@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+:root {
+  --background: 240 4.8% 95.9%;
+  --text: 240 10% 3.9%;
+  --warning: 0 72% 51%;
+  --alert: 38 92% 50%;
+  --blue: 199 89% 50%;
+  --cyan: 189 94% 43%;
+  --success: 142 71% 45%;
+  --success-secondary: 160 84% 39%;
+  --muted: 0 0% 100%;
+  --border: 240 5.9% 90%;
+  --primary: 160 84% 39%;
+  --primary-btn: 160 84% 39%;
+  --secondary: 240 6% 90%;
+  --ring: 240 10% 3.9%;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --text: 0 0% 98%;
+  --warning: 0 84% 60%;
+  --alert: 43 96% 56%;
+  --blue: 198 93% 57%;
+  --cyan: 188 86% 53%;
+  --success: 142 69% 58%;
+  --success-secondary: 161 94% 30%;
+  --muted: 270 4% 10%;
+  --border: 240 3.7% 15.9%;
+  --primary: 158 64% 52%;
+  --primary-btn: 161 94% 30%;
+  --secondary: 240 4% 16%;
+  --ring: 240 4.9% 83.9%;
+}
+
+@font-face {
+  font-family: "IRANYekan";
+  font-style: normal;
+  font-weight: 300;
+  src: url("/fonts/iranyekan/woff2/IRANYekanXFaNum-Light.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "IRANYekan";
+  font-style: normal;
+  font-weight: normal;
+  src: url("/fonts/iranyekan/woff2/IRANYekanXFaNum-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IRANYekan";
+  font-style: normal;
+  font-weight: 500;
+  src: url("/fonts/iranyekan/woff2/IRANYekanXFaNum-Medium.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IRANYekan";
+  font-style: normal;
+  font-weight: 600;
+  src: url("/fonts/iranyekan/woff2/IRANYekanXFaNum-DemiBold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IRANYekan";
+  font-style: normal;
+  font-weight: bold;
+  src: url("/fonts/iranyekan/woff2/IRANYekanXFaNum-Bold.woff2") format("woff2");
+}
+body {
+  font-family: "IRANYekan";
+}
