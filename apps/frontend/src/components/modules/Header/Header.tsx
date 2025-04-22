@@ -1,10 +1,9 @@
 import Link from "next/link";
-import Image from "next/image";
 import { HiOutlineMoon, HiOutlineSun, HiOutlineMenu, HiOutlineChevronLeft } from "react-icons/hi";
 import DesktopLogo from "./Logo/DesktopLogo";
 import SearchBar from "./SearchBar/SearchBarDesktop";
 import ProfileDropdown from "./ProfileDropdown";
-import BasketDropdown from "./Basket/BasketDropdown";
+import BasketDropdown from "./Basket";
 import SearchBarMobile from "./SearchBar/SearchBarMobile";
 import MobileLogo from "./Logo/MobileLogo";
 
