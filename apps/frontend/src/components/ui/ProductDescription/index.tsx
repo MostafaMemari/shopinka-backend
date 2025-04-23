@@ -1,10 +1,15 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
+import Drawer from "../Drawer";
 
 interface ProductDescriptionProps {
   description: string;
 }
 
 const ProductDescription = ({ description }: ProductDescriptionProps) => {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
   return (
     <div className="py-6" id="description">
       <div className="relative mb-16 w-fit text-xl font-medium">
@@ -28,6 +33,7 @@ const ProductDescription = ({ description }: ProductDescriptionProps) => {
           data-drawer-placement="bottom"
           data-drawer-target="mobile-description-drawer-navigation"
           type="button"
+          onClick={() => setIsDrawerOpen(true)}
           className="btn-secondary-nobg md:hidden"
         >
           مشاهده بیشتر
@@ -36,6 +42,10 @@ const ProductDescription = ({ description }: ProductDescriptionProps) => {
           </svg>
         </button>
       </div>
+
+      <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} title="توضیحات محصول">
+        {description}
+      </Drawer>
     </div>
   );
 };

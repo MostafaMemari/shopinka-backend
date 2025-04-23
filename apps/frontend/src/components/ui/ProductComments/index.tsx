@@ -88,13 +88,10 @@ const ProductComments = ({ comments }: ProductCommentsProps) => {
           </div>
 
           {/* Comments List */}
-          <div
-            className="order-first col-span-12 mb-10 max-h-[500px] overflow-hidden md:order-last md:col-span-8 lg:col-span-9"
-            id="commentsContainer"
-          >
+          <div className="order-first col-span-12 mb-10 md:order-last md:col-span-8 lg:col-span-9" id="commentsContainer">
             {/* Desktop Comments */}
             <div className="hidden md:block">
-              <ul className="mb-8 space-y-4 divide-y divide-gray-200 dark:divide-white/10">
+              <ul className="mb-8 space-y-4 divide-gray-200 dark:divide-white/10">
                 {comments &&
                   comments?.map((comment) => (
                     <li key={comment.id} className="space-y-2">
@@ -113,7 +110,7 @@ const ProductComments = ({ comments }: ProductCommentsProps) => {
                             </svg>
                           </button>
                         </div>
-                        <div className="mb-6 flex items-center gap-x-4 border-b pb-6">
+                        <div className="mb-6 flex items-center gap-x-4 border-b pb-2">
                           <div
                             className={`flex items-center gap-x-2 ${comment.isRecommended ? "text-primary" : "text-red-500 dark:text-red-400"}`}
                           >
