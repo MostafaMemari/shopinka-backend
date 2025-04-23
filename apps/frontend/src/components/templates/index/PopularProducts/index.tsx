@@ -9,7 +9,7 @@ const PopularProducts = () => {
       oldPrice: 150000,
       newPrice: 100000,
       discount: 5,
-      productLink: "/",
+      productLink: "/products/1",
     },
     {
       id: "2",
@@ -18,14 +18,14 @@ const PopularProducts = () => {
       oldPrice: 150000,
       newPrice: 100000,
       discount: 5,
-      productLink: "/",
+      productLink: "/products/2",
     },
     {
       id: "3",
       imageSrc: "/images/products/p3.png",
       title: "کفش پیاده روی مردانه نیو بالانس مدل Mdrftlm2",
       newPrice: 100000,
-      productLink: "/",
+      productLink: "/products/3",
     },
     {
       id: "4",
@@ -34,7 +34,7 @@ const PopularProducts = () => {
       oldPrice: 150000,
       newPrice: 100000,
       discount: 5,
-      productLink: "/",
+      productLink: "/products/4",
     },
     {
       id: "5",
@@ -43,7 +43,7 @@ const PopularProducts = () => {
       oldPrice: 150000,
       newPrice: 100000,
       discount: 5,
-      productLink: "/",
+      productLink: "/products/5",
     },
     {
       id: "6",
@@ -52,7 +52,7 @@ const PopularProducts = () => {
       oldPrice: 150000,
       newPrice: 100000,
       discount: 5,
-      productLink: "/",
+      productLink: "/products/6",
     },
   ];
 
