@@ -20,7 +20,7 @@ export default function ProductImage({ src, alt, isBlurred = false, size = "md" 
         src={src}
         alt={alt}
         fill
-        className={`rounded-lg object-cover ${isBlurred ? "blur-sm" : ""}`}
+        className={`rounded-lg object-cover p-1 ${isBlurred ? "blur-sm" : ""}`}
         sizes="(max-width: 640px) 64px, (max-width: 768px) 96px, 112px"
       />
       {isBlurred && (

@@ -44,8 +44,7 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Gallery
       onClick={(e) => e.target === e.currentTarget && handleClose()}
     >
       <div
-        className={`relative w-full max-w-5xl transform transition-all duration-200 ease-out
-          ${isClosing ? "animate-modalOut" : "animate-modalIn"}`}
+        className={`relative w-full max-w-[90%] max-h-[80%] sm:max-w-3xl md:max-w-4xl transform transition-all duration-200 ease-out          ${isClosing ? "animate-modalOut" : "animate-modalIn"}`}
       >
         <div className="divide-y overflow-hidden rounded-lg bg-muted shadow-sm ring-1 ring-gray-100 dark:ring-white/5">
           {/* Header */}
@@ -107,11 +106,10 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Gallery
                   640: { slidesPerView: 4, spaceBetween: 10 },
                   1024: { slidesPerView: 5, spaceBetween: 12 },
                 }}
-                className="product-image-desktop-2-swiper"
               >
                 {images.map((image, index) => (
                   <SwiperSlide key={index}>
-                    <div className="cursor-pointer rounded-lg border p-2 transition-all hover:border-primary">
+                    <div className="cursor-pointer flex justify-center items-center rounded-lg border p-2 transition-all hover:border-primary">
                       <div className="relative h-20 w-20 sm:h-24 sm:w-24">
                         <Image src={image.src} alt={image.alt} fill className="object-contain" sizes="(max-width: 640px) 80px, 96px" />
                       </div>

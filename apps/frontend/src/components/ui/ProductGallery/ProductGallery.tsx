@@ -19,6 +19,10 @@ type ProductGalleryProps = {
 export default function ProductGallery({ images, title = "تصاویر محصول" }: ProductGalleryProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const displayedImages = images.slice(0, 3);
+  const hasMoreImages = images.length > 3;
+  const blurredImage = hasMoreImages ? images[3] : null;
+
   return (
     <>
       <div className="space-y-4">
@@ -27,11 +31,16 @@ export default function ProductGallery({ images, title = "تصاویر محصو�
         </div>
 
         <div className="flex items-center justify-start gap-x-2 overflow-x-auto pb-2">
-          {images.map((image, index) => (
-            <div key={index} onClick={() => setIsModalOpen(true)} className="shrink-0">
-              <GalleryImage src={image.src} alt={image.alt} isBlurred={image.isBlurred} size="md" />
+          {displayedImages.map((image, index) => (
+            <div key={index} onClick={() => setIsModalOpen(true)} className="shrink-0 cursor-pointer">
+              <GalleryImage src={image.src} alt={image.alt} isBlurred={false} size="md" />
             </div>
           ))}
+          {blurredImage && (
+            <div onClick={() => setIsModalOpen(true)} className="shrink-0">
+              <GalleryImage src={blurredImage.src} alt={blurredImage.alt} isBlurred={true} size="md" />
+            </div>
+          )}
         </div>
       </div>
 

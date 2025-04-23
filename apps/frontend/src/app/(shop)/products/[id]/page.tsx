@@ -22,7 +22,7 @@ export default async function Page({ params }: Props) {
     { src: "/images/products/p2.png", alt: "تصویر محصول 2" },
     { src: "/images/products/p3.png", alt: "تصویر محصول 3" },
     { src: "/images/products/p4.png", alt: "تصویر محصول 4" },
-    { src: "/images/products/p5.png", alt: "تصویر محصول 5", isBlurred: true },
+    { src: "/images/products/p5.png", alt: "تصویر محصول 5" },
   ];
 
   return (
