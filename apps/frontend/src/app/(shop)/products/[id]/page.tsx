@@ -1,5 +1,6 @@
 import ProductActions from "@/components/ui/ActionButtons";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import ProductDetails from "@/components/ui/ProductDetails";
 import ProductGallery from "@/components/ui/ProductGallery/ProductGallery";
 import React from "react";
 
@@ -14,6 +15,10 @@ export default async function Page({ params }: Props) {
     { label: "روتی کالا", href: "/" },
     { label: "مردانه", href: "/men" },
     { label: "کتونی مردانه", href: `/products/${id}` },
+  ];
+  const breadcrumbProduct = [
+    { label: "کفش", href: `/products/${id}` },
+    { label: "نایک", href: `/products/${id}` },
   ];
 
   const productTitle = "کفش پیاده روی مردانه نیو بالانس مدل Mdrftlm2";
@@ -31,10 +36,12 @@ export default async function Page({ params }: Props) {
       <div className="mb-6 rounded-lg bg-muted p-6 shadow-base">
         <div className="mb-6 grid grow grid-cols-12 gap-4">
           <div className="col-span-4">
-            <div className="min-w-fit space-y-4">
-              <ProductActions productId={id} />
-              <ProductGallery images={galleryImages} title={`تصاویر محصول ${productTitle}`} />
-            </div>
+            <ProductActions productId={id} />
+            <ProductGallery images={galleryImages} title={`تصاویر محصول ${productTitle}`} />
+          </div>
+          <div className="col-span-8 flex min-h-full flex-col">
+            <Breadcrumb items={breadcrumbProduct} forceRender="mobile" />
+            <ProductDetails />
           </div>
         </div>
       </div>

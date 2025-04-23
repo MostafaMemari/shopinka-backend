@@ -1,5 +1,6 @@
+import React from "react";
 import Link from "next/link";
-import { HiChevronLeft } from "react-icons/hi";
+import { HiChevronLeft } from "react-icons/hi"; // فرض کردم از react-icons استفاده می‌کنی
 
 interface BreadcrumbItem {
   label: string;
@@ -8,13 +9,16 @@ interface BreadcrumbItem {
 
 interface BreadcrumbProps {
   items: BreadcrumbItem[];
+  forceRender?: "desktop" | "mobile"; // prop جدید برای کنترل اجباری رندر
 }
 
-const Breadcrumb = ({ items }: BreadcrumbProps) => {
+const Breadcrumb = ({ items, forceRender }: BreadcrumbProps) => {
+  const renderDesktop = forceRender === "desktop";
+  const renderMobile = forceRender === "mobile";
+
   return (
     <>
-      <div className="hidden lg:block">
-        {" "}
+      <div className={renderMobile ? "hidden" : renderDesktop ? "block" : "hidden lg:block"}>
         <div className="mb-6">
           <nav aria-label="Breadcrumb" className="w-fit rounded-lg bg-muted px-4 py-4 shadow-base">
             <ol className="flex flex-wrap items-center justify-center gap-x-2 gap-y-4">
@@ -35,8 +39,7 @@ const Breadcrumb = ({ items }: BreadcrumbProps) => {
         </div>
       </div>
 
-      <div className="lg:hidden">
-        {" "}
+      <div className={renderDesktop ? "hidden" : renderMobile ? "block" : "lg:hidden"}>
         <div className="mb-4 flex flex-wrap items-center gap-2">
           {items.map((item, index) => (
             <div key={index} className="flex items-center gap-x-1 text-sm font-light text-primary sm:text-base">

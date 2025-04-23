@@ -30,15 +30,15 @@ export default function ProductGallery({ images, title = "تصاویر محصو�
           <MainImage src={images[0].src} alt={images[0].alt} />
         </div>
 
-        <div className="flex items-center justify-start gap-x-2 overflow-x-auto pb-2">
+        <div className="flex items-center justify-center gap-x-2">
           {displayedImages.map((image, index) => (
-            <div key={index} onClick={() => setIsModalOpen(true)} className="shrink-0 cursor-pointer">
-              <GalleryImage src={image.src} alt={image.alt} isBlurred={false} size="md" />
+            <div key={index} onClick={() => setIsModalOpen(true)}>
+              <GalleryImage src={image.src} alt={image.alt} isBlurred={false} />
             </div>
           ))}
           {blurredImage && (
             <div onClick={() => setIsModalOpen(true)} className="shrink-0">
-              <GalleryImage src={blurredImage.src} alt={blurredImage.alt} isBlurred={true} size="md" />
+              <GalleryImage src={blurredImage.src} alt={blurredImage.alt} isBlurred={true} />
             </div>
           )}
         </div>
