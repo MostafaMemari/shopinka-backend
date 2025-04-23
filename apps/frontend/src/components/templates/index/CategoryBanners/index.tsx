@@ -22,8 +22,8 @@ const CategoryBanners = () => {
       <div className="container relative mx-auto">
         <div className="flex w-full flex-col justify-between gap-4 md:flex-row">
           {banners.map((banner) => (
-            <Link key={banner.id} href={banner.link}>
-              <Image src={banner.image} alt={banner.alt} width={600} height={300} className="rounded-base w-full object-cover" />
+            <Link key={banner.id} href={banner.link} className="flex-1">
+              <Image src={banner.image} alt={banner.alt} width={600} height={300} className="rounded-base w-full h-full object-cover" />
             </Link>
           ))}
         </div>
