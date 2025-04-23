@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { HiOutlinePlus, HiOutlineMinus, HiOutlineShieldCheck } from "react-icons/hi";
 
 const ProductDetails = () => {
   const [quantity, setQuantity] = useState<number>(1);
@@ -139,10 +140,10 @@ const ProductDetails = () => {
           </div>
 
           {/* Verified Text */}
-          <div className="mb-6 flex items-center gap-x-2 rounded-lg bg-primary/10 p-4 text-sm text-primary/50">
-            <svg className="h-6 w-6">
-              <use xlinkHref="#verified" />
-            </svg>
+          <div className="mb-6 flex items-center gap-x-2 rounded-lg bg-primary/10 p-4 text-sm text-primary /5">
+            <span className="h-6 w-6">
+              <HiOutlineShieldCheck className="h-full w-full" />
+            </span>
             تضمین سلامت فیزیکی و اصالت کالا
           </div>
 
@@ -150,9 +151,9 @@ const ProductDetails = () => {
           <div className="mb-6 flex items-center justify-between">
             <div className="flex h-12 w-32 items-center justify-between rounded-lg border px-4 py-1">
               <button type="button" onClick={handleIncrement}>
-                <svg className="h-6 w-6 text-primary">
-                  <use xlinkHref="#plus" />
-                </svg>
+                <span className="h-6 w-6 text-primary cursor-pointer">
+                  <HiOutlinePlus />
+                </span>
               </button>
               <input
                 value={quantity}
@@ -161,9 +162,9 @@ const ProductDetails = () => {
                 className="flex h-6 w-6 select-none items-center justify-center bg-transparent text-center outline-none"
               />
               <button type="button" onClick={handleDecrement}>
-                <svg className="h-6 w-6 text-red-600 dark:text-red-500">
-                  <use xlinkHref="#minus" />
-                </svg>
+                <span className="h-6 w-6 text-red-600 dark:text-red-500 cursor-pointer">
+                  <HiOutlineMinus />
+                </span>
               </button>
             </div>
             <div className="flex items-center gap-x-1 text-primary">

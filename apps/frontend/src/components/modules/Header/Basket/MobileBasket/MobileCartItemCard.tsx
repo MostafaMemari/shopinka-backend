@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { HiOutlineMinusCircle, HiOutlinePlusCircle, HiOutlineX } from "react-icons/hi";
+import { HiOutlineMinus, HiOutlinePlus, HiOutlineX } from "react-icons/hi";
 
 interface MobileCartItemCardProps {
   item: {
@@ -50,7 +50,7 @@ const MobileCartItemCard = ({ item, onRemove }: MobileCartItemCardProps) => {
           </div>
           <div className="flex h-8 w-20 justify-between rounded-lg border px-2 py-1">
             <button type="button" data-action="increment">
-              <HiOutlinePlusCircle className="h-5 w-5 text-primary" />
+              <HiOutlinePlus className="h-5 w-5 text-primary" />
             </button>
             <input
               value={item.quantity}
@@ -59,7 +59,7 @@ const MobileCartItemCard = ({ item, onRemove }: MobileCartItemCardProps) => {
               className="flex h-5 w-5 select-none items-center justify-center bg-transparent text-center text-sm outline-none"
             />
             <button type="button" data-action="decrement">
-              <HiOutlineMinusCircle className="h-5 w-5 text-red-600 dark:text-red-500" />
+              <HiOutlineMinus className="h-5 w-5 text-red-600 dark:text-red-500" />
             </button>
           </div>
         </div>
