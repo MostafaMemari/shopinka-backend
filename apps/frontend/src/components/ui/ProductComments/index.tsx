@@ -1,4 +1,5 @@
 import React from "react";
+import MobileCommentsSwiper from "./MobileCommentsSwiper";
 
 interface Comment {
   id: string;
@@ -234,85 +235,7 @@ const ProductComments = ({ comments }: ProductCommentsProps) => {
             </div>
 
             {/* Mobile Comments */}
-            <div className="md:hidden">
-              <div className="swiper product-comments-swiper">
-                <div className="swiper-wrapper">
-                  {comments &&
-                    comments.map((comment) => (
-                      <div key={comment.id} className="swiper-slide">
-                        <div className="flex h-64 flex-col rounded-lg border px-4 py-6">
-                          <div className="flex items-center justify-between gap-2 mb-4">
-                            <div
-                              className={`flex items-center gap-x-2 ${comment.isRecommended ? "text-primary" : "text-red-500 dark:text-red-400"}`}
-                            >
-                              <svg className="h-5 w-5">
-                                <use xlinkHref={comment.isRecommended ? "#like" : "#dislike"} />
-                              </svg>
-                              {comment.isRecommended ? "پیشنهاد میکنم" : "پیشنهاد نمیکنم"}
-                            </div>
-                            <button
-                              data-modal-target="submit-answers-to-comments-drawer-navigation"
-                              data-modal-toggle="submit-answers-to-comments-drawer-navigation"
-                              type="button"
-                              className="btn-secondary-nobg"
-                            >
-                              پاسخ
-                              <svg className="h-5 w-5">
-                                <use xlinkHref="#chevron-left" />
-                              </svg>
-                            </button>
-                          </div>
-                          <div className="grow space-y-2">
-                            <h5 className="text-sm leading-relaxed">{comment.title}</h5>
-                            <p className="line-clamp-4 text-sm leading-relaxed text-text/90">{comment.content}</p>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-x-4">
-                              <button className="relative text-primary">
-                                <svg className="h-6 w-6">
-                                  <use xlinkHref="#like" />
-                                </svg>
-                                <span className="absolute -right-2 top-6 text-sm">{comment.likes}</span>
-                              </button>
-                              <button className="relative text-red-500 dark:text-red-400">
-                                <svg className="h-6 w-6">
-                                  <use xlinkHref="#dislike" />
-                                </svg>
-                                <span className="absolute -right-2 top-6 text-sm">{comment.dislikes}</span>
-                              </button>
-                            </div>
-                            <div className="flex items-center gap-x-2">
-                              <div className="text-xs text-text/60">{comment.date}</div>
-                              <span className="h-3 w-px rounded-full bg-background dark:bg-muted/10"></span>
-                              <div className="text-xs text-text/60">{comment.isBuyer ? "خریدار" : "کاربر"}</div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  {/* Load More */}
-                  <div className="swiper-slide">
-                    <div className="flex h-64 items-center justify-center">
-                      <button
-                        aria-controls="mobile-comments-drawer-navigation"
-                        data-drawer-show="mobile-comments-drawer-navigation"
-                        data-drawer-placement="bottom"
-                        data-drawer-target="mobile-comments-drawer-navigation"
-                        type="button"
-                        className="flex flex-col items-center justify-center gap-y-4 text-primary"
-                      >
-                        <div className="rounded-full border border-emerald-500 p-2 dark:border-emerald-400">
-                          <svg className="h-6 w-6">
-                            <use xlinkHref="#chevron-left" />
-                          </svg>
-                        </div>
-                        <div>مشاهده بیشتر</div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <MobileCommentsSwiper comments={comments} />
           </div>
         </div>
       </div>

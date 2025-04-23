@@ -1,55 +1,61 @@
 import PopularProducts from "@/components/templates/index/PopularProducts";
-import ProductComments from "@/components/ui/ProductComments";
-import ProductDescription from "@/components/ui/ProductDescription";
-import ProductSpecifications from "@/components/ui/ProductSpecifications";
+import ProductTabs from "@/components/ui/ProductTabs";
 
 export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const mockData = {
+    description: `چه در حال تمرین و چه در زندگی روزمره، این کفش‌های اورجبنال نیوبالانس طوری طراحی شده‌اند که در هر نوع حرکت با شما همراه
+    باشند. جزئیات متمرکز بر عملکرد مانند زیره میانی DynaSoft و زیره لاستیکی بادوام به این کفش وزن سبک و واکنش پذیری بالایی
+    می بخشد که performance ورزشی شما را افزایش می دهد. ترکیب رنگی این کفش جذابیت و شادابی دو چندانی را به استایل اسپورت شما
+    می بخشد.`,
+    specifications: [
+      {
+        title: "جنس",
+        values: ["پارچه"],
+      },
+      {
+        title: "جنس زیره",
+        values: ["لاستیک"],
+      },
+      {
+        title: "نحوه بسته شدن کفش",
+        values: ["بندی"],
+      },
+      {
+        title: "ویژگی‌های زیره",
+        values: ["انعطاف پذیر", "دارای بالشتک هوا", "قابلیت ارتجاعی", "قابلیت گردش هوا", "کاهش فشار وارده", "مقاوم در برابر سایش"],
+      },
+    ],
+    comments: [
+      {
+        id: "1",
+        title: "با این قیمت کاملا مناسب و خوبه",
+        content: "برا کسایی که نمیخوان هزینه بالایی کنن گزینه خیلی خوبیه",
+        date: "10 شهریور 1403",
+        isRecommended: true,
+        isBuyer: true,
+        likes: 32,
+        dislikes: 76,
+        replies: [],
+      },
+      {
+        id: "2",
+        title: "با این قیمت اصلا مناسب نیست",
+        content: "اصلا خوب نیست",
+        date: "20 شهریور 1403",
+        isRecommended: false,
+        isBuyer: true,
+        likes: 100,
+        dislikes: 100,
+        replies: [],
+      },
+    ],
+  };
+
   return (
     <>
-      <div className="container">
-        {children}
-        <PopularProducts />
-        <div className="rounded-lg bg-muted p-4 shadow-base">
-          <div className="mb-6">
-            <ul className="-mb-px flex justify-between gap-x-2 border-b text-center text-sm font-medium xs:justify-start xs:gap-x-4 xs:text-base">
-              <li>
-                <a
-                  href="#description"
-                  className="inline-block rounded-t-lg border-b-2 border-transparent px-2 pb-2 hover: text-text/90 dark:hover:text-zinc-300"
-                >
-                  معرفی
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#specs"
-                  className="inline-block rounded-t-lg border-b-2 border-transparent px-2 pb-2 hover: text-text/90 dark:hover:text-zinc-300"
-                >
-                  مشخصات
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#comments"
-                  className="relative inline-block rounded-t-lg border-b-2 border-transparent px-2 pb-2 hover: text-text/90 dark:hover:text-zinc-300"
-                >
-                  دیدگاه ها
-                  <span className="absolute -left-5 -top-4 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs text-white dark:bg-emerald-600 xs:text-sm">
-                    2
-                  </span>
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div className="space-y-16 divide-y">
-            <ProductDescription />
-
-            <ProductSpecifications />
-
-            <ProductComments />
-          </div>
-        </div>
-      </div>
+      {children}
+      <PopularProducts />
+      <ProductTabs description={mockData.description} specifications={mockData.specifications} comments={mockData.comments} />
     </>
   );
 }
