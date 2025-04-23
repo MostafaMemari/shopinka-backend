@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { HiOutlineShoppingCart } from "react-icons/hi";
-import DesktopBasketDropdown from "./DesktopBasketDropdown";
-import MobileBasketDrawer from "./MobileBasketDrawer";
+import DesktopBasketDropdown from "./DesktopBasket";
+import MobileBasketDrawer from "./MobileBasket";
 
 const BasketDropdown = () => {
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);

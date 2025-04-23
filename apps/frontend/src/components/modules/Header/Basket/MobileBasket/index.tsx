@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
-import { HiOutlinePlusCircle, HiOutlineMinusCircle, HiOutlineX } from "react-icons/hi";
+import { HiOutlineX } from "react-icons/hi";
+import MobileCartItemCard from "./MobileCartItemCard";
 
 interface MobileBasketDrawerProps {
   isOpen: boolean;
@@ -49,7 +49,6 @@ const MobileBasketDrawer = ({ isOpen, onClose }: MobileBasketDrawerProps) => {
 
   return (
     <>
-      {/* Backdrop */}
       {isOpen && <div className="fixed inset-0 z-30 bg-black/50" onClick={onClose}></div>}
 
       <div
@@ -59,7 +58,7 @@ const MobileBasketDrawer = ({ isOpen, onClose }: MobileBasketDrawerProps) => {
         }`}
         id="user-basket-drawer-navigation"
         tabIndex={-1}
-        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside drawer
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between gap-x-4 border-b p-4 pb-5">
           <button
@@ -80,53 +79,7 @@ const MobileBasketDrawer = ({ isOpen, onClose }: MobileBasketDrawerProps) => {
           <ul className="main-scroll h-full space-y-2 divide-y overflow-y-auto p-4">
             {cartItems.map((item) => (
               <li key={item.id}>
-                <div className="flex gap-x-2 py-5">
-                  <div className="relative min-w-fit">
-                    <Link href="/product-detail">
-                      <Image alt={item.title} className="h-20 w-20" src={item.image} width={80} height={80} loading="lazy" />
-                    </Link>
-                    <button
-                      className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-background"
-                      type="button"
-                    >
-                      <HiOutlineX className="h-6 w-6 text-red-600 dark:text-red-500" />
-                    </button>
-                  </div>
-
-                  <div className="w-full space-y-1.5">
-                    <Link href="/product-detail" className="line-clamp-2 h-10 text-sm">
-                      {item.title}
-                    </Link>
-                    <div className="flex items-center gap-x-2 text-xs text-text/60">
-                      <div>تعداد : {item.quantity}</div>
-                      <div className="h-3 w-px rounded-full bg-background"></div>
-                      <div className="flex items-center gap-x-2">
-                        <span className="h-4 w-4 rounded-full" style={{ background: item.colorHex }}></span>
-                        <span>{item.color}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between gap-x-2">
-                      <div className="text-primary">
-                        <span className="font-bold">{item.price}</span>
-                        <span className="text-xs">تومان</span>
-                      </div>
-                      <div className="flex h-8 w-20 justify-between rounded-lg border px-2 py-1">
-                        <button type="button" data-action="increment">
-                          <HiOutlinePlusCircle className="h-5 w-5 text-primary" />
-                        </button>
-                        <input
-                          value="1"
-                          disabled
-                          type="number"
-                          className="flex h-5 w-5 select-none items-center justify-center bg-transparent text-center text-sm outline-none"
-                        />
-                        <button type="button" data-action="decrement">
-                          <HiOutlineMinusCircle className="h-5 w-5 text-red-600 dark:text-red-500" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <MobileCartItemCard item={item} onRemove={() => console.log("remove item", item.id)} />
               </li>
             ))}
           </ul>

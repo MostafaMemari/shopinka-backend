@@ -1,7 +1,4 @@
-import "swiper/css";
-import "swiper/css/navigation";
-
-import ProductSlider from "@/components/ui/ProductSlider";
+import CarouselProduct from "@/components/ui/CarouselProduct";
 
 const PopularProducts = () => {
   const products = [
@@ -61,7 +58,7 @@ const PopularProducts = () => {
 
   return (
     <>
-      <ProductSlider title="محبوب ترین محصولات" viewAllLink="/shop" products={products} />
+      <CarouselProduct title="محبوب ترین محصولات" viewAllLink="/shop" products={products} />
     </>
   );
 };

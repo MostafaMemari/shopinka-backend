@@ -1,4 +1,4 @@
-import BlogSection from "@/components/ui/BlogSlider";
+import CarouselBlog from "@/components/ui/CarouselBlog";
 
 const LatestBlogs = () => {
   const blogs = [
@@ -34,7 +34,7 @@ const LatestBlogs = () => {
 
   return (
     <div>
-      <BlogSection sectionTitle="مطالب خواندنی" viewAllLink="/blog" viewAllText="مشاهده همه" blogs={blogs} />
+      <CarouselBlog sectionTitle="مطالب خواندنی" viewAllLink="/blog" viewAllText="مشاهده همه" blogs={blogs} />
     </div>
   );
 };

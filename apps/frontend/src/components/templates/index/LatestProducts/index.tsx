@@ -1,7 +1,4 @@
-import "swiper/css";
-import "swiper/css/navigation";
-
-import ProductSlider from "@/components/ui/ProductSlider";
+import CarouselProduct from "@/components/ui/CarouselProduct";
 
 const LatestProducts = () => {
   const products = [
@@ -59,11 +56,7 @@ const LatestProducts = () => {
     },
   ];
 
-  return (
-    <>
-      <ProductSlider title="جدیدترین محصولات" viewAllLink="/shop" products={products} />
-    </>
-  );
+  return <CarouselProduct title="جدیدترین محصولات" viewAllLink="/shop" products={products} />;
 };
 
 export default LatestProducts;

@@ -2,36 +2,32 @@ import "swiper/css";
 import "swiper/css/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { IBlog } from "@/lib/types/blogs";
 
-export interface BlogCardProps {
-  id: number;
-  imageSrc: string;
-  title: string;
-  date: string;
-  link: string;
+export interface props {
+  blog: IBlog;
 }
 
-// BlogCard Component
-const BlogCard: React.FC<BlogCardProps> = ({ imageSrc, title, date, link }) => {
+const CarouselBlogCard: React.FC<props> = ({ blog }) => {
   return (
     <div>
-      <Link href={link}>
+      <Link href={blog.link}>
         <div className="relative rounded-xl bg-muted p-2 shadow-base">
           <div className="mb-2 md:mb-5" draggable="false">
             <Image
               alt="blog"
               className="mx-auto w-auto rounded-lg rounded-bl-3xl"
-              src={imageSrc}
+              src={blog.imageSrc}
               width={300}
               height={200}
               priority={false}
             />
           </div>
           <div className="mb-2">
-            <p className="line-clamp-2 h-10 text-sm md:h-12 md:text-base">{title}</p>
+            <p className="line-clamp-2 h-10 text-sm md:h-12 md:text-base">{blog.title}</p>
           </div>
           <div className="flex justify-end">
-            <p className="text-xs text-primary xs:text-sm">{date}</p>
+            <p className="text-xs text-primary xs:text-sm">{blog.date}</p>
           </div>
         </div>
       </Link>
@@ -39,4 +35,4 @@ const BlogCard: React.FC<BlogCardProps> = ({ imageSrc, title, date, link }) => {
   );
 };
 
-export default BlogCard;
+export default CarouselBlogCard;
