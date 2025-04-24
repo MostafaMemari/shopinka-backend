@@ -7,9 +7,9 @@ import { HiChevronLeft } from "react-icons/hi";
 import "swiper/css";
 import "swiper/css/navigation";
 import { IProduct } from "@/lib/types/products";
-import CarouselProductCard from "./CarouselProductCard";
 import { useMemo } from "react";
 import { defaultSwiperConfig, productSwiperConfig } from "@/config/swiper";
+import ProductCard from "../ProductCard";
 
 interface Props {
   title: string;
@@ -48,7 +48,7 @@ export default function CarouselProduct({ title, viewAllLink, viewAllText = "Ù…Ø
         <Swiper {...swiperConfig} modules={[Navigation]} className="product-slider">
           {stableProducts.map((product) => (
             <SwiperSlide key={product.id}>
-              <CarouselProductCard product={product} />
+              <ProductCard product={product} />
             </SwiperSlide>
           ))}
         </Swiper>

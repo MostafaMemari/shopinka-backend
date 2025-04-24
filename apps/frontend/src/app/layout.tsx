@@ -28,15 +28,7 @@ export default function RootLayout({
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <div className="flex min-h-screen flex-col">
-          <header>
-            <Header />
-          </header>
-
-          <main className="grow bg-background pb-14 pt-36 xs:pt-36">{children}</main>
-
-          <Footer />
-        </div>
+        <div className="flex min-h-screen flex-col">{children}</div>
       </body>
     </html>
   );

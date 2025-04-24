@@ -129,7 +129,9 @@
   }
 
   .accordion-content {
-    transition: max-height 0.3s ease-out, padding 0.3s ease;
+    transition:
+      max-height 0.3s ease-out,
+      padding 0.3s ease;
   }
 
   /* Border Color Effect Styles */
@@ -167,7 +169,9 @@
 }
 
 @utility accordion-content {
-  transition: max-height 0.3s ease-out, padding 0.3s ease;
+  transition:
+    max-height 0.3s ease-out,
+    padding 0.3s ease;
 }
 
 @utility mega-menu-active {
