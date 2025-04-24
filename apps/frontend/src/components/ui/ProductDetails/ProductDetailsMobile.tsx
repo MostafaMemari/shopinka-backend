@@ -17,14 +17,11 @@ type ProductDetailsProps = {
   englishTitle?: string;
   sku?: string;
   commentsCount?: number;
-  userSuggestion?: string;
-  properties?: { [key: string]: string }[];
   colors?: Color[];
   sizes?: string[];
-  price?: number;
 };
 
-const ProductDetailsMobile = ({ title, sku, commentsCount, userSuggestion, properties, colors, sizes, price }: ProductDetailsProps) => {
+const ProductDetailsMobile = ({ title, sku, commentsCount, colors, sizes }: ProductDetailsProps) => {
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedColor, setSelectedColor] = useState<string>("color-desktop-1");
   const [selectedSize, setSelectedSize] = useState<string>("size-desktop-1");

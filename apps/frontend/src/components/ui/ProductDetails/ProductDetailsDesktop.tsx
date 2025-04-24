@@ -2,11 +2,10 @@
 
 import React, { useState } from "react";
 import { HiOutlineShieldCheck } from "react-icons/hi";
-import ProductTitle from "./ProductTitle";
 import { ColorSelector } from "../ColorSelector";
-import SizeSelector from "../SizeSelector";
-import { QuantitySelector } from "../QuantitySelector";
 import { ProductProperties } from "../ProductProperties";
+import { QuantitySelector } from "../QuantitySelector";
+import SizeSelector from "../SizeSelector";
 
 // Types
 type Color = {
@@ -47,7 +46,7 @@ const ProductDetailsDesktop = ({
 
   return (
     <div className="col-span-8 flex min-h-full flex-col">
-      {title && <h1 className="text-lg font-semibold">{title}</h1>}
+      {title && <h1 className="text-lg font-semibold pb-2">{title}</h1>}
 
       <div className="grid grow grid-cols-2 gap-x-4">
         <div className="col-span-1">
@@ -79,9 +78,7 @@ const ProductDetailsDesktop = ({
             <p className="text-sm font-light text-text/60">{userSuggestion}</p>
           </div>
 
-          {/* Product Properties */}
-
-          <ProductProperties properties={properties} />
+          {properties && properties.length > 0 && <ProductProperties properties={properties} />}
         </div>
 
         <div className="col-span-1 flex flex-col">
@@ -124,7 +121,6 @@ const ProductDetailsDesktop = ({
             </div>
           </div>
 
-          {/* Add to Cart */}
           <div className="mb-6">
             <button className="btn-primary w-full py-3">افزودن به سبد خرید</button>
           </div>

@@ -1,10 +1,6 @@
-interface ProductProperty {
-  [key: string]: string;
-}
-
 interface ProductPropertiesProps {
   title?: string;
-  properties: ProductProperty[];
+  properties?: { [key: string]: string }[];
 }
 
 export const ProductProperties = ({ title = "ویژگی های محصول", properties }: ProductPropertiesProps) => {
