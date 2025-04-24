@@ -1,4 +1,3 @@
-import PopularProducts from "@/components/templates/index/PopularProducts";
 import ProductActions from "@/components/ui/ActionButtons";
 import BoxedBreadcrumb from "@/components/ui/Breadcrumb/BoxedBreadcrumb";
 import CompactBreadcrumb from "@/components/ui/Breadcrumb/CompactBreadcrumb";
@@ -67,6 +66,7 @@ export default async function Page({ params }: Props) {
                     },
                   ]}
                   sizes={["28", "18"]}
+                  properties={[{ "جنس زیره": "چرم مصنوعی" }, { "نحوه بسته شدن": "بند دار" }, { جنس: "پارچه‌ای" }]}
                 />
               </div>
             </div>
@@ -106,6 +106,7 @@ export default async function Page({ params }: Props) {
                 },
               ]}
               sizes={["28", "18"]}
+              properties={[{ "جنس زیره": "چرم مصنوعی" }, { "نحوه بسته شدن": "بند دار" }, { جنس: "پارچه‌ای" }]}
             />
           </div>
           <div className="mb-6 rounded-lg bg-muted p-4 shadow-base lg:hidden">

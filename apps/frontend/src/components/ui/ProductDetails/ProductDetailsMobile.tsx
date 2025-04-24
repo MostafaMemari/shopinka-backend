@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { ColorSelector } from "./ColorSelector";
-import ProductTitle from "./ProductTitle";
-import SizeSelector from "./SizeSelector";
-import { QuantitySelector } from "./QuantitySelector";
 import ProductGuarantees from "../ProductGuarantees";
+import { ColorSelector } from "../ColorSelector";
+import SizeSelector from "../SizeSelector";
+import { QuantitySelector } from "../QuantitySelector";
 
 type Color = {
   id: string;
@@ -19,27 +18,13 @@ type ProductDetailsProps = {
   sku?: string;
   commentsCount?: number;
   userSuggestion?: string;
-  properties?: {
-    material?: string;
-    soleMaterial?: string;
-    closureType?: string;
-  };
+  properties?: { [key: string]: string }[];
   colors?: Color[];
   sizes?: string[];
   price?: number;
 };
 
-const ProductDetailsMobile = ({
-  title,
-  englishTitle,
-  sku,
-  commentsCount,
-  userSuggestion,
-  properties,
-  colors,
-  sizes,
-  price,
-}: ProductDetailsProps) => {
+const ProductDetailsMobile = ({ title, sku, commentsCount, userSuggestion, properties, colors, sizes, price }: ProductDetailsProps) => {
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedColor, setSelectedColor] = useState<string>("color-desktop-1");
   const [selectedSize, setSelectedSize] = useState<string>("size-desktop-1");
@@ -50,7 +35,7 @@ const ProductDetailsMobile = ({
   return (
     <div>
       <div className="space-y-4">
-        {title && <ProductTitle title={title} />}
+        {title && <h1 className="text-lg font-semibold">{title}</h1>}
         <div className="flex gap-x-4 text-sm font-light text-primary md:text-base">
           {sku && (
             <div>
@@ -64,20 +49,16 @@ const ProductDetailsMobile = ({
         <div className="my-4 h-px w-full bg-background"></div>
         <div className="mb-6 space-y-4">
           {colors && (
-            <>
-              <div className="mb-3 space-y-6">
-                <ColorSelector colors={colors ?? []} selectedColor={selectedColor} onColorChange={setSelectedColor} />
-              </div>
-            </>
+            <div className="mb-3 space-y-6">
+              <ColorSelector label="انتخاب رنگ" colors={colors ?? []} selectedColor={selectedColor} onColorChange={setSelectedColor} />
+            </div>
           )}
           {sizes && (
-            <>
-              <div className="mb-3 space-y-6">
-                <SizeSelector sizes={sizes ?? []} selectedSize={selectedSize} onSizeChange={setSelectedSize} />
-              </div>
-            </>
+            <div className="mb-3 space-y-6">
+              <SizeSelector label="انتخاب سایز" sizes={sizes ?? []} selectedSize={selectedSize} onSizeChange={setSelectedSize} />
+            </div>
           )}
-          <QuantitySelector quantity={quantity} onIncrement={handleIncrement} onDecrement={handleDecrement} />
+          <QuantitySelector label="انتخاب تعداد" quantity={quantity} onIncrement={handleIncrement} onDecrement={handleDecrement} />
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <ProductGuarantees />

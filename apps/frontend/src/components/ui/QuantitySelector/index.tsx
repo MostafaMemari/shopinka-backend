@@ -1,15 +1,15 @@
 import { HiOutlineMinus, HiOutlinePlus } from "react-icons/hi";
 
-interface props {
+interface QuantitySelectorProps {
   quantity: number;
   onIncrement: () => void;
   onDecrement: () => void;
+  label?: string;
 }
 
-export const QuantitySelector = ({ quantity, onIncrement, onDecrement }: props) => (
+export const QuantitySelector = ({ quantity, onIncrement, onDecrement, label }: QuantitySelectorProps) => (
   <>
-    <div className="mb-4 block lg:hidden">انتخاب تعداد</div>
-
+    {label && <div className="mb-4 block lg:hidden">{label}</div>}
     <div className="flex h-12 w-32 items-center justify-between rounded-lg border px-4 py-1">
       <button type="button" onClick={onIncrement}>
         <span className="h-6 w-6 text-primary cursor-pointer">

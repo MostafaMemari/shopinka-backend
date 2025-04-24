@@ -1,20 +1,11 @@
 import React from "react";
 import MobileCommentsSwiper from "./MobileCommentsSwiper";
-
-interface Comment {
-  id: string;
-  title: string;
-  content: string;
-  date: string;
-  isRecommended: boolean;
-  isBuyer: boolean;
-  likes: number;
-  dislikes: number;
-  replies?: Comment[];
-}
-
+import { IComment } from "@/lib/types/comments";
+import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
+import Comment from "../Comments";
+import SuggestionRadio from "../SuggestionRadio";
 interface ProductCommentsProps {
-  comments: Comment[];
+  comments: IComment[];
 }
 
 const ProductComments = ({ comments }: ProductCommentsProps) => {
@@ -27,46 +18,12 @@ const ProductComments = ({ comments }: ProductCommentsProps) => {
 
       <div>
         <div className="grid grid-cols-12 gap-y-8 md:gap-8">
-          {/* Submit New Comment */}
           <div className="col-span-12 md:col-span-4 lg:col-span-3">
             <div className="grid grid-cols-2 gap-4 md:sticky md:top-32">
               <div className="text-lg">ثبت دیدگاه</div>
               <div className="col-span-2">
-                {/* Suggestion */}
                 <div className="mb-4 text-sm text-text/60">این محصول را به دیگران پیشنهاد</div>
-                <fieldset className="flex items-center gap-4">
-                  <legend className="sr-only">Suggestion</legend>
-
-                  <div className="w-full">
-                    <input type="radio" name="suggest" value="suggest-like" id="suggest-like" className="peer hidden" />
-                    <label
-                      htmlFor="suggest-like"
-                      className="relative block cursor-pointer rounded-lg border p-2 shadow-base peer-checked:border-emerald-500 hover:border-border/50 dark:peer-checked:border-emerald-400 dark:hover:border-white/10"
-                    >
-                      <div className="flex items-center gap-x-2 text-primary">
-                        <svg className="h-5 w-5">
-                          <use xlinkHref="#like" />
-                        </svg>
-                        <p className="text-sm xs:text-base">میکنم</p>
-                      </div>
-                    </label>
-                  </div>
-
-                  <div className="w-full">
-                    <input type="radio" name="suggest" value="suggest-dislike" id="suggest-dislike" className="peer hidden" />
-                    <label
-                      htmlFor="suggest-dislike"
-                      className="relative block cursor-pointer rounded-lg border p-2 shadow-base peer-checked:border-red-500 hover:border-border/50 dark:peer-checked:border-red-400 dark:hover:border-white/10"
-                    >
-                      <div className="flex items-center gap-x-2 text-red-500 dark:text-red-400">
-                        <svg className="h-5 w-5">
-                          <use xlinkHref="#dislike" />
-                        </svg>
-                        <p className="text-sm xs:text-base">نمیکنم</p>
-                      </div>
-                    </label>
-                  </div>
-                </fieldset>
+                <SuggestionRadio />
               </div>
               <div className="col-span-2">
                 <label htmlFor="comment" className="relative block rounded-lg border shadow-base">
@@ -87,122 +44,15 @@ const ProductComments = ({ comments }: ProductCommentsProps) => {
             </div>
           </div>
 
-          {/* Comments List */}
           <div className="order-first col-span-12 mb-10 md:order-last md:col-span-8 lg:col-span-9" id="commentsContainer">
-            {/* Desktop Comments */}
             <div className="hidden md:block">
               <ul className="mb-8 space-y-4 divide-gray-200 dark:divide-white/10">
-                {comments &&
-                  comments?.map((comment) => (
-                    <li key={comment.id} className="space-y-2">
-                      <div className="py-6">
-                        <div className="flex items-center justify-between gap-2">
-                          <h5 className="mb-4 leading-relaxed xl:text-lg">{comment.title}</h5>
-                          <button
-                            data-modal-target="submit-answers-to-comments-drawer-navigation"
-                            data-modal-toggle="submit-answers-to-comments-drawer-navigation"
-                            type="button"
-                            className="btn-secondary-nobg"
-                          >
-                            پاسخ
-                            <svg className="h-5 w-5">
-                              <use xlinkHref="#chevron-left" />
-                            </svg>
-                          </button>
-                        </div>
-                        <div className="mb-6 flex items-center gap-x-4 border-b pb-2">
-                          <div
-                            className={`flex items-center gap-x-2 ${comment.isRecommended ? "text-primary" : "text-red-500 dark:text-red-400"}`}
-                          >
-                            <svg className="h-5 w-5">
-                              <use xlinkHref={comment.isRecommended ? "#like" : "#dislike"} />
-                            </svg>
-                            {comment.isRecommended ? "پیشنهاد میکنم" : "پیشنهاد نمیکنم"}
-                          </div>
-                          <div className="flex items-center gap-x-2">
-                            <div className="text-sm text-text/60">{comment.date}</div>
-                            <span className="h-3 w-px rounded-full bg-background dark:bg-muted/10"></span>
-                            <div className="text-sm text-text/60">{comment.isBuyer ? "خریدار" : "کاربر"}</div>
-                          </div>
-                        </div>
-                        <div className="mb-6 border-b pb-6">
-                          <p className="line-clamp-4 text-sm text-text/90">{comment.content}</p>
-                        </div>
-                        <div className="flex items-center justify-end gap-x-8">
-                          <div className="text-sm text-text/60">آیا این دیدگاه برایتان مفید بود؟</div>
-                          <button className="flex items-center gap-x-2 text-primary transition-all duration-200 hover:text-emerald-400 dark:hover:text-primary">
-                            <span className="text-sm">{comment.likes}</span>
-                            <svg className="h-6 w-6">
-                              <use xlinkHref="#like" />
-                            </svg>
-                          </button>
-                          <button className="flex items-center gap-x-2 text-red-500 transition-all duration-200 hover:text-red-400 dark:text-red-400 dark:hover:text-red-500">
-                            <span className="text-sm">{comment.dislikes}</span>
-                            <svg className="h-6 w-6">
-                              <use xlinkHref="#dislike" />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-                      {/* Replies */}
-                      {comment.replies && comment.replies.length > 0 && (
-                        <ul className="space-y-2">
-                          {comment.replies.map((reply) => (
-                            <li key={reply.id}>
-                              <div className="py-6 pr-8 border-r dark:border-white/10">
-                                <div className="flex items-center justify-between">
-                                  <h5 className="mb-4 leading-relaxed xl:text-lg">{reply.title}</h5>
-                                  <button
-                                    data-modal-target="submit-answers-to-comments-drawer-navigation"
-                                    data-modal-toggle="submit-answers-to-comments-drawer-navigation"
-                                    type="button"
-                                    className="btn-secondary-nobg"
-                                  >
-                                    پاسخ
-                                    <svg className="h-5 w-5">
-                                      <use xlinkHref="#chevron-left" />
-                                    </svg>
-                                  </button>
-                                </div>
-                                <div className="mb-6 flex items-center gap-x-4 border-b pb-6">
-                                  <div className="flex items-center gap-x-2">
-                                    <div className="text-sm text-text/60">{reply.date}</div>
-                                    <span className="h-3 w-px rounded-full bg-grauy-200 /10"></span>
-                                    <div className="text-sm text-text/60">{reply.isBuyer ? "خریدار" : "کاربر"}</div>
-                                  </div>
-                                </div>
-                                <div className="mb-6 border-b pb-6">
-                                  <p className="line-clamp-4 text-sm text-text/90">{reply.content}</p>
-                                </div>
-                                <div className="flex items-center justify-end gap-x-8">
-                                  <div className="text-sm text-text/60">آیا این دیدگاه برایتان مفید بود؟</div>
-                                  <button className="flex items-center gap-x-2 text-primary transition-all duration-200 hover:text-emerald-400 dark:hover:text-primary">
-                                    <span className="text-sm">{reply.likes}</span>
-                                    <svg className="h-6 w-6">
-                                      <use xlinkHref="#like" />
-                                    </svg>
-                                  </button>
-                                  <button className="flex items-center gap-x-2 text-red-500 transition-all duration-200 hover:text-red-400 dark:text-red-400 dark:hover:text-red-500">
-                                    <span className="text-sm">{reply.dislikes}</span>
-                                    <svg className="h-6 w-6">
-                                      <use xlinkHref="#dislike" />
-                                    </svg>
-                                  </button>
-                                </div>
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </li>
-                  ))}
+                {comments?.map((comment) => <Comment key={comment.id} comment={comment} />)}
               </ul>
               {/* Pagination */}
               <div className="flex items-center justify-center gap-x-4 md:justify-end">
                 <a className="pagination-button flex items-center justify-center" href="#">
-                  <svg className="h-6 w-6">
-                    <use xlinkHref="#chevron-right"></use>
-                  </svg>
+                  <AiOutlineRight className="h-5 w-5" />
                 </a>
                 <div className="flex items-center gap-x-2">
                   <a className="pagination-button pagination-button-active" href="#">
@@ -224,9 +74,7 @@ const ProductComments = ({ comments }: ProductCommentsProps) => {
                   className="flex h-8 w-8 items-center justify-center rounded-full bg-muted transition-all duration-200 hover:bg-primary hover:text-white dark:hover:bg-emerald-600"
                   href="#"
                 >
-                  <svg className="h-6 w-6">
-                    <use xlinkHref="#chevron-left"></use>
-                  </svg>
+                  <AiOutlineLeft className="h-5 w-5" />
                 </a>
               </div>
             </div>

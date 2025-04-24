@@ -2,10 +2,11 @@
 
 import React, { useState } from "react";
 import { HiOutlineShieldCheck } from "react-icons/hi";
-import SizeSelector from "./SizeSelector";
-import { ColorSelector } from "./ColorSelector";
-import { QuantitySelector } from "./QuantitySelector";
 import ProductTitle from "./ProductTitle";
+import { ColorSelector } from "../ColorSelector";
+import SizeSelector from "../SizeSelector";
+import { QuantitySelector } from "../QuantitySelector";
+import { ProductProperties } from "../ProductProperties";
 
 // Types
 type Color = {
@@ -20,11 +21,7 @@ type ProductDetailsProps = {
   sku?: string;
   commentsCount?: number;
   userSuggestion?: string;
-  properties?: {
-    material?: string;
-    soleMaterial?: string;
-    closureType?: string;
-  };
+  properties?: { [key: string]: string }[];
   colors?: Color[];
   sizes?: string[];
   price?: number;
@@ -50,7 +47,7 @@ const ProductDetailsDesktop = ({
 
   return (
     <div className="col-span-8 flex min-h-full flex-col">
-      {title && <ProductTitle title={title} />}
+      {title && <h1 className="text-lg font-semibold">{title}</h1>}
 
       <div className="grid grow grid-cols-2 gap-x-4">
         <div className="col-span-1">
@@ -84,25 +81,7 @@ const ProductDetailsDesktop = ({
 
           {/* Product Properties */}
 
-          {properties && Object.keys(properties).length > 0 && (
-            <div>
-              <p className="mb-6 font-medium">ویژگی های محصول</p>
-              <ul className="space-y-4">
-                <li className="flex gap-x-2">
-                  <div className="min-w-fit text-text/60">جنس :</div>
-                  <div className="text-text/90">{properties?.material}</div>
-                </li>
-                <li className="flex gap-x-2">
-                  <div className="min-w-fit text-text/60">جنس زیره :</div>
-                  <div className="text-text/90">{properties?.soleMaterial}</div>
-                </li>
-                <li className="flex gap-x-2">
-                  <div className="min-w-fit text-text/60">نحوه بسته شدن کفش :</div>
-                  <div className="text-text/90">{properties?.closureType}</div>
-                </li>
-              </ul>
-            </div>
-          )}
+          <ProductProperties properties={properties} />
         </div>
 
         <div className="col-span-1 flex flex-col">
@@ -110,14 +89,14 @@ const ProductDetailsDesktop = ({
             {colors && (
               <>
                 <div className="mb-3 space-y-6">
-                  <ColorSelector colors={colors ?? []} selectedColor={selectedColor} onColorChange={setSelectedColor} />
+                  <ColorSelector label="انتخاب رنگ" colors={colors ?? []} selectedColor={selectedColor} onColorChange={setSelectedColor} />
                 </div>
               </>
             )}
             {sizes && (
               <>
                 <div className="mb-3 space-y-6">
-                  <SizeSelector sizes={sizes ?? []} selectedSize={selectedSize} onSizeChange={setSelectedSize} />
+                  <SizeSelector label="انتخاب سایز" sizes={sizes ?? []} selectedSize={selectedSize} onSizeChange={setSelectedSize} />
                 </div>
               </>
             )}
