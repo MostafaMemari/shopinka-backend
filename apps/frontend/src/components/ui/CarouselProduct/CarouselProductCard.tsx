@@ -6,7 +6,7 @@ interface Props {
   product: IProduct;
 }
 
-const CarouselProductCard: React.FC<Props> = ({ product }) => {
+const CarouselProductCard = ({ product }: Props) => {
   const hasDiscount = !!product?.oldPrice && !!product?.discount;
 
   return (

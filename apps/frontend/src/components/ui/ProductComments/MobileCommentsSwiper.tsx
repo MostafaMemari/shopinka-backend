@@ -6,20 +6,14 @@ import "swiper/css";
 import "swiper/css/free-mode";
 import CommentsDrawer from "./CommentsDrawer";
 import { useState } from "react";
+import { AiOutlineLike, AiOutlineDislike, AiOutlineLeft } from "react-icons/ai";
+import { IComment } from "@/lib/types/comments";
 
-type Comment = {
-  id: string;
-  title: string;
-  content: string;
-  date: string;
-  isBuyer: boolean;
-  isRecommended: boolean;
-  likes: number;
-  dislikes: number;
-  replies?: Comment[];
-};
+interface Props {
+  comments: IComment[];
+}
 
-export default function MobileCommentsSwiper({ comments }: { comments: Comment[] }) {
+const MobileCommentsSwiper = ({ comments }: Props) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   return (
@@ -41,9 +35,7 @@ export default function MobileCommentsSwiper({ comments }: { comments: Comment[]
             <div className="flex h-64 flex-col rounded-lg border px-4 py-6">
               <div className="mb-4 flex items-center justify-between gap-2">
                 <div className={`flex items-center gap-x-2 ${comment.isRecommended ? "text-primary" : "text-red-500 dark:text-red-400"}`}>
-                  <svg className="h-5 w-5">
-                    <use xlinkHref={comment.isRecommended ? "#like" : "#dislike"} />
-                  </svg>
+                  {comment.isRecommended ? <AiOutlineLike className="h-5 w-5" /> : <AiOutlineDislike className="h-5 w-5" />}
                   {comment.isRecommended ? "پیشنهاد میکنم" : "پیشنهاد نمیکنم"}
                 </div>
                 <button
@@ -53,9 +45,7 @@ export default function MobileCommentsSwiper({ comments }: { comments: Comment[]
                   className="btn-secondary-nobg"
                 >
                   پاسخ
-                  <svg className="h-5 w-5">
-                    <use xlinkHref="#chevron-left" />
-                  </svg>
+                  <AiOutlineLeft />
                 </button>
               </div>
               <div className="grow space-y-2">
@@ -65,15 +55,11 @@ export default function MobileCommentsSwiper({ comments }: { comments: Comment[]
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-x-4">
                   <button className="relative text-primary">
-                    <svg className="h-6 w-6">
-                      <use xlinkHref="#like" />
-                    </svg>
+                    <AiOutlineLike className="h-6 w-6" />
                     <span className="absolute -right-2 top-6 text-sm">{comment.likes}</span>
                   </button>
                   <button className="relative text-red-500 dark:text-red-400">
-                    <svg className="h-6 w-6">
-                      <use xlinkHref="#dislike" />
-                    </svg>
+                    <AiOutlineDislike className="h-6 w-6" />
                     <span className="absolute -right-2 top-6 text-sm">{comment.dislikes}</span>
                   </button>
                 </div>
@@ -100,9 +86,7 @@ export default function MobileCommentsSwiper({ comments }: { comments: Comment[]
               className="flex flex-col items-center justify-center gap-y-4 text-primary"
             >
               <div className="rounded-full border border-emerald-500 p-2 dark:border-emerald-400">
-                <svg className="h-6 w-6">
-                  <use xlinkHref="#chevron-left" />
-                </svg>
+                <AiOutlineLeft className="h-4 w-4" />
               </div>
               <div>مشاهده بیشتر</div>
             </button>
@@ -113,4 +97,6 @@ export default function MobileCommentsSwiper({ comments }: { comments: Comment[]
       <CommentsDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} comments={comments} />
     </div>
   );
-}
+};
+
+export default MobileCommentsSwiper;

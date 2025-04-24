@@ -1,11 +1,11 @@
 import { IComment } from "@/lib/types/comments";
 import { AiOutlineLike, AiOutlineDislike, AiOutlineLeft } from "react-icons/ai";
 
-interface CommentProps {
+interface Props {
   comment: IComment;
 }
 
-const Comment = ({ comment }: CommentProps) => {
+const DesktopComments = ({ comment }: Props) => {
   return (
     <li className="space-y-2">
       <div className="py-6">
@@ -47,7 +47,6 @@ const Comment = ({ comment }: CommentProps) => {
           </button>
         </div>
       </div>
-      {/* Replies */}
       {comment.replies && comment.replies.length > 0 && (
         <ul className="space-y-2 border-r">
           {comment.replies.map((reply) => (
@@ -86,4 +85,4 @@ const Comment = ({ comment }: CommentProps) => {
   );
 };
 
-export default Comment;
+export default DesktopComments;

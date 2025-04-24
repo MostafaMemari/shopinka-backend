@@ -6,25 +6,7 @@ import { ColorSelector } from "../ColorSelector";
 import { ProductProperties } from "../ProductProperties";
 import { QuantitySelector } from "../QuantitySelector";
 import SizeSelector from "../SizeSelector";
-
-// Types
-type Color = {
-  id: string;
-  name: string;
-  color: string;
-};
-
-type ProductDetailsProps = {
-  title?: string;
-  englishTitle?: string;
-  sku?: string;
-  commentsCount?: number;
-  userSuggestion?: string;
-  properties?: { [key: string]: string }[];
-  colors?: Color[];
-  sizes?: string[];
-  price?: number;
-};
+import { IProductDetails } from "@/lib/types/products";
 
 const ProductDetailsDesktop = ({
   title,
@@ -36,7 +18,7 @@ const ProductDetailsDesktop = ({
   colors,
   sizes,
   price,
-}: ProductDetailsProps) => {
+}: IProductDetails) => {
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedColor, setSelectedColor] = useState<string>("color-desktop-1");
   const [selectedSize, setSelectedSize] = useState<string>("size-desktop-1");

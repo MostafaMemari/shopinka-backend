@@ -2,13 +2,14 @@ import React from "react";
 import MobileCommentsSwiper from "./MobileCommentsSwiper";
 import { IComment } from "@/lib/types/comments";
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
-import Comment from "../Comments";
+import DesktopComments from "../DesktopComments";
 import SuggestionRadio from "../SuggestionRadio";
-interface ProductCommentsProps {
+
+interface Props {
   comments: IComment[];
 }
 
-const ProductComments = ({ comments }: ProductCommentsProps) => {
+const ProductComments = ({ comments }: Props) => {
   return (
     <div className="py-6" id="comments">
       <div className="relative mb-16 w-fit text-xl font-medium">
@@ -47,7 +48,7 @@ const ProductComments = ({ comments }: ProductCommentsProps) => {
           <div className="order-first col-span-12 mb-10 md:order-last md:col-span-8 lg:col-span-9" id="commentsContainer">
             <div className="hidden md:block">
               <ul className="mb-8 space-y-4 divide-gray-200 dark:divide-white/10">
-                {comments?.map((comment) => <Comment key={comment.id} comment={comment} />)}
+                {comments?.map((comment) => <DesktopComments key={comment.id} comment={comment} />)}
               </ul>
               {/* Pagination */}
               <div className="flex items-center justify-center gap-x-4 md:justify-end">

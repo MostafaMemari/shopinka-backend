@@ -5,23 +5,9 @@ import ProductGuarantees from "../ProductGuarantees";
 import { ColorSelector } from "../ColorSelector";
 import SizeSelector from "../SizeSelector";
 import { QuantitySelector } from "../QuantitySelector";
+import { IProductDetails } from "@/lib/types/products";
 
-type Color = {
-  id: string;
-  name: string;
-  color: string;
-};
-
-type ProductDetailsProps = {
-  title?: string;
-  englishTitle?: string;
-  sku?: string;
-  commentsCount?: number;
-  colors?: Color[];
-  sizes?: string[];
-};
-
-const ProductDetailsMobile = ({ title, sku, commentsCount, colors, sizes }: ProductDetailsProps) => {
+const ProductDetailsMobile = ({ title, sku, commentsCount, colors, sizes }: IProductDetails) => {
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedColor, setSelectedColor] = useState<string>("color-desktop-1");
   const [selectedSize, setSelectedSize] = useState<string>("size-desktop-1");

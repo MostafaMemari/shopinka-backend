@@ -10,7 +10,7 @@ import { defaultSwiperConfig } from "./swiperConfig";
 import { IProduct } from "@/lib/types/products";
 import CarouselProductCard from "./CarouselProductCard";
 
-interface props {
+interface Props {
   title: string;
   viewAllLink: string;
   viewAllText?: string;
@@ -20,7 +20,7 @@ interface props {
   breakpoints?: Record<number, { slidesPerView: number; spaceBetween: number }>;
 }
 
-const CarouselProduct = ({ title, viewAllLink, viewAllText = "مشاهده همه", products, slidesPerView, spaceBetween, breakpoints }: props) => {
+const CarouselProduct = ({ title, viewAllLink, viewAllText = "مشاهده همه", products, slidesPerView, spaceBetween, breakpoints }: Props) => {
   const swiperConfig = {
     ...defaultSwiperConfig,
     slidesPerView: slidesPerView ?? defaultSwiperConfig.slidesPerView,

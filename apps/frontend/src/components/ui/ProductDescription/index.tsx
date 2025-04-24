@@ -3,11 +3,11 @@
 import React, { useState } from "react";
 import Drawer from "../Drawer";
 
-interface ProductDescriptionProps {
+interface Props {
   description: string;
 }
 
-const ProductDescription = ({ description }: ProductDescriptionProps) => {
+const ProductDescription = ({ description }: Props) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   return (

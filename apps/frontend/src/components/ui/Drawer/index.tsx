@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
+import { HiOutlineX } from "react-icons/hi";
 
-interface DrawerProps {
+interface Props {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
   children: React.ReactNode;
 }
 
-const Drawer: React.FC<DrawerProps> = ({ isOpen, onClose, title, children }) => {
+const Drawer = ({ isOpen, onClose, title, children }: Props) => {
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
     return () => {
@@ -27,9 +28,7 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, onClose, title, children }) => 
           onClick={onClose}
           className="inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-text/90 hover:bg-zinc-100 hover:text-gray-900 dark:hover:bg-black dark:hover:text-white"
         >
-          <svg className="h-5 w-5">
-            <use xlinkHref="#close" />
-          </svg>
+          <HiOutlineX className="h-5 w-5" />
           <span className="sr-only">بستن</span>
         </button>
       </div>

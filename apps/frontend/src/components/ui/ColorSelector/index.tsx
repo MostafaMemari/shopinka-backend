@@ -1,20 +1,13 @@
-interface Color {
-  id: string;
-  name: string;
-  color: string;
-}
+import { IColor } from "@/lib/types/colors";
 
-export const ColorSelector = ({
-  colors,
-  selectedColor,
-  onColorChange,
-  label,
-}: {
-  colors: Color[];
+interface Props {
+  colors: IColor[];
   selectedColor: string;
   onColorChange: (id: string) => void;
   label?: string;
-}) => {
+}
+
+export const ColorSelector = ({ colors, selectedColor, onColorChange, label }: Props) => {
   if (!colors || colors.length === 0) return null;
 
   return (
