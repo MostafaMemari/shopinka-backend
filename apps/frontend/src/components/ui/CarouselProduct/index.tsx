@@ -8,7 +8,8 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { IProduct } from "@/lib/types/products";
 import CarouselProductCard from "./CarouselProductCard";
-import { productSwiperConfig } from "@/config/swiper";
+import { useMemo } from "react";
+import { defaultSwiperConfig, productSwiperConfig } from "@/config/swiper";
 
 interface Props {
   title: string;
@@ -29,12 +30,17 @@ export default function CarouselProduct({
   spaceBetween,
   breakpoints,
 }: Props) {
-  const swiperConfig = {
-    ...productSwiperConfig,
-    slidesPerView: slidesPerView ?? productSwiperConfig.slidesPerView,
-    spaceBetween: spaceBetween ?? productSwiperConfig.spaceBetween,
-    breakpoints: breakpoints ?? productSwiperConfig.breakpoints,
-  };
+  const swiperConfig = useMemo(
+    () => ({
+      ...defaultSwiperConfig,
+      slidesPerView: slidesPerView ?? productSwiperConfig.slidesPerView,
+      spaceBetween: spaceBetween ?? productSwiperConfig.spaceBetween,
+      breakpoints: breakpoints ?? productSwiperConfig.breakpoints,
+    }),
+    [slidesPerView, spaceBetween, breakpoints]
+  );
+
+  const stableProducts = useMemo(() => products, [products]);
 
   return (
     <section className="mb-8">
@@ -48,7 +54,7 @@ export default function CarouselProduct({
         </div>
 
         <Swiper {...swiperConfig} modules={[Navigation]} className="product-slider">
-          {products.map((product) => (
+          {stableProducts.map((product) => (
             <SwiperSlide key={product.id}>
               <CarouselProductCard product={product} />
             </SwiperSlide>

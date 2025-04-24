@@ -6,28 +6,25 @@ import "swiper/css";
 import "swiper/css/pagination";
 import Image from "next/image";
 
-interface GalleryImage {
-  src: string;
-  alt: string;
+interface Props {
+  images: {
+    src: string;
+    alt: string;
+  }[];
 }
 
-interface ProductImageSwiperProps {
-  images: GalleryImage[];
-}
-
-const ProductImageSwiper: React.FC<ProductImageSwiperProps> = ({ images }) => {
+export default function ProductImageSwiper({ images }: Props) {
   return (
     <div className="swiper product-image-mobile-swiper">
       <Swiper modules={[Pagination]} pagination={{ el: ".swiper-pagination" }} spaceBetween={0} slidesPerView={1} className="w-full">
-        {images.map((image, index) => (
-          <SwiperSlide key={index}>
-            <Image src={image.src} alt={image.alt} width={500} height={500} className="mx-auto" loading="lazy" />
-          </SwiperSlide>
-        ))}
+        {images?.length &&
+          images.map((image, index) => (
+            <SwiperSlide key={index}>
+              <Image src={image.src} alt={image.alt} width={500} height={500} className="mx-auto" loading="lazy" />
+            </SwiperSlide>
+          ))}
       </Swiper>
       <div className="swiper-pagination text-left"></div>
     </div>
   );
-};
-
-export default ProductImageSwiper;
+}

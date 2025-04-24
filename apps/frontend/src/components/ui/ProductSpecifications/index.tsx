@@ -1,15 +1,13 @@
 import React from "react";
 
-interface Specification {
-  title: string;
-  values: string[];
-}
-
 interface ProductSpecificationsProps {
-  specifications: Specification[];
+  specifications: Array<{
+    title: string;
+    values: string[];
+  }>;
 }
 
-const ProductSpecifications = ({ specifications }: ProductSpecificationsProps) => {
+export default function ProductSpecifications({ specifications }: ProductSpecificationsProps) {
   return (
     <div className="py-6" id="specs">
       <div className="relative mb-16 w-fit text-xl font-medium">
@@ -57,6 +55,4 @@ const ProductSpecifications = ({ specifications }: ProductSpecificationsProps) =
       </div>
     </div>
   );
-};
-
-export default ProductSpecifications;
+}

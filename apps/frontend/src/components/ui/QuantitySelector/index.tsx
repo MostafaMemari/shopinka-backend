@@ -1,13 +1,13 @@
 import { HiOutlineMinus, HiOutlinePlus } from "react-icons/hi";
 
-interface QuantitySelectorProps {
+interface Props {
   quantity: number;
   onIncrement: () => void;
   onDecrement: () => void;
   label?: string;
 }
 
-export const QuantitySelector = ({ quantity, onIncrement, onDecrement, label }: QuantitySelectorProps) => (
+export const QuantitySelector = ({ quantity, onIncrement, onDecrement, label }: Props) => (
   <>
     {label && <div className="mb-4 block lg:hidden">{label}</div>}
     <div className="flex h-12 w-32 items-center justify-between rounded-lg border px-4 py-1">

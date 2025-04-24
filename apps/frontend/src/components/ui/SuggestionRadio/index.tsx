@@ -1,12 +1,12 @@
 import { AiOutlineLike, AiOutlineDislike } from "react-icons/ai";
 
-interface SuggestionRadioProps {
+interface Props {
   name?: string;
   onChange?: (value: string) => void;
   selected?: string;
 }
 
-export default function SuggestionRadio({ name = "suggest", selected, onChange }: SuggestionRadioProps) {
+export default function SuggestionRadio({ name = "suggest", selected, onChange }: Props) {
   return (
     <fieldset className="flex items-center gap-4">
       <legend className="sr-only">Suggestion</legend>
