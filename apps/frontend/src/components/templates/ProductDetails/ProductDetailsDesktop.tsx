@@ -2,11 +2,12 @@
 
 import React, { useState } from "react";
 import { HiOutlineShieldCheck } from "react-icons/hi";
-import { QuantitySelector } from "../QuantitySelector";
-import SizeSelector from "../SizeSelector";
 import { IProductDetails } from "@/lib/types/products";
-import ColorSelector from "../ColorSelector";
-import ProductProperties from "../ProductProperties";
+import ProductProperties from "@/components/ui/ProductProperties";
+import ColorSelector from "@/components/ui/ColorSelector";
+import SizeSelector from "@/components/ui/SizeSelector";
+import QuantitySelector from "@/components/ui/QuantitySelector";
+import AddToCartButtonDesktop from "@/components/ui/AddToCartButton/AddToCartButtonDesktop";
 
 export default function ProductDetailsDesktop({
   title,
@@ -103,9 +104,7 @@ export default function ProductDetailsDesktop({
             </div>
           </div>
 
-          <div className="mb-6">
-            <button className="btn-primary w-full py-3">افزودن به سبد خرید</button>
-          </div>
+          <AddToCartButtonDesktop />
         </div>
       </div>
     </div>

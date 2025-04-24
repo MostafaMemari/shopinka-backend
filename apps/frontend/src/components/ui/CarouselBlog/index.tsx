@@ -19,23 +19,15 @@ interface Props {
   breakpoints?: Record<number, { slidesPerView: number; spaceBetween: number }>;
 }
 
-export default function CarouselBlog({
-  sectionTitle,
-  viewAllLink,
-  viewAllText = "مشاهده همه",
-  blogs,
-  slidesPerView,
-  spaceBetween,
-  breakpoints,
-}: Props) {
+export default function CarouselBlog({ sectionTitle, viewAllLink, viewAllText = "مشاهده همه", blogs }: Props) {
   const swiperConfig = useMemo(
     () => ({
       ...defaultSwiperConfig,
-      slidesPerView: slidesPerView ?? blogSwiperConfig.slidesPerView,
-      spaceBetween: spaceBetween ?? blogSwiperConfig.spaceBetween,
-      breakpoints: breakpoints ?? blogSwiperConfig.breakpoints,
+      slidesPerView: blogSwiperConfig.slidesPerView,
+      spaceBetween: blogSwiperConfig.spaceBetween,
+      breakpoints: blogSwiperConfig.breakpoints,
     }),
-    [slidesPerView, spaceBetween, breakpoints]
+    []
   );
 
   const stableBlogs = useMemo(() => blogs, [blogs]);

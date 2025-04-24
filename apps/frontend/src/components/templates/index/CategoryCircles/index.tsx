@@ -1,48 +1,10 @@
 "use client";
 
+import { categoryCirclesBanners } from "@/mock/categories";
 import Image from "next/image";
 import Link from "next/link";
 
-const categories = [
-  {
-    id: 1,
-    title: "جوراب مردانه",
-    image: "/images/categories/c1.jpg",
-    link: "/shop",
-  },
-  {
-    id: 2,
-    title: "کفش ورزشی مردانه",
-    image: "/images/categories/c3.jpg",
-    link: "/shop",
-  },
-  {
-    id: 3,
-    title: "کیف مردانه",
-    image: "/images/categories/c6.jpg",
-    link: "/shop",
-  },
-  {
-    id: 4,
-    title: "جوراب زنانه",
-    image: "/images/categories/c2.jpg",
-    link: "/shop",
-  },
-  {
-    id: 5,
-    title: "کفش ورزشی زنانه",
-    image: "/images/categories/c4.jpg",
-    link: "/shop",
-  },
-  {
-    id: 6,
-    title: "کیف زنانه",
-    image: "/images/categories/c5.jpg",
-    link: "/shop",
-  },
-];
-
-const CategoryCircles = () => {
+export default function CategoryCircles() {
   return (
     <section className="mb-8">
       <style jsx>{`
@@ -63,7 +25,7 @@ const CategoryCircles = () => {
       `}</style>
       <div className="container relative mx-auto">
         <div className="flex flex-wrap items-center justify-center gap-8 lg:justify-between">
-          {categories.map((category) => (
+          {categoryCirclesBanners.map((category) => (
             <Link
               key={category.id}
               href={category.link}
@@ -85,6 +47,4 @@ const CategoryCircles = () => {
       </div>
     </section>
   );
-};
-
-export default CategoryCircles;
+}

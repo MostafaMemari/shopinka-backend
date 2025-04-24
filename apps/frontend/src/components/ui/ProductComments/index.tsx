@@ -12,10 +12,10 @@ interface Props {
 export default function ProductComments({ comments }: Props) {
   return (
     <div className="py-6" id="comments">
-      <div className="relative mb-16 w-fit text-xl font-medium">
+      {/* <div className="relative mb-16 w-fit text-xl font-medium">
         دیدگاه ها
         <span className="absolute right-0 top-10 h-[3px] w-full rounded-full bg-primary"></span>
-      </div>
+      </div> */}
 
       <div>
         <div className="grid grid-cols-12 gap-y-8 md:gap-8">

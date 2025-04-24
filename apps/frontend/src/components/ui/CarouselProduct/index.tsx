@@ -21,23 +21,15 @@ interface Props {
   breakpoints?: Record<number, { slidesPerView: number; spaceBetween: number }>;
 }
 
-export default function CarouselProduct({
-  title,
-  viewAllLink,
-  viewAllText = "مشاهده همه",
-  products,
-  slidesPerView,
-  spaceBetween,
-  breakpoints,
-}: Props) {
+export default function CarouselProduct({ title, viewAllLink, viewAllText = "مشاهده همه", products }: Props) {
   const swiperConfig = useMemo(
     () => ({
       ...defaultSwiperConfig,
-      slidesPerView: slidesPerView ?? productSwiperConfig.slidesPerView,
-      spaceBetween: spaceBetween ?? productSwiperConfig.spaceBetween,
-      breakpoints: breakpoints ?? productSwiperConfig.breakpoints,
+      slidesPerView: productSwiperConfig.slidesPerView,
+      spaceBetween: productSwiperConfig.spaceBetween,
+      breakpoints: productSwiperConfig.breakpoints,
     }),
-    [slidesPerView, spaceBetween, breakpoints]
+    []
   );
 
   const stableProducts = useMemo(() => products, [products]);
