@@ -2,11 +2,11 @@
 
 import React, { useState } from "react";
 import { HiOutlineShieldCheck } from "react-icons/hi";
-import { ProductProperties } from "../ProductProperties";
 import { QuantitySelector } from "../QuantitySelector";
 import SizeSelector from "../SizeSelector";
 import { IProductDetails } from "@/lib/types/products";
 import ColorSelector from "../ColorSelector";
+import ProductProperties from "../ProductProperties";
 
 export default function ProductDetailsDesktop({
   title,

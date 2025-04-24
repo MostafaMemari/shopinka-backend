@@ -4,15 +4,10 @@ import { useState } from "react";
 import MainImage from "./MainImage";
 import GalleryImage from "./GalleryImage";
 import GalleryModal from "./GalleryModal";
-
-type GalleryItem = {
-  src: string;
-  alt: string;
-  isBlurred?: boolean;
-};
+import { IProductThumbnail } from "@/lib/types/products";
 
 type ProductGalleryProps = {
-  images: GalleryItem[];
+  images: IProductThumbnail[];
   title?: string;
 };
 

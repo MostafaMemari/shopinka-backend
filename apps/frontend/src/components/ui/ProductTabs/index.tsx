@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import ProductDescription from "../ProductDescription";
-import ProductSpecifications from "../ProductSpecifications";
 import ProductComments from "../ProductComments";
+import { IComment } from "@/lib/types/comments";
+import ProductSpecifications from "../ProductSpecifications";
 
 interface Tab {
   id: string;
@@ -11,28 +12,16 @@ interface Tab {
   count?: number;
 }
 
-interface Comment {
-  id: string;
-  title: string;
-  content: string;
-  date: string;
-  isRecommended: boolean;
-  isBuyer: boolean;
-  likes: number;
-  dislikes: number;
-  replies?: Comment[];
-}
-
-interface ProductTabsProps {
+interface Props {
   description: string;
   specifications: Array<{
     title: string;
     values: string[];
   }>;
-  comments: Comment[];
+  comments: IComment[];
 }
 
-const ProductTabs = ({ description, specifications, comments }: ProductTabsProps) => {
+export default function ProductTabs({ description, specifications, comments }: Props) {
   const tabs: Tab[] = [
     { id: "description", title: "معرفی" },
     { id: "specs", title: "مشخصات" },
@@ -85,6 +74,4 @@ const ProductTabs = ({ description, specifications, comments }: ProductTabsProps
       </div>
     </div>
   );
-};
-
-export default ProductTabs;
+}

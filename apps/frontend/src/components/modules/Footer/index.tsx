@@ -19,7 +19,6 @@ interface SocialLink {
   icon: string; // Icon identifier for sprite sheet or inline SVG
 }
 
-// Interface for trust badges
 interface TrustBadge {
   id: string;
   name: string;
@@ -28,8 +27,7 @@ interface TrustBadge {
   isTest?: boolean;
 }
 
-// Interface for Footer props
-interface FooterProps {
+interface Props {
   supportPhone?: string;
   supportText?: string;
   subscribeText?: string;
@@ -40,8 +38,7 @@ interface FooterProps {
   copyrightText?: string;
 }
 
-// Footer Component
-const Footer: React.FC<FooterProps> = ({
+export default function Footer({
   supportPhone = "021-0000000",
   supportText = "۷ روز هفته، ۲۴ ساعته پاسخگوی شما هستیم",
   subscribeText = "از جدیدترین تخفیف ها با خبر شوید",
@@ -67,9 +64,8 @@ const Footer: React.FC<FooterProps> = ({
     { id: "2", name: "samandehi", imageSrc: "/images/samandehi.png", href: "#", isTest: true },
   ],
   copyrightText = "کلیه حقوق این سایت متعلق به فروشگاه روتی کالا می‌باشد.",
-}) => {
+}: Props) {
   useEffect(() => {
-    // Handle scroll to top button
     const scrollTopButton = document.getElementById("scroll-top-button-footer");
     if (scrollTopButton) {
       scrollTopButton.addEventListener("click", () => {
@@ -85,7 +81,6 @@ const Footer: React.FC<FooterProps> = ({
 
   return (
     <footer className="relative border-t bg-muted">
-      {/* Footer Logo */}
       <div className="absolute inset-x-0 -top-3 flex items-center justify-center">
         <div className="relative flex h-10 w-14 justify-center">
           <div className="absolute inset-0 -top-[2px] h-full w-full rounded-full bg-muted blur-[6px]"></div>
@@ -98,9 +93,7 @@ const Footer: React.FC<FooterProps> = ({
         </div>
       </div>
 
-      {/* Content */}
       <div className="container">
-        {/* Contact - Go to Top */}
         <div className="mt-10 flex flex-col items-center justify-between gap-y-4 md:flex-row">
           <div className="flex flex-col items-center gap-x-4 gap-y-4 text-sm text-text/60 md:flex-row">
             <p>تلفن پشتیبانی {supportPhone}</p>
@@ -119,7 +112,6 @@ const Footer: React.FC<FooterProps> = ({
           </div>
         </div>
 
-        {/* Subscribe - Social Links */}
         <div className="relative mb-10 mt-10 flex flex-col items-center justify-between gap-x-4 gap-y-8 rounded-xl bg-background px-10 py-4 shadow-base backdrop-blur-3xl md:flex-row">
           <div>
             <p className="text-sm text-text/60">{subscribeText}</p>
@@ -171,7 +163,6 @@ const Footer: React.FC<FooterProps> = ({
           </div>
         </div>
 
-        {/* Menu Links and Trust Badges */}
         <div className="grid grid-cols-12 gap-y-10">
           <div className="col-span-12 md:col-span-6">
             <div className="grid grid-cols-12 justify-items-center md:justify-items-start">
@@ -215,13 +206,10 @@ const Footer: React.FC<FooterProps> = ({
           </div>
         </div>
 
-        {/* Copyright */}
         <div className="mt-4 flex items-center justify-center border-t py-4">
           <p className="text-xs text-text/60 xs:text-sm">{copyrightText}</p>
         </div>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

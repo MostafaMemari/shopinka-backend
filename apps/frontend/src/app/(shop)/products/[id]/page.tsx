@@ -7,7 +7,7 @@ import ProductDetailsMobile from "@/components/ui/ProductDetails/ProductDetailsM
 import ProductGallery from "@/components/ui/ProductGallery/ProductGallery";
 import ProductGuarantees from "@/components/ui/ProductGuarantees";
 import ProductImageSwiper from "@/components/ui/ProductImageSwiper";
-import { ProductProperties } from "@/components/ui/ProductProperties";
+import ProductProperties from "@/components/ui/ProductProperties";
 import React from "react";
 
 type Props = {

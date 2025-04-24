@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const DesktopLogo = () => {
+export default function DesktopLogo() {
   return (
     <div>
       <Link href="/">
@@ -9,6 +9,4 @@ const DesktopLogo = () => {
       </Link>
     </div>
   );
-};
-
-export default DesktopLogo;
+}

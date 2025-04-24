@@ -7,7 +7,7 @@ interface MobileBasketDrawerProps {
   onClose: () => void;
 }
 
-const MobileBasketDrawer = ({ isOpen, onClose }: MobileBasketDrawerProps) => {
+export default function MobileBasketDrawer({ isOpen, onClose }: MobileBasketDrawerProps) {
   const cartItems = [
     {
       id: 1,
@@ -100,6 +100,4 @@ const MobileBasketDrawer = ({ isOpen, onClose }: MobileBasketDrawerProps) => {
       </div>
     </>
   );
-};
-
-export default MobileBasketDrawer;
+}

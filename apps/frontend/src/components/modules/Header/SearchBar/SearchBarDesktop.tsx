@@ -28,7 +28,6 @@ const SearchBarDesktop = () => {
       image: "/images/products/p5.png",
     },
   ];
-
   const recentSearchItems = [
     {
       id: "1",
@@ -46,7 +45,6 @@ const SearchBarDesktop = () => {
       href: "/",
     },
   ];
-
   const popularSearchItems = [
     {
       id: "1",

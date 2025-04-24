@@ -6,7 +6,8 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { IBlog } from "@/lib/types/blogs";
 import CarouselBlogCard from "./CarouselBlogCard";
-import { CarouselBlogConfig } from "@/config/swiper";
+import { blogSwiperConfig, defaultSwiperConfig } from "@/config/swiper";
+import { useMemo } from "react";
 
 interface Props {
   sectionTitle: string;
@@ -27,12 +28,17 @@ export default function CarouselBlog({
   spaceBetween,
   breakpoints,
 }: Props) {
-  const swiperConfig = {
-    ...CarouselBlogConfig,
-    slidesPerView: slidesPerView ?? CarouselBlogConfig.slidesPerView,
-    spaceBetween: spaceBetween ?? CarouselBlogConfig.spaceBetween,
-    breakpoints: breakpoints ?? CarouselBlogConfig.breakpoints,
-  };
+  const swiperConfig = useMemo(
+    () => ({
+      ...defaultSwiperConfig,
+      slidesPerView: slidesPerView ?? blogSwiperConfig.slidesPerView,
+      spaceBetween: spaceBetween ?? blogSwiperConfig.spaceBetween,
+      breakpoints: breakpoints ?? blogSwiperConfig.breakpoints,
+    }),
+    [slidesPerView, spaceBetween, breakpoints]
+  );
+
+  const stableBlogs = useMemo(() => blogs, [blogs]);
 
   return (
     <section className="mb-6">
@@ -51,7 +57,7 @@ export default function CarouselBlog({
         </div>
         {/* Section Content */}
         <Swiper {...swiperConfig} className="blog-slider">
-          {blogs.map((blog) => (
+          {stableBlogs.map((blog) => (
             <SwiperSlide key={blog.id}>
               <CarouselBlogCard blog={blog} />
             </SwiperSlide>

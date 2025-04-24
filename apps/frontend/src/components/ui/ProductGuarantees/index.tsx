@@ -19,7 +19,7 @@ const guarantees = [
   },
 ];
 
-const ProductGuarantees = () => {
+export default function ProductGuarantees() {
   return (
     <>
       {guarantees.map((item, index) => (
@@ -32,6 +32,4 @@ const ProductGuarantees = () => {
       ))}
     </>
   );
-};
-
-export default ProductGuarantees;
+}

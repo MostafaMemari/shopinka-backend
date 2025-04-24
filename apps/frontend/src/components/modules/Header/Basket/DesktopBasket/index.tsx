@@ -25,7 +25,7 @@ const cartItems = [
   },
 ];
 
-const CartDropdown = () => {
+export default function CartDropdown() {
   return (
     <div
       className={`
@@ -74,6 +74,4 @@ const CartDropdown = () => {
       </div>
     </div>
   );
-};
-
-export default CartDropdown;
+}

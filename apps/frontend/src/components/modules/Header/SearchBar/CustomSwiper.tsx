@@ -1,11 +1,14 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { HiOutlineChevronLeft } from "react-icons/hi";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, FreeMode } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/free-mode";
+import { useMemo } from "react";
+import { defaultSwiperConfig, searchBarSwiperConfig } from "@/config/swiper";
 
 interface Item {
   id: string;
@@ -20,48 +23,20 @@ interface CustomSwiperProps {
 }
 
 const CustomSwiper = ({ items, variant }: CustomSwiperProps) => {
-  const swiperConfig = {
-    slidesPerView: 1.3,
-    spaceBetween: 10,
-    freeMode: true,
-    navigation: {
-      nextEl: ".swiper-button-next",
-      prevEl: ".swiper-button-prev",
-    },
-    breakpoints: {
-      360: {
-        slidesPerView: 1.5,
-        spaceBetween: 10,
-      },
-      460: {
-        slidesPerView: 2.1,
-        spaceBetween: 10,
-      },
-      640: {
-        slidesPerView: 2.5,
-        spaceBetween: 10,
-      },
-      768: {
-        slidesPerView: 2.1,
-        spaceBetween: 10,
-      },
-      1024: {
-        slidesPerView: 2.2,
-        spaceBetween: 10,
-      },
-      1380: {
-        slidesPerView: 2.5,
-        spaceBetween: 10,
-      },
-    },
-    modules: [Navigation, FreeMode],
-    className: `search-result-desktop ${variant === "search" ? "h-14" : ""}`,
-  };
+  const swiperConfig = useMemo(
+    () => ({
+      ...defaultSwiperConfig,
+      slidesPerView: searchBarSwiperConfig.slidesPerView,
+      spaceBetween: searchBarSwiperConfig.spaceBetween,
+      breakpoints: searchBarSwiperConfig.breakpoints,
+    }),
+    []
+  );
 
   return (
     <Swiper {...swiperConfig}>
       {items.map((item) => (
-        <SwiperSlide key={item.id}>
+        <SwiperSlide key={item.id} className={`search-result-desktop ${variant === "search" ? "h-14" : ""}`}>
           {variant === "product" ? (
             <Link href={item.href} className="flex items-center gap-x-2 rounded-xl border px-4 py-2 text-text/60 hover:border-border/50">
               {item.image && <Image src={item.image} alt={item.title} width={64} height={64} className="w-16" />}

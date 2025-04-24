@@ -1,11 +1,11 @@
-interface SizeSelectorProps {
+interface Props {
   sizes: string[];
   selectedSize: string;
   onSizeChange: (size: string) => void;
   label?: string;
 }
 
-export default function SizeSelector({ sizes, selectedSize, onSizeChange, label }: SizeSelectorProps) {
+export default function SizeSelector({ sizes, selectedSize, onSizeChange, label }: Props) {
   if (!sizes || sizes.length === 0) return null;
 
   return (
