@@ -13,7 +13,7 @@ export interface ItemCardBasketProp {
   };
 }
 
-const CartItemCard = ({ item }: ItemCardBasketProp) => {
+export default function CartItemCard({ item }: ItemCardBasketProp) {
   return (
     <div className="flex gap-x-2 py-5">
       <div className="relative min-w-fit">
@@ -63,6 +63,4 @@ const CartItemCard = ({ item }: ItemCardBasketProp) => {
       </div>
     </div>
   );
-};
-
-export default CartItemCard;
+}

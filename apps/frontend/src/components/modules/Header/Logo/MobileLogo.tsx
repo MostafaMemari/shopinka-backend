@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const MobileLogo = () => {
+export default function MobileLogo() {
   return (
     <div>
       <Link href="/">
@@ -9,6 +9,4 @@ const MobileLogo = () => {
       </Link>
     </div>
   );
-};
-
-export default MobileLogo;
+}

@@ -15,7 +15,7 @@ interface MobileCartItemCardProps {
   onRemove: () => void;
 }
 
-const MobileCartItemCard = ({ item, onRemove }: MobileCartItemCardProps) => {
+export default function MobileCartItemCard({ item, onRemove }: MobileCartItemCardProps) {
   return (
     <div className="flex gap-x-2 py-5">
       <div className="relative min-w-fit">
@@ -66,6 +66,4 @@ const MobileCartItemCard = ({ item, onRemove }: MobileCartItemCardProps) => {
       </div>
     </div>
   );
-};
-
-export default MobileCartItemCard;
+}

@@ -5,7 +5,7 @@ import { HiOutlineShoppingCart } from "react-icons/hi";
 import DesktopBasketDropdown from "./DesktopBasket";
 import MobileBasketDrawer from "./MobileBasket";
 
-const BasketDropdown = () => {
+export default function BasketDropdown() {
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   return (
@@ -34,6 +34,4 @@ const BasketDropdown = () => {
       </div>
     </div>
   );
-};
-
-export default BasketDropdown;
+}
