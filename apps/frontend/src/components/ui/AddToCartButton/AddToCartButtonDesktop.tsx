@@ -1,7 +1,7 @@
 "use client";
 
 interface Props {
-  onAddToCart: () => void;
+  onAddToCart?: () => void;
 }
 
 export default function AddToCartButtonDesktop({ onAddToCart }: Props) {

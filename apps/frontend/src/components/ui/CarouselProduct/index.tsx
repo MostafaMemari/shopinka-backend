@@ -7,9 +7,9 @@ import { HiChevronLeft } from "react-icons/hi";
 import "swiper/css";
 import "swiper/css/navigation";
 import { IProduct } from "@/lib/types/products";
-import CarouselProductCard from "./CarouselProductCard";
 import { useMemo } from "react";
 import { defaultSwiperConfig, productSwiperConfig } from "@/config/swiper";
+import ProductCard from "../ProductCard";
 
 interface Props {
   title: string;
@@ -21,23 +21,15 @@ interface Props {
   breakpoints?: Record<number, { slidesPerView: number; spaceBetween: number }>;
 }
 
-export default function CarouselProduct({
-  title,
-  viewAllLink,
-  viewAllText = "مشاهده همه",
-  products,
-  slidesPerView,
-  spaceBetween,
-  breakpoints,
-}: Props) {
+export default function CarouselProduct({ title, viewAllLink, viewAllText = "مشاهده همه", products }: Props) {
   const swiperConfig = useMemo(
     () => ({
       ...defaultSwiperConfig,
-      slidesPerView: slidesPerView ?? productSwiperConfig.slidesPerView,
-      spaceBetween: spaceBetween ?? productSwiperConfig.spaceBetween,
-      breakpoints: breakpoints ?? productSwiperConfig.breakpoints,
+      slidesPerView: productSwiperConfig.slidesPerView,
+      spaceBetween: productSwiperConfig.spaceBetween,
+      breakpoints: productSwiperConfig.breakpoints,
     }),
-    [slidesPerView, spaceBetween, breakpoints]
+    []
   );
 
   const stableProducts = useMemo(() => products, [products]);
@@ -56,7 +48,7 @@ export default function CarouselProduct({
         <Swiper {...swiperConfig} modules={[Navigation]} className="product-slider">
           {stableProducts.map((product) => (
             <SwiperSlide key={product.id}>
-              <CarouselProductCard product={product} />
+              <ProductCard product={product} />
             </SwiperSlide>
           ))}
         </Swiper>

@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import ProductGuarantees from "../ProductGuarantees";
-import SizeSelector from "../SizeSelector";
-import { QuantitySelector } from "../QuantitySelector";
+import ProductGuarantees from "../../ui/ProductGuarantees";
+import SizeSelector from "../../ui/SizeSelector";
 import { IProductDetails } from "@/lib/types/products";
-import ColorSelector from "../ColorSelector";
+import ColorSelector from "../../ui/ColorSelector";
+import QuantitySelector from "@/components/ui/QuantitySelector";
+import AddToCartButtonMobile from "@/components/ui/AddToCartButton/AddToCartButtonMobile";
 
 export default function ProductDetailsMobile({ title, sku, commentsCount, colors, sizes }: IProductDetails) {
   const [quantity, setQuantity] = useState<number>(1);
@@ -22,7 +23,8 @@ export default function ProductDetailsMobile({ title, sku, commentsCount, colors
         <div className="flex gap-x-4 text-sm font-light text-primary md:text-base">
           {sku && (
             <div>
-              <a href="#"> کد کالا {sku}# </a>
+              {" "}
+              <a href="#"> کد کالا {sku}# </a>{" "}
             </div>
           )}
           <div>
@@ -47,6 +49,7 @@ export default function ProductDetailsMobile({ title, sku, commentsCount, colors
           <ProductGuarantees />
         </div>
       </div>
+      <AddToCartButtonMobile />
     </div>
   );
 }

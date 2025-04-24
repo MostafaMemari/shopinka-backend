@@ -1,15 +1,15 @@
 import Link from "next/link";
 import { HiOutlineMoon, HiOutlineSun, HiOutlineMenu, HiOutlineChevronLeft } from "react-icons/hi";
-import DesktopLogo from "./Logo/DesktopLogo";
+import DesktopLogo from "../../ui/Logo/DesktopLogo";
 import SearchBar from "./SearchBar/SearchBarDesktop";
 import ProfileDropdown from "./ProfileDropdown";
 import BasketDropdown from "./Basket";
 import SearchBarMobile from "./SearchBar/SearchBarMobile";
-import MobileLogo from "./Logo/MobileLogo";
+import MobileLogo from "../../ui/Logo/MobileLogo";
 
 function Header() {
   return (
-    <>
+    <header>
       <div className="fixed left-0 right-0 top-0 z-30 bg-muted">
         <div>
           <div className="hidden md:block">
@@ -142,7 +142,7 @@ function Header() {
           </div>
         </div>
       </div>
-    </>
+    </header>
   );
 }
 export default Header;

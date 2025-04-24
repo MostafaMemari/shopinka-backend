@@ -12,10 +12,10 @@ export default function ProductDescription({ description }: Props) {
 
   return (
     <div className="py-6" id="description">
-      <div className="relative mb-16 w-fit text-xl font-medium">
+      {/* <div className="relative mb-16 w-fit text-xl font-medium">
         معرفی
         <span className="absolute right-0 top-10 h-[3px] w-full rounded-full bg-primary"></span>
-      </div>
+      </div> */}
       <div className="mb-6 max-h-[500px] overflow-hidden md:mb-10" id="descriptionContainer">
         <div className="space-y-4 text-sm leading-loose text-text/90 lg:text-base">{description}</div>
       </div>

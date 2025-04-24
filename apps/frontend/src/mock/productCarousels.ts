@@ -1,3 +1,62 @@
+export const mockProductDetails = {
+  id: "1",
+  title: "کفش ورزشی نایک",
+  slug: "nike-sport-shoe",
+  price: 1250000,
+  discount: 150000,
+  status: "in_stock",
+  specifications: "لورم تستی",
+  description: "این کفش برای فعالیت‌های ورزشی و استفاده روزمره طراحی شده است.",
+
+  mainImage: {
+    src: "/images/products/p1.png",
+    alt: "تصویر اصلی محصول",
+  },
+
+  gallery: [
+    { src: "/images/products/p2.png", alt: "تصویر محصول 2" },
+    { src: "/images/products/p3.png", alt: "تصویر محصول 3" },
+    { src: "/images/products/p4.png", alt: "تصویر محصول 4" },
+    { src: "/images/products/p5.png", alt: "تصویر محصول 5" },
+  ],
+
+  properties: [
+    { title: "جنس زیره", values: ["چرم مصنوعی"] },
+    { title: "نحوه بسته شدن", values: ["بند دار"] },
+    { title: "جنس", values: ["پارچه‌ای", "نخی"] },
+  ],
+
+  breadcrumb: [
+    { label: "کفش", href: "/products/shoes" },
+    { label: "نایک", href: "/products/shoes/nike" },
+  ],
+
+  comments: [
+    {
+      id: "1",
+      title: "با این قیمت کاملا مناسب و خوبه",
+      content: "برا کسایی که نمیخوان هزینه بالایی کنن گزینه خیلی خوبیه",
+      date: "10 شهریور 1403",
+      isRecommended: true,
+      isBuyer: true,
+      likes: 32,
+      dislikes: 76,
+      replies: [
+        {
+          id: "2",
+          title: "با این قیمت اصلا مناسب نیست",
+          content: "اصلا خوب نیست",
+          date: "20 شهریور 1403",
+          isRecommended: false,
+          isBuyer: true,
+          likes: 100,
+          dislikes: 100,
+        },
+      ],
+    },
+  ],
+};
+
 export const latestProducts = [
   {
     id: "1",

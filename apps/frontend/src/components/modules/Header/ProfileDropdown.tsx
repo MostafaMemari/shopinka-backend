@@ -58,7 +58,7 @@ const ProfileDropdown = () => {
         <ul className="space-y-1 p-2">
           <li>
             <Link
-              href="/profile-dashboard"
+              href="/profile"
               className="flex items-center justify-between gap-x-2 rounded-lg p-4 hover:text-primary dark:hover:text-emerald-400"
             >
               <span className="flex items-center gap-x-4">

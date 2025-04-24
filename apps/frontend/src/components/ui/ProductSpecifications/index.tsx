@@ -10,10 +10,10 @@ interface ProductSpecificationsProps {
 export default function ProductSpecifications({ specifications }: ProductSpecificationsProps) {
   return (
     <div className="py-6" id="specs">
-      <div className="relative mb-16 w-fit text-xl font-medium">
+      {/* <div className="relative mb-16 w-fit text-xl font-medium">
         مشخصات
         <span className="absolute right-0 top-10 h-[3px] w-full rounded-full bg-primary"></span>
-      </div>
+      </div> */}
       <div className="mb-6 max-h-[500px] overflow-hidden md:mb-10" id="specsContainer">
         <ul className="space-y-6 text-sm">
           {specifications &&
