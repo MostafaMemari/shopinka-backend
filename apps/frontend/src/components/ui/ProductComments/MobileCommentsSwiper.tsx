@@ -13,7 +13,7 @@ interface Props {
   comments: IComment[];
 }
 
-const MobileCommentsSwiper = ({ comments }: Props) => {
+export default function MobileCommentsSwiper({ comments }: Props) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   return (
@@ -97,6 +97,4 @@ const MobileCommentsSwiper = ({ comments }: Props) => {
       <CommentsDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} comments={comments} />
     </div>
   );
-};
-
-export default MobileCommentsSwiper;
+}

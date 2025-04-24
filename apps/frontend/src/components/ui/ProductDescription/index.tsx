@@ -7,7 +7,7 @@ interface Props {
   description: string;
 }
 
-const ProductDescription = ({ description }: Props) => {
+export default function ProductDescription({ description }: Props) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   return (
@@ -48,6 +48,4 @@ const ProductDescription = ({ description }: Props) => {
       </Drawer>
     </div>
   );
-};
-
-export default ProductDescription;
+}

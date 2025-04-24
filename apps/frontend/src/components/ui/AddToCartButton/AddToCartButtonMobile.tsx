@@ -2,13 +2,13 @@
 
 import React from "react";
 
-interface AddToCartButtonMobileProps {
+interface Props {
   originalPrice?: number;
   discountPrice?: number;
   discountPercentage?: number;
 }
 
-const AddToCartButtonMobile: React.FC<AddToCartButtonMobileProps> = ({ originalPrice, discountPrice, discountPercentage }) => {
+export default function AddToCartButtonMobile({ originalPrice, discountPrice, discountPercentage }: Props) {
   const handleAddToCart = () => {
     console.log("محصول به سبد خرید اضافه شد");
   };
@@ -37,6 +37,4 @@ const AddToCartButtonMobile: React.FC<AddToCartButtonMobileProps> = ({ originalP
       </div>
     </div>
   );
-};
-
-export default AddToCartButtonMobile;
+}

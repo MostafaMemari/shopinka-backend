@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import ProductGuarantees from "../ProductGuarantees";
-import { ColorSelector } from "../ColorSelector";
 import SizeSelector from "../SizeSelector";
 import { QuantitySelector } from "../QuantitySelector";
 import { IProductDetails } from "@/lib/types/products";
+import ColorSelector from "../ColorSelector";
 
-const ProductDetailsMobile = ({ title, sku, commentsCount, colors, sizes }: IProductDetails) => {
+export default function ProductDetailsMobile({ title, sku, commentsCount, colors, sizes }: IProductDetails) {
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedColor, setSelectedColor] = useState<string>("color-desktop-1");
   const [selectedSize, setSelectedSize] = useState<string>("size-desktop-1");
@@ -49,6 +49,4 @@ const ProductDetailsMobile = ({ title, sku, commentsCount, colors, sizes }: IPro
       </div>
     </div>
   );
-};
-
-export default ProductDetailsMobile;
+}

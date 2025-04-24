@@ -9,7 +9,7 @@ interface Props {
   comments: IComment[];
 }
 
-const CommentsDrawer = ({ isOpen, onClose, comments }: Props) => {
+export default function CommentsDrawer({ isOpen, onClose, comments }: Props) {
   return (
     <Drawer isOpen={isOpen} onClose={onClose} title="دیدگاه ها">
       <ul className="space-y-6">
@@ -53,6 +53,4 @@ const CommentsDrawer = ({ isOpen, onClose, comments }: Props) => {
       </ul>
     </Drawer>
   );
-};
-
-export default CommentsDrawer;
+}

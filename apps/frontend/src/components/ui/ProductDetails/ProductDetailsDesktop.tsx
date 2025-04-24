@@ -2,13 +2,13 @@
 
 import React, { useState } from "react";
 import { HiOutlineShieldCheck } from "react-icons/hi";
-import { ColorSelector } from "../ColorSelector";
 import { ProductProperties } from "../ProductProperties";
 import { QuantitySelector } from "../QuantitySelector";
 import SizeSelector from "../SizeSelector";
 import { IProductDetails } from "@/lib/types/products";
+import ColorSelector from "../ColorSelector";
 
-const ProductDetailsDesktop = ({
+export default function ProductDetailsDesktop({
   title,
   englishTitle,
   sku,
@@ -18,7 +18,7 @@ const ProductDetailsDesktop = ({
   colors,
   sizes,
   price,
-}: IProductDetails) => {
+}: IProductDetails) {
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedColor, setSelectedColor] = useState<string>("color-desktop-1");
   const [selectedSize, setSelectedSize] = useState<string>("size-desktop-1");
@@ -110,6 +110,4 @@ const ProductDetailsDesktop = ({
       </div>
     </div>
   );
-};
-
-export default ProductDetailsDesktop;
+}

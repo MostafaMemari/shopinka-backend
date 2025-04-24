@@ -21,3 +21,9 @@ export interface IProductDetails {
   sizes?: string[];
   price?: number;
 }
+
+export interface IProductThumbnail {
+  src: string;
+  alt: string;
+  isBlurred?: boolean;
+}

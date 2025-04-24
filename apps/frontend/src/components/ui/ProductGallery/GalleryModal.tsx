@@ -11,14 +11,14 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/thumbs";
 
-interface GalleryModalProps {
+interface Props {
   isOpen: boolean;
   onClose: () => void;
   images: Array<{ src: string; alt: string }>;
   title: string;
 }
 
-export default function GalleryModal({ isOpen, onClose, images, title }: GalleryModalProps) {
+export default function GalleryModal({ isOpen, onClose, images, title }: Props) {
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
   const [isClosing, setIsClosing] = useState(false);
 

@@ -5,10 +5,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { IBlog } from "@/lib/types/blogs";
-import { blogSwiperConfig } from "./swiperConfig";
 import CarouselBlogCard from "./CarouselBlogCard";
+import { CarouselBlogConfig } from "@/config/swiper";
 
-interface props {
+interface Props {
   sectionTitle: string;
   viewAllLink: string;
   viewAllText?: string;
@@ -18,7 +18,7 @@ interface props {
   breakpoints?: Record<number, { slidesPerView: number; spaceBetween: number }>;
 }
 
-const CarouselBlog: React.FC<props> = ({
+export default function CarouselBlog({
   sectionTitle,
   viewAllLink,
   viewAllText = "مشاهده همه",
@@ -26,12 +26,12 @@ const CarouselBlog: React.FC<props> = ({
   slidesPerView,
   spaceBetween,
   breakpoints,
-}) => {
+}: Props) {
   const swiperConfig = {
-    ...blogSwiperConfig,
-    slidesPerView: slidesPerView ?? blogSwiperConfig.slidesPerView,
-    spaceBetween: spaceBetween ?? blogSwiperConfig.spaceBetween,
-    breakpoints: breakpoints ?? blogSwiperConfig.breakpoints,
+    ...CarouselBlogConfig,
+    slidesPerView: slidesPerView ?? CarouselBlogConfig.slidesPerView,
+    spaceBetween: spaceBetween ?? CarouselBlogConfig.spaceBetween,
+    breakpoints: breakpoints ?? CarouselBlogConfig.breakpoints,
   };
 
   return (
@@ -62,6 +62,4 @@ const CarouselBlog: React.FC<props> = ({
       </div>
     </section>
   );
-};
-
-export default CarouselBlog;
+}

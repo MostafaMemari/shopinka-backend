@@ -1,13 +1,9 @@
+import { IBreadcrumb } from "@/lib/types/breadcrumb";
 import Link from "next/link";
 import { HiChevronLeft } from "react-icons/hi";
 
-export interface BreadcrumbItem {
-  label: string;
-  href: string;
-}
-
 interface Props {
-  items: BreadcrumbItem[];
+  items: IBreadcrumb[];
 }
 
 const CompactBreadcrumb = ({ items }: Props) => (

@@ -6,9 +6,9 @@ import { Navigation } from "swiper/modules";
 import { HiChevronLeft } from "react-icons/hi";
 import "swiper/css";
 import "swiper/css/navigation";
-import { defaultSwiperConfig } from "./swiperConfig";
 import { IProduct } from "@/lib/types/products";
 import CarouselProductCard from "./CarouselProductCard";
+import { productSwiperConfig } from "@/config/swiper";
 
 interface Props {
   title: string;
@@ -20,12 +20,20 @@ interface Props {
   breakpoints?: Record<number, { slidesPerView: number; spaceBetween: number }>;
 }
 
-const CarouselProduct = ({ title, viewAllLink, viewAllText = "مشاهده همه", products, slidesPerView, spaceBetween, breakpoints }: Props) => {
+export default function CarouselProduct({
+  title,
+  viewAllLink,
+  viewAllText = "مشاهده همه",
+  products,
+  slidesPerView,
+  spaceBetween,
+  breakpoints,
+}: Props) {
   const swiperConfig = {
-    ...defaultSwiperConfig,
-    slidesPerView: slidesPerView ?? defaultSwiperConfig.slidesPerView,
-    spaceBetween: spaceBetween ?? defaultSwiperConfig.spaceBetween,
-    breakpoints: breakpoints ?? defaultSwiperConfig.breakpoints,
+    ...productSwiperConfig,
+    slidesPerView: slidesPerView ?? productSwiperConfig.slidesPerView,
+    spaceBetween: spaceBetween ?? productSwiperConfig.spaceBetween,
+    breakpoints: breakpoints ?? productSwiperConfig.breakpoints,
   };
 
   return (
@@ -52,6 +60,4 @@ const CarouselProduct = ({ title, viewAllLink, viewAllText = "مشاهده هم�
       </div>
     </section>
   );
-};
-
-export default CarouselProduct;
+}

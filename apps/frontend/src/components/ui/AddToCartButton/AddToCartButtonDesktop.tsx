@@ -1,10 +1,10 @@
 "use client";
 
-interface AddToCartButtonDesktopProps {
+interface Props {
   onAddToCart: () => void;
 }
 
-const AddToCartButtonDesktop: React.FC<AddToCartButtonDesktopProps> = ({ onAddToCart }) => {
+export default function AddToCartButtonDesktop({ onAddToCart }: Props) {
   return (
     <div className="mb-6">
       <button onClick={onAddToCart} className="btn-primary w-full py-3">
@@ -12,6 +12,4 @@ const AddToCartButtonDesktop: React.FC<AddToCartButtonDesktopProps> = ({ onAddTo
       </button>
     </div>
   );
-};
-
-export default AddToCartButtonDesktop;
+}

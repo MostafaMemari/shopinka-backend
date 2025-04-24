@@ -8,7 +8,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-const Drawer = ({ isOpen, onClose, title, children }: Props) => {
+export default function Drawer({ isOpen, onClose, title, children }: Props) {
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
     return () => {
@@ -35,6 +35,4 @@ const Drawer = ({ isOpen, onClose, title, children }: Props) => {
       <div className="h-full overflow-y-auto p-4 pb-32">{children}</div>
     </div>
   );
-};
-
-export default Drawer;
+}

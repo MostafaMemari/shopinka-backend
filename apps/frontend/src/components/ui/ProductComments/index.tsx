@@ -9,7 +9,7 @@ interface Props {
   comments: IComment[];
 }
 
-const ProductComments = ({ comments }: Props) => {
+export default function ProductComments({ comments }: Props) {
   return (
     <div className="py-6" id="comments">
       <div className="relative mb-16 w-fit text-xl font-medium">
@@ -87,6 +87,4 @@ const ProductComments = ({ comments }: Props) => {
       </div>
     </div>
   );
-};
-
-export default ProductComments;
+}

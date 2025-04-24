@@ -6,7 +6,7 @@ interface Props {
   product: IProduct;
 }
 
-const CarouselProductCard = ({ product }: Props) => {
+export default function CarouselProductCard({ product }: Props) {
   const hasDiscount = !!product?.oldPrice && !!product?.discount;
 
   return (
@@ -56,6 +56,4 @@ const CarouselProductCard = ({ product }: Props) => {
       </div>
     </div>
   );
-};
-
-export default CarouselProductCard;
+}

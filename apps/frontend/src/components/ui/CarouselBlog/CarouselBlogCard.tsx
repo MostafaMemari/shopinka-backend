@@ -4,11 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { IBlog } from "@/lib/types/blogs";
 
-export interface props {
+export interface Props {
   blog: IBlog;
 }
 
-const CarouselBlogCard: React.FC<props> = ({ blog }) => {
+export default function CarouselBlogCard({ blog }: Props) {
   return (
     <div>
       <Link href={blog.link}>
@@ -33,6 +33,4 @@ const CarouselBlogCard: React.FC<props> = ({ blog }) => {
       </Link>
     </div>
   );
-};
-
-export default CarouselBlogCard;
+}

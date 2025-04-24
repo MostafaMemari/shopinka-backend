@@ -5,7 +5,7 @@ interface Props {
   comment: IComment;
 }
 
-const DesktopComments = ({ comment }: Props) => {
+export default function DesktopComments({ comment }: Props) {
   return (
     <li className="space-y-2">
       <div className="py-6">
@@ -83,6 +83,4 @@ const DesktopComments = ({ comment }: Props) => {
       )}
     </li>
   );
-};
-
-export default DesktopComments;
+}
