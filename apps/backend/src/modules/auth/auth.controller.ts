@@ -6,6 +6,7 @@ import { SignoutDto } from "./dto/signout.dto";
 import { RefreshTokenDto } from "./dto/refreshToken.dto";
 import { VerifyOtpDto } from "./dto/verifyOtp.dto";
 import { SwaggerConsumes } from "../../common/enums/swagger-consumes.enum";
+import { AuthDecorator } from "../../common/decorators/auth.decorator"
 
 @Controller("auth")
 @ApiTags('auth')
@@ -20,7 +21,7 @@ export class AuthController {
   }
 
   @Post('signout')
-  // @AuthDecorator()
+  @AuthDecorator()
   @HttpCode(HttpStatus.CREATED)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   async signout(@Body() signoutDto: SignoutDto) {
