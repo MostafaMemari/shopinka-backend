@@ -19,7 +19,7 @@ import * as bcrypt from "bcryptjs"
 import { Smsir } from "sms-typescript/lib"
 import { SendOtpDto } from "./dto/authenticate.dto";
 import { UserRepository } from "../user/user.repository";
-import { Role } from "generated/prisma";
+import { Role, User } from "generated/prisma";
 
 @Injectable()
 export class AuthService {
@@ -53,7 +53,7 @@ export class AuthService {
         return { refreshTokenKey };
     }
 
-    async verifyAccessToken(verifyTokenDto: { accessToken: string }): Promise<{ userId: number }> {
+    async verifyAccessToken(verifyTokenDto: { accessToken: string }): Promise<never | User> {
         try {
             const { ACCESS_TOKEN_SECRET } = process.env;
 
@@ -66,7 +66,9 @@ export class AuthService {
                 throw new BadRequestException(AuthMessages.InvalidAccessTokenPayload);
             }
 
-            return { userId: verifiedToken.id };
+            const user = await this.userRepository.findOneOrThrow({ where: { id: verifiedToken.id } })
+
+            return user;
         } catch (error) {
             throw new HttpException(error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
         }

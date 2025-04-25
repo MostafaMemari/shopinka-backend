@@ -7,6 +7,7 @@ import { ConfigModule } from "@nestjs/config";
 import envConfig from "../../configs/env.config";
 import { APP_PIPE } from "@nestjs/core";
 import { PrismaService } from "../prisma/prisma.service";
+import { PrismaModule } from "../prisma/prisma.module";
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { PrismaService } from "../prisma/prisma.service";
     RedisModule.forRoot(redisConfig()),
     AuthModule,
     UserModule,
+    PrismaModule
   ],
   controllers: [],
   providers: [
