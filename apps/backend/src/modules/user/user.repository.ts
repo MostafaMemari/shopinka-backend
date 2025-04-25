@@ -14,6 +14,10 @@ export class UserRepository {
         return this.prismaService.user.count()
     }
 
+    findAll(args: Prisma.UserFindManyArgs = {}): Promise<User[]> {
+        return this.prismaService.user.findMany(args)
+    }
+
     findOne(args: Prisma.UserFindFirstArgs): Promise<User | null> {
         return this.prismaService.user.findFirst(args)
     }

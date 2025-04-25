@@ -1,28 +1,20 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from "@nestjs/common";
+import { Controller, Get, Body, Patch, Param, Delete, Query } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { CreateUserDto } from "./dto/create-user.dto";
+import { Roles } from "src/common/decorators/role.decorator";
+import { Role } from "generated/prisma";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { AuthDecorator } from "../../common/decorators/auth.decorator";
+import { QueryUsersDto } from "./dto/users-query.dto";
 
 @Controller("user")
+@AuthDecorator()
 export class UserController {
-  constructor(private readonly userService: UserService) {}
-
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
+  constructor(private readonly userService: UserService) { }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
+  findAll(@Query() queryUsersDto: QueryUsersDto) {
+    return this.userService.findAll(queryUsersDto);
   }
 
   @Get(":id")
