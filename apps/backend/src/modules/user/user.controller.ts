@@ -15,6 +15,11 @@ import { GetUser } from "src/common/decorators/get-user.decorator";
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
+  @Get('me')
+  getMe(@GetUser() user: User) {
+    return user
+  }
+
   @Get()
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   findAll(@Query() queryUsersDto: QueryUsersDto) {
