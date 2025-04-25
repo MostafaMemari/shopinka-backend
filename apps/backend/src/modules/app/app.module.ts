@@ -6,6 +6,7 @@ import { redisConfig } from "../../configs/redis.config";
 import { ConfigModule } from "@nestjs/config";
 import envConfig from "../../configs/env.config";
 import { APP_PIPE } from "@nestjs/core";
+import { PrismaService } from "../prisma/prisma.service";
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { APP_PIPE } from "@nestjs/core";
   ],
   controllers: [],
   providers: [
+    PrismaService,
     {
       provide: APP_PIPE,
       useValue: new ValidationPipe({ whitelist: true })
