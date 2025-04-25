@@ -5,8 +5,8 @@ import { QueryUsersDto } from "./dto/users-query.dto";
 import { pagination } from "../../common/utils/pagination.utils";
 import { CacheService } from "../cache/cache.service";
 import { Prisma, User } from "generated/prisma";
-import { sortObject } from "src/common/utils/functions.utils";
-import { CacheKeys } from "src/common/enums/cache.enum";
+import { sortObject } from "../../common/utils/functions.utils";
+import { CacheKeys } from "../../common/enums/cache.enum";
 
 @Injectable()
 export class UserService {
@@ -52,7 +52,7 @@ export class UserService {
     return { ...pagination(paginationDto, users) }
   }
 
-  findOne(id: number): Promise<User> {
+  findOne(id: number): Promise<User | never> {
     return this.userRepository.findOneOrThrow({ where: { id } })
   }
 
@@ -68,7 +68,11 @@ export class UserService {
     return { message: 'Updated user successfully', user: updatedUser }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number): Promise<{ message: string, user: User }> {
+    await this.userRepository.findOneOrThrow({ where: { id } })
+
+    const removedUser = await this.userRepository.delete({ where: { id } })
+
+    return { message: "Removed user successfully", user: removedUser }
   }
 }

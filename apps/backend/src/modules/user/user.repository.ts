@@ -26,6 +26,10 @@ export class UserRepository {
         return this.prismaService.user.update(args)
     }
 
+    delete(args: Prisma.UserDeleteArgs): Promise<User> {
+        return this.prismaService.user.delete(args)
+    }
+
     async findOneOrThrow(args: Prisma.UserFindFirstArgs): Promise<User | never> {
         const user = await this.findOne(args)
 
