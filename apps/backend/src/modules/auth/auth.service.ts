@@ -10,13 +10,16 @@ import {
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Redis } from "ioredis";
-import dateFns from "date-fns";
+import * as dateFns from "date-fns";
 import { IGenerateTokens, IRefreshToken } from "./auth.interface";
 import { AuthMessages } from "./enums/auth.messages";
 import { OtpKeys } from "./enums/otp.keys";
 import { VerifyOtpDto } from "./dto/verifyOtp.dto";
 import * as bcrypt from "bcryptjs"
 import { Smsir } from "sms-typescript/lib"
+import { SendOtpDto } from "./dto/authenticate.dto";
+import { UserRepository } from "../user/user.repository";
+import { Role } from "generated/prisma";
 
 @Injectable()
 export class AuthService {
@@ -27,6 +30,7 @@ export class AuthService {
     constructor(
         @InjectRedis() private readonly redis: Redis,
         private readonly jwtService: JwtService,
+        private readonly userRepository: UserRepository
     ) { }
 
     private generateOtp() {
@@ -117,11 +121,6 @@ export class AuthService {
         return { accessToken: newAccessToken, message: AuthMessages.RefreshedTokenSuccess }
     }
 
-    async authenticateWithOtp(signupDto: { mobile: string }): Promise<{ message: string }> {
-        const otpCode = this.generateOtp();
-
-        return this.sendOtp(signupDto.mobile, otpCode);
-    }
 
     async signout(signoutDto: { refreshToken: string }): Promise<{ message: string }> {
         const { refreshTokenKey } = await this.validateRefreshToken(signoutDto.refreshToken);
@@ -131,8 +130,10 @@ export class AuthService {
         return { message: AuthMessages.SignoutSuccess }
     }
 
-    async sendOtp(mobile: string, otpCode: string = this.generateOtp()): Promise<{ message: string }> {
+    async sendOtp({ mobile }: SendOtpDto): Promise<{ message: string }> {
         await this.checkExistingOtp(`${OtpKeys.StoreOtp}${mobile}`);
+
+        const otpCode = this.generateOtp()
 
         await this.sendSms(mobile, otpCode);
 
@@ -154,10 +155,40 @@ export class AuthService {
         return { message: AuthMessages.VerifiedOtpSuccess }
     }
 
+
+    async verifyAuthenticateOtp(verifyOtpDto: VerifyOtpDto): Promise<{ message: string } & IGenerateTokens> {
+        const { mobile, otp } = verifyOtpDto;
+
+        await this.enforceOtpRequestLimit(`${OtpKeys.RequestsOtp}${mobile}`);
+
+        await this.validateOtp(`${OtpKeys.StoreOtp}${mobile}`, otp);
+
+        await this.clearOtpData(mobile);
+
+        const existingUser = await this.userRepository.findOne({ where: { mobile } })
+
+        if (existingUser) {
+            const jwtTokens = await this.generateTokens({ id: existingUser.id })
+
+            return { message: AuthMessages.VerifiedOtpSuccess, ...jwtTokens }
+        }
+
+        const usersCount = await this.userRepository.count()
+
+        const userRole = usersCount == 0 ? Role.SUPER_ADMIN : Role.CUSTOMER
+
+        const user = await this.userRepository.create({ mobile, isVerifiedMobile: true, role: userRole })
+
+        const jwtTokens = await this.generateTokens({ id: user.id })
+
+        return { message: AuthMessages.VerifiedOtpSuccess, ...jwtTokens }
+    }
+
     private async sendSms(mobile: string, verifyCode: string): Promise<void | never> {
         const { SMS_API_KEY, SMS_LINE_NUMBER, SMS_TEMPLATE_ID, SMS_NAME } = process.env;
         const sms = new Smsir(SMS_API_KEY, Number(SMS_LINE_NUMBER));
         console.log(mobile, verifyCode);
+        //TODO: Uncomment send otp
         // const result = await sms.SendVerifyCode(mobile, Number(SMS_TEMPLATE_ID), [{ name: SMS_NAME, value: verifyCode }]);
 
         // if (result.data?.status !== 1) throw new InternalServerErrorException(AuthMessages.ProblemSendingSms);
