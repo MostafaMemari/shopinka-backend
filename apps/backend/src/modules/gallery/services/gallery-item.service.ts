@@ -14,6 +14,7 @@ import { pagination } from '../../../common/utils/pagination.utils';
 import { MoveGalleryItemDto } from '../dto/move-gallery-item.dto';
 import { DuplicateGalleryItemDto } from '../dto/duplicate-gallery-item.dto';
 import { RemoveGalleryItemDto } from '../dto/remove-gallery-item.dto';
+import { GalleryItemMessages } from '../enums/gallery-item-messages.enum';
 
 @Injectable()
 export class GalleryItemService {
@@ -49,7 +50,7 @@ export class GalleryItemService {
         include: { gallery: true }
       })
 
-      return { message: "Items created successfully.", galleryItems }
+      return { message: GalleryItemMessages.CreatedGalleryItemsSuccess, galleryItems }
     } catch (error) {
       if (uploadedFiles.length) await this.awsService.removeFiles(uploadedFiles.map((file => file.key)))
 
@@ -109,7 +110,7 @@ export class GalleryItemService {
 
     const updatedGalleryItem = await this.galleryItemRepository.update({ where: { id: galleryItemId, gallery: { userId } }, data: { ...updateGalleryItemDto } })
 
-    return { message: "Updated gallery item successfully.", galleryItem: updatedGalleryItem }
+    return { message: GalleryItemMessages.UpdatedGalleryItemsSuccess, galleryItem: updatedGalleryItem }
   }
 
   async move(userId: number, { galleryId, galleryItemIds }: MoveGalleryItemDto): Promise<{ message: string, galleryItems: GalleryItem[] }> {
@@ -127,12 +128,12 @@ export class GalleryItemService {
       return updatedGalleryItem
     })
 
-    return { message: "Moved galleryItems to other gallery successfully", galleryItems: await Promise.all(updatedGalleryItems) }
+    return { message: GalleryItemMessages.MovedGalleryItemsSuccess, galleryItems: await Promise.all(updatedGalleryItems) }
   }
 
   async duplicate(userId: number, { galleryId, galleryItemIds }: DuplicateGalleryItemDto): Promise<{ message: string, galleryItems: GalleryItem[] }> {
     const galleryItems = await this.galleryItemRepository.findAll({ where: { id: { in: galleryItemIds }, gallery: { userId }, NOT: { galleryId } } })
-     await this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId } })
+    await this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId } })
 
     const copiedFiles = galleryItems.map(async item => {
       const newKey = `gallery-${galleryId}-${userId}/${item.fileKey.split('/')[1]}`
@@ -153,7 +154,7 @@ export class GalleryItemService {
 
     const newGalleryItems = await this.galleryItemRepository.createMany({ data: await Promise.all(copiedFiles) })
 
-    return { message: "Duplicated galleryItems to other gallery successfully", galleryItems: newGalleryItems }
+    return { message: GalleryItemMessages.DuplicatedGalleryItemsSuccess, galleryItems: newGalleryItems }
   }
 
   async remove(userId: number, { galleryItemIds }: RemoveGalleryItemDto): Promise<{ message: string, galleryItems: GalleryItem[] }> {
@@ -163,6 +164,6 @@ export class GalleryItemService {
 
     await this.galleryItemRepository.deleteMany({ where: { id: { in: galleryItemIds }, gallery: { userId } } })
 
-    return { message: "Removed gallery items successfully.", galleryItems }
+    return { message: GalleryItemMessages.RemovedGalleryItemsSuccess, galleryItems }
   }
 }
