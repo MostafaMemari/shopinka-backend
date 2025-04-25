@@ -40,7 +40,9 @@ export default function CategoryCircles() {
                   className="relative h-25 w-25 rounded-full object-cover"
                 />
               </div>
-              <p className="line-clamp-2 h-10 text-center text-sm sm:text-base">{category.title}</p>
+              <p className="line-clamp-2 h-10 text-center text-sm sm:text-base">
+                {category.title}
+              </p>
             </Link>
           ))}
         </div>

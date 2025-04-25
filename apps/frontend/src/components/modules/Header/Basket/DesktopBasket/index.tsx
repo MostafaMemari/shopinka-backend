@@ -38,7 +38,10 @@ export default function CartDropdown() {
       {/* Head */}
       <div className="flex items-center justify-between p-5 pb-2">
         <div className="text-sm text-text/90">{cartItems.length} مورد</div>
-        <Link className="flex items-center gap-x-1 text-sm text-primary" href="/checkout-cart">
+        <Link
+          className="flex items-center gap-x-1 text-sm text-primary"
+          href="/checkout-cart"
+        >
           <div>مشاهده سبد خرید</div>
           <div>
             <HiOutlineChevronLeft className="h-5 w-5" />

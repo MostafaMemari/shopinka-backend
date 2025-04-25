@@ -18,7 +18,12 @@ interface Props {
   title: string;
 }
 
-export default function GalleryModal({ isOpen, onClose, images, title }: Props) {
+export default function GalleryModal({
+  isOpen,
+  onClose,
+  images,
+  title,
+}: Props) {
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
   const [isClosing, setIsClosing] = useState(false);
 
@@ -51,7 +56,11 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Props) 
           <div className="px-4 py-3 sm:px-6">
             <div className="flex items-center justify-between">
               <h3 className="line-clamp-1 text-sm md:text-lg">{title}</h3>
-              <button className="text-gray-500 hover:text-gray-700 transition-colors" onClick={handleClose} type="button">
+              <button
+                className="text-gray-500 hover:text-gray-700 transition-colors"
+                onClick={handleClose}
+                type="button"
+              >
                 <HiX className="h-5 w-5" />
                 <span className="sr-only">بستن</span>
               </button>
@@ -68,7 +77,12 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Props) 
                   prevEl: ".swiper-button-prev",
                 }}
                 pagination={{ clickable: true }}
-                thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
+                thumbs={{
+                  swiper:
+                    thumbsSwiper && !thumbsSwiper.destroyed
+                      ? thumbsSwiper
+                      : null,
+                }}
                 className="product-image-desktop-swiper"
               >
                 {images.map((image, index) => (
@@ -111,7 +125,13 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Props) 
                   <SwiperSlide key={index}>
                     <div className="cursor-pointer flex justify-center items-center rounded-lg border p-2 transition-all hover:border-primary">
                       <div className="relative h-20 w-20 sm:h-24 sm:w-24">
-                        <Image src={image.src} alt={image.alt} fill className="object-contain" sizes="(max-width: 640px) 80px, 96px" />
+                        <Image
+                          src={image.src}
+                          alt={image.alt}
+                          fill
+                          className="object-contain"
+                          sizes="(max-width: 640px) 80px, 96px"
+                        />
                       </div>
                     </div>
                   </SwiperSlide>

@@ -30,7 +30,10 @@ export default function BasketDropdown() {
 
       {/* Mobile Drawer */}
       <div className="md:hidden">
-        <MobileBasketDrawer isOpen={isMobileDrawerOpen} onClose={() => setIsMobileDrawerOpen(false)} />
+        <MobileBasketDrawer
+          isOpen={isMobileDrawerOpen}
+          onClose={() => setIsMobileDrawerOpen(false)}
+        />
       </div>
     </div>
   );

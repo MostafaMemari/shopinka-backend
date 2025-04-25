@@ -14,12 +14,21 @@ export default function CarouselProductCard({ product }: Props) {
       <div className="relative rounded-xl bg-muted p-2 shadow-base md:p-5">
         <div className="mb-2 md:mb-5" draggable={false}>
           <Link href={product?.productLink}>
-            <Image src={product?.imageSrc} alt="محصول" width={200} height={200} className="mx-auto w-32 rounded-lg md:w-auto" />
+            <Image
+              src={product?.imageSrc}
+              alt="محصول"
+              width={200}
+              height={200}
+              className="mx-auto w-32 rounded-lg md:w-auto"
+            />
           </Link>
         </div>
 
         <div className="mb-2">
-          <Link href={product?.productLink} className="line-clamp-2 h-10 text-sm md:h-12 md:text-base">
+          <Link
+            href={product?.productLink}
+            className="line-clamp-2 h-10 text-sm md:h-12 md:text-base"
+          >
             {product?.title}
           </Link>
         </div>
@@ -28,11 +37,15 @@ export default function CarouselProductCard({ product }: Props) {
           {hasDiscount ? (
             <>
               <div className="h-5 text-left">
-                <del className="text-sm text-text/60 decoration-warning md:text-base">{product?.oldPrice?.toLocaleString("fa-IR")}</del>
+                <del className="text-sm text-text/60 decoration-warning md:text-base">
+                  {product?.oldPrice?.toLocaleString("fa-IR")}
+                </del>
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="w-9 rounded-full bg-warning py-px text-center text-sm text-white">%{product?.discount}</p>
+                  <p className="w-9 rounded-full bg-warning py-px text-center text-sm text-white">
+                    %{product?.discount}
+                  </p>
                 </div>
                 <div className="text-sm font-bold text-primary md:text-base">
                   {product?.newPrice.toLocaleString("fa-IR")}

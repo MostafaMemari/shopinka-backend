@@ -1,4 +1,9 @@
-import { HiOutlineClock, HiOutlineShieldCheck, HiOutlinePhone, HiOutlineLightningBolt } from "react-icons/hi";
+import {
+  HiOutlineClock,
+  HiOutlineShieldCheck,
+  HiOutlinePhone,
+  HiOutlineLightningBolt,
+} from "react-icons/hi";
 
 const guarantees = [
   {
@@ -23,7 +28,10 @@ export default function ProductGuarantees() {
   return (
     <>
       {guarantees.map((item, index) => (
-        <div key={index} className="flex w-full items-center gap-x-2 rounded-lg border px-2 py-4 text-sm text-text/60">
+        <div
+          key={index}
+          className="flex w-full items-center gap-x-2 rounded-lg border px-2 py-4 text-sm text-text/60"
+        >
           <span className="h-6 w-6">
             <item.icon className="h-full w-full" />
           </span>

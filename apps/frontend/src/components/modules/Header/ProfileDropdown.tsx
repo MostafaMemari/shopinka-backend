@@ -3,7 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { HiOutlineBell, HiOutlineChevronLeft, HiOutlineClock, HiOutlineHeart, HiOutlineLogout, HiOutlineUser } from "react-icons/hi";
+import {
+  HiOutlineBell,
+  HiOutlineChevronLeft,
+  HiOutlineClock,
+  HiOutlineHeart,
+  HiOutlineLogout,
+  HiOutlineUser,
+} from "react-icons/hi";
 
 const ProfileDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +25,10 @@ const ProfileDropdown = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -40,7 +50,12 @@ const ProfileDropdown = () => {
   };
 
   return (
-    <div className="relative" ref={dropdownRef} onMouseEnter={openDropdown} onMouseLeave={closeDropdown}>
+    <div
+      className="relative"
+      ref={dropdownRef}
+      onMouseEnter={openDropdown}
+      onMouseLeave={closeDropdown}
+    >
       <button
         type="button"
         className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
@@ -52,7 +67,9 @@ const ProfileDropdown = () => {
       {/* Dropdown with animation */}
       <div
         className={`absolute left-0 z-10 w-60 rounded-lg border-t-2 border-t-primary bg-muted shadow-lg dark:bg-gray-800 transition-all duration-300 origin-top ${
-          isOpen ? "opacity-100 scale-100 translate-y-0 pointer-events-auto" : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
+          isOpen
+            ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
+            : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
         }`}
       >
         <ul className="space-y-1 p-2">
@@ -62,7 +79,13 @@ const ProfileDropdown = () => {
               className="flex items-center justify-between gap-x-2 rounded-lg p-4 hover:text-primary dark:hover:text-emerald-400"
             >
               <span className="flex items-center gap-x-4">
-                <Image src="/images/user.png" alt="profile" width={32} height={32} className="rounded-full" />
+                <Image
+                  src="/images/user.png"
+                  alt="profile"
+                  width={32}
+                  height={32}
+                  className="rounded-full"
+                />
                 <span className="line-clamp-1">نام تستی تستی</span>
               </span>
               <HiOutlineChevronLeft className="h-6 w-6" />

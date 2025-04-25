@@ -16,11 +16,19 @@ export default function ProductDescription({ description }: Props) {
         معرفی
         <span className="absolute right-0 top-10 h-[3px] w-full rounded-full bg-primary"></span>
       </div> */}
-      <div className="mb-6 max-h-[500px] overflow-hidden md:mb-10" id="descriptionContainer">
-        <div className="space-y-4 text-sm leading-loose text-text/90 lg:text-base">{description}</div>
+      <div
+        className="mb-6 max-h-[500px] overflow-hidden md:mb-10"
+        id="descriptionContainer"
+      >
+        <div className="space-y-4 text-sm leading-loose text-text/90 lg:text-base">
+          {description}
+        </div>
       </div>
       <div className="flex justify-center">
-        <button className="btn-secondary-nobg hidden md:flex" id="toggleDescriptionButton">
+        <button
+          className="btn-secondary-nobg hidden md:flex"
+          id="toggleDescriptionButton"
+        >
           مشاهده بیشتر
           <svg className="h-5 w-5">
             <use xlinkHref="#chevron-left" />
@@ -43,7 +51,11 @@ export default function ProductDescription({ description }: Props) {
         </button>
       </div>
 
-      <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} title="توضیحات محصول">
+      <Drawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title="توضیحات محصول"
+      >
         {description}
       </Drawer>
     </div>

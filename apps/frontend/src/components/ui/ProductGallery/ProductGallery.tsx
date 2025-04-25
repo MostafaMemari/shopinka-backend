@@ -11,7 +11,10 @@ type ProductGalleryProps = {
   title?: string;
 };
 
-export default function ProductGallery({ images, title = "تصاویر محصول" }: ProductGalleryProps) {
+export default function ProductGallery({
+  images,
+  title = "تصاویر محصول",
+}: ProductGalleryProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const displayedImages = images.slice(0, 3);
@@ -33,13 +36,22 @@ export default function ProductGallery({ images, title = "تصاویر محصو�
           ))}
           {blurredImage && (
             <div onClick={() => setIsModalOpen(true)} className="shrink-0">
-              <GalleryImage src={blurredImage.src} alt={blurredImage.alt} isBlurred={true} />
+              <GalleryImage
+                src={blurredImage.src}
+                alt={blurredImage.alt}
+                isBlurred={true}
+              />
             </div>
           )}
         </div>
       </div>
 
-      <GalleryModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} images={images} title={title} />
+      <GalleryModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        images={images}
+        title={title}
+      />
     </>
   );
 }

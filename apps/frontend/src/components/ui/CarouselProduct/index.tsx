@@ -21,7 +21,12 @@ interface Props {
   breakpoints?: Record<number, { slidesPerView: number; spaceBetween: number }>;
 }
 
-export default function CarouselProduct({ title, viewAllLink, viewAllText = "مشاهده همه", products }: Props) {
+export default function CarouselProduct({
+  title,
+  viewAllLink,
+  viewAllText = "مشاهده همه",
+  products,
+}: Props) {
   const swiperConfig = useMemo(
     () => ({
       ...defaultSwiperConfig,
@@ -29,7 +34,7 @@ export default function CarouselProduct({ title, viewAllLink, viewAllText = "م�
       spaceBetween: productSwiperConfig.spaceBetween,
       breakpoints: productSwiperConfig.breakpoints,
     }),
-    []
+    [],
   );
 
   const stableProducts = useMemo(() => products, [products]);
@@ -39,13 +44,20 @@ export default function CarouselProduct({ title, viewAllLink, viewAllText = "م�
       <div className="container relative">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="font-medium md:text-lg lg:text-xl">{title}</h3>
-          <Link href={viewAllLink} className="flex items-center gap-x-2 py-2 text-sm text-primary lg:text-base">
+          <Link
+            href={viewAllLink}
+            className="flex items-center gap-x-2 py-2 text-sm text-primary lg:text-base"
+          >
             {viewAllText}
             <HiChevronLeft className="h-5 w-5 lg:h-6 lg:w-6" />
           </Link>
         </div>
 
-        <Swiper {...swiperConfig} modules={[Navigation]} className="product-slider">
+        <Swiper
+          {...swiperConfig}
+          modules={[Navigation]}
+          className="product-slider"
+        >
           {stableProducts.map((product) => (
             <SwiperSlide key={product.id}>
               <ProductCard product={product} />

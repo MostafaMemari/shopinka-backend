@@ -1,6 +1,10 @@
 "use client";
 
-import { HiOutlineClock, HiOutlineSearch, HiOutlineSparkles } from "react-icons/hi";
+import {
+  HiOutlineClock,
+  HiOutlineSearch,
+  HiOutlineSparkles,
+} from "react-icons/hi";
 import { useEffect, useRef, useState } from "react";
 import CustomSwiper from "./CustomSwiper";
 
@@ -67,7 +71,10 @@ const SearchBarMobile = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };

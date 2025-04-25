@@ -8,13 +8,20 @@ import ColorSelector from "../../ui/ColorSelector";
 import QuantitySelector from "@/components/ui/QuantitySelector";
 import AddToCartButtonMobile from "@/components/ui/AddToCartButton/AddToCartButtonMobile";
 
-export default function ProductDetailsMobile({ title, sku, commentsCount, colors, sizes }: IProductDetails) {
+export default function ProductDetailsMobile({
+  title,
+  sku,
+  commentsCount,
+  colors,
+  sizes,
+}: IProductDetails) {
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedColor, setSelectedColor] = useState<string>("color-desktop-1");
   const [selectedSize, setSelectedSize] = useState<string>("size-desktop-1");
 
   const handleIncrement = () => setQuantity((prev) => prev + 1);
-  const handleDecrement = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+  const handleDecrement = () =>
+    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
   return (
     <div>
@@ -35,15 +42,30 @@ export default function ProductDetailsMobile({ title, sku, commentsCount, colors
         <div className="mb-6 space-y-4">
           {colors && (
             <div className="mb-3 space-y-6">
-              <ColorSelector label="انتخاب رنگ" colors={colors ?? []} selectedColor={selectedColor} onColorChange={setSelectedColor} />
+              <ColorSelector
+                label="انتخاب رنگ"
+                colors={colors ?? []}
+                selectedColor={selectedColor}
+                onColorChange={setSelectedColor}
+              />
             </div>
           )}
           {sizes && (
             <div className="mb-3 space-y-6">
-              <SizeSelector label="انتخاب سایز" sizes={sizes ?? []} selectedSize={selectedSize} onSizeChange={setSelectedSize} />
+              <SizeSelector
+                label="انتخاب سایز"
+                sizes={sizes ?? []}
+                selectedSize={selectedSize}
+                onSizeChange={setSelectedSize}
+              />
             </div>
           )}
-          <QuantitySelector label="انتخاب تعداد" quantity={quantity} onIncrement={handleIncrement} onDecrement={handleDecrement} />
+          <QuantitySelector
+            label="انتخاب تعداد"
+            quantity={quantity}
+            onIncrement={handleIncrement}
+            onDecrement={handleDecrement}
+          />
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <ProductGuarantees />

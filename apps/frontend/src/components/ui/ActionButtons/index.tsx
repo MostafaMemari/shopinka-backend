@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { HiOutlineHeart, HiOutlineAdjustments, HiOutlineShare } from "react-icons/hi";
+import {
+  HiOutlineHeart,
+  HiOutlineAdjustments,
+  HiOutlineShare,
+} from "react-icons/hi";
 
 type Props = {
   productId: string;

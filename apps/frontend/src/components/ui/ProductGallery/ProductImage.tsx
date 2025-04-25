@@ -1,9 +1,15 @@
 import { IProductThumbnail } from "@/lib/types/products";
 import Image from "next/image";
 
-export default function GalleryImage({ src, alt, isBlurred = false }: IProductThumbnail) {
+export default function GalleryImage({
+  src,
+  alt,
+  isBlurred = false,
+}: IProductThumbnail) {
   return (
-    <div className={`cursor-pointer rounded-lg border p-1 ${isBlurred ? "relative" : ""}`}>
+    <div
+      className={`cursor-pointer rounded-lg border p-1 ${isBlurred ? "relative" : ""}`}
+    >
       <Image
         src={src}
         alt={alt}
@@ -14,7 +20,12 @@ export default function GalleryImage({ src, alt, isBlurred = false }: IProductTh
       />
       {isBlurred && (
         <span className="absolute inset-0 flex items-center justify-center">
-          <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <circle cx="12" cy="12" r="2" />
             <circle cx="6" cy="12" r="2" />
             <circle cx="18" cy="12" r="2" />

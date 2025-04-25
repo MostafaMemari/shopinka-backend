@@ -29,11 +29,17 @@ export default function ProductDetails({ product }: { product: IProduct }) {
             <div className="mb-10 grid grow grid-cols-12 gap-4">
               <div className="col-span-4">
                 <ProductActions productId={product.id} />
-                <ProductGallery images={galleryImages} title={`تصاویر محصول ${product.title}`} />
+                <ProductGallery
+                  images={galleryImages}
+                  title={`تصاویر محصول ${product.title}`}
+                />
               </div>
               <div className="col-span-8 flex min-h-full flex-col">
                 <CompactBreadcrumb items={breadcrumbItems} />
-                <ProductDetailsDesktop title={product.title} price={product.newPrice} />
+                <ProductDetailsDesktop
+                  title={product.title}
+                  price={product.newPrice}
+                />
               </div>
             </div>
             <div className="flex justify-between gap-4">
@@ -52,7 +58,10 @@ export default function ProductDetails({ product }: { product: IProduct }) {
             <CompactBreadcrumb items={breadcrumbItems} />
           </div>
           <ProductActions productId={product.id} />
-          <ProductDetailsMobile title={product.title} price={product.newPrice} />
+          <ProductDetailsMobile
+            title={product.title}
+            price={product.newPrice}
+          />
         </div>
       </div>
     </>

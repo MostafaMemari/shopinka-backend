@@ -25,7 +25,8 @@ export default function ProductDetailsDesktop({
   const [selectedSize, setSelectedSize] = useState<string>("size-desktop-1");
 
   const handleIncrement = () => setQuantity((prev) => prev + 1);
-  const handleDecrement = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+  const handleDecrement = () =>
+    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
   return (
     <div className="col-span-8 flex min-h-full flex-col">
@@ -35,7 +36,9 @@ export default function ProductDetailsDesktop({
         <div className="col-span-1">
           {englishTitle && (
             <div className="mb-4 flex items-center gap-x-2">
-              <h2 className="line-clamp-1 text-sm font-light text-text/60">{englishTitle}</h2>
+              <h2 className="line-clamp-1 text-sm font-light text-text/60">
+                {englishTitle}
+              </h2>
               <span className="h-px grow bg-background dark:bg-muted/10"></span>
             </div>
           )}
@@ -61,7 +64,9 @@ export default function ProductDetailsDesktop({
             <p className="text-sm font-light text-text/60">{userSuggestion}</p>
           </div>
 
-          {properties && properties.length > 0 && <ProductProperties properties={properties} />}
+          {properties && properties.length > 0 && (
+            <ProductProperties properties={properties} />
+          )}
         </div>
 
         <div className="col-span-1 flex flex-col">
@@ -69,14 +74,24 @@ export default function ProductDetailsDesktop({
             {colors && (
               <>
                 <div className="mb-3 space-y-6">
-                  <ColorSelector label="انتخاب رنگ" colors={colors ?? []} selectedColor={selectedColor} onColorChange={setSelectedColor} />
+                  <ColorSelector
+                    label="انتخاب رنگ"
+                    colors={colors ?? []}
+                    selectedColor={selectedColor}
+                    onColorChange={setSelectedColor}
+                  />
                 </div>
               </>
             )}
             {sizes && (
               <>
                 <div className="mb-3 space-y-6">
-                  <SizeSelector label="انتخاب سایز" sizes={sizes ?? []} selectedSize={selectedSize} onSizeChange={setSelectedSize} />
+                  <SizeSelector
+                    label="انتخاب سایز"
+                    sizes={sizes ?? []}
+                    selectedSize={selectedSize}
+                    onSizeChange={setSelectedSize}
+                  />
                 </div>
               </>
             )}
@@ -91,11 +106,17 @@ export default function ProductDetailsDesktop({
           </div>
 
           <div className="mb-6 flex items-center justify-between">
-            <QuantitySelector quantity={quantity} onIncrement={handleIncrement} onDecrement={handleDecrement} />
+            <QuantitySelector
+              quantity={quantity}
+              onIncrement={handleIncrement}
+              onDecrement={handleDecrement}
+            />
             <div className="flex items-center gap-x-1 text-primary">
               {price && price > 0 ? (
                 <>
-                  <span className="text-xl font-bold">{price?.toLocaleString("IR-fa")}</span>
+                  <span className="text-xl font-bold">
+                    {price?.toLocaleString("IR-fa")}
+                  </span>
                   <span>تومان</span>
                 </>
               ) : (

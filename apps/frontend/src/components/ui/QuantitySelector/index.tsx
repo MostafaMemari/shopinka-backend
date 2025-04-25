@@ -9,7 +9,12 @@ interface Props {
   label?: string;
 }
 
-export default function QuantitySelector({ quantity, onIncrement, onDecrement, label }: Props) {
+export default function QuantitySelector({
+  quantity,
+  onIncrement,
+  onDecrement,
+  label,
+}: Props) {
   return (
     <>
       {label && <div className="mb-4 block lg:hidden">{label}</div>}

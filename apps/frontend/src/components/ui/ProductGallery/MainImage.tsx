@@ -12,7 +12,11 @@ export default function MainImage({ src, alt }: MainImageProps) {
   const [isZoomed, setIsZoomed] = useState(false);
 
   return (
-    <div className="relative overflow-hidden rounded-lg" onMouseEnter={() => setIsZoomed(true)} onMouseLeave={() => setIsZoomed(false)}>
+    <div
+      className="relative overflow-hidden rounded-lg"
+      onMouseEnter={() => setIsZoomed(true)}
+      onMouseLeave={() => setIsZoomed(false)}
+    >
       <Image
         src={src}
         alt={alt}

@@ -4,14 +4,27 @@ import Image from "next/image";
 import { FaInstagram, FaTwitter } from "react-icons/fa";
 import { SiAparat } from "react-icons/si";
 
-export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+export default function GlobalError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted">
       <div className="container flex flex-col items-center justify-center gap-y-8">
-        <Image src="/images/others/maintenance.png" alt="maintenance" className="w-80" width={100} height={100} />
+        <Image
+          src="/images/others/maintenance.png"
+          alt="maintenance"
+          className="w-80"
+          width={100}
+          height={100}
+        />
         <div className="text-3xl">بزودی برمیگردیم ...</div>
         <div className="text-center leading-loose text-text/90">
-          {error.message || "برای اطلاع از بروزرسانی ها مارا در شبکه های اجتماعی دنبال کنید"}
+          {error.message ||
+            "برای اطلاع از بروزرسانی ها مارا در شبکه های اجتماعی دنبال کنید"}
         </div>
         <button onClick={() => reset()} className="btn-primary px-6 py-2">
           تلاش مجدد

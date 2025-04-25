@@ -1,5 +1,12 @@
 import Image from "next/image";
-import { HiOutlineMinus, HiOutlinePlus, HiOutlineX, HiOutlineShoppingCart, HiOutlineCreditCard, HiOutlineTrash } from "react-icons/hi";
+import {
+  HiOutlineMinus,
+  HiOutlinePlus,
+  HiOutlineX,
+  HiOutlineShoppingCart,
+  HiOutlineCreditCard,
+  HiOutlineTrash,
+} from "react-icons/hi";
 import { TbTruckDelivery } from "react-icons/tb";
 
 export default function Page() {
@@ -38,7 +45,10 @@ export default function Page() {
                     سبد خرید
                     <span className="text-sm text-text/60"> ( 2 کالا ) </span>
                   </h1>
-                  <button type="button" className="btn-red-nobg px-3 py-2 text-sm">
+                  <button
+                    type="button"
+                    className="btn-red-nobg px-3 py-2 text-sm"
+                  >
                     <span>
                       <HiOutlineTrash className="h-6 w-6" />
                     </span>
@@ -53,7 +63,13 @@ export default function Page() {
                         {/* <!-- Image --> */}
                         <div className="relative row-span-2 min-w-fit xs:mx-auto">
                           <a href="#">
-                            <Image alt="" className="w-25 rounded-lg sm:w-28" src="/images/products/p4.png" width={100} height={100} />
+                            <Image
+                              alt=""
+                              className="w-25 rounded-lg sm:w-28"
+                              src="/images/products/p4.png"
+                              width={100}
+                              height={100}
+                            />
                           </a>
 
                           <button
@@ -66,13 +82,21 @@ export default function Page() {
                         {/* <!-- Detail --> */}
                         <div className="row-span-2 space-y-4 xs:col-span-2 sm:col-span-3 xl:col-span-5">
                           {/* <!-- Title --> */}
-                          <a className="line-clamp-2 text-sm xs:text-base" href="#">
+                          <a
+                            className="line-clamp-2 text-sm xs:text-base"
+                            href="#"
+                          >
                             کیف دستی دلسی مدل CHATELET AIR 2.0 کد 1676350
                           </a>
                           {/* <!-- Variant --> */}
                           <div className="flex items-center gap-x-2">
-                            <span className="h-4 w-4 rounded-full" style={{ background: "#782f2f" }}></span>
-                            <span className="text-xs text-text/90 xs:text-sm">قهوه ای</span>
+                            <span
+                              className="h-4 w-4 rounded-full"
+                              style={{ background: "#782f2f" }}
+                            ></span>
+                            <span className="text-xs text-text/90 xs:text-sm">
+                              قهوه ای
+                            </span>
                           </div>
                         </div>
                         {/* <!-- Quantity --> */}
@@ -110,7 +134,9 @@ export default function Page() {
                 <div className="mb-2 divide-y">
                   {/* <!-- cart items price before discount - coupon --> */}
                   <div className="flex items-center justify-between gap-x-2 py-6">
-                    <div className="text-sm text-text/90 lg:text-base">قیمت کالا ها (2)</div>
+                    <div className="text-sm text-text/90 lg:text-base">
+                      قیمت کالا ها (2)
+                    </div>
 
                     <div className="text-sm text-primary lg:text-base">
                       <span className="font-bold">2,400,000</span>
@@ -120,7 +146,9 @@ export default function Page() {
 
                   {/* <!-- Discount --> */}
                   <div className="flex items-center justify-between gap-x-2 py-6">
-                    <div className="text-sm text-text/90 lg:text-base">تخفیف</div>
+                    <div className="text-sm text-text/90 lg:text-base">
+                      تخفیف
+                    </div>
 
                     <div className="text-sm font-medium text-red-500 dark:text-red-400 lg:text-base">
                       <span className="font-bold">1,220,000</span>
@@ -130,7 +158,9 @@ export default function Page() {
                   {/* <!-- Order final price --> */}
 
                   <div className="flex items-center justify-between gap-x-2 py-6">
-                    <div className="text-sm text-text/90 lg:text-base">مبلغ قابل پرداخت</div>
+                    <div className="text-sm text-text/90 lg:text-base">
+                      مبلغ قابل پرداخت
+                    </div>
 
                     <div className="text-sm text-primary lg:text-base">
                       <span className="font-bold">2,400,000</span>
@@ -139,14 +169,20 @@ export default function Page() {
                   </div>
                 </div>
                 <div>
-                  <a href="./checkout-shipping.html" className="btn-primary py-3">
+                  <a
+                    href="./checkout-shipping.html"
+                    className="btn-primary py-3"
+                  >
                     ادامه فرایند خرید
                   </a>
                 </div>
               </div>
               {/* <!-- Mobile --> */}
               <div className="fixed inset-x-0 bottom-0 flex items-center gap-x-6 rounded-t-2xl bg-muted p-4 md:hidden">
-                <a className="btn-primary grow py-3" href="./checkout-shipping.html">
+                <a
+                  className="btn-primary grow py-3"
+                  href="./checkout-shipping.html"
+                >
                   ادامه فرایند خرید
                 </a>
                 <div className="flex flex-col items-center gap-y-1">

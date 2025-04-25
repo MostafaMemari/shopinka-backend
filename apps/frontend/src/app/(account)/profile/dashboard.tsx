@@ -32,26 +32,42 @@ interface UserAccountSectionProps {
   notificationCount: number;
 }
 
-const UserAccountSection: React.FC<UserAccountSectionProps> = ({ favoriteCount, notificationCount }) => (
+const UserAccountSection: React.FC<UserAccountSectionProps> = ({
+  favoriteCount,
+  notificationCount,
+}) => (
   <div className="mb-8">
     <h2 className="mb-8 flex items-center gap-x-4 text-lg text-text/90">
       <span className="h-2 w-2 rounded-full bg-primary" />
       حساب کاربری
     </h2>
     <div className="grid grid-cols-2 gap-4 md:gap-6 xl:grid-cols-4">
-      <Link href="/profile-edit" className="flex flex-col items-center gap-4 rounded-base bg-sky-500 p-2 dark:bg-sky-600 md:flex-row">
+      <Link
+        href="/profile-edit"
+        className="flex flex-col items-center gap-4 rounded-base bg-sky-500 p-2 dark:bg-sky-600 md:flex-row"
+      >
         <div className="relative rounded-base bg-sky-600/50 p-2 dark:bg-sky-500/50">
           <FaUserEdit className="h-8 w-8 text-white" />
         </div>
-        <div className="text-sm font-medium text-white md:text-base">تکمیل مشخصات</div>
+        <div className="text-sm font-medium text-white md:text-base">
+          تکمیل مشخصات
+        </div>
       </Link>
-      <Link href="/profile-edit" className="flex flex-col items-center gap-4 rounded-base bg-warning p-2 dark:bg-red-600 md:flex-row">
+      <Link
+        href="/profile-edit"
+        className="flex flex-col items-center gap-4 rounded-base bg-warning p-2 dark:bg-red-600 md:flex-row"
+      >
         <div className="relative rounded-base bg-red-600/50 p-2">
           <FaLock className="h-8 w-8 text-white" />
         </div>
-        <div className="text-sm font-medium text-white md:text-base">ثبت کلمه عبور</div>
+        <div className="text-sm font-medium text-white md:text-base">
+          ثبت کلمه عبور
+        </div>
       </Link>
-      <Link href="/profile-favorite" className="flex flex-col items-center gap-4 rounded-base bg-rose-500 p-2 dark:bg-rose-600 md:flex-row">
+      <Link
+        href="/profile-favorite"
+        className="flex flex-col items-center gap-4 rounded-base bg-rose-500 p-2 dark:bg-rose-600 md:flex-row"
+      >
         <div className="relative rounded-base bg-rose-600/50 p-2 dark:bg-rose-500/50">
           <FaHeart className="h-8 w-8 text-white" />
           <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-rose-600 text-sm font-medium text-white dark:bg-rose-500 md:hidden">
@@ -73,7 +89,8 @@ const UserAccountSection: React.FC<UserAccountSectionProps> = ({ favoriteCount, 
           </span>
         </div>
         <div className="flex items-center gap-x-2 text-sm font-medium text-white md:text-base">
-          <span className="hidden md:block">{notificationCount}</span> اعلان جدید
+          <span className="hidden md:block">{notificationCount}</span> اعلان
+          جدید
         </div>
       </Link>
     </div>
@@ -87,7 +104,12 @@ interface OrderStatusSectionProps {
   returnedOrders: number;
 }
 
-const OrderStatusSection: React.FC<OrderStatusSectionProps> = ({ currentOrders, deliveredOrders, canceledOrders, returnedOrders }) => (
+const OrderStatusSection: React.FC<OrderStatusSectionProps> = ({
+  currentOrders,
+  deliveredOrders,
+  canceledOrders,
+  returnedOrders,
+}) => (
   <div className="mb-8">
     <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
       <h3 className="flex items-center gap-x-4 text-lg text-text/90">
@@ -108,7 +130,9 @@ const OrderStatusSection: React.FC<OrderStatusSectionProps> = ({ currentOrders, 
           </span>
         </div>
         <div className="flex flex-col gap-y-1">
-          <div className="hidden font-medium text-white md:block">{currentOrders} سفارش</div>
+          <div className="hidden font-medium text-white md:block">
+            {currentOrders} سفارش
+          </div>
           <div className="text-white">فعلی</div>
         </div>
       </div>
@@ -120,7 +144,9 @@ const OrderStatusSection: React.FC<OrderStatusSectionProps> = ({ currentOrders, 
           </span>
         </div>
         <div className="flex flex-col gap-y-1">
-          <div className="hidden font-medium text-white md:block">{deliveredOrders} سفارش</div>
+          <div className="hidden font-medium text-white md:block">
+            {deliveredOrders} سفارش
+          </div>
           <div className="text-white">تحویل شده</div>
         </div>
       </div>
@@ -132,7 +158,9 @@ const OrderStatusSection: React.FC<OrderStatusSectionProps> = ({ currentOrders, 
           </span>
         </div>
         <div className="flex flex-col gap-y-1">
-          <div className="hidden font-medium text-white md:block">{canceledOrders} سفارش</div>
+          <div className="hidden font-medium text-white md:block">
+            {canceledOrders} سفارش
+          </div>
           <div className="text-white">لغو شده</div>
         </div>
       </div>
@@ -144,7 +172,9 @@ const OrderStatusSection: React.FC<OrderStatusSectionProps> = ({ currentOrders, 
           </span>
         </div>
         <div className="flex flex-col gap-y-1">
-          <div className="hidden font-medium text-white md:block">{returnedOrders} سفارش</div>
+          <div className="hidden font-medium text-white md:block">
+            {returnedOrders} سفارش
+          </div>
           <div className="text-white">مرجوع شده</div>
         </div>
       </div>
@@ -171,14 +201,26 @@ interface OrderCardProps {
 
 const OrderCard: React.FC<OrderCardProps> = ({ order }) => (
   <div className="rounded-lg border shadow-base">
-    <Link href={order.status === "pending" ? "/profile-orders-detail-pending" : "/profile-orders-detail"}>
+    <Link
+      href={
+        order.status === "pending"
+          ? "/profile-orders-detail-pending"
+          : "/profile-orders-detail"
+      }
+    >
       <div className="p-4">
         <div className="flex items-center justify-between pb-6">
           <div
             className={`flex items-center gap-x-2 ${order.status === "pending" ? "text-yellow-500 dark:text-yellow-400" : "text-primary"}`}
           >
-            {order.status === "pending" ? <FaExclamationTriangle className="h-6 w-6" /> : <FaCheckCircle className="h-6 w-6" />}
-            <p className="font-medium md:text-lg">{order.status === "pending" ? "در انتظار پرداخت" : "پرداخت شده"}</p>
+            {order.status === "pending" ? (
+              <FaExclamationTriangle className="h-6 w-6" />
+            ) : (
+              <FaCheckCircle className="h-6 w-6" />
+            )}
+            <p className="font-medium md:text-lg">
+              {order.status === "pending" ? "در انتظار پرداخت" : "پرداخت شده"}
+            </p>
           </div>
           <FaChevronLeft className="h-6 w-6" />
         </div>
@@ -186,32 +228,46 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => (
           <div className="flex flex-col gap-4 md:flex-row">
             {order.remainingTime && (
               <div className="flex items-center justify-between gap-x-2 md:justify-start">
-                <div className="text-sm text-text/60 md:text-base">زمان باقیمانده</div>
-                <div className="text-sm text-red-500 dark:text-red-400 md:text-base">{order.remainingTime}</div>
+                <div className="text-sm text-text/60 md:text-base">
+                  زمان باقیمانده
+                </div>
+                <div className="text-sm text-red-500 dark:text-red-400 md:text-base">
+                  {order.remainingTime}
+                </div>
               </div>
             )}
             <div className="flex items-center justify-between gap-x-2 md:justify-start">
-              <div className="text-sm text-text/60 md:text-base">شماره سفارش</div>
-              <div className="text-sm text-text/90 md:text-base">{order.orderNumber}</div>
+              <div className="text-sm text-text/60 md:text-base">
+                شماره سفارش
+              </div>
+              <div className="text-sm text-text/90 md:text-base">
+                {order.orderNumber}
+              </div>
             </div>
             <div className="flex items-center justify-between gap-x-2 md:justify-start">
               <div className="text-sm text-text/60 md:text-base">مبلغ کل</div>
               <div className="text-primary">
-                <span className="font-bold md:text-lg">{order.totalAmount}</span>
+                <span className="font-bold md:text-lg">
+                  {order.totalAmount}
+                </span>
                 <span className="text-sm md:text-base">تومان</span>
               </div>
             </div>
             {order.date && (
               <div className="flex items-center justify-between gap-x-2 md:justify-start">
                 <div className="text-sm text-text/60 md:text-base">تاریخ</div>
-                <div className="text-sm text-text/90 md:text-base">{order.date}</div>
+                <div className="text-sm text-text/90 md:text-base">
+                  {order.date}
+                </div>
               </div>
             )}
           </div>
           <div className="flex grow flex-col gap-y-4">
             <div className="flex items-center gap-x-2 text-yellow-500 dark:text-yellow-400">
               <FaClock className="h-5 w-5 md:h-6 md:w-6" />
-              <p className="text-sm font-medium md:text-base">{order.statusLabel}</p>
+              <p className="text-sm font-medium md:text-base">
+                {order.statusLabel}
+              </p>
             </div>
             <div className="relative h-2 w-full rounded-full bg-background dark:bg-zinc-800">
               <span
@@ -234,7 +290,9 @@ interface CurrentOrdersSectionProps {
   orders: Order[];
 }
 
-const CurrentOrdersSection: React.FC<CurrentOrdersSectionProps> = ({ orders }) => (
+const CurrentOrdersSection: React.FC<CurrentOrdersSectionProps> = ({
+  orders,
+}) => (
   <div className="mb-8">
     <div
       className="mb-8 flex flex-wrap items-center justify-between gap-4
@@ -276,7 +334,10 @@ const Dashboard: React.FC<DashboardProps> = ({
   <div className="col-span-12 lg:col-span-9">
     <div className="rounded-lg bg-muted p-5 shadow-base">
       <DashboardHeader title="پیشخوان" />
-      <UserAccountSection favoriteCount={favoriteCount} notificationCount={notificationCount} />
+      <UserAccountSection
+        favoriteCount={favoriteCount}
+        notificationCount={notificationCount}
+      />
       <OrderStatusSection
         currentOrders={currentOrders}
         deliveredOrders={deliveredOrders}

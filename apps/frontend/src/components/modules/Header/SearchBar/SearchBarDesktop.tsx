@@ -1,6 +1,10 @@
 "use client";
 
-import { HiOutlineClock, HiOutlineSearch, HiOutlineSparkles } from "react-icons/hi";
+import {
+  HiOutlineClock,
+  HiOutlineSearch,
+  HiOutlineSparkles,
+} from "react-icons/hi";
 import { useEffect, useRef, useState } from "react";
 import CustomSwiper from "./CustomSwiper";
 
@@ -65,7 +69,10 @@ const SearchBarDesktop = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -80,7 +87,11 @@ const SearchBarDesktop = () => {
   }, []);
 
   return (
-    <div className="relative max-w-xl flex-1" id="desktopHeaderSearchBase" ref={wrapperRef}>
+    <div
+      className="relative max-w-xl flex-1"
+      id="desktopHeaderSearchBase"
+      ref={wrapperRef}
+    >
       <div className="flex items-center justify-between rounded-lg border-b-transparent bg-background px-2 dark:border-white/10 dark:border-b-transparent">
         <div>
           <HiOutlineSearch className="h-6 w-6" />

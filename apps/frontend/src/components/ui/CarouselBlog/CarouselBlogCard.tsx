@@ -24,7 +24,9 @@ export default function CarouselBlogCard({ blog }: Props) {
             />
           </div>
           <div className="mb-2">
-            <p className="line-clamp-2 h-10 text-sm md:h-12 md:text-base">{blog.title}</p>
+            <p className="line-clamp-2 h-10 text-sm md:h-12 md:text-base">
+              {blog.title}
+            </p>
           </div>
           <div className="flex justify-end">
             <p className="text-xs text-primary xs:text-sm">{blog.date}</p>

@@ -4,7 +4,12 @@ import { latestBlogs } from "@/mock/blogCarousels";
 export default function LatestBlogs() {
   return (
     <div>
-      <CarouselBlog sectionTitle="مطالب خواندنی" viewAllLink="/blog" viewAllText="مشاهده همه" blogs={latestBlogs} />
+      <CarouselBlog
+        sectionTitle="مطالب خواندنی"
+        viewAllLink="/blog"
+        viewAllText="مشاهده همه"
+        blogs={latestBlogs}
+      />
     </div>
   );
 }

@@ -19,7 +19,12 @@ interface Props {
   breakpoints?: Record<number, { slidesPerView: number; spaceBetween: number }>;
 }
 
-export default function CarouselBlog({ sectionTitle, viewAllLink, viewAllText = "مشاهده همه", blogs }: Props) {
+export default function CarouselBlog({
+  sectionTitle,
+  viewAllLink,
+  viewAllText = "مشاهده همه",
+  blogs,
+}: Props) {
   const swiperConfig = useMemo(
     () => ({
       ...defaultSwiperConfig,
@@ -27,7 +32,7 @@ export default function CarouselBlog({ sectionTitle, viewAllLink, viewAllText = 
       spaceBetween: blogSwiperConfig.spaceBetween,
       breakpoints: blogSwiperConfig.breakpoints,
     }),
-    []
+    [],
   );
 
   const stableBlogs = useMemo(() => blogs, [blogs]);
@@ -38,11 +43,24 @@ export default function CarouselBlog({ sectionTitle, viewAllLink, viewAllText = 
         {/* Section Header */}
         <div className="mb-4 flex items-center justify-between">
           <h3 className="font-medium md:text-lg lg:text-xl">{sectionTitle}</h3>
-          <Link href={viewAllLink} className="flex items-center gap-x-2 py-2 text-sm text-primary lg:text-base">
+          <Link
+            href={viewAllLink}
+            className="flex items-center gap-x-2 py-2 text-sm text-primary lg:text-base"
+          >
             {viewAllText}
             <span>
-              <svg className="h-5 w-5 lg:h-6 lg:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+              <svg
+                className="h-5 w-5 lg:h-6 lg:w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
             </span>
           </Link>

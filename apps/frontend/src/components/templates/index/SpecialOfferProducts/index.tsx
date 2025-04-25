@@ -4,7 +4,11 @@ import { specialOfferProducts } from "@/mock/productCarousels";
 export default function SpecialOfferProducts() {
   return (
     <>
-      <CarouselProduct title="پیشنهادات شگفت انگیز" viewAllLink="/shop" products={specialOfferProducts} />
+      <CarouselProduct
+        title="پیشنهادات شگفت انگیز"
+        viewAllLink="/shop"
+        products={specialOfferProducts}
+      />
     </>
   );
 }

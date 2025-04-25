@@ -60,8 +60,20 @@ export default function Footer({
     { id: "3", name: "aparat", href: "#", icon: "aparat" },
   ],
   trustBadges = [
-    { id: "1", name: "namad", imageSrc: "/images/namad.png", href: "#", isTest: true },
-    { id: "2", name: "samandehi", imageSrc: "/images/samandehi.png", href: "#", isTest: true },
+    {
+      id: "1",
+      name: "namad",
+      imageSrc: "/images/namad.png",
+      href: "#",
+      isTest: true,
+    },
+    {
+      id: "2",
+      name: "samandehi",
+      imageSrc: "/images/samandehi.png",
+      href: "#",
+      isTest: true,
+    },
   ],
   copyrightText = "کلیه حقوق این سایت متعلق به فروشگاه روتی کالا می‌باشد.",
 }: Props) {
@@ -84,8 +96,19 @@ export default function Footer({
       <div className="absolute inset-x-0 -top-3 flex items-center justify-center">
         <div className="relative flex h-10 w-14 justify-center">
           <div className="absolute inset-0 -top-[2px] h-full w-full rounded-full bg-muted blur-[6px]"></div>
-          <svg className="relative h-5 w-5 text-gray-200" xmlns="http://www.w3.org/2000/svg" width="135" height="90" viewBox="0 0 14 14">
-            <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            className="relative h-5 w-5 text-gray-200"
+            xmlns="http://www.w3.org/2000/svg"
+            width="135"
+            height="90"
+            viewBox="0 0 14 14"
+          >
+            <g
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <circle cx="7" cy="7" r="6.5" />
               <path d="M.5 7h13m-4 0A11.22 11.22 0 0 1 7 13.5A11.22 11.22 0 0 1 4.5 7A11.22 11.22 0 0 1 7 .5A11.22 11.22 0 0 1 9.5 7Z" />
             </g>
@@ -101,11 +124,25 @@ export default function Footer({
             <p>{supportText}</p>
           </div>
           <div className="order-first flex md:order-last">
-            <button className="inline-flex items-center gap-x-2 rounded-lg border p-2 text-sm" id="scroll-top-button-footer" type="button">
+            <button
+              className="inline-flex items-center gap-x-2 rounded-lg border p-2 text-sm"
+              id="scroll-top-button-footer"
+              type="button"
+            >
               <span>برگشت به بالا</span>
               <span aria-hidden="true">
-                <svg className="h-5 w-5 lg:h-6 lg:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
+                <svg
+                  className="h-5 w-5 lg:h-6 lg:w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 15l7-7 7 7"
+                  />
                 </svg>
               </span>
             </button>
@@ -130,7 +167,9 @@ export default function Footer({
                 placeholder="ایمیل شما"
                 type="text"
               />
-              <button className="btn-primary ml-1 w-24 py-2 text-sm">ثبت</button>
+              <button className="btn-primary ml-1 w-24 py-2 text-sm">
+                ثبت
+              </button>
             </div>
           </div>
           <div className="flex items-center justify-center gap-x-6 md:gap-x-6">
@@ -138,12 +177,26 @@ export default function Footer({
               <div
                 key={link.id}
                 className={`transition-colors duration-200 ${
-                  link.name === "instagram" ? "hover:text-rose-600" : link.name === "twitter" ? "hover:text-blue-500" : "hover:text-red-600"
+                  link.name === "instagram"
+                    ? "hover:text-rose-600"
+                    : link.name === "twitter"
+                      ? "hover:text-blue-500"
+                      : "hover:text-red-600"
                 }`}
               >
-                <a aria-label={`Follow us on ${link.name}`} href={link.href} target="_blank" rel="noopener noreferrer">
+                <a
+                  aria-label={`Follow us on ${link.name}`}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <div className="sr-only">{`${link.name} link`}</div>
-                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    className="h-6 w-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -171,7 +224,10 @@ export default function Footer({
                 <ul className="space-y-4 text-gray-400">
                   {menuLinks1.map((link) => (
                     <li key={link.id}>
-                      <Link className="py-2 hover:text-primary hover:" href={link.href}>
+                      <Link
+                        className="py-2 hover:text-primary hover:"
+                        href={link.href}
+                      >
                         {link.label}
                       </Link>
                     </li>
@@ -183,7 +239,10 @@ export default function Footer({
                 <ul className="space-y-4 text-gray-400">
                   {menuLinks2.map((link) => (
                     <li key={link.id}>
-                      <Link className="py-2 hover:text-primary hover:" href={link.href}>
+                      <Link
+                        className="py-2 hover:text-primary hover:"
+                        href={link.href}
+                      >
                         {link.label}
                       </Link>
                     </li>
@@ -194,8 +253,21 @@ export default function Footer({
           </div>
           <div className="col-span-12 flex items-center justify-center gap-x-2 md:col-span-6 md:justify-end">
             {trustBadges.map((badge) => (
-              <a key={badge.id} href={badge.href} className="relative" target="_blank" rel="noopener noreferrer">
-                <Image alt={badge.name} className="h-[130px] w-[130px]" src={badge.imageSrc} width={130} height={130} priority={false} />
+              <a
+                key={badge.id}
+                href={badge.href}
+                className="relative"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Image
+                  alt={badge.name}
+                  className="h-[130px] w-[130px]"
+                  src={badge.imageSrc}
+                  width={130}
+                  height={130}
+                  priority={false}
+                />
                 {badge.isTest && (
                   <span className="absolute inset-x-0 top-0 mx-auto w-fit rounded-lg bg-warning px-4 py-2 text-white dark:bg-red-600">
                     تستی

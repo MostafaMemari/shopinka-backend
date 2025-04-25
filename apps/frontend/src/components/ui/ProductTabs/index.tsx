@@ -21,7 +21,11 @@ interface Props {
   comments: IComment[];
 }
 
-export default function ProductTabs({ description, specifications, comments }: Props) {
+export default function ProductTabs({
+  description,
+  specifications,
+  comments,
+}: Props) {
   const tabs: Tab[] = [
     { id: "description", title: "معرفی" },
     { id: "specs", title: "مشخصات" },

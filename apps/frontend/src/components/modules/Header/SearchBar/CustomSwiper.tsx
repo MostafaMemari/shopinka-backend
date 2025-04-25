@@ -30,16 +30,30 @@ const CustomSwiper = ({ items, variant }: CustomSwiperProps) => {
       spaceBetween: searchBarSwiperConfig.spaceBetween,
       breakpoints: searchBarSwiperConfig.breakpoints,
     }),
-    []
+    [],
   );
 
   return (
     <Swiper {...swiperConfig}>
       {items.map((item) => (
-        <SwiperSlide key={item.id} className={`search-result-desktop ${variant === "search" ? "h-14" : ""}`}>
+        <SwiperSlide
+          key={item.id}
+          className={`search-result-desktop ${variant === "search" ? "h-14" : ""}`}
+        >
           {variant === "product" ? (
-            <Link href={item.href} className="flex items-center gap-x-2 rounded-xl border px-4 py-2 text-text/60 hover:border-border/50">
-              {item.image && <Image src={item.image} alt={item.title} width={64} height={64} className="w-16" />}
+            <Link
+              href={item.href}
+              className="flex items-center gap-x-2 rounded-xl border px-4 py-2 text-text/60 hover:border-border/50"
+            >
+              {item.image && (
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  width={64}
+                  height={64}
+                  className="w-16"
+                />
+              )}
               <p className="line-clamp-2">{item.title}</p>
             </Link>
           ) : (
