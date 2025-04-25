@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { ConflictException, Injectable } from "@nestjs/common";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UserRepository } from "./user.repository";
 import { QueryUsersDto } from "./dto/users-query.dto";
@@ -52,12 +52,20 @@ export class UserService {
     return { ...pagination(paginationDto, users) }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(id: number): Promise<User> {
+    return this.userRepository.findOneOrThrow({ where: { id } })
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, { fullName, mobile }: UpdateUserDto): Promise<{ message: string, user: User }> {
+    const existingUser = await this.userRepository.findOne({ where: { OR: [{ mobile }], NOT: { id } } })
+
+    if (existingUser) {
+      throw new ConflictException("User with this mobile already exists.")
+    }
+
+    const updatedUser = await this.userRepository.update({ where: { id }, data: { fullName, mobile } })
+
+    return { message: 'Updated user successfully', user: updatedUser }
   }
 
   remove(id: number) {

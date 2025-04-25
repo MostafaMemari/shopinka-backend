@@ -22,6 +22,10 @@ export class UserRepository {
         return this.prismaService.user.findFirst(args)
     }
 
+    update(args: Prisma.UserUpdateArgs): Promise<User> {
+        return this.prismaService.user.update(args)
+    }
+
     async findOneOrThrow(args: Prisma.UserFindFirstArgs): Promise<User | never> {
         const user = await this.findOne(args)
 
