@@ -1,10 +1,11 @@
-import { Module } from "@nestjs/common";
+import { Module, ValidationPipe } from "@nestjs/common";
 import { AuthModule } from "../auth/auth.module";
 import { UserModule } from "../user/user.module";
 import { RedisModule } from "@nestjs-modules/ioredis";
 import { redisConfig } from "../../configs/redis.config";
 import { ConfigModule } from "@nestjs/config";
 import envConfig from "../../configs/env.config";
+import { APP_PIPE } from "@nestjs/core";
 
 @Module({
   imports: [
@@ -14,6 +15,11 @@ import envConfig from "../../configs/env.config";
     UserModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({ whitelist: true })
+    }
+  ],
 })
-export class AppModule {}
+export class AppModule { }

@@ -1,111 +1,213 @@
 import { InjectRedis } from "@nestjs-modules/ioredis";
 import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
+    BadRequestException,
+    ConflictException,
+    ForbiddenException,
+    HttpException,
+    HttpStatus,
+    Injectable,
+    NotFoundException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Redis } from "ioredis";
 import dateFns from "date-fns";
-import { IGenerateTokens } from "./auth.interface";
-import { AuthMessages } from "./messages/auth.messages";
+import { IGenerateTokens, IRefreshToken } from "./auth.interface";
+import { AuthMessages } from "./enums/auth.messages";
+import { OtpKeys } from "./enums/otp.keys";
+import { VerifyOtpDto } from "./dto/verifyOtp.dto";
+import * as bcrypt from "bcryptjs"
+import { Smsir } from "sms-typescript/lib"
 
 @Injectable()
 export class AuthService {
-  constructor(
-    @InjectRedis() private readonly redis: Redis,
-    private readonly jwtService: JwtService,
-  ) {}
+    private readonly OTP_EXPIRATION_SEC = 300; //* 5 minutes
+    private readonly OTP_REQUEST_LIMIT = 5;
+    private readonly OTP_REQUEST_TIMEOUT_SEC = 3600; //* 1 hour
 
-  generateOtp() {
-    return Math.floor(100_000 + Math.random() * 900_000).toString();
-  }
+    constructor(
+        @InjectRedis() private readonly redis: Redis,
+        private readonly jwtService: JwtService,
+    ) { }
 
-  async validateRefreshToken(
-    refreshToken: string,
-  ): Promise<never | { refreshTokenKey: string }> {
-    const jwtResult = this.jwtService.decode<{ id: number } | undefined>(
-      refreshToken,
-    );
-
-    if (!jwtResult?.id)
-      throw new BadRequestException(AuthMessages.InvalidRefreshToken);
-
-    const refreshTokenKey = `refreshToken_${jwtResult.id}_${refreshToken}`;
-
-    const storedToken = await this.redis.get(refreshTokenKey);
-
-    if (storedToken !== refreshToken || !storedToken)
-      throw new NotFoundException(AuthMessages.NotFoundRefreshToken);
-
-    return { refreshTokenKey };
-  }
-
-  async verifyAccessToken(verifyTokenDto: {
-    accessToken: string;
-  }): Promise<{ userId: number }> {
-    try {
-      const { ACCESS_TOKEN_SECRET } = process.env;
-
-      const verifiedToken = this.jwtService.verify<{ id: number }>(
-        verifyTokenDto.accessToken,
-        { secret: ACCESS_TOKEN_SECRET },
-      );
-
-      if (!verifiedToken.id) {
-        throw new BadRequestException(AuthMessages.InvalidAccessTokenPayload);
-      }
-
-      return { userId: verifiedToken.id };
-    } catch (error) {
-      throw new HttpException(
-        error.message,
-        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+    private generateOtp() {
+        return Math.floor(100_000 + Math.random() * 900_000).toString();
     }
-  }
 
-  async generateTokens(user: { id: number }): Promise<IGenerateTokens> {
-    const payload = { id: user.id };
+    async validateRefreshToken(refreshToken: string): Promise<never | { refreshTokenKey: string }> {
+        const jwtResult = this.jwtService.decode<{ id: number } | undefined>(refreshToken);
 
-    const parseDays: number = Number.parseInt(
-      process.env.REFRESH_TOKEN_EXPIRE_TIME,
-    );
+        if (!jwtResult?.id)
+            throw new BadRequestException(AuthMessages.InvalidRefreshToken);
 
-    const now = new Date();
+        const refreshTokenKey = `refreshToken_${jwtResult.id}_${refreshToken}`;
 
-    const futureDate = dateFns.addDays(now, parseDays);
+        const storedToken = await this.redis.get(refreshTokenKey);
 
-    const refreshTokenExpireTime: number = dateFns.differenceInSeconds(
-      futureDate,
-      now,
-    );
+        if (storedToken !== refreshToken || !storedToken)
+            throw new NotFoundException(AuthMessages.NotFoundRefreshToken);
 
-    const accessToken = this.jwtService.sign(payload, {
-      secret: process.env.ACCESS_TOKEN_SECRET,
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME,
-    });
+        return { refreshTokenKey };
+    }
 
-    const refreshToken = this.jwtService.sign(payload, {
-      expiresIn: process.env.REFRESH_TOKEN_EXPIRE_TIME,
-      secret: process.env.REFRESH_TOKEN_SECRET,
-    });
+    async verifyAccessToken(verifyTokenDto: { accessToken: string }): Promise<{ userId: number }> {
+        try {
+            const { ACCESS_TOKEN_SECRET } = process.env;
 
-    const redisData = {
-      value: refreshToken,
-      key: `refreshToken_${user.id}_${refreshToken}`,
-      expireTime: refreshTokenExpireTime,
-    };
+            const verifiedToken = this.jwtService.verify<{ id: number }>(
+                verifyTokenDto.accessToken,
+                { secret: ACCESS_TOKEN_SECRET },
+            );
 
-    await this.redis.set(
-      redisData.key,
-      redisData.value,
-      "EX",
-      redisData.expireTime,
-    );
+            if (!verifiedToken.id) {
+                throw new BadRequestException(AuthMessages.InvalidAccessTokenPayload);
+            }
 
-    return { accessToken, refreshToken };
-  }
+            return { userId: verifiedToken.id };
+        } catch (error) {
+            throw new HttpException(error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async generateTokens(user: { id: number }): Promise<IGenerateTokens> {
+        const payload = { id: user.id };
+
+        const parseDays: number = Number.parseInt(process.env.REFRESH_TOKEN_EXPIRE_TIME);
+
+        const now = new Date();
+
+        const futureDate = dateFns.addDays(now, parseDays);
+
+        const refreshTokenExpireTime: number = dateFns.differenceInSeconds(futureDate, now);
+
+        const accessToken = this.jwtService.sign(payload, {
+            secret: process.env.ACCESS_TOKEN_SECRET,
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME,
+        });
+
+        const refreshToken = this.jwtService.sign(payload, {
+            expiresIn: process.env.REFRESH_TOKEN_EXPIRE_TIME,
+            secret: process.env.REFRESH_TOKEN_SECRET,
+        });
+
+        const redisData = {
+            value: refreshToken,
+            key: `refreshToken_${user.id}_${refreshToken}`,
+            expireTime: refreshTokenExpireTime,
+        };
+
+        await this.redis.set(
+            redisData.key,
+            redisData.value,
+            "EX",
+            redisData.expireTime,
+        );
+
+        return { accessToken, refreshToken };
+    }
+
+    async refreshToken({ refreshToken }: { refreshToken: string }): Promise<IRefreshToken> {
+        await this.validateRefreshToken(refreshToken);
+
+        const { REFRESH_TOKEN_SECRET, ACCESS_TOKEN_SECRET, ACCESS_TOKEN_EXPIRE_TIME } = process.env;
+
+        const { id } = this.jwtService.verify<{ id: number }>(refreshToken, { secret: REFRESH_TOKEN_SECRET });
+
+        const newAccessToken = this.jwtService.sign({ id }, { secret: ACCESS_TOKEN_SECRET, expiresIn: ACCESS_TOKEN_EXPIRE_TIME });
+
+        return { accessToken: newAccessToken, message: AuthMessages.RefreshedTokenSuccess }
+    }
+
+    async authenticateWithOtp(signupDto: { mobile: string }): Promise<{ message: string }> {
+        const otpCode = this.generateOtp();
+
+        return this.sendOtp(signupDto.mobile, otpCode);
+    }
+
+    async signout(signoutDto: { refreshToken: string }): Promise<{ message: string }> {
+        const { refreshTokenKey } = await this.validateRefreshToken(signoutDto.refreshToken);
+
+        await this.redis.del(refreshTokenKey);
+
+        return { message: AuthMessages.SignoutSuccess }
+    }
+
+    async sendOtp(mobile: string, otpCode: string = this.generateOtp()): Promise<{ message: string }> {
+        await this.checkExistingOtp(`${OtpKeys.StoreOtp}${mobile}`);
+
+        await this.sendSms(mobile, otpCode);
+
+        await this.enforceOtpRequestLimit(`${OtpKeys.RequestsOtp}${mobile}`);
+        await this.storeOtp(`${OtpKeys.StoreOtp}${mobile}`, otpCode);
+
+        return { message: AuthMessages.OtpSentSuccessfully }
+    }
+
+    async verifyOtp(verifyOtpDto: VerifyOtpDto): Promise<{ message: string }> {
+        const { mobile, otp } = verifyOtpDto;
+
+        await this.enforceOtpRequestLimit(`${OtpKeys.RequestsOtp}${mobile}`);
+
+        await this.validateOtp(`${OtpKeys.StoreOtp}${mobile}`, otp);
+
+        await this.clearOtpData(mobile);
+
+        return { message: AuthMessages.VerifiedOtpSuccess }
+    }
+
+    private async sendSms(mobile: string, verifyCode: string): Promise<void | never> {
+        const { SMS_API_KEY, SMS_LINE_NUMBER, SMS_TEMPLATE_ID, SMS_NAME } = process.env;
+        const sms = new Smsir(SMS_API_KEY, Number(SMS_LINE_NUMBER));
+        console.log(mobile, verifyCode);
+        // const result = await sms.SendVerifyCode(mobile, Number(SMS_TEMPLATE_ID), [{ name: SMS_NAME, value: verifyCode }]);
+
+        // if (result.data?.status !== 1) throw new InternalServerErrorException(AuthMessages.ProblemSendingSms);
+    }
+
+    private async clearOtpData(mobile: string): Promise<void | never> {
+        await Promise.all([
+            this.redis.del(`${OtpKeys.StoreOtp}${mobile}`),
+            this.redis.del(`${OtpKeys.RequestsOtp}${mobile}`),
+        ]);
+    }
+
+    private async validateOtp(otpKey: string, otp: string): Promise<void | never> {
+        const storedOtp = await this.redis.get(otpKey);
+        const isValidOtp = await bcrypt.compare(otp, storedOtp || '');
+
+        if (!isValidOtp) {
+            throw new BadRequestException(AuthMessages.NotFoundOrInvalidOtpCode);
+        }
+    }
+
+    private async checkExistingOtp(otpKey: string): Promise<void | never> {
+        const existingOtp = await this.redis.get(otpKey);
+        const otpTtl = await this.redis.ttl(otpKey);
+
+        if (existingOtp)
+            throw new ConflictException(`${AuthMessages.OtpAlreadySentWithWaitTime}${this.formatSecondsToMinutes(otpTtl)}`);
+    }
+
+    private async storeOtp(otpKey: string, otp: string): Promise<void | never> {
+        const hashedOtp = await bcrypt.hash(otp, 10);
+        await this.redis.setex(otpKey, this.OTP_EXPIRATION_SEC, hashedOtp);
+    }
+
+    private async enforceOtpRequestLimit(requestKey: string): Promise<void | never> {
+        let requestCount = Number(await this.redis.get(requestKey)) || 0;
+        const requestCountTtl = await this.redis.ttl(requestKey);
+        if (requestCount >= this.OTP_REQUEST_LIMIT) {
+            const formattedTime = this.formatSecondsToMinutes(requestCountTtl);
+            throw new ForbiddenException(`${AuthMessages.MaxOtpRequests}${formattedTime}.`);
+        }
+
+        await this.redis.setex(requestKey, this.OTP_REQUEST_TIMEOUT_SEC, requestCount + 1);
+    }
+
+    private formatSecondsToMinutes(seconds: number): string {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+
+        return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+    }
+
 }
