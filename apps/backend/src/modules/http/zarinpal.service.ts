@@ -10,7 +10,7 @@ export class ZarinpalService {
     constructor(private readonly httpService: HttpService) { }
 
     async sendRequest(data: Omit<ISendRequest, 'userId'>) {
-        const { amount, description, user, callbackUrl } = data;
+        const { amount, description, user } = data;
 
         const options = {
             merchant_id: process.env.ZARINPAL_MERCHANT_ID,
@@ -20,7 +20,7 @@ export class ZarinpalService {
                 email: user?.email ?? 'example@gmail.com',
                 mobile: user?.mobile ?? '',
             },
-            callback_url: callbackUrl ?? process.env.ZARINPAL_CALLBACK_URL,
+            callback_url: process.env.ZARINPAL_CALLBACK_URL,
         };
         const requestURL = process.env.ZARINPAL_REQUEST_URL;
 

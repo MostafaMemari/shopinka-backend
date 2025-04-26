@@ -1,6 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { Prisma, Transaction } from "generated/prisma";
+import { PaymentMessages } from "./enums/payment.messages";
 
 @Injectable()
 export class PaymentRepository {
@@ -16,5 +17,13 @@ export class PaymentRepository {
 
     update(args: Prisma.TransactionUpdateArgs): Promise<Transaction> {
         return this.prismaService.transaction.update(args)
+    }
+
+    async findOneOrThrow(args: Prisma.TransactionFindFirstArgs): Promise<never | Transaction> {
+        const transaction = await this.prismaService.transaction.findFirst(args)
+
+        if (!transaction) throw new NotFoundException(PaymentMessages.NotFoundTransaction)
+
+        return transaction
     }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { User } from 'generated/prisma';
@@ -18,4 +18,11 @@ export class PaymentController {
   gatewayUrl(@Body() paymentDto: PaymentDto, @GetUser() user: User) {
     return this.paymentService.getGatewayUrl({ ...paymentDto, user, userId: user.id })
   }
+
+  @Get('verify')
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  async verifyPayment(@Query('Authority') authority: string, @Query('Status') status: string) {
+    return this.paymentService.verify({ authority, status })
+  }
+
 }
