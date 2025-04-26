@@ -25,7 +25,7 @@ model User {
   fullName         String?  @map("full_name")
   mobile           String   @unique()
   perviousMobile   String?
-  lastMobileChange String?
+  lastMobileChange DateTime?
   isVerifiedMobile Boolean  @default(false)
   role             Role     @default(CUSTOMER)
   createdAt        DateTime @default(now())

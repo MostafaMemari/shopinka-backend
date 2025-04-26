@@ -7,6 +7,7 @@ import { CacheService } from "../cache/cache.service";
 import { Prisma, User } from "generated/prisma";
 import { sortObject } from "../../common/utils/functions.utils";
 import { CacheKeys } from "../../common/enums/cache.enum";
+import { AuthService } from "../auth/auth.service";
 
 @Injectable()
 export class UserService {
@@ -14,7 +15,8 @@ export class UserService {
 
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly cacheService: CacheService
+    private readonly cacheService: CacheService,
+    private readonly authService: AuthService
   ) { }
 
   async findAll({ page, take, ...queryUsersDto }: QueryUsersDto) {
@@ -35,7 +37,7 @@ export class UserService {
     if (fullName) filters.fullName = { contains: fullName, mode: "insensitive" }
     if (mobile) filters.mobile = { contains: mobile, mode: 'insensitive' }
     if (role) filters.role = role
-    if (lastMobileChange) filters.lastMobileChange = String(lastMobileChange)
+    if (lastMobileChange) filters.lastMobileChange = lastMobileChange
     if (startDate || endDate) {
       filters.createdAt = {}
       if (startDate) filters.createdAt.gte = new Date(startDate)
@@ -63,7 +65,16 @@ export class UserService {
       throw new ConflictException("User with this mobile already exists.")
     }
 
-    const updatedUser = await this.userRepository.update({ where: { id }, data: { fullName, mobile } })
+    const currentUser = await this.userRepository.findOneOrThrow({ where: { id } })
+
+    const isChangedMobile = mobile && mobile !== currentUser.mobile
+
+    if (isChangedMobile) await this.authService.sendOtp({ mobile })
+
+    const updatedUser = await this.userRepository.update({
+      where: { id },
+      data: { fullName, mobile, isVerifiedMobile: !isChangedMobile, perviousMobile: isChangedMobile ? currentUser.mobile : undefined, updatedAt: new Date() }
+    })
 
     return { message: 'Updated user successfully', user: updatedUser }
   }
