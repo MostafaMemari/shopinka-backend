@@ -8,12 +8,12 @@ import { Gallery, User } from 'generated/prisma';
 export class GalleryService {
   constructor(private readonly galleryRepository: GalleryRepository) { }
 
-  async create(createGalleryDto: CreateGalleryDto, user: User): Promise<{ message: string, gallery: Gallery }> {
+  async create(userId: number, createGalleryDto: CreateGalleryDto): Promise<{ message: string, gallery: Gallery }> {
     const existingGallery = await this.galleryRepository.findOne({ where: { title: { equals: createGalleryDto.title, mode: "insensitive" } } })
 
     if (existingGallery) throw new ConflictException("Gallery with this title already exists.")
 
-    const gallery = await this.galleryRepository.create({ data: { ...createGalleryDto, userId: user.id } })
+    const gallery = await this.galleryRepository.create({ data: { ...createGalleryDto, userId } })
 
     return { message: 'Gallery created successfully', gallery }
   }
@@ -22,8 +22,8 @@ export class GalleryService {
     return `This action returns all gallery`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} gallery`;
+  findOne(galleryId: number, userId: number): Promise<never | Gallery> {
+    return this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId }, include: { items: true } })
   }
 
   update(id: number, updateGalleryDto: UpdateGalleryDto) {
