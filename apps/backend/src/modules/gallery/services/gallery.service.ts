@@ -1,11 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateGalleryDto } from '../dto/create-gallery.dto';
 import { UpdateGalleryDto } from '../dto/update-gallery.dto';
+import { GalleryRepository } from '../repositories/gallery.repository';
+import { Gallery, User } from 'generated/prisma';
 
 @Injectable()
 export class GalleryService {
-  create(createGalleryDto: CreateGalleryDto) {
-    return 'This action adds a new gallery';
+  constructor(private readonly galleryRepository: GalleryRepository) { }
+
+  async create(createGalleryDto: CreateGalleryDto, user: User): Promise<{ message: string, gallery: Gallery }> {
+    const existingGallery = await this.galleryRepository.findOne({ where: { title: { equals: createGalleryDto.title, mode: "insensitive" } } })
+
+    if (existingGallery) throw new ConflictException("Gallery with this title already exists.")
+
+    const gallery = await this.galleryRepository.create({ data: { ...createGalleryDto, userId: user.id } })
+
+    return { message: 'Gallery created successfully', gallery }
   }
 
   findAll() {
