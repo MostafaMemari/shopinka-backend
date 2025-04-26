@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import ProductGuarantees from "../../ui/ProductGuarantees";
-import SizeSelector from "../../ui/SizeSelector";
+import ProductGuarantees from "../../../features/product/ProductGuarantees";
+import SizeSelector from "../../../features/product/SizeSelector";
 import { IProductDetails } from "@/lib/types/products";
-import ColorSelector from "../../ui/ColorSelector";
-import QuantitySelector from "@/components/ui/QuantitySelector";
-import AddToCartButtonMobile from "@/components/ui/AddToCartButton/AddToCartButtonMobile";
+import ColorSelector from "../../../features/product/ColorSelector";
+import QuantitySelector from "@/features/product/QuantitySelector";
+import AddToCartButtonMobile from "@/features/product/AddToCartButton/AddToCartButtonMobile";
 
 export default function ProductDetailsMobile({
   title,

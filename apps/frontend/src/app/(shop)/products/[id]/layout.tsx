@@ -1,7 +1,7 @@
-import Footer from "@/components/modules/Footer";
-import Header from "@/components/modules/Header/Header";
+import Footer from "@/components/layout/Footer";
+import Header from "@/components/layout/Header/Header";
 import PopularProducts from "@/components/templates/index/PopularProducts";
-import ProductTabs from "@/components/ui/ProductTabs";
+import ProductTabs from "@/features/product/ProductTabs";
 import { mockProductDetails } from "@/mock/productCarousels";
 
 export default function Layout({

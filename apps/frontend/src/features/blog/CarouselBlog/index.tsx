@@ -5,7 +5,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { IBlog } from "@/lib/types/blogs";
-import CarouselBlogCard from "./CarouselBlogCard";
+import CarouselBlogCard from "../BlogCard";
 import { blogSwiperConfig, defaultSwiperConfig } from "@/config/swiper";
 import { useMemo } from "react";
 

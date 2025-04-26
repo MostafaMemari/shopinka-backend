@@ -1,4 +1,4 @@
-import CarouselBlog from "@/components/ui/CarouselBlog";
+import CarouselBlog from "@/features/blog/CarouselBlog";
 import { latestBlogs } from "@/mock/blogCarousels";
 
 export default function LatestBlogs() {

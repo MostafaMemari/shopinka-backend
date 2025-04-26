@@ -1,21 +1,13 @@
 import React from "react";
 
-interface CartItem {
-  sku: string;
-  title: string;
-  quantity: number;
-  color: string;
-  size: string;
-  price: number;
-}
-
 interface Props {
   originalPrice?: number;
   discountPrice?: number;
   discountPercentage?: number;
-  productDetails?: CartItem;
+  onAddToCart?: () => void;
 }
 
+<<<<<<< HEAD:apps/frontend/src/components/ui/AddToCartButton/AddToCartButtonMobile.tsx
 export default function AddToCartButtonMobile({
   originalPrice,
   discountPrice,
@@ -26,14 +18,21 @@ export default function AddToCartButtonMobile({
     console.log("محصول به سبد خرید اضافه شد:", productDetails);
   };
 
+=======
+export default function AddToCartButtonMobile({ onAddToCart, originalPrice, discountPrice, discountPercentage }: Props) {
+>>>>>>> 10f013bf818eb47032d00db373a205fdaec45600:apps/frontend/src/features/product/AddToCartButton/AddToCartButtonMobile.tsx
   return (
     <div className="fixed inset-x-0 bottom-0 z-10 bg-muted p-5">
       <div className="flex items-center justify-between gap-x-6">
         <div className="flex grow">
+<<<<<<< HEAD:apps/frontend/src/components/ui/AddToCartButton/AddToCartButtonMobile.tsx
           <button
             onClick={handleAddToCart}
             className="btn-primary w-full px-4 py-3 text-sm"
           >
+=======
+          <button onClick={onAddToCart} className="btn-primary w-full px-4 py-3 text-sm">
+>>>>>>> 10f013bf818eb47032d00db373a205fdaec45600:apps/frontend/src/features/product/AddToCartButton/AddToCartButtonMobile.tsx
             افزودن به سبد خرید
           </button>
         </div>

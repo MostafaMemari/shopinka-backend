@@ -1,15 +1,18 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import MobileCommentsSwiper from "./MobileCommentsSwiper";
 import { IComment } from "@/lib/types/comments";
-import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
-import DesktopComments from "../DesktopComments";
-import SuggestionRadio from "../SuggestionRadio";
+import DesktopComments from "@/features/comment/ProductComments/DesktopComments";
+import SuggestionRadio from "@/features/comment/SuggestionRadio";
+import Pagination from "@/components/ui/Pagination";
 
 interface Props {
   comments: IComment[];
 }
 
 export default function ProductComments({ comments }: Props) {
+  const [currentPage, setCurrentPage] = useState(1);
   return (
     <div className="py-6" id="comments">
       {/* <div className="relative mb-16 w-fit text-xl font-medium">
@@ -22,12 +25,14 @@ export default function ProductComments({ comments }: Props) {
           <div className="col-span-12 md:col-span-4 lg:col-span-3">
             <div className="grid grid-cols-2 gap-4 md:sticky md:top-32">
               <div className="text-lg">ثبت دیدگاه</div>
+
               <div className="col-span-2">
                 <div className="mb-4 text-sm text-text/60">
                   این محصول را به دیگران پیشنهاد
                 </div>
                 <SuggestionRadio />
               </div>
+
               <div className="col-span-2">
                 <label
                   htmlFor="comment"
@@ -44,6 +49,7 @@ export default function ProductComments({ comments }: Props) {
                   </span>
                 </label>
               </div>
+
               <div className="col-span-2 flex justify-end">
                 <button className="btn-primary w-full px-4 py-2 md:w-auto">
                   ارسال دیدگاه
@@ -62,7 +68,9 @@ export default function ProductComments({ comments }: Props) {
                   <DesktopComments key={comment.id} comment={comment} />
                 ))}
               </ul>
+
               {/* Pagination */}
+<<<<<<< HEAD:apps/frontend/src/components/ui/ProductComments/index.tsx
               <div className="flex items-center justify-center gap-x-4 md:justify-end">
                 <a
                   className="pagination-button flex items-center justify-center"
@@ -96,6 +104,9 @@ export default function ProductComments({ comments }: Props) {
                   <AiOutlineLeft className="h-5 w-5" />
                 </a>
               </div>
+=======
+              <Pagination currentPage={1} totalPages={2} onPageChange={setCurrentPage} />
+>>>>>>> 10f013bf818eb47032d00db373a205fdaec45600:apps/frontend/src/features/comment/ProductComments/index.tsx
             </div>
 
             {/* Mobile Comments */}

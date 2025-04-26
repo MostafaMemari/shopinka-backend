@@ -3,11 +3,11 @@
 import React, { useState } from "react";
 import { HiOutlineShieldCheck } from "react-icons/hi";
 import { IProductDetails } from "@/lib/types/products";
-import ProductProperties from "@/components/ui/ProductProperties";
-import ColorSelector from "@/components/ui/ColorSelector";
-import SizeSelector from "@/components/ui/SizeSelector";
-import QuantitySelector from "@/components/ui/QuantitySelector";
-import AddToCartButtonDesktop from "@/components/ui/AddToCartButton/AddToCartButtonDesktop";
+import ProductProperties from "@/features/product/ProductProperties";
+import ColorSelector from "@/features/product/ColorSelector";
+import SizeSelector from "@/features/product/SizeSelector";
+import QuantitySelector from "@/features/product/QuantitySelector";
+import AddToCartButtonDesktop from "@/features/product/AddToCartButton/AddToCartButtonDesktop";
 
 export default function ProductDetailsDesktop({
   title,

@@ -5,8 +5,8 @@ import LatestBlogs from "@/components/templates/index/LatestBlogs";
 import PopularProducts from "@/components/templates/index/PopularProducts";
 import SpecialOfferProducts from "@/components/templates/index/SpecialOfferProducts";
 import LatestProducts from "@/components/templates/index/LatestProducts";
-import Header from "@/components/modules/Header/Header";
-import Footer from "@/components/modules/Footer";
+import Header from "@/components/layout/Header/Header";
+import Footer from "@/components/layout/Footer";
 
 export default function Home() {
   return (

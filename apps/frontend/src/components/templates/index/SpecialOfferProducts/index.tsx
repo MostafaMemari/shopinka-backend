@@ -1,4 +1,4 @@
-import CarouselProduct from "@/components/ui/CarouselProduct";
+import CarouselProduct from "@/features/product/CarouselProduct";
 import { specialOfferProducts } from "@/mock/productCarousels";
 
 export default function SpecialOfferProducts() {
