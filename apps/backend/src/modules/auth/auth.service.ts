@@ -20,6 +20,7 @@ import { Smsir } from "sms-typescript/lib"
 import { SendOtpDto } from "./dto/authenticate.dto";
 import { UserRepository } from "../user/user.repository";
 import { Role, User } from "generated/prisma";
+import { VerifyMobileDto } from "./dto/verify-mobile.dto";
 
 @Injectable()
 export class AuthService {
@@ -157,6 +158,30 @@ export class AuthService {
         return { message: AuthMessages.VerifiedOtpSuccess }
     }
 
+    async requestVerificationMobile(user: User): Promise<{ message: string }> {
+        if (user.isVerifiedMobile) throw new BadRequestException('Your mobile already verified.')
+
+        return await this.sendOtp({ mobile: user.mobile })
+    }
+
+    async verifyMobileOtp({ otp }: VerifyMobileDto, user: User): Promise<{ message: string }> {
+        if (user.isVerifiedMobile) throw new BadRequestException('Your mobile already verified.')
+
+
+        await this.verifyOtp({ otp, mobile: user.mobile })
+
+        await this.userRepository.update({
+            where: { mobile: user.mobile },
+            data: {
+                isVerifiedMobile: true,
+                perviousMobile: null,
+                lastMobileChange: new Date(),
+                updatedAt: new Date(),
+            }
+        })
+
+        return { message: "Mobile verified successfully." }
+    }
 
     async verifyAuthenticateOtp(verifyOtpDto: VerifyOtpDto): Promise<{ message: string } & IGenerateTokens> {
         const { mobile, otp } = verifyOtpDto;
