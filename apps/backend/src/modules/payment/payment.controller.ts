@@ -46,4 +46,10 @@ export class PaymentController {
   getTransactions(@Query() transactionsFilters: QueryTransactionsDto) {
     return this.paymentService.findTransactions(transactionsFilters)
   }
+
+  @Get(":id")
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  getOneTransaction(@Param('id', ParseIntPipe) id: number) {
+    return this.paymentService.findOneTransaction(id)
+  }
 }

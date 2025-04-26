@@ -150,4 +150,9 @@ export class PaymentService {
     async findUserTransactions(userId: number, transactionsFilters: QueryMyTransactionsDto): Promise<unknown> {
         return await this.findTransactions({ userId, ...transactionsFilters })
     }
+
+    findOneTransaction(transactionId: number): Promise<never | Transaction> {
+        return this.paymentRepository.findOneOrThrow({ where: { id: transactionId }, include: { user: true } });
+    }
+
 }
