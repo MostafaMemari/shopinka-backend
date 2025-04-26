@@ -20,14 +20,34 @@ enum Role {
   CUSTOMER
 }
 
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
 model User {
-  id               Int      @id() @default(autoincrement()) @db.Integer()
-  fullName         String?  @map("full_name")
-  mobile           String   @unique()
+  id               Int           @id() @default(autoincrement()) @db.Integer()
+  fullName         String?       @map("full_name")
+  mobile           String        @unique()
+  transactions     Transaction[]
   perviousMobile   String?
   lastMobileChange DateTime?
-  isVerifiedMobile Boolean  @default(false)
-  role             Role     @default(CUSTOMER)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @default(now())
+  isVerifiedMobile Boolean       @default(false)
+  role             Role          @default(CUSTOMER)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @default(now())
+}
+
+model Transaction {
+  id        Int               @id @default(autoincrement())
+  user      User?             @relation(references: [id], fields: [userId] , onDelete: NoAction)
+  userId    Int?
+  amount    Int
+  status    TransactionStatus @default(PENDING)
+  authority String
+  sessionId String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @default(now())
 }
