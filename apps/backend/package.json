@@ -21,6 +21,7 @@
     "@nestjs/core": "^10.0.0",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/schedule": "^6.0.0",
     "@nestjs/swagger": "^7.4.0",
     "@prisma/client": "^6.6.0",
     "bcryptjs": "^3.0.2",

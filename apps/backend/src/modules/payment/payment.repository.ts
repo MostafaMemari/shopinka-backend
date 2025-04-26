@@ -9,4 +9,12 @@ export class PaymentRepository {
     create(args: Prisma.TransactionCreateArgs): Promise<Transaction> {
         return this.prismaService.transaction.create(args)
     }
+
+    findAll(args: Prisma.TransactionFindManyArgs): Promise<Transaction[]> {
+        return this.prismaService.transaction.findMany(args)
+    }
+
+    update(args: Prisma.TransactionUpdateArgs): Promise<Transaction> {
+        return this.prismaService.transaction.update(args)
+    }
 }
