@@ -9,6 +9,7 @@ import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { SwaggerConsumes } from "../../common/enums/swagger-consumes.enum";
 import { GetUser } from "../../common/decorators/get-user.decorator";
 import { SkipVerifyMobile } from "../../common/decorators/skip-verify-mobile.decorator";
+import { UserMessages } from "./enums/user.messages";
 
 @Controller("user")
 @ApiTags('user')
@@ -49,7 +50,7 @@ export class UserController {
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   remove(@Param("id", ParseIntPipe) id: number, @GetUser() user: User) {
 
-    if (id == user.id) throw new BadRequestException("You cannot remove your account.")
+    if (id == user.id) throw new BadRequestException(UserMessages.CannotRemoveYourAccount)
 
     return this.userService.remove(id);
   }

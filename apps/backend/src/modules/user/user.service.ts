@@ -8,6 +8,7 @@ import { Prisma, User } from "generated/prisma";
 import { sortObject } from "../../common/utils/functions.utils";
 import { CacheKeys } from "../../common/enums/cache.enum";
 import { AuthService } from "../auth/auth.service";
+import { UserMessages } from "./enums/user.messages";
 
 @Injectable()
 export class UserService {
@@ -62,7 +63,7 @@ export class UserService {
     const existingUser = await this.userRepository.findOne({ where: { OR: [{ mobile }], NOT: { id } } })
 
     if (existingUser) {
-      throw new ConflictException("User with this mobile already exists.")
+      throw new ConflictException(UserMessages.AlreadyExistsUser)
     }
 
     const currentUser = await this.userRepository.findOneOrThrow({ where: { id } })
@@ -75,7 +76,7 @@ export class UserService {
     //* Allow mobile number change only if 24 hours have passed since the last change
     if (isMobileChanged && currentUser.lastMobileChange) {
       if (timeSinceLastMobileChange < HOURS_LIMIT * 60 * 60 * 1000) {
-        throw new ForbiddenException('mobile change limit.');
+        throw new ForbiddenException(UserMessages.MobileChangeLimit);
       }
     }
 
@@ -86,7 +87,7 @@ export class UserService {
       data: { fullName, mobile, isVerifiedMobile: !isMobileChanged, perviousMobile: isMobileChanged ? currentUser.mobile : undefined, updatedAt: new Date() }
     })
 
-    return { message: 'Updated user successfully', user: updatedUser }
+    return { message: UserMessages.UpdatedUserSuccess, user: updatedUser }
   }
 
   async remove(id: number): Promise<{ message: string, user: User }> {
@@ -94,12 +95,12 @@ export class UserService {
 
     const removedUser = await this.userRepository.delete({ where: { id } })
 
-    return { message: "Removed user successfully", user: removedUser }
+    return { message: UserMessages.RemovedUserSuccess, user: removedUser }
   }
 
   async revertMobile(user: User): Promise<{ message: string }> {
     if (user.isVerifiedMobile && !user.perviousMobile)
-      throw new BadRequestException("Pervious mobile not found or already verified mobile.")
+      throw new BadRequestException(UserMessages.MobileVerifiedOrPrevNotFound)
 
     await this.userRepository.update({
       where: { id: user.id },
@@ -112,6 +113,6 @@ export class UserService {
       }
     })
 
-    return { message: "Reverted mobile successfully." }
+    return { message: UserMessages.RevertedMobileSuccess }
   }
 }

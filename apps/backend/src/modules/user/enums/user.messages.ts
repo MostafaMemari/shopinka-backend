@@ -1,0 +1,13 @@
+export enum UserMessages {
+    AlreadyExistsUser = 'User with this mobile already exists.',
+    NotFoundUser = 'User not found',
+    RemovedUserSuccess = 'User removed successfully',
+    AlreadyAssignedRole = 'This role is already assigned to the user.',
+    UpdatedUserSuccess = 'User Updated successfully.',
+    MobileChangeLimit = 'You can only change your mobile number once every 24 hours.',
+    VerifiedMobileSuccess = 'Mobile verified successfully.',
+    AlreadyVerifiedMobile = 'Mobile already verified.',
+    RevertedMobileSuccess = 'Reverted mobile successfully.',
+    MobileVerifiedOrPrevNotFound = 'Mobile is verified or previous mobile not found.',
+    CannotRemoveYourAccount = 'You cannot delete your account.'
+}

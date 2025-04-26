@@ -1,5 +1,7 @@
 export enum AuthMessages {
   SignoutSuccess = "User signout success",
+  AlreadyVerifiedMobile = 'Mobile already verified.',
+  VerifiedMobileSuccess = 'Mobile verified successfully.',
   InvalidRefreshToken = "Refresh token is invalid",
   NotFoundRefreshToken = "Refresh token not found",
   InvalidAccessTokenPayload = "Access token payload is invalid",

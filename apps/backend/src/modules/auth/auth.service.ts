@@ -159,13 +159,13 @@ export class AuthService {
     }
 
     async requestVerificationMobile(user: User): Promise<{ message: string }> {
-        if (user.isVerifiedMobile) throw new BadRequestException('Your mobile already verified.')
+        if (user.isVerifiedMobile) throw new BadRequestException(AuthMessages.AlreadyVerifiedMobile)
 
         return await this.sendOtp({ mobile: user.mobile })
     }
 
     async verifyMobileOtp({ otp }: VerifyMobileDto, user: User): Promise<{ message: string }> {
-        if (user.isVerifiedMobile) throw new BadRequestException('Your mobile already verified.')
+        if (user.isVerifiedMobile) throw new BadRequestException(AuthMessages.AlreadyVerifiedMobile)
 
 
         await this.verifyOtp({ otp, mobile: user.mobile })
@@ -180,7 +180,7 @@ export class AuthService {
             }
         })
 
-        return { message: "Mobile verified successfully." }
+        return { message: AuthMessages.VerifiedMobileSuccess }
     }
 
     async verifyAuthenticateOtp(verifyOtpDto: VerifyOtpDto): Promise<{ message: string } & IGenerateTokens> {
