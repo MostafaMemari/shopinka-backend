@@ -13,10 +13,7 @@ export default function Page() {
 
             <h1 className="mb-10 text-center text-lg">ورود | ثبت نام</h1>
             <div className="mb-4 space-y-4">
-              <label
-                htmlFor="username"
-                className="relative block rounded-lg border shadow-base"
-              >
+              <label htmlFor="username" className="relative block rounded-lg border shadow-base">
                 <input
                   type="text"
                   id="username"

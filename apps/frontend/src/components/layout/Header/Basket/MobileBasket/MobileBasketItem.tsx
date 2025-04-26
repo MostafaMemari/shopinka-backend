@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { HiOutlineMinus, HiOutlinePlus, HiOutlineX } from "react-icons/hi";
 
-interface MobileCartItemCardProps {
+interface MobileBasketItemProp {
   item: {
     id: number;
     title: string;
@@ -15,22 +15,12 @@ interface MobileCartItemCardProps {
   onRemove: () => void;
 }
 
-export default function MobileCartItemCard({
-  item,
-  onRemove,
-}: MobileCartItemCardProps) {
+export default function MobileBasketItem({ item, onRemove }: MobileBasketItemProp) {
   return (
     <div className="flex gap-x-2 py-5">
       <div className="relative min-w-fit">
         <Link href="/product-detail">
-          <Image
-            alt={item.title}
-            className="h-20 w-20"
-            src={item.image}
-            width={80}
-            height={80}
-            loading="lazy"
-          />
+          <Image alt={item.title} className="h-20 w-20" src={item.image} width={80} height={80} loading="lazy" />
         </Link>
         <button
           className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-background"
@@ -49,10 +39,7 @@ export default function MobileCartItemCard({
           <div>تعداد : {item.quantity}</div>
           <div className="h-3 w-px rounded-full bg-background"></div>
           <div className="flex items-center gap-x-2">
-            <span
-              className="h-4 w-4 rounded-full"
-              style={{ background: item.colorHex }}
-            ></span>
+            <span className="h-4 w-4 rounded-full" style={{ background: item.colorHex }}></span>
             <span>{item.color}</span>
           </div>
         </div>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { HiOutlineChevronLeft } from "react-icons/hi";
-import CartItemCard from "./CartItemCard";
+import DesktopBasketItem from "./DesktopBasketItem";
 
 const cartItems = [
   {
@@ -35,13 +35,9 @@ export default function CartDropdown() {
         group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 group-hover:pointer-events-auto
       `}
     >
-      {/* Head */}
       <div className="flex items-center justify-between p-5 pb-2">
         <div className="text-sm text-text/90">{cartItems.length} مورد</div>
-        <Link
-          className="flex items-center gap-x-1 text-sm text-primary"
-          href="/checkout-cart"
-        >
+        <Link className="flex items-center gap-x-1 text-sm text-primary" href="/checkout-cart">
           <div>مشاهده سبد خرید</div>
           <div>
             <HiOutlineChevronLeft className="h-5 w-5" />
@@ -49,18 +45,16 @@ export default function CartDropdown() {
         </Link>
       </div>
 
-      {/* Items */}
       <div className="h-60">
         <ul className="main-scroll h-full space-y-2 divide-y overflow-y-auto p-5 pl-2">
           {cartItems.map((item) => (
             <li key={item.id}>
-              <CartItemCard item={item} />
+              <DesktopBasketItem item={item} />
             </li>
           ))}
         </ul>
       </div>
 
-      {/* Footer */}
       <div className="flex items-center justify-between border-t p-5">
         <div className="flex flex-col items-center gap-y-1">
           <div className="text-sm text-text/60">مبلغ قابل پرداخت</div>

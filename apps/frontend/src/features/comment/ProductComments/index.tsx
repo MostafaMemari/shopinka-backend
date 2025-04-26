@@ -27,17 +27,12 @@ export default function ProductComments({ comments }: Props) {
               <div className="text-lg">ثبت دیدگاه</div>
 
               <div className="col-span-2">
-                <div className="mb-4 text-sm text-text/60">
-                  این محصول را به دیگران پیشنهاد
-                </div>
+                <div className="mb-4 text-sm text-text/60">این محصول را به دیگران پیشنهاد</div>
                 <SuggestionRadio />
               </div>
 
               <div className="col-span-2">
-                <label
-                  htmlFor="comment"
-                  className="relative block rounded-lg border shadow-base"
-                >
+                <label htmlFor="comment" className="relative block rounded-lg border shadow-base">
                   <textarea
                     id="comment"
                     rows={3}
@@ -51,62 +46,19 @@ export default function ProductComments({ comments }: Props) {
               </div>
 
               <div className="col-span-2 flex justify-end">
-                <button className="btn-primary w-full px-4 py-2 md:w-auto">
-                  ارسال دیدگاه
-                </button>
+                <button className="btn-primary w-full px-4 py-2 md:w-auto">ارسال دیدگاه</button>
               </div>
             </div>
           </div>
 
-          <div
-            className="order-first col-span-12 mb-10 md:order-last md:col-span-8 lg:col-span-9"
-            id="commentsContainer"
-          >
+          <div className="order-first col-span-12 mb-10 md:order-last md:col-span-8 lg:col-span-9" id="commentsContainer">
             <div className="hidden md:block">
               <ul className="mb-8 space-y-4 divide-gray-200 dark:divide-white/10">
-                {comments?.map((comment) => (
-                  <DesktopComments key={comment.id} comment={comment} />
-                ))}
+                {comments?.map((comment) => <DesktopComments key={comment.id} comment={comment} />)}
               </ul>
 
               {/* Pagination */}
-<<<<<<< HEAD:apps/frontend/src/components/ui/ProductComments/index.tsx
-              <div className="flex items-center justify-center gap-x-4 md:justify-end">
-                <a
-                  className="pagination-button flex items-center justify-center"
-                  href="#"
-                >
-                  <AiOutlineRight className="h-5 w-5" />
-                </a>
-                <div className="flex items-center gap-x-2">
-                  <a
-                    className="pagination-button pagination-button-active"
-                    href="#"
-                  >
-                    1
-                  </a>
-                  <p className="text-sm text-text/60">...</p>
-                  <a className="pagination-button" href="#">
-                    3
-                  </a>
-                  <a className="pagination-button" href="#">
-                    4
-                  </a>
-                  <p className="text-sm text-text/60">...</p>
-                  <a className="pagination-button" href="#">
-                    10
-                  </a>
-                </div>
-                <a
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-muted transition-all duration-200 hover:bg-primary hover:text-white dark:hover:bg-emerald-600"
-                  href="#"
-                >
-                  <AiOutlineLeft className="h-5 w-5" />
-                </a>
-              </div>
-=======
               <Pagination currentPage={1} totalPages={2} onPageChange={setCurrentPage} />
->>>>>>> 10f013bf818eb47032d00db373a205fdaec45600:apps/frontend/src/features/comment/ProductComments/index.tsx
             </div>
 
             {/* Mobile Comments */}

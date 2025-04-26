@@ -1,0 +1,46 @@
+import { IProduct } from "@/lib/types/products";
+import { FC } from "react";
+
+interface Props {
+  oldPrice?: number;
+  discount?: number;
+  newPrice?: number;
+}
+
+const ProductPrice: FC<Props> = ({ oldPrice, discount, newPrice }) => {
+  const hasDiscount = !!oldPrice && !!discount;
+
+  return (
+    <div className="flex flex-col">
+      {hasDiscount ? (
+        <>
+          <div className="h-5 text-left">
+            <del className="text-sm text-text/60 decoration-warning md:text-base">{oldPrice && oldPrice?.toLocaleString("fa-IR")}</del>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="w-9 rounded-full bg-warning py-px text-center text-sm text-white">{discount && `${discount}%`}</p>
+            </div>
+            <div className="text-sm font-bold text-primary md:text-base">
+              {newPrice && newPrice?.toLocaleString("fa-IR")}
+              <span className="text-xs font-light md:text-sm"> تومان</span>
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="flex flex-col">
+          <div className="h-5 text-left"></div>
+          <div className="flex items-center justify-between">
+            <div></div>
+            <div className="text-sm font-bold text-primary md:text-base">
+              {newPrice && newPrice.toLocaleString("fa-IR")}
+              <span className="text-xs font-light md:text-sm"> تومان</span>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ProductPrice;

@@ -7,50 +7,30 @@ interface Props {
   onAddToCart?: () => void;
 }
 
-<<<<<<< HEAD:apps/frontend/src/components/ui/AddToCartButton/AddToCartButtonMobile.tsx
-export default function AddToCartButtonMobile({
-  originalPrice,
-  discountPrice,
-  discountPercentage,
-  productDetails,
-}: Props) {
+export default function AddToCartButtonMobile({ originalPrice, discountPrice, discountPercentage }: Props) {
   const handleAddToCart = () => {
-    console.log("محصول به سبد خرید اضافه شد:", productDetails);
+    console.log("محصول به سبد خرید اضافه شد:");
   };
 
-=======
-export default function AddToCartButtonMobile({ onAddToCart, originalPrice, discountPrice, discountPercentage }: Props) {
->>>>>>> 10f013bf818eb47032d00db373a205fdaec45600:apps/frontend/src/features/product/AddToCartButton/AddToCartButtonMobile.tsx
   return (
     <div className="fixed inset-x-0 bottom-0 z-10 bg-muted p-5">
       <div className="flex items-center justify-between gap-x-6">
         <div className="flex grow">
-<<<<<<< HEAD:apps/frontend/src/components/ui/AddToCartButton/AddToCartButtonMobile.tsx
-          <button
-            onClick={handleAddToCart}
-            className="btn-primary w-full px-4 py-3 text-sm"
-          >
-=======
-          <button onClick={onAddToCart} className="btn-primary w-full px-4 py-3 text-sm">
->>>>>>> 10f013bf818eb47032d00db373a205fdaec45600:apps/frontend/src/features/product/AddToCartButton/AddToCartButtonMobile.tsx
+          <button onClick={handleAddToCart} className="btn-primary w-full px-4 py-3 text-sm">
             افزودن به سبد خرید
           </button>
         </div>
         <div className="space-y-1">
           <div className="flex items-center gap-x-2">
             <div>
-              <del className="text-sm text-text/60 decoration-warning md:text-base">
-                {originalPrice?.toLocaleString("fa-IR")}
-              </del>
+              <del className="text-sm text-text/60 decoration-warning md:text-base">{originalPrice?.toLocaleString("fa-IR")}</del>
             </div>
             <div className="flex w-10 items-center justify-center rounded-full bg-warning py-0.5 text-sm font-bold text-white dark:bg-red-600">
               {discountPercentage}%
             </div>
           </div>
           <div className="text-primary">
-            <span className="font-semibold">
-              {discountPrice?.toLocaleString("fa-IR")}
-            </span>
+            <span className="font-semibold">{discountPrice?.toLocaleString("fa-IR")}</span>
             <span className="text-sm font-light">تومان</span>
           </div>
         </div>

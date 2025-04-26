@@ -10,7 +10,6 @@ export default function BasketDropdown() {
 
   return (
     <div className="group relative">
-      {/* Basket Button */}
       <button
         className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
         onClick={() => setIsMobileDrawerOpen(true)}
@@ -23,17 +22,12 @@ export default function BasketDropdown() {
         </span>
       </button>
 
-      {/* Desktop Dropdown */}
       <div className="relative group hidden md:block">
         <DesktopBasketDropdown />
       </div>
 
-      {/* Mobile Drawer */}
       <div className="md:hidden">
-        <MobileBasketDrawer
-          isOpen={isMobileDrawerOpen}
-          onClose={() => setIsMobileDrawerOpen(false)}
-        />
+        <MobileBasketDrawer isOpen={isMobileDrawerOpen} onClose={() => setIsMobileDrawerOpen(false)} />
       </div>
     </div>
   );

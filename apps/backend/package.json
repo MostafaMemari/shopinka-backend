@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main"
   },
@@ -19,6 +19,7 @@
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^10.0.0",
+    "@nestjs/jwt": "^11.0.0",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.4.0",
     "@prisma/client": "^6.6.0",

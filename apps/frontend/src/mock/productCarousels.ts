@@ -57,6 +57,63 @@ export const mockProductDetails = {
   ],
 };
 
+export const specialOfferProducts = [
+  {
+    id: "1",
+    imageSrc: "/images/products/p7.png",
+    title: "کفش ورزشی مردانه آدیداس مدل Ultraboost 22",
+    newPrice: 100000,
+    productLink: "/products/1",
+    oldPrice: 200000,
+    discount: 25,
+  },
+  {
+    id: "2",
+    imageSrc: "/images/products/p8.png",
+    title: "کتانی زنانه نایک ایرمکس 270 با طراحی روزمره",
+    newPrice: 100000,
+    productLink: "/products/2",
+    oldPrice: 200000,
+    discount: 25,
+  },
+  {
+    id: "3",
+    imageSrc: "/images/products/p9.png",
+    title: "صندل راحتی طبی زنانه مدل Ortho Soft",
+    newPrice: 100000,
+    productLink: "/products/3",
+    oldPrice: 200000,
+    discount: 25,
+  },
+  {
+    id: "4",
+    imageSrc: "/images/products/p2.png",
+    title: "کفش پیاده‌روی اسکیچرز مردانه مدل Go Walk 6",
+    newPrice: 100000,
+    productLink: "/products/4",
+    oldPrice: 200000,
+    discount: 25,
+  },
+  {
+    id: "5",
+    imageSrc: "/images/products/p5.png",
+    title: "بوت چرمی مردانه کاترپیلار مدل Colorado",
+    newPrice: 100000,
+    productLink: "/products/5",
+    oldPrice: 200000,
+    discount: 25,
+  },
+  {
+    id: "6",
+    imageSrc: "/images/products/p4.png",
+    title: "کفش ورزشی دخترانه ریباک مدل Classic Legacy",
+    newPrice: 100000,
+    productLink: "/products/6",
+    oldPrice: 200000,
+    discount: 25,
+  },
+];
+
 export const latestProducts = [
   {
     id: "1",
@@ -144,62 +201,5 @@ export const popularProducts = [
     title: "کفش ورزشی دخترانه ریباک مدل Classic Legacy",
     newPrice: 100000,
     productLink: "/products/6",
-  },
-];
-
-export const specialOfferProducts = [
-  {
-    id: "1",
-    imageSrc: "/images/products/p7.png",
-    title: "کفش ورزشی مردانه آدیداس مدل Ultraboost 22",
-    newPrice: 100000,
-    productLink: "/products/1",
-    oldPrice: 200000,
-    discount: 25,
-  },
-  {
-    id: "2",
-    imageSrc: "/images/products/p8.png",
-    title: "کتانی زنانه نایک ایرمکس 270 با طراحی روزمره",
-    newPrice: 100000,
-    productLink: "/products/2",
-    oldPrice: 200000,
-    discount: 25,
-  },
-  {
-    id: "3",
-    imageSrc: "/images/products/p9.png",
-    title: "صندل راحتی طبی زنانه مدل Ortho Soft",
-    newPrice: 100000,
-    productLink: "/products/3",
-    oldPrice: 200000,
-    discount: 25,
-  },
-  {
-    id: "4",
-    imageSrc: "/images/products/p2.png",
-    title: "کفش پیاده‌روی اسکیچرز مردانه مدل Go Walk 6",
-    newPrice: 100000,
-    productLink: "/products/4",
-    oldPrice: 200000,
-    discount: 25,
-  },
-  {
-    id: "5",
-    imageSrc: "/images/products/p5.png",
-    title: "بوت چرمی مردانه کاترپیلار مدل Colorado",
-    newPrice: 100000,
-    productLink: "/products/5",
-    oldPrice: 200000,
-    discount: 25,
-  },
-  {
-    id: "6",
-    imageSrc: "/images/products/p4.png",
-    title: "کفش ورزشی دخترانه ریباک مدل Classic Legacy",
-    newPrice: 100000,
-    productLink: "/products/6",
-    oldPrice: 200000,
-    discount: 25,
   },
 ];
