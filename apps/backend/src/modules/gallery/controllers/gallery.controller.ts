@@ -39,7 +39,7 @@ export class GalleryController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.galleryService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.galleryService.remove(id, user.id);
   }
 }

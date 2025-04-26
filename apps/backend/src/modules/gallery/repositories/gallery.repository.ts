@@ -18,6 +18,10 @@ export class GalleryRepository {
         return this.prismaService.gallery.update(args)
     }
 
+    delete(args: Prisma.GalleryDeleteArgs): Promise<Gallery> {
+        return this.prismaService.gallery.delete(args)
+    }
+
     async findOneOrThrow(args: Prisma.GalleryFindFirstArgs): Promise<never | Gallery> {
         const gallery = await this.findOne(args)
 

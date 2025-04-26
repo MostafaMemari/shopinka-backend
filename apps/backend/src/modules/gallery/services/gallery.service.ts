@@ -48,7 +48,11 @@ export class GalleryService {
     return { message: "Updated gallery successfully.", gallery: updatedGallery }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} gallery`;
+  async remove(galleryId: number, userId: number): Promise<{ message: string, gallery: Gallery }> {
+    await this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId } })
+
+    const removedGallery = await this.galleryRepository.delete({ where: { id: galleryId, userId } })
+
+    return { message: "Removed gallery successfully", gallery: removedGallery }
   }
 }
