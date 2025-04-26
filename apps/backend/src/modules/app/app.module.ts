@@ -9,6 +9,8 @@ import { APP_PIPE } from "@nestjs/core";
 import { PrismaService } from "../prisma/prisma.service";
 import { PrismaModule } from "../prisma/prisma.module";
 import { CacheModule } from "../cache/cache.module";
+import { HttpApiModule } from "../http/http.module";
+import { PaymentModule } from "../payment/payment.module";
 
 @Module({
   imports: [
@@ -17,7 +19,9 @@ import { CacheModule } from "../cache/cache.module";
     AuthModule,
     UserModule,
     PrismaModule,
-    CacheModule
+    CacheModule,
+    HttpApiModule,
+    PaymentModule
   ],
   controllers: [],
   providers: [

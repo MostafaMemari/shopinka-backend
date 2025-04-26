@@ -86,6 +86,9 @@ importers:
       swagger-ui-express:
         specifier: ^5.0.1
         version: 5.0.1(express@5.1.0)
+      zarinpal-node-sdk:
+        specifier: ^2.1.0
+        version: 2.1.0
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.2.0
@@ -6131,6 +6134,9 @@ packages:
   z-schema@3.25.1:
     resolution: {integrity: sha512-7tDlwhrBG+oYFdXNOjILSurpfQyuVgkRe3hB2q8TEssamDHB7BbLWYkYO98nTn0FibfdFroFKDjndbgufAgS/Q==}
     hasBin: true
+
+  zarinpal-node-sdk@2.1.0:
+    resolution: {integrity: sha512-2POMwR2hT0/LB6pOxLqDRDpD+4ntqxpe7OSuNijSEdaG7PkFQLk2DS+OVWediex6ePzFTddG0OR8j/N/LAYAlA==}
 
 snapshots:
 
@@ -12838,3 +12844,10 @@ snapshots:
       validator: 10.11.0
     optionalDependencies:
       commander: 2.20.3
+
+  zarinpal-node-sdk@2.1.0:
+    dependencies:
+      axios: 1.8.4
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - debug
