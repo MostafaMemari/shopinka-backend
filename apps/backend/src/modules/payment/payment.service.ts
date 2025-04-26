@@ -2,19 +2,27 @@ import { BadRequestException, HttpException, HttpStatus, Injectable, Logger } fr
 import { ISendRequest } from '../../common/interfaces/http.interface';
 import { ZarinpalService } from '../http/zarinpal.service';
 import { PaymentRepository } from './payment.repository';
-import { Transaction, TransactionStatus } from 'generated/prisma';
+import { Prisma, Transaction, TransactionStatus } from 'generated/prisma';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { IVerifyPayment } from '../../common/interfaces/payment.interface';
 import { PaymentMessages } from './enums/payment.messages';
 import { RefundPaymentDto } from './dto/refund.dto';
+import { QueryMyTransactionsDto } from './dto/user-transactions-query.dto';
+import { CacheKeys } from '../../common/enums/cache.enum';
+import { sortObject } from '../../common/utils/functions.utils';
+import { pagination } from '../../common/utils/pagination.utils';
+import { CacheService } from '../cache/cache.service';
+import { QueryTransactionsDto } from './dto/transactions-query.dto';
 
 @Injectable()
 export class PaymentService {
     private readonly logger: Logger = new Logger(PaymentService.name)
+    private readonly CACHE_EXPIRE_TIME: number = 600 //* 5 minutes
 
     constructor(
         private readonly paymentRepository: PaymentRepository,
-        private readonly zarinpalService: ZarinpalService
+        private readonly zarinpalService: ZarinpalService,
+        private readonly cacheService: CacheService
     ) { }
 
     @Cron(CronExpression.EVERY_12_HOURS)
@@ -100,4 +108,46 @@ export class PaymentService {
         return { ...result, message: PaymentMessages.RefundedSuccess }
     }
 
+    async findTransactions({ page, take, ...transactionsFiltersDto }: QueryTransactionsDto): Promise<unknown> {
+        const paginationDto = { page, take };
+        const { authority, endDate, maxAmount, minAmount, sortBy, sortDirection, startDate, status, userId } = transactionsFiltersDto;
+
+        const sortedDto = sortObject(transactionsFiltersDto);
+
+        const cacheKey = `${CacheKeys.Transactions}_${JSON.stringify(sortedDto)}`;
+
+        const cachedTransactions = await this.cacheService.get<null | Transaction[]>(cacheKey);
+
+        if (cachedTransactions) return { ...pagination(paginationDto, cachedTransactions) }
+
+        const filters: Prisma.TransactionWhereInput = {};
+
+        if (userId) filters.userId = userId;
+        if (authority) filters.authority = authority;
+        if (status) filters.status = status;
+        if (minAmount || maxAmount) {
+            filters.amount = {};
+            if (minAmount) filters.amount.gte = minAmount * 10;
+            if (maxAmount) filters.amount.lte = maxAmount * 10;
+        }
+        if (startDate || endDate) {
+            filters.createdAt = {};
+            if (startDate) filters.createdAt.gte = new Date(startDate);
+            if (endDate) filters.createdAt.lte = new Date(endDate);
+        }
+
+        const transactions = await this.paymentRepository.findAll({
+            where: filters,
+            orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
+        });
+
+        await this.cacheService.set(cacheKey, transactions, this.CACHE_EXPIRE_TIME);
+
+        return { ...pagination(paginationDto, transactions) }
+    }
+
+
+    async findUserTransactions(userId: number, transactionsFilters: QueryMyTransactionsDto): Promise<unknown> {
+        return await this.findTransactions({ userId, ...transactionsFilters })
+    }
 }

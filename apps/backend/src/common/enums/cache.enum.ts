@@ -1,3 +1,4 @@
 export enum CacheKeys {
-    Users = "users"
+    Users = "users",
+    Transactions = 'transactions'
 }

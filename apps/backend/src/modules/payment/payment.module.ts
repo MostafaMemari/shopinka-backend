@@ -5,10 +5,11 @@ import { AuthService } from '../auth/auth.service';
 import { UserRepository } from '../user/user.repository';
 import { PaymentRepository } from './payment.repository';
 import { ScheduleModule } from '@nestjs/schedule';
+import { CacheService } from '../cache/cache.service';
 
 @Module({
   imports: [ScheduleModule.forRoot()],
   controllers: [PaymentController],
-  providers: [PaymentService , AuthService, UserRepository , PaymentRepository],
+  providers: [PaymentService , AuthService, UserRepository , PaymentRepository , CacheService],
 })
 export class PaymentModule {}
