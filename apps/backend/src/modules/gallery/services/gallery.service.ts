@@ -26,8 +26,26 @@ export class GalleryService {
     return this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId }, include: { items: true } })
   }
 
-  update(id: number, updateGalleryDto: UpdateGalleryDto) {
-    return `This action updates a #${id} gallery`;
+  async update(galleryId: number, userId: number, updateGalleryDto: UpdateGalleryDto): Promise<{ message: string, gallery: Gallery }> {
+    const existingGallery = await this.galleryRepository.findOne({
+      where: {
+        title: {
+          equals: updateGalleryDto.title, mode: "insensitive"
+        },
+        NOT: { id: galleryId },
+        userId
+      }
+    })
+
+    if (existingGallery) throw new ConflictException("Gallery with this title already exists.")
+
+
+    const updatedGallery = await this.galleryRepository.update({
+      where: { id: galleryId, userId },
+      data: { ...updateGalleryDto, updatedAt: new Date() }
+    })
+
+    return { message: "Updated gallery successfully.", gallery: updatedGallery }
   }
 
   remove(id: number) {

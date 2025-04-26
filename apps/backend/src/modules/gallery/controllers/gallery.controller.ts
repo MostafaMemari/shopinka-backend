@@ -33,8 +33,9 @@ export class GalleryController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGalleryDto: UpdateGalleryDto) {
-    return this.galleryService.update(+id, updateGalleryDto);
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateGalleryDto: UpdateGalleryDto, @GetUser() user: User) {
+    return this.galleryService.update(id, user.id, updateGalleryDto);
   }
 
   @Delete(':id')

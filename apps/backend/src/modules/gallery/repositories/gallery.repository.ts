@@ -14,6 +14,10 @@ export class GalleryRepository {
         return this.prismaService.gallery.findFirst(args)
     }
 
+    update(args: Prisma.GalleryUpdateArgs): Promise<Gallery> {
+        return this.prismaService.gallery.update(args)
+    }
+
     async findOneOrThrow(args: Prisma.GalleryFindFirstArgs): Promise<never | Gallery> {
         const gallery = await this.findOne(args)
 
