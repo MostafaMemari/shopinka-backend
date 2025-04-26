@@ -1,8 +1,9 @@
-import { BadRequestException, CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { BadRequestException, CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { SKIP_AUTH } from "../decorators/skip-auth.decorator";
 import { AuthService } from "../../modules/auth/auth.service";
 import { Request } from "express";
+import { SKIP_VERIFY_MOBILE } from "../decorators/skip-verify-mobile.decorator";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -12,6 +13,7 @@ export class AuthGuard implements CanActivate {
     ) { }
     async canActivate(context: ExecutionContext): Promise<boolean | never> {
         const isSkippedAuth = this.reflector.get<boolean>(SKIP_AUTH, context.getHandler())
+        const isSkippedVerifyMobile = this.reflector.get<boolean>(SKIP_VERIFY_MOBILE, context.getHandler())
 
         if (isSkippedAuth) return isSkippedAuth
 
@@ -23,6 +25,8 @@ export class AuthGuard implements CanActivate {
         }
 
         const user = await this.authService.verifyAccessToken({ accessToken: authorization.split(' ')[1] })
+
+        if (!isSkippedVerifyMobile && !user.isVerifiedMobile) throw new ForbiddenException("Mobile is not verified.")
 
         req.user = user
 
