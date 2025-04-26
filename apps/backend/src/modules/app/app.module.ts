@@ -11,6 +11,7 @@ import { PrismaModule } from "../prisma/prisma.module";
 import { CacheModule } from "../cache/cache.module";
 import { HttpApiModule } from "../http/http.module";
 import { PaymentModule } from "../payment/payment.module";
+import { GalleryModule } from "../gallery/gallery.module";
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { PaymentModule } from "../payment/payment.module";
     PrismaModule,
     CacheModule,
     HttpApiModule,
-    PaymentModule
+    PaymentModule,
+    GalleryModule
   ],
   controllers: [],
   providers: [
