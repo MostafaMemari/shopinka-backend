@@ -38,11 +38,12 @@ model User {
   role             Role          @default(CUSTOMER)
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @default(now())
+  galleries        Gallery[]
 }
 
 model Transaction {
   id        Int               @id @default(autoincrement())
-  user      User?             @relation(references: [id], fields: [userId] , onDelete: NoAction)
+  user      User?             @relation(references: [id], fields: [userId], onDelete: NoAction)
   userId    Int?
   amount    Int
   status    TransactionStatus @default(PENDING)
@@ -50,4 +51,31 @@ model Transaction {
   sessionId String?
   createdAt DateTime          @default(now())
   updatedAt DateTime          @default(now())
+}
+
+model Gallery {
+  id          Int           @id() @default(autoincrement())
+  title       String
+  description String?
+  userId      Int
+  user        User          @relation(fields: [userId], references: [id])
+  items       GalleryItem[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @default(now())
+}
+
+model GalleryItem {
+  id          Int      @id() @default(autoincrement())
+  galleryId   Int
+  gallery     Gallery  @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  fileUrl     String
+  fileKey     String
+  mimetype    String
+  size        Int
+  width       Int?
+  height      Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
 }
