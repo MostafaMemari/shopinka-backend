@@ -6,6 +6,7 @@ import { Transaction, TransactionStatus } from 'generated/prisma';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { IVerifyPayment } from '../../common/interfaces/payment.interface';
 import { PaymentMessages } from './enums/payment.messages';
+import { RefundPaymentDto } from './dto/refund.dto';
 
 @Injectable()
 export class PaymentService {
@@ -73,12 +74,30 @@ export class PaymentService {
             }
 
             return { redirectUrl, payment, message: PaymentMessages.VerifiedSuccess }
-        } catch (error) {   
+        } catch (error) {
             if (payment?.id && payment.status === TransactionStatus.PENDING) {
                 await this.paymentRepository.update({ where: { id: payment.id }, data: { status: TransactionStatus.FAILED } });
             }
             throw new HttpException(error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
+    }
+
+    async refund(transactionId: number, refundPaymentDto: RefundPaymentDto) {
+        const { description, reason } = refundPaymentDto;
+        const transaction = await this.paymentRepository.findOneOrThrow({ where: { id: transactionId, status: TransactionStatus.SUCCESS } });
+
+        if (!transaction.sessionId) throw new BadRequestException(PaymentMessages.SessionIdNotFound);
+
+        const result = await this.zarinpalService.refund({
+            amount: transaction.amount,
+            sessionId: transaction.sessionId.slice(0, -2),
+            description,
+            reason,
+        });
+
+        await this.paymentRepository.update({ where: { id: transactionId }, data: { status: TransactionStatus.REFUNDED } });
+
+        return { ...result, message: PaymentMessages.RefundedSuccess }
     }
 
 }

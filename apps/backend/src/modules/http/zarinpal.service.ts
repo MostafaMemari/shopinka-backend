@@ -56,6 +56,8 @@ export class ZarinpalService {
             merchantId: process.env.ZARINPAL_MERCHANT_ID,
         });
 
+        console.log(refundDto, process.env.ZARINPAL_ACCESS_TOKEN )
+
         const result = await zarinpal.refunds.create({
             amount,
             sessionId,
