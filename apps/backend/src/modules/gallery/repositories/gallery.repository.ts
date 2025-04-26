@@ -14,6 +14,10 @@ export class GalleryRepository {
         return this.prismaService.gallery.findFirst(args)
     }
 
+    findAll(args: Prisma.GalleryFindManyArgs): Promise<Gallery[]> {
+        return this.prismaService.gallery.findMany(args)
+    }
+
     update(args: Prisma.GalleryUpdateArgs): Promise<Gallery> {
         return this.prismaService.gallery.update(args)
     }

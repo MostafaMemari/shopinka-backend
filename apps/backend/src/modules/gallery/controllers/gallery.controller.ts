@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
 import { GalleryService } from '../services/gallery.service';
 import { CreateGalleryDto } from '../dto/create-gallery.dto';
 import { UpdateGalleryDto } from '../dto/update-gallery.dto';
@@ -8,6 +8,7 @@ import { GetUser } from '../../../common/decorators/get-user.decorator';
 import { Role, User } from 'generated/prisma';
 import { SwaggerConsumes } from '../../../common/enums/swagger-consumes.enum';
 import { Roles } from '../../../common/decorators/role.decorator';
+import { QueryGalleriesDto } from '../dto/gallery-query.dto';
 
 @Controller('gallery')
 @ApiTags('gallery')
@@ -23,8 +24,8 @@ export class GalleryController {
   }
 
   @Get()
-  findAll() {
-    return this.galleryService.findAll();
+  findAll(@Query() galleryQueryFiltersDto: QueryGalleriesDto, @GetUser() user: User) {
+    return this.galleryService.findAll(user.id, galleryQueryFiltersDto);
   }
 
   @Get(':id')
