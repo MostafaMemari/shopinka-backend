@@ -9,6 +9,7 @@ import { sortObject } from "../../common/utils/functions.utils";
 import { CacheKeys } from "../../common/enums/cache.enum";
 import { AuthService } from "../auth/auth.service";
 import { UserMessages } from "./enums/user.messages";
+import { ChangeRoleDto } from "./dto/change-role.dto";
 
 @Injectable()
 export class UserService {
@@ -114,5 +115,15 @@ export class UserService {
     })
 
     return { message: UserMessages.RevertedMobileSuccess }
+  }
+
+  async changeRole({ role, userId }: ChangeRoleDto) {
+    const user = await this.userRepository.findOneOrThrow({ where: { id: userId } })
+
+    if (user.role == role) throw new ConflictException(UserMessages.RoleAlreadyExistsInUser)
+
+    const updatedUser = await this.userRepository.update({ where: { id: userId }, data: { updatedAt: new Date(), role } })
+
+    return { message: UserMessages.ChangedRoleSuccess, user: updatedUser }
   }
 }
