@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional, IsNumber, IsPositive, Min, Max, IsString, IsDate, IsEnum } from "class-validator";
+import { IsOptional, IsNumber, IsPositive, Min, Max, IsString, IsDate, IsEnum, IsBoolean } from "class-validator";
 import { TransactionStatus } from "generated/prisma";
-import { PaginationDto } from "src/common/dtos/pagination.dto";
-import { SortOrder } from "src/common/enums/shared.enum";
+import { PaginationDto } from "../../../common/dtos/pagination.dto";
+import { SortOrder } from "../../../common/enums/shared.enum";
 import { Transform } from "class-transformer";
 import { TransactionsSortBy } from "../enums/sortby.enum";
 
@@ -56,6 +56,19 @@ export class QueryTransactionsDto extends PaginationDto {
         required: false,
     })
     authority?: string;
+
+    @IsBoolean()
+    @IsOptional()
+    @Transform(({ value }) => {
+        if (typeof value == 'string') return value == 'true'
+        return value
+    })
+    @ApiProperty({
+        type: 'boolean',
+        nullable: true,
+        required: false
+    })
+    includeUser?: boolean
 
     @IsOptional()
     @IsDate()

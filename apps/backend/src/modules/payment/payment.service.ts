@@ -110,7 +110,7 @@ export class PaymentService {
 
     async findTransactions({ page, take, ...transactionsFiltersDto }: QueryTransactionsDto): Promise<unknown> {
         const paginationDto = { page, take };
-        const { authority, endDate, maxAmount, minAmount, sortBy, sortDirection, startDate, status, userId } = transactionsFiltersDto;
+        const { authority, endDate, maxAmount, minAmount, sortBy, sortDirection, startDate, status, userId, includeUser } = transactionsFiltersDto;
 
         const sortedDto = sortObject(transactionsFiltersDto);
 
@@ -139,6 +139,7 @@ export class PaymentService {
         const transactions = await this.paymentRepository.findAll({
             where: filters,
             orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
+            include: { user: includeUser }
         });
 
         await this.cacheService.set(cacheKey, transactions, this.CACHE_EXPIRE_TIME);
