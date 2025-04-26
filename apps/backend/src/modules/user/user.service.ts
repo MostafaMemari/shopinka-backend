@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from "@nestjs/common";
+import { ConflictException, ForbiddenException, Injectable } from "@nestjs/common";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UserRepository } from "./user.repository";
 import { QueryUsersDto } from "./dto/users-query.dto";
@@ -67,13 +67,23 @@ export class UserService {
 
     const currentUser = await this.userRepository.findOneOrThrow({ where: { id } })
 
-    const isChangedMobile = mobile && mobile !== currentUser.mobile
+    const isMobileChanged = mobile && mobile !== currentUser.mobile
 
-    if (isChangedMobile) await this.authService.sendOtp({ mobile })
+    const HOURS_LIMIT = 24;
+    const timeSinceLastMobileChange = Date.now() - new Date(currentUser.lastMobileChange).getTime();
+
+    //* Allow mobile number change only if 24 hours have passed since the last change
+    if (isMobileChanged && currentUser.lastMobileChange) {
+      if (timeSinceLastMobileChange < HOURS_LIMIT * 60 * 60 * 1000) {
+        throw new ForbiddenException('mobile change limit.');
+      }
+    }
+
+    if (isMobileChanged) await this.authService.sendOtp({ mobile })
 
     const updatedUser = await this.userRepository.update({
       where: { id },
-      data: { fullName, mobile, isVerifiedMobile: !isChangedMobile, perviousMobile: isChangedMobile ? currentUser.mobile : undefined, updatedAt: new Date() }
+      data: { fullName, mobile, isVerifiedMobile: !isMobileChanged, perviousMobile: isMobileChanged ? currentUser.mobile : undefined, updatedAt: new Date() }
     })
 
     return { message: 'Updated user successfully', user: updatedUser }
