@@ -1,17 +1,22 @@
 "use client";
 
-import BoxedBreadcrumb from "@/components/ui/Breadcrumb/BoxedBreadcrumb";
-import CompactBreadcrumb from "@/components/ui/Breadcrumb/CompactBreadcrumb";
-import ProductDetailsDesktop from "@/components/templates/ProductDetails/ProductDetailsDesktop";
-import ProductDetailsMobile from "@/components/templates/ProductDetails/ProductDetailsMobile";
-import ProductGallery from "@/features/product/ProductGallery/ProductGallery";
-import ProductGuarantees from "@/features/product/ProductGuarantees";
-import ProductImageSwiper from "@/features/product/ProductImageSwiper";
-import React from "react";
-import { IProduct } from "@/lib/types/products";
-import ProductActions from "@/features/product/ActionButtons";
+import { FC } from "react";
 
-export default function ProductDetails({ product }: { product: IProduct }) {
+import { IProduct } from "@/lib/types/products";
+import BoxedBreadcrumb from "../Common/BoxedBreadcrumb";
+import ProductActions from "./ActionButtons";
+import ProductGuarantees from "./ProductGuarantees";
+import CompactBreadcrumb from "../Common/CompactBreadcrumb";
+import ProductImageSwiper from "./ProductImageSwiper";
+import MobileDetails from "./MobileDetails";
+import ProductGallery from "./ProductGallery/ProductGallery";
+import DesktopDetails from "./DesktopDetails";
+
+interface Props {
+  product: IProduct;
+}
+
+const ProductDetails: FC<Props> = ({ product }) => {
   const breadcrumbItems = [
     { label: "روتی کالا", href: "/" },
     { label: "مردانه", href: "/men" },
@@ -29,17 +34,11 @@ export default function ProductDetails({ product }: { product: IProduct }) {
             <div className="mb-10 grid grow grid-cols-12 gap-4">
               <div className="col-span-4">
                 <ProductActions productId={product.id} />
-                <ProductGallery
-                  images={galleryImages}
-                  title={`تصاویر محصول ${product.title}`}
-                />
+                <ProductGallery images={galleryImages} title={`تصاویر محصول ${product.title}`} />
               </div>
               <div className="col-span-8 flex min-h-full flex-col">
                 <CompactBreadcrumb items={breadcrumbItems} />
-                <ProductDetailsDesktop
-                  title={product.title}
-                  price={product.newPrice}
-                />
+                <DesktopDetails product={product} />
               </div>
             </div>
             <div className="flex justify-between gap-4">
@@ -49,21 +48,18 @@ export default function ProductDetails({ product }: { product: IProduct }) {
         </div>
       </div>
 
-      {/* ---------------- Mobile -------------- */}
       <div className="lg:hidden">
         <CompactBreadcrumb items={breadcrumbItems} />
         <div className="mb-6 relative rounded-lg bg-muted p-4 shadow-base">
           <div className="mb-4">
             <ProductImageSwiper images={galleryImages} />
-            <CompactBreadcrumb items={breadcrumbItems} />
           </div>
           <ProductActions productId={product.id} />
-          <ProductDetailsMobile
-            title={product.title}
-            price={product.newPrice}
-          />
+          <MobileDetails product={product} />
         </div>
       </div>
     </>
   );
-}
+};
+
+export default ProductDetails;

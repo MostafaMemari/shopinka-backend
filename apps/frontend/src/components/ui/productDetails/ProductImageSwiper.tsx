@@ -16,24 +16,11 @@ interface Props {
 export default function ProductImageSwiper({ images }: Props) {
   return (
     <div className="swiper product-image-mobile-swiper">
-      <Swiper
-        modules={[Pagination]}
-        pagination={{ el: ".swiper-pagination" }}
-        spaceBetween={0}
-        slidesPerView={1}
-        className="w-full"
-      >
+      <Swiper modules={[Pagination]} pagination={{ el: ".swiper-pagination" }} spaceBetween={0} slidesPerView={1} className="w-full">
         {images?.length &&
           images.map((image, index) => (
             <SwiperSlide key={index}>
-              <Image
-                src={image.src}
-                alt={image.alt}
-                width={500}
-                height={500}
-                className="mx-auto"
-                loading="lazy"
-              />
+              <Image src={image.src} alt={image.alt} width={500} height={500} className="mx-auto" loading="lazy" />
             </SwiperSlide>
           ))}
       </Swiper>

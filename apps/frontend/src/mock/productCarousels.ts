@@ -1,9 +1,10 @@
 export const mockProductDetails = {
   id: "1",
-  title: "کفش ورزشی نایک",
+  title: "کفش ورزشی ناییک",
   slug: "nike-sport-shoe",
-  price: 1250000,
-  discount: 150000,
+  newPrice: 100000,
+  oldPrice: 200000,
+  discount: 50,
   status: "in_stock",
   specifications: "لورم تستی",
   description: "این کفش برای فعالیت‌های ورزشی و استفاده روزمره طراحی شده است.",

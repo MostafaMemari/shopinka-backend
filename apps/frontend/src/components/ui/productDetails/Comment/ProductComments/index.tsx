@@ -3,9 +3,9 @@
 import React, { useState } from "react";
 import MobileCommentsSwiper from "./MobileCommentsSwiper";
 import { IComment } from "@/lib/types/comments";
-import DesktopComments from "@/features/comment/ProductComments/DesktopComments";
-import SuggestionRadio from "@/features/comment/SuggestionRadio";
+import SuggestionRadio from "@/components/ui/productDetails/Comment/SuggestionRadio";
 import Pagination from "@/components/ui/Pagination";
+import DesktopComments from "./DesktopComments";
 
 interface Props {
   comments: IComment[];

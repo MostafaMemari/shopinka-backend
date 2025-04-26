@@ -57,13 +57,7 @@ export default function BannerSlider() {
             {sideBanners.map((banner) => (
               <div key={banner.id}>
                 <Link href={banner.link}>
-                  <Image
-                    src={banner.image}
-                    alt=""
-                    width={400}
-                    height={220}
-                    className="h-full w-full rounded-lg shadow-base"
-                  />
+                  <Image src={banner.image} alt="" width={400} height={220} className="h-full w-full rounded-lg shadow-base" />
                 </Link>
               </div>
             ))}

@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import ProductDescription from "../ProductDescription";
-import ProductComments from "../../comment/ProductComments";
 import { IComment } from "@/lib/types/comments";
 import ProductSpecifications from "../ProductSpecifications";
+import ProductComments from "@/components/ui/productDetails/Comment/ProductComments";
 
 interface Tab {
   id: string;
@@ -21,11 +21,7 @@ interface Props {
   comments: IComment[];
 }
 
-export default function ProductTabs({
-  description,
-  specifications,
-  comments,
-}: Props) {
+export default function ProductTabs({ description, specifications, comments }: Props) {
   const tabs: Tab[] = [
     { id: "description", title: "معرفی" },
     { id: "specs", title: "مشخصات" },
