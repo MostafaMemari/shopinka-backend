@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException, Injectable } from "@nestjs/common";
+import { BadRequestException, ConflictException, ForbiddenException, Injectable } from "@nestjs/common";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UserRepository } from "./user.repository";
 import { QueryUsersDto } from "./dto/users-query.dto";
@@ -95,5 +95,23 @@ export class UserService {
     const removedUser = await this.userRepository.delete({ where: { id } })
 
     return { message: "Removed user successfully", user: removedUser }
+  }
+
+  async revertMobile(user: User): Promise<{ message: string }> {
+    if (user.isVerifiedMobile && !user.perviousMobile)
+      throw new BadRequestException("Pervious mobile not found or already verified mobile.")
+
+    await this.userRepository.update({
+      where: { id: user.id },
+      data: {
+        isVerifiedMobile: true,
+        perviousMobile: null,
+        lastMobileChange: null,
+        mobile: user.perviousMobile,
+        updatedAt: new Date()
+      }
+    })
+
+    return { message: "Reverted mobile successfully." }
   }
 }

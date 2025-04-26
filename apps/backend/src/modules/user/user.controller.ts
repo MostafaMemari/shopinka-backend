@@ -8,6 +8,7 @@ import { QueryUsersDto } from "./dto/users-query.dto";
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { SwaggerConsumes } from "../../common/enums/swagger-consumes.enum";
 import { GetUser } from "../../common/decorators/get-user.decorator";
+import { SkipVerifyMobile } from "../../common/decorators/skip-verify-mobile.decorator";
 
 @Controller("user")
 @ApiTags('user')
@@ -24,6 +25,12 @@ export class UserController {
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   findAll(@Query() queryUsersDto: QueryUsersDto) {
     return this.userService.findAll(queryUsersDto);
+  }
+
+  @Get('revert-mobile')
+  @SkipVerifyMobile()
+  revertMobile(@GetUser() user: User) {
+    return this.userService.revertMobile(user)
   }
 
   @Get(":id")
@@ -46,4 +53,5 @@ export class UserController {
 
     return this.userService.remove(id);
   }
+
 }
