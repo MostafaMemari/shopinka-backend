@@ -1,15 +1,18 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import MobileCommentsSwiper from "./MobileCommentsSwiper";
 import { IComment } from "@/lib/types/comments";
-import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
-import DesktopComments from "../DesktopComments";
-import SuggestionRadio from "../SuggestionRadio";
+import DesktopComments from "@/features/comment/ProductComments/DesktopComments";
+import SuggestionRadio from "@/features/comment/SuggestionRadio";
+import Pagination from "@/components/ui/Pagination";
 
 interface Props {
   comments: IComment[];
 }
 
 export default function ProductComments({ comments }: Props) {
+  const [currentPage, setCurrentPage] = useState(1);
   return (
     <div className="py-6" id="comments">
       {/* <div className="relative mb-16 w-fit text-xl font-medium">
@@ -22,10 +25,12 @@ export default function ProductComments({ comments }: Props) {
           <div className="col-span-12 md:col-span-4 lg:col-span-3">
             <div className="grid grid-cols-2 gap-4 md:sticky md:top-32">
               <div className="text-lg">ثبت دیدگاه</div>
+
               <div className="col-span-2">
                 <div className="mb-4 text-sm text-text/60">این محصول را به دیگران پیشنهاد</div>
                 <SuggestionRadio />
               </div>
+
               <div className="col-span-2">
                 <label htmlFor="comment" className="relative block rounded-lg border shadow-base">
                   <textarea
@@ -39,6 +44,7 @@ export default function ProductComments({ comments }: Props) {
                   </span>
                 </label>
               </div>
+
               <div className="col-span-2 flex justify-end">
                 <button className="btn-primary w-full px-4 py-2 md:w-auto">ارسال دیدگاه</button>
               </div>
@@ -50,34 +56,9 @@ export default function ProductComments({ comments }: Props) {
               <ul className="mb-8 space-y-4 divide-gray-200 dark:divide-white/10">
                 {comments?.map((comment) => <DesktopComments key={comment.id} comment={comment} />)}
               </ul>
+
               {/* Pagination */}
-              <div className="flex items-center justify-center gap-x-4 md:justify-end">
-                <a className="pagination-button flex items-center justify-center" href="#">
-                  <AiOutlineRight className="h-5 w-5" />
-                </a>
-                <div className="flex items-center gap-x-2">
-                  <a className="pagination-button pagination-button-active" href="#">
-                    1
-                  </a>
-                  <p className="text-sm text-text/60">...</p>
-                  <a className="pagination-button" href="#">
-                    3
-                  </a>
-                  <a className="pagination-button" href="#">
-                    4
-                  </a>
-                  <p className="text-sm text-text/60">...</p>
-                  <a className="pagination-button" href="#">
-                    10
-                  </a>
-                </div>
-                <a
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-muted transition-all duration-200 hover:bg-primary hover:text-white dark:hover:bg-emerald-600"
-                  href="#"
-                >
-                  <AiOutlineLeft className="h-5 w-5" />
-                </a>
-              </div>
+              <Pagination currentPage={1} totalPages={2} onPageChange={setCurrentPage} />
             </div>
 
             {/* Mobile Comments */}

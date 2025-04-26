@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import ProductDescription from "../ProductDescription";
-import ProductComments from "../ProductComments";
+import ProductComments from "../../comment/ProductComments";
 import { IComment } from "@/lib/types/comments";
 import ProductSpecifications from "../ProductSpecifications";
 

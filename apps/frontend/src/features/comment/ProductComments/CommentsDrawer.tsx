@@ -1,7 +1,7 @@
 import React from "react";
-import Drawer from "../Drawer";
 import { AiOutlineLike, AiOutlineDislike, AiOutlineLeft } from "react-icons/ai";
 import { IComment } from "@/lib/types/comments";
+import Drawer from "@/components/ui/Drawer";
 
 interface Props {
   isOpen: boolean;

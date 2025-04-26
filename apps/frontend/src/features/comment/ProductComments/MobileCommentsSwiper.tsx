@@ -28,7 +28,6 @@ export default function MobileCommentsSwiper({ comments }: Props) {
           460: { slidesPerView: 1.6, spaceBetween: 10 },
           640: { slidesPerView: 2.2, spaceBetween: 10 },
         }}
-        className="product-comments-swiper"
       >
         {comments.map((comment) => (
           <SwiperSlide key={comment.id}>
@@ -73,7 +72,6 @@ export default function MobileCommentsSwiper({ comments }: Props) {
           </SwiperSlide>
         ))}
 
-        {/* مشاهده بیشتر */}
         <SwiperSlide>
           <div className="flex h-64 items-center justify-center">
             <button

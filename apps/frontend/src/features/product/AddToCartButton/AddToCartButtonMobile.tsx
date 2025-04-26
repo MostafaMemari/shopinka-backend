@@ -1,31 +1,18 @@
 import React from "react";
 
-interface CartItem {
-  sku: string;
-  title: string;
-  quantity: number;
-  color: string;
-  size: string;
-  price: number;
-}
-
 interface Props {
   originalPrice?: number;
   discountPrice?: number;
   discountPercentage?: number;
-  productDetails?: CartItem;
+  onAddToCart?: () => void;
 }
 
-export default function AddToCartButtonMobile({ originalPrice, discountPrice, discountPercentage, productDetails }: Props) {
-  const handleAddToCart = () => {
-    console.log("محصول به سبد خرید اضافه شد:", productDetails);
-  };
-
+export default function AddToCartButtonMobile({ onAddToCart, originalPrice, discountPrice, discountPercentage }: Props) {
   return (
     <div className="fixed inset-x-0 bottom-0 z-10 bg-muted p-5">
       <div className="flex items-center justify-between gap-x-6">
         <div className="flex grow">
-          <button onClick={handleAddToCart} className="btn-primary w-full px-4 py-3 text-sm">
+          <button onClick={onAddToCart} className="btn-primary w-full px-4 py-3 text-sm">
             افزودن به سبد خرید
           </button>
         </div>

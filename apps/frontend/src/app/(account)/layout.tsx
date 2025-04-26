@@ -1,5 +1,5 @@
-import Header from "@/components/modules/Header/Header";
-import ProfileSidebar from "@/components/modules/ProfileSlider";
+import Header from "@/components/layout/Header/Header";
+import ProfileSidebar from "@/components/layout/ProfileSlider";
 
 export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

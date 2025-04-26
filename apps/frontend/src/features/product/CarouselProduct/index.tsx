@@ -51,10 +51,9 @@ export default function CarouselProduct({ title, viewAllLink, viewAllText = "Ù…Ø
               <ProductCard product={product} />
             </SwiperSlide>
           ))}
+          <div className="swiper-button-next absolute left-0 top-1/2 z-10 -translate-y-1/2 cursor-pointer" />
+          <div className="swiper-button-prev absolute right-0 top-1/2 z-10 -translate-y-1/2 cursor-pointer" />
         </Swiper>
-
-        <div className="swiper-button-next absolute left-0 top-1/2 z-10 -translate-y-1/2 cursor-pointer" />
-        <div className="swiper-button-prev absolute right-0 top-1/2 z-10 -translate-y-1/2 cursor-pointer" />
       </div>
     </section>
   );

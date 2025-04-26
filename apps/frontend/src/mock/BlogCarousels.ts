@@ -27,4 +27,11 @@ export const latestBlogs = [
     date: "29 / شهریور / 1403",
     link: "/blog-detail",
   },
+  {
+    id: 4,
+    imageSrc: "/images/blog/blog2.jpg",
+    title: "مزایا و معایب گوشی‌های سری گلکسی S21",
+    date: "29 / شهریور / 1403",
+    link: "/blog-detail",
+  },
 ];

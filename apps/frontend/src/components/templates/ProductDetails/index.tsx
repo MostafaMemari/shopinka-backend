@@ -1,15 +1,15 @@
 "use client";
 
-import ProductActions from "@/components/ui/ActionButtons";
 import BoxedBreadcrumb from "@/components/ui/Breadcrumb/BoxedBreadcrumb";
 import CompactBreadcrumb from "@/components/ui/Breadcrumb/CompactBreadcrumb";
 import ProductDetailsDesktop from "@/components/templates/ProductDetails/ProductDetailsDesktop";
 import ProductDetailsMobile from "@/components/templates/ProductDetails/ProductDetailsMobile";
-import ProductGallery from "@/components/ui/ProductGallery/ProductGallery";
-import ProductGuarantees from "@/components/ui/ProductGuarantees";
-import ProductImageSwiper from "@/components/ui/ProductImageSwiper";
+import ProductGallery from "@/features/product/ProductGallery/ProductGallery";
+import ProductGuarantees from "@/features/product/ProductGuarantees";
+import ProductImageSwiper from "@/features/product/ProductImageSwiper";
 import React from "react";
 import { IProduct } from "@/lib/types/products";
+import ProductActions from "@/features/product/ActionButtons";
 
 export default function ProductDetails({ product }: { product: IProduct }) {
   const breadcrumbItems = [
