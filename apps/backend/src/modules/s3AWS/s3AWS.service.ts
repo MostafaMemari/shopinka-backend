@@ -11,6 +11,7 @@ import {
 import { lookup } from 'mime-types';
 import * as path from 'path';
 import * as sharp from 'sharp'
+import { IUploadSingleFile } from '../../common/interfaces/aws.interface';
 
 @Injectable()
 export class AwsService {
@@ -45,7 +46,7 @@ export class AwsService {
         folderName?: string;
         isPublic?: boolean;
         contentType?: string;
-    }): Promise<{ key: string; url: string; isPublic: boolean }> {
+    }): Promise<IUploadSingleFile> {
         let ext: string;
         let extractedContentType: string;
         let bufferFile: Buffer;
@@ -64,13 +65,15 @@ export class AwsService {
 
         extractedContentType = contentType || lookup(ext) || 'application/octet-stream';
 
+        const optimizeBuffer = await this.optimizeBuffer(bufferFile)
+
         const command = new PutObjectCommand({
             Bucket: this.bucketName,
             Key: key,
-            Body: await this.optimizeBuffer(bufferFile),
+            Body: optimizeBuffer,
             ContentType: contentType,
             ACL: isPublic ? 'public-read' : 'private',
-            ContentLength: bufferFile.length,
+            ContentLength: optimizeBuffer.length,
         });
 
         const uploadResult = await this.client.send(command);
@@ -176,7 +179,9 @@ export class AwsService {
                 fit: 'inside',
                 withoutEnlargement: true,
             })
-            .toFormat('webp', { quality: 80 })
+            .jpeg({ quality: 80 })
+            .png({ quality: 80 })
+            .webp({ quality: 80 })
             .toBuffer();
     }
 }
