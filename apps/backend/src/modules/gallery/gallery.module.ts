@@ -7,6 +7,7 @@ import { UserRepository } from '../user/user.repository';
 import { CacheService } from '../cache/cache.service';
 import { GalleryItemService } from './services/gallery-item.service';
 import { GalleryItemController } from './controllers/gallery-item.controller';
+import { GalleryItemRepository } from './repositories/gallery-item.repository';
 
 @Module({
   controllers: [GalleryController, GalleryItemController],
@@ -16,7 +17,8 @@ import { GalleryItemController } from './controllers/gallery-item.controller';
     AuthService,
     UserRepository,
     CacheService,
-    GalleryItemService
+    GalleryItemService,
+    GalleryItemRepository
   ],
 })
 export class GalleryModule { }
