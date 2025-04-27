@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { GalleryItem, Prisma } from "generated/prisma";
 import { PrismaService } from "../../../modules/prisma/prisma.service";
 
@@ -8,5 +8,17 @@ export class GalleryItemRepository {
 
     create(args: Prisma.GalleryItemCreateArgs): Promise<GalleryItem> {
         return this.prismaService.galleryItem.create(args)
+    }
+
+    findOne(args: Prisma.GalleryItemFindFirstArgs): Promise<null | GalleryItem> {
+        return this.prismaService.galleryItem.findFirst(args)
+    }
+
+    async findOneOrThrow(args: Prisma.GalleryItemFindFirstArgs): Promise<never | GalleryItem> {
+        const galleryItem = await this.findOne(args)
+
+        if (!galleryItem) throw new NotFoundException("Gallery item not found")
+
+        return galleryItem
     }
 }

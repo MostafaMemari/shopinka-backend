@@ -5,6 +5,7 @@ import { GalleryItemRepository } from '../repositories/gallery-item.repository';
 import { AwsService } from '../../../modules/s3AWS/s3AWS.service';
 import { GalleryRepository } from '../repositories/gallery.repository';
 import { IUploadSingleFile } from '../../../common/interfaces/aws.interface';
+import { GalleryItem } from 'generated/prisma';
 
 @Injectable()
 export class GalleryItemService {
@@ -14,7 +15,7 @@ export class GalleryItemService {
     private readonly galleryRepository: GalleryRepository
   ) { }
 
-  async create(userId: number, file: Express.Multer.File, createGalleryItemDto: CreateGalleryItemDto) {
+  async create(userId: number, file: Express.Multer.File, createGalleryItemDto: CreateGalleryItemDto): Promise<{ message: string, galleryItem: GalleryItem }> {
     let uploadedFile: null | IUploadSingleFile = null
 
     try {
@@ -50,8 +51,8 @@ export class GalleryItemService {
     return `This action returns all galleryItem`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} galleryItem`;
+  findOne(id: number, userId: number): Promise<never | GalleryItem> {
+    return this.galleryItemRepository.findOneOrThrow({ where: { id, gallery: { userId } }, include: { gallery: true } })
   }
 
   update(id: number, updateGalleryItemDto: UpdateGalleryItemDto) {

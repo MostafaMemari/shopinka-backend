@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseIntPipe } from '@nestjs/common';
 import { GalleryItemService } from '../services/gallery-item.service';
 import { CreateGalleryItemDto } from '../dto/create-gallery-item.dto';
 import { UpdateGalleryItemDto } from '../dto/update-gallery-item.dto';
@@ -32,8 +32,8 @@ export class GalleryItemController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.galleryItemService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.galleryItemService.findOne(id, user.id);
   }
 
   @Patch(':id')
