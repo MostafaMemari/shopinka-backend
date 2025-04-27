@@ -13,6 +13,7 @@ import { AuthDecorator } from '../../../common/decorators/auth.decorator';
 import { Roles } from '../../../common/decorators/role.decorator';
 import { GalleryItemQueryDto } from '../dto/gallery-item-query.dto';
 import { MoveGalleryItemDto } from '../dto/move-gallery-item.dto';
+import { DuplicateGalleryItemDto } from '../dto/duplicate-gallery-item.dto';
 
 @Controller('gallery-item')
 @ApiTags('gallery-item')
@@ -42,6 +43,12 @@ export class GalleryItemController {
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   move(@Param("id", ParseIntPipe) id: number, @Body() moveGalleryItemDto: MoveGalleryItemDto, @GetUser() user: User) {
     return this.galleryItemService.move(id, user.id, moveGalleryItemDto)
+  }
+  
+  @Patch('duplicate/:id')
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  duplicate(@Param("id", ParseIntPipe) id: number, @Body() duplicateGalleryItemDto: DuplicateGalleryItemDto, @GetUser() user: User) {
+    return this.galleryItemService.duplicate(id, user.id, duplicateGalleryItemDto)
   }
 
   @Patch(':id')

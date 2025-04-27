@@ -187,6 +187,20 @@ export class AwsService {
         await this.removeFile(oldKey)
     }
 
+    async copyFile(oldKey: string, newKey: string, isPublic: boolean = true): Promise<void | never> {
+        const command = new CopyObjectCommand({
+            Bucket: this.bucketName,
+            CopySource: `${this.bucketName}/${oldKey}`,
+            Key: newKey,
+            ACL: isPublic ? "public-read" : "private"
+        })
+
+        const copyResult = await this.client.send(command)
+
+        if (copyResult.$metadata.httpStatusCode !== 200) throw new BadRequestException("Copy file failed.")
+    }
+
+
     private optimizeBuffer(buffer: Buffer): Promise<Buffer> {
         return sharp(buffer)
             .resize(1200, 1200, {

@@ -12,6 +12,7 @@ import { sortObject } from '../../../common/utils/functions.utils';
 import { CacheKeys } from '../../../common/enums/cache.enum';
 import { pagination } from '../../../common/utils/pagination.utils';
 import { MoveGalleryItemDto } from '../dto/move-gallery-item.dto';
+import { DuplicateGalleryItemDto } from '../dto/duplicate-gallery-item.dto';
 
 @Injectable()
 export class GalleryItemService {
@@ -110,7 +111,7 @@ export class GalleryItemService {
     return { message: "Updated gallery item successfully.", galleryItem: updatedGalleryItem }
   }
 
-  async move(galleryItemId: number, userId: number, { galleryId }: MoveGalleryItemDto) {
+  async move(galleryItemId: number, userId: number, { galleryId }: MoveGalleryItemDto): Promise<{ message: string, galleryItem: GalleryItem }> {
     const galleryItem = await this.galleryItemRepository.findOneOrThrow({ where: { id: galleryItemId, gallery: { userId }, NOT: { galleryId } } })
     const gallery = await this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId } })
 
@@ -122,6 +123,30 @@ export class GalleryItemService {
     const updatedGalleryItem = await this.galleryItemRepository.update({ where: { id: galleryItemId, gallery: { userId } }, data: { fileKey: newKey, fileUrl, galleryId } })
 
     return { message: "Moved galleryItem to other gallery successfully", galleryItem: updatedGalleryItem }
+  }
+
+  async duplicate(galleryItemId: number, userId: number, { galleryId }: DuplicateGalleryItemDto): Promise<{ message: string, galleryItem: GalleryItem }> {
+    const galleryItem = await this.galleryItemRepository.findOneOrThrow({ where: { id: galleryItemId, gallery: { userId }, NOT: { galleryId } } })
+    const gallery = await this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId } })
+
+    const newKey = `gallery-${userId}-${gallery.id}/${galleryItem.fileKey.split('/')[1]}`
+
+    await this.awsService.copyFile(galleryItem.fileKey, newKey)
+    const { url: fileUrl } = await this.awsService.getFileUrl(newKey)
+
+    const newGalleryItem = await this.galleryItemRepository.create({
+      data: {
+        fileKey: newKey,
+        fileUrl,
+        mimetype: galleryItem.mimetype,
+        size: galleryItem.size,
+        title: galleryItem.title,
+        galleryId,
+        description: galleryItem.description
+      }
+    })
+
+    return { message: "Duplicated galleryItem to other gallery successfully", galleryItem: newGalleryItem }
   }
 
   async remove(galleryItemId: number, userId: number): Promise<{ message: string, galleryItem: GalleryItem }> {
