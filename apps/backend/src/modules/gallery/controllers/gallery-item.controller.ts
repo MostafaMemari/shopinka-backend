@@ -7,18 +7,23 @@ import { FileInterceptor } from "@nestjs/platform-express"
 import { memoryStorage } from 'multer'
 import { FileValidatorPipe } from '../../../common/pipes/file-validator.pipe';
 import { SwaggerConsumes } from '../../../common/enums/swagger-consumes.enum';
+import { GetUser } from '../../../common/decorators/get-user.decorator';
+import { Role, User } from 'generated/prisma';
+import { AuthDecorator } from '../../../common/decorators/auth.decorator';
+import { Roles } from '../../../common/decorators/role.decorator';
 
 @Controller('gallery-item')
 @ApiTags('gallery-item')
+@AuthDecorator()
+@Roles(Role.ADMIN, Role.SUPER_ADMIN)
 export class GalleryItemController {
   constructor(private readonly galleryItemService: GalleryItemService) { }
 
   @Post()
-  @UseInterceptors(FileInterceptor('image', { storage: memoryStorage(), limits: { fields: 1 } }))
+  @UseInterceptors(FileInterceptor('image', { storage: memoryStorage(), limits: { files: 1 } }))
   @ApiConsumes(SwaggerConsumes.MultipartData)
-  create(@UploadedFile(FileValidatorPipe) file: Express.Multer.File, @Body() createGalleryItemDto: CreateGalleryItemDto) {
-    console.log(file, createGalleryItemDto)
-    return this.galleryItemService.create(createGalleryItemDto);
+  create(@UploadedFile(FileValidatorPipe) file: Express.Multer.File, @Body() createGalleryItemDto: CreateGalleryItemDto, @GetUser() user: User) {
+    return this.galleryItemService.create(user.id, file, createGalleryItemDto);
   }
 
   @Get()

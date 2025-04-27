@@ -74,8 +74,6 @@ model GalleryItem {
   fileKey     String
   mimetype    String
   size        Int
-  width       Int?
-  height      Int?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
 }

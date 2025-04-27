@@ -8,6 +8,7 @@ import { CacheService } from '../cache/cache.service';
 import { GalleryItemService } from './services/gallery-item.service';
 import { GalleryItemController } from './controllers/gallery-item.controller';
 import { GalleryItemRepository } from './repositories/gallery-item.repository';
+import { AwsService } from '../s3AWS/s3AWS.service';
 
 @Module({
   controllers: [GalleryController, GalleryItemController],
@@ -18,7 +19,8 @@ import { GalleryItemRepository } from './repositories/gallery-item.repository';
     UserRepository,
     CacheService,
     GalleryItemService,
-    GalleryItemRepository
+    GalleryItemRepository,
+    AwsService
   ],
 })
 export class GalleryModule { }
