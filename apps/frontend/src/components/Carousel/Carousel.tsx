@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useMemo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, FreeMode } from "swiper/modules";
 import "swiper/css";
@@ -22,23 +22,31 @@ const Carousel: FC<CarouselProps> = ({
   slidesPerView = 1,
   spaceBetween = 0,
   breakpoints,
-  navigation = false,
+  navigation = true,
   freeMode = false,
   className = "",
 }) => {
+  const modules = useMemo(() => {
+    const mods = [];
+    if (navigation) mods.push(Navigation);
+    if (freeMode) mods.push(FreeMode);
+    return mods;
+  }, [navigation, freeMode]);
+
   return (
     <Swiper
       slidesPerView={slidesPerView}
       spaceBetween={spaceBetween}
       breakpoints={breakpoints}
-      navigation={navigation ? { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" } : false}
+      navigation={navigation ? { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" } : undefined}
       freeMode={freeMode}
-      modules={[Navigation, FreeMode]}
+      modules={modules}
       className={className}
     >
       {items.map((item, index) => (
         <SwiperSlide key={index}>{item}</SwiperSlide>
       ))}
+
       {navigation && (
         <>
           <div className="swiper-button-next" />

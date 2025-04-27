@@ -1,17 +1,10 @@
+import { ICartItem } from "@/lib/types/cart";
 import Image from "next/image";
 import Link from "next/link";
 import { HiOutlineMinus, HiOutlinePlus, HiOutlineX } from "react-icons/hi";
 
 interface MobileBasketItemProp {
-  item: {
-    id: number;
-    title: string;
-    image: string;
-    quantity: number;
-    color: string;
-    colorHex: string;
-    price: string;
-  };
+  item: ICartItem;
   onRemove: () => void;
 }
 

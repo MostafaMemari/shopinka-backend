@@ -1,31 +1,22 @@
-"use client";
-
 import Link from "next/link";
 import { HiOutlineChevronLeft } from "react-icons/hi";
 import DesktopBasketItem from "./DesktopBasketItem";
 
-const cartItems = [
-  {
-    id: 1,
-    title: "تیشرت اسپورت مردانه",
-    image: "/images/products/p1.png",
-    quantity: 2,
-    color: "طوسی",
-    colorHex: "rgb(128, 128, 128)",
-    price: 180000,
-  },
-  {
-    id: 2,
-    title: "کفش ورزشی زنانه",
-    image: "/images/products/p2.png",
-    quantity: 1,
-    color: "قرمز",
-    colorHex: "red",
-    price: 280000,
-  },
-];
+interface DesktopBasketDropdownProps {
+  cartItems: {
+    id: number;
+    title: string;
+    image: string;
+    quantity: number;
+    color: string;
+    colorHex: string;
+    price: number;
+  }[];
+}
 
-export default function CartDropdown() {
+export default function DesktopBasketDropdown({ cartItems = [] }: DesktopBasketDropdownProps) {
+  const totalPrice = cartItems?.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0;
+
   return (
     <div
       className={`
@@ -59,7 +50,7 @@ export default function CartDropdown() {
         <div className="flex flex-col items-center gap-y-1">
           <div className="text-sm text-text/60">مبلغ قابل پرداخت</div>
           <div className="text-text/90">
-            <span className="font-bold">1,200,000</span>
+            <span className="font-bold">{totalPrice.toLocaleString()}</span>
             <span className="text-sm"> تومان</span>
           </div>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import Link from "next/link";
 import { blogSwiperConfig } from "@/config/swiper";
 import { IBlog } from "@/lib/types/blogs";
@@ -12,21 +12,10 @@ interface Props {
   viewAllLink: string;
   viewAllText?: string;
   blogs: IBlog[];
-  slidesPerView?: number;
-  spaceBetween?: number;
-  breakpoints?: Record<number, { slidesPerView: number; spaceBetween: number }>;
 }
 
-const CarouselBlog: FC<Props> = ({
-  sectionTitle,
-  viewAllLink,
-  viewAllText = "مشاهده همه",
-  blogs,
-  slidesPerView = blogSwiperConfig.slidesPerView,
-  spaceBetween = blogSwiperConfig.spaceBetween,
-  breakpoints = blogSwiperConfig.breakpoints,
-}) => {
-  const blogItems = blogs.map((blog) => <BlogCard key={blog.id} blog={blog} />);
+const CarouselBlog: FC<Props> = ({ sectionTitle, viewAllLink, viewAllText = "مشاهده همه", blogs }) => {
+  const blogItems = useMemo(() => blogs.map((blog) => <BlogCard key={blog.id} blog={blog} />), [blogs]);
 
   return (
     <section className="mb-6">
@@ -44,9 +33,9 @@ const CarouselBlog: FC<Props> = ({
         </div>
         <Carousel
           items={blogItems}
-          slidesPerView={slidesPerView}
-          spaceBetween={spaceBetween}
-          breakpoints={breakpoints}
+          slidesPerView={blogSwiperConfig.slidesPerView}
+          spaceBetween={blogSwiperConfig.spaceBetween}
+          breakpoints={blogSwiperConfig.breakpoints}
           navigation={true}
           freeMode={true}
           className="blog-slider"

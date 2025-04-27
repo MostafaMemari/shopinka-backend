@@ -1,14 +1,14 @@
 import { HiOutlineMoon, HiOutlineSun } from "react-icons/hi";
 import DesktopLogo from "../ui/Logo/DesktopLogo";
-import SearchBar from "./SearchBar/SearchBarDesktop";
 import ProfileDropdown from "./ProfileDropdown";
-import BasketDropdown from "./Basket";
-import SearchBarMobile from "./SearchBar/SearchBarMobile";
 import MobileLogo from "../ui/Logo/MobileLogo";
 import TopbarContainer from "./TopbarContainer";
 import DesktopNavbar from "./DesktopNavbar";
 import { categories } from "@/mock/categories";
 import MobileMenu from "./MobileMenu";
+import SearchBarBase from "./SearchBar";
+import { mockProductItems } from "@/mock/searchBar";
+import BasketDropdown from "./Basket/BasketDropdown";
 
 function Header() {
   return (
@@ -17,7 +17,7 @@ function Header() {
         <div className="hidden md:block">
           <div className="container relative z-30 flex max-w-[1680px] items-center justify-between gap-x-4 bg-muted py-4">
             <DesktopLogo />
-            <SearchBar />
+            <SearchBarBase recentSearchItems={mockProductItems} productItems={mockProductItems} />
             <div className="flex">
               <ProfileDropdown />
               <BasketDropdown />
@@ -33,10 +33,7 @@ function Header() {
           </div>
 
           {/* <!-- Bottom Section --> */}
-          <div
-            className="absolute left-0 right-0 top-full z-20 bg-muted shadow-xs transition-transform duration-300"
-            data-onscrollclassname="-translate-y-full"
-          >
+          <div className="absolute left-0 right-0 top-full z-20 bg-muted shadow-xs transition-transform duration-300">
             <DesktopNavbar categories={categories} />
           </div>
         </div>
@@ -55,7 +52,7 @@ function Header() {
           </div>
           <div className="absolute left-0 right-0 top-full z-20 bg-muted pb-4 transition-transform duration-300" id="mobile-header-bottom">
             <div className="container">
-              <SearchBarMobile />
+              <SearchBarBase isMobile recentSearchItems={mockProductItems} productItems={mockProductItems} />
             </div>
           </div>
         </div>

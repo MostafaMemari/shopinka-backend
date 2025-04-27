@@ -3,15 +3,14 @@
 import { FC } from "react";
 
 import { IProduct } from "@/lib/types/products";
-import BoxedBreadcrumb from "../ui/BoxedBreadcrumb";
 import ProductActions from "./ActionButtons";
 import ProductGuarantees from "./ProductGuarantees";
-import CompactBreadcrumb from "../ui/CompactBreadcrumb";
 import ProductImageSwiper from "./ProductImageSwiper";
 import MobileDetails from "./MobileDetails";
 import ProductGallery from "./ProductGallery/ProductGallery";
 import DesktopDetails from "./DesktopDetails";
-import BreadcrumbContainer from "../product/BreadcrumbContainer";
+import BreadcrumbContainer from "./BreadcrumbContainer";
+import { CompactBreadcrumb } from "../ui/breadcrumb";
 
 interface Props {
   product: IProduct;
@@ -50,10 +49,10 @@ const ProductDetails: FC<Props> = ({ product }) => {
       </div>
 
       <div className="lg:hidden">
-        <CompactBreadcrumb items={breadcrumbItems} />
         <div className="mb-6 relative rounded-lg bg-muted p-4 shadow-base">
           <div className="mb-4">
             <ProductImageSwiper images={galleryImages} />
+            <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
           </div>
           <ProductActions productId={product.id} />
           <MobileDetails product={product} />

@@ -1,14 +1,25 @@
 import Link from "next/link";
 import { HiOutlineX } from "react-icons/hi";
-import MobileCartItemCard from "./MobileBasketItem";
-import { cartItems } from "@/mock/basketItem";
+import MobileBasketItem from "./MobileBasketItem";
 
 interface MobileBasketDrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  cartItems: {
+    id: number;
+    title: string;
+    image: string;
+    quantity: number;
+    color: string;
+    colorHex: string;
+    price: number;
+  }[];
 }
 
-export default function MobileBasketDrawer({ isOpen, onClose }: MobileBasketDrawerProps) {
+export default function MobileBasketDrawer({ isOpen, onClose, cartItems = [] }: MobileBasketDrawerProps) {
+  const totalPrice = cartItems?.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0;
+  const totalQuantity = cartItems?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+
   return (
     <>
       {isOpen && <div className="fixed inset-0 z-30 bg-black/50" onClick={onClose}></div>}
@@ -30,10 +41,10 @@ export default function MobileBasketDrawer({ isOpen, onClose }: MobileBasketDraw
             type="button"
           >
             <HiOutlineX className="h-5 w-5" />
-            <span className="sr-only">Close menu</span>
+            <span className="sr-only">بستن منو</span>
           </button>
           <h5 className="text-lg text-text/90">
-            سبد خرید <span className="text-sm">( 4 )</span>
+            سبد خرید <span className="text-sm">({totalQuantity})</span>
           </h5>
         </div>
 
@@ -41,7 +52,7 @@ export default function MobileBasketDrawer({ isOpen, onClose }: MobileBasketDraw
           <ul className="main-scroll h-full space-y-2 divide-y overflow-y-auto p-4">
             {cartItems.map((item) => (
               <li key={item.id}>
-                <MobileCartItemCard item={item} onRemove={() => console.log("remove item", item.id)} />
+                <MobileBasketItem item={item} onRemove={() => console.log("remove item", item.id)} />
               </li>
             ))}
           </ul>
@@ -51,7 +62,7 @@ export default function MobileBasketDrawer({ isOpen, onClose }: MobileBasketDraw
           <div className="flex flex-col items-center gap-y-1">
             <div className="text-sm text-text/60">مبلغ قابل پرداخت</div>
             <div className="text-text/90">
-              <span className="font-bold">1,200,000</span>
+              <span className="font-bold">{totalPrice.toLocaleString()}</span>
               <span className="text-sm">تومان</span>
             </div>
           </div>

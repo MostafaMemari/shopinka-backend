@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import Link from "next/link";
 import { HiChevronLeft } from "react-icons/hi";
 import ProductCard from "@/components/ProductCard";
@@ -13,22 +13,10 @@ interface Props {
   viewAllLink: string;
   viewAllText?: string;
   products: IProduct[];
-  slidesPerView?: number;
-  spaceBetween?: number;
-  breakpoints?: Record<number, { slidesPerView: number; spaceBetween: number }>;
 }
 
-const CarouselProduct: FC<Props> = ({
-  title,
-  viewAllLink,
-  viewAllText = "مشاهده همه",
-  products,
-  slidesPerView = productSwiperConfig.slidesPerView,
-  spaceBetween = productSwiperConfig.spaceBetween,
-  breakpoints = productSwiperConfig.breakpoints,
-}) => {
-  const productItems = products.map((product) => <ProductCard key={product.id} product={product} />);
-
+const CarouselProduct: FC<Props> = ({ title, viewAllLink, viewAllText = "مشاهده همه", products }) => {
+  const productItems = useMemo(() => products.map((product) => <ProductCard key={product.id} product={product} />), [products]);
   return (
     <section className="mb-8">
       <div className="container relative">
@@ -41,9 +29,9 @@ const CarouselProduct: FC<Props> = ({
         </div>
         <Carousel
           items={productItems}
-          slidesPerView={slidesPerView}
-          spaceBetween={spaceBetween}
-          breakpoints={breakpoints}
+          slidesPerView={productSwiperConfig.slidesPerView}
+          spaceBetween={productSwiperConfig.spaceBetween}
+          breakpoints={productSwiperConfig.breakpoints}
           navigation={true}
           className="product-slider"
         />
