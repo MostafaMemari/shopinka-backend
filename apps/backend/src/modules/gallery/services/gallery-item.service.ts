@@ -101,7 +101,7 @@ export class GalleryItemService {
     return this.galleryItemRepository.findOneOrThrow({ where: { id, gallery: { userId } }, include: { gallery: true } })
   }
 
-  async update(galleryItemId: number, userId: number, updateGalleryItemDto: UpdateGalleryItemDto) {
+  async update(galleryItemId: number, userId: number, updateGalleryItemDto: UpdateGalleryItemDto): Promise<{ message: string, galleryItem: GalleryItem }> {
     await this.galleryItemRepository.findOneOrThrow({ where: { id: galleryItemId, gallery: { userId } } })
 
     const updatedGalleryItem = await this.galleryItemRepository.update({ where: { id: galleryItemId, gallery: { userId } }, data: { ...updateGalleryItemDto } })
@@ -109,7 +109,13 @@ export class GalleryItemService {
     return { message: "Updated gallery item successfully.", galleryItem: updatedGalleryItem }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} galleryItem`;
+  async remove(galleryItemId: number, userId: number): Promise<{ message: string, galleryItem: GalleryItem }> {
+    const galleryItem = await this.galleryItemRepository.findOneOrThrow({ where: { id: galleryItemId, gallery: { userId } } })
+
+    await this.awsService.removeFile(galleryItem.fileKey)
+
+    const removedGalleryItem = await this.galleryItemRepository.delete({ where: { id: galleryItemId, gallery: { userId } } })
+
+    return { message: "Removed gallery item successfully.", galleryItem: removedGalleryItem }
   }
 }

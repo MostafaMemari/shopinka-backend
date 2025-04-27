@@ -44,7 +44,7 @@ export class GalleryItemController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.galleryItemService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.galleryItemService.remove(id, user.id);
   }
 }
