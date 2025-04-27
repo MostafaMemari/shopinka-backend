@@ -5,12 +5,12 @@ import {
     PutObjectCommand,
     DeleteObjectCommand,
     DeleteObjectsCommand,
-    CopyObjectCommand,
     ListObjectsV2Command,
     GetObjectCommand,
 } from '@aws-sdk/client-s3';
 import { lookup } from 'mime-types';
 import * as path from 'path';
+import * as sharp from 'sharp'
 
 @Injectable()
 export class AwsService {
@@ -67,7 +67,7 @@ export class AwsService {
         const command = new PutObjectCommand({
             Bucket: this.bucketName,
             Key: key,
-            Body: bufferFile,
+            Body: await this.optimizeBuffer(bufferFile),
             ContentType: contentType,
             ACL: isPublic ? 'public-read' : 'private',
             ContentLength: bufferFile.length,
@@ -114,29 +114,6 @@ export class AwsService {
         return await this.uploadSingleFile({ fileMetadata: file, folderName, isPublic: true });
     }
 
-    async moveFileToCourseFolder(oldKey: string, id: string) {
-        const newKey = oldKey.replace('temp', id);
-        const commandCopy = new CopyObjectCommand({
-            Bucket: this.bucketName,
-            CopySource: `${this.bucketName}/${oldKey}`,
-            Key: newKey,
-            ACL: 'public-read',
-        });
-
-        await this.client.send(commandCopy);
-
-        const commandDelete = new DeleteObjectCommand({
-            Bucket: this.bucketName,
-            Key: oldKey,
-        });
-
-        await this.client.send(commandDelete);
-
-        return {
-            url: (await this.getFileUrl(newKey)).url,
-            key: newKey,
-        };
-    }
 
     async removeFolder(folderPath: string) {
         const listCommand = new ListObjectsV2Command({
@@ -190,5 +167,16 @@ export class AwsService {
         } catch (error) {
             throw new InternalServerErrorException(error);
         }
+    }
+
+
+    private optimizeBuffer(buffer: Buffer): Promise<Buffer> {
+        return sharp(buffer)
+            .resize(1200, 1200, {
+                fit: 'inside',
+                withoutEnlargement: true,
+            })
+            .toFormat('webp', { quality: 80 })
+            .toBuffer();
     }
 }
