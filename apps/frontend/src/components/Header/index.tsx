@@ -3,12 +3,12 @@ import DesktopLogo from "../ui/Logo/DesktopLogo";
 import ProfileDropdown from "./ProfileDropdown";
 import MobileLogo from "../ui/Logo/MobileLogo";
 import TopbarContainer from "./TopbarContainer";
-import DesktopNavbar from "./DesktopNavbar";
 import { categories } from "@/mock/categories";
 import MobileMenu from "./MobileMenu";
 import SearchBarBase from "./SearchBar";
 import { mockProductItems } from "@/mock/searchBar";
 import BasketDropdown from "./Basket/BasketDropdown";
+import DesktopNavbar from "./DesktopNavbar";
 
 function Header() {
   return (
@@ -32,8 +32,7 @@ function Header() {
             </div>
           </div>
 
-          {/* <!-- Bottom Section --> */}
-          <div className="absolute left-0 right-0 top-full z-20 bg-muted shadow-xs transition-transform duration-300">
+          <div className="absolute left-0 right-0 z-20">
             <DesktopNavbar categories={categories} />
           </div>
         </div>
