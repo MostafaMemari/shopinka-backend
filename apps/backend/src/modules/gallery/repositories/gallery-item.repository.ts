@@ -10,6 +10,10 @@ export class GalleryItemRepository {
         return this.prismaService.galleryItem.create(args)
     }
 
+    createMany(args: Prisma.GalleryItemCreateManyAndReturnArgs): Promise<GalleryItem[]> {
+        return this.prismaService.galleryItem.createManyAndReturn(args)
+    }
+
     findOne(args: Prisma.GalleryItemFindFirstArgs): Promise<null | GalleryItem> {
         return this.prismaService.galleryItem.findFirst(args)
     }

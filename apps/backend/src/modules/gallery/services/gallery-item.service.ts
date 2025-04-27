@@ -25,32 +25,32 @@ export class GalleryItemService {
     private readonly cacheService: CacheService
   ) { }
 
-  async create(userId: number, file: Express.Multer.File, createGalleryItemDto: CreateGalleryItemDto): Promise<{ message: string, galleryItem: GalleryItem }> {
-    let uploadedFile: null | IUploadSingleFile = null
+  async create(userId: number, files: Express.Multer.File[], createGalleryItemDto: CreateGalleryItemDto): Promise<{ message: string, galleryItems: GalleryItem[] }> {
+    let uploadedFiles: IUploadSingleFile[] = []
 
     try {
       const gallery = await this.galleryRepository.findOneOrThrow({ where: { id: createGalleryItemDto.galleryId, userId } })
 
       const folderName = `gallery-${gallery.id}-${userId}`
 
-      uploadedFile = await this.awsService.uploadSingleFile({ fileMetadata: file, folderName, isPublic: false })
+      uploadedFiles = await this.awsService.uploadMultiFiles(folderName, files)
 
-      const galleryItem = await this.galleryItemRepository.create({
-        data: {
-          fileKey: uploadedFile.key,
-          fileUrl: uploadedFile.url,
-          mimetype: file.mimetype,
-          size: file.size,
-          title: createGalleryItemDto.title ?? file.originalname,
+      const galleryItems = await this.galleryItemRepository.createMany({
+        data: uploadedFiles.map((file, index) => ({
+          fileKey: file.key,
+          fileUrl: file.url,
+          mimetype: files[index].mimetype,
+          size: files[index].size,
+          title: createGalleryItemDto.title ?? files[index].originalname,
           description: createGalleryItemDto.description,
           galleryId: gallery.id
-        },
+        })),
         include: { gallery: true }
       })
 
-      return { message: "Item created successfully.", galleryItem }
+      return { message: "Items created successfully.", galleryItems }
     } catch (error) {
-      if (uploadedFile) await this.awsService.removeFile(uploadedFile.key)
+      if (uploadedFiles.length) await this.awsService.removeFiles(uploadedFiles.map((file => file.key)))
 
       throw error
     }

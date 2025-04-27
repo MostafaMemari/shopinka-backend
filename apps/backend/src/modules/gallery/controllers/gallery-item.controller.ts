@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseIntPipe, Query, UploadedFiles } from '@nestjs/common';
 import { GalleryItemService } from '../services/gallery-item.service';
 import { CreateGalleryItemDto } from '../dto/create-gallery-item.dto';
 import { UpdateGalleryItemDto } from '../dto/update-gallery-item.dto';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { FileInterceptor } from "@nestjs/platform-express"
+import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express"
 import { memoryStorage } from 'multer'
 import { FileValidatorPipe } from '../../../common/pipes/file-validator.pipe';
 import { SwaggerConsumes } from '../../../common/enums/swagger-consumes.enum';
@@ -23,10 +23,10 @@ export class GalleryItemController {
   constructor(private readonly galleryItemService: GalleryItemService) { }
 
   @Post()
-  @UseInterceptors(FileInterceptor('image', { storage: memoryStorage(), limits: { files: 1 } }))
+  @UseInterceptors(FilesInterceptor('image', 5, { storage: memoryStorage(), limits: { files: 5 } }))
   @ApiConsumes(SwaggerConsumes.MultipartData)
-  create(@UploadedFile(FileValidatorPipe) file: Express.Multer.File, @Body() createGalleryItemDto: CreateGalleryItemDto, @GetUser() user: User) {
-    return this.galleryItemService.create(user.id, file, createGalleryItemDto);
+  create(@UploadedFiles(FileValidatorPipe) files: Express.Multer.File[], @Body() createGalleryItemDto: CreateGalleryItemDto, @GetUser() user: User) {
+    return this.galleryItemService.create(user.id, files, createGalleryItemDto);
   }
 
   @Get()
@@ -44,7 +44,7 @@ export class GalleryItemController {
   move(@Param("id", ParseIntPipe) id: number, @Body() moveGalleryItemDto: MoveGalleryItemDto, @GetUser() user: User) {
     return this.galleryItemService.move(id, user.id, moveGalleryItemDto)
   }
-  
+
   @Patch('duplicate/:id')
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   duplicate(@Param("id", ParseIntPipe) id: number, @Body() duplicateGalleryItemDto: DuplicateGalleryItemDto, @GetUser() user: User) {

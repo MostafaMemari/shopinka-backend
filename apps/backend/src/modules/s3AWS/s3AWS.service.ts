@@ -113,6 +113,20 @@ export class AwsService {
         return Buffer.concat(chunks);
     }
 
+    async uploadMultiFiles(folderName: string, files: Express.Multer.File[], isPublic: boolean = false) {
+        const uploadedFiles: IUploadSingleFile[] = []
+        try {
+            for (const file of files) {
+                const uploadedFile = await this.uploadSingleFile({ fileMetadata: file, folderName, isPublic })
+                uploadedFiles.push(uploadedFile)
+            }
+
+            return uploadedFiles
+        } catch (error) {
+            await this.removeFiles(uploadedFiles.map(file => file.key))
+        }
+    }
+
     async uploadTempFile(file: Partial<Express.Multer.File>, folderName: string) {
         // const folderName = `academy/course/temp`;
         return await this.uploadSingleFile({ fileMetadata: file, folderName, isPublic: true });
