@@ -8,9 +8,9 @@ import { IUploadSingleFile } from '../../../common/interfaces/aws.interface';
 import { GalleryItem, Prisma } from 'generated/prisma';
 import { GalleryItemQueryDto } from '../dto/gallery-item-query.dto';
 import { CacheService } from '../../../modules/cache/cache.service';
-import { sortObject } from 'src/common/utils/functions.utils';
-import { CacheKeys } from 'src/common/enums/cache.enum';
-import { pagination } from 'src/common/utils/pagination.utils';
+import { sortObject } from '../../../common/utils/functions.utils';
+import { CacheKeys } from '../../../common/enums/cache.enum';
+import { pagination } from '../../../common/utils/pagination.utils';
 
 @Injectable()
 export class GalleryItemService {
@@ -55,7 +55,7 @@ export class GalleryItemService {
 
   }
 
-  async findAll(userId: number, { page, take, ...galleryItemsDto }: GalleryItemQueryDto) {
+  async findAll(userId: number, { page, take, ...galleryItemsDto }: GalleryItemQueryDto): Promise<unknown> {
     const paginationDto = { page, take };
     const { endDate, sortBy, sortDirection, startDate, description, includeGallery, title, fileKey, fileUrl, galleryId, mimetype, maxSize, minSize } = galleryItemsDto;
 
@@ -101,8 +101,12 @@ export class GalleryItemService {
     return this.galleryItemRepository.findOneOrThrow({ where: { id, gallery: { userId } }, include: { gallery: true } })
   }
 
-  update(id: number, updateGalleryItemDto: UpdateGalleryItemDto) {
-    return `This action updates a #${id} galleryItem`;
+  async update(galleryItemId: number, userId: number, updateGalleryItemDto: UpdateGalleryItemDto) {
+    await this.galleryItemRepository.findOneOrThrow({ where: { id: galleryItemId, gallery: { userId } } })
+
+    const updatedGalleryItem = await this.galleryItemRepository.update({ where: { id: galleryItemId, gallery: { userId } }, data: { ...updateGalleryItemDto } })
+
+    return { message: "Updated gallery item successfully.", galleryItem: updatedGalleryItem }
   }
 
   remove(id: number) {
