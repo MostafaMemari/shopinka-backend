@@ -125,7 +125,6 @@ export class AwsService {
         });
 
         const { Contents } = await this.client.send(listCommand);
-        console.log(Contents);
 
         if (!Contents || Contents.length === 0) return;
 

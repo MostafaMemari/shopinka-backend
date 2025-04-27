@@ -9,6 +9,7 @@ import { CacheKeys } from '../../../common/enums/cache.enum';
 import { CacheService } from '../../../modules/cache/cache.service';
 import { pagination } from '../../../common/utils/pagination.utils';
 import { GalleryMessages } from '../enums/gallery.messages';
+import { AwsService } from '../../../modules/s3AWS/s3AWS.service';
 
 @Injectable()
 export class GalleryService {
@@ -16,7 +17,8 @@ export class GalleryService {
 
   constructor(
     private readonly cacheService: CacheService,
-    private readonly galleryRepository: GalleryRepository
+    private readonly galleryRepository: GalleryRepository,
+    private readonly awsService: AwsService,
   ) { }
 
   async create(userId: number, createGalleryDto: CreateGalleryDto): Promise<{ message: string, gallery: Gallery }> {
@@ -90,6 +92,8 @@ export class GalleryService {
 
   async remove(galleryId: number, userId: number): Promise<{ message: string, gallery: Gallery }> {
     await this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId } })
+
+    await this.awsService.removeFolder(`gallery-${galleryId}-${userId}`)
 
     const removedGallery = await this.galleryRepository.delete({ where: { id: galleryId, userId } })
 
