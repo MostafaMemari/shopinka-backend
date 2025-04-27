@@ -12,6 +12,7 @@ import { CacheModule } from "../cache/cache.module";
 import { HttpApiModule } from "../http/http.module";
 import { PaymentModule } from "../payment/payment.module";
 import { GalleryModule } from "../gallery/gallery.module";
+import { AwsModule } from "../s3AWS/s3AWS.module";
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { GalleryModule } from "../gallery/gallery.module";
     CacheModule,
     HttpApiModule,
     PaymentModule,
-    GalleryModule
+    GalleryModule,
+    AwsModule
   ],
   controllers: [],
   providers: [
