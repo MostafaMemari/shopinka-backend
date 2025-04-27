@@ -12,6 +12,7 @@ import { Role, User } from 'generated/prisma';
 import { AuthDecorator } from '../../../common/decorators/auth.decorator';
 import { Roles } from '../../../common/decorators/role.decorator';
 import { GalleryItemQueryDto } from '../dto/gallery-item-query.dto';
+import { MoveGalleryItemDto } from '../dto/move-gallery-item.dto';
 
 @Controller('gallery-item')
 @ApiTags('gallery-item')
@@ -35,6 +36,12 @@ export class GalleryItemController {
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
     return this.galleryItemService.findOne(id, user.id);
+  }
+
+  @Patch('move/:id')
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  move(@Param("id", ParseIntPipe) id: number, @Body() moveGalleryItemDto: MoveGalleryItemDto, @GetUser() user: User) {
+    return this.galleryItemService.move(id, user.id, moveGalleryItemDto)
   }
 
   @Patch(':id')

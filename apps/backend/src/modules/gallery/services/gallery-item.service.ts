@@ -11,6 +11,7 @@ import { CacheService } from '../../../modules/cache/cache.service';
 import { sortObject } from '../../../common/utils/functions.utils';
 import { CacheKeys } from '../../../common/enums/cache.enum';
 import { pagination } from '../../../common/utils/pagination.utils';
+import { MoveGalleryItemDto } from '../dto/move-gallery-item.dto';
 
 @Injectable()
 export class GalleryItemService {
@@ -107,6 +108,20 @@ export class GalleryItemService {
     const updatedGalleryItem = await this.galleryItemRepository.update({ where: { id: galleryItemId, gallery: { userId } }, data: { ...updateGalleryItemDto } })
 
     return { message: "Updated gallery item successfully.", galleryItem: updatedGalleryItem }
+  }
+
+  async move(galleryItemId: number, userId: number, { galleryId }: MoveGalleryItemDto) {
+    const galleryItem = await this.galleryItemRepository.findOneOrThrow({ where: { id: galleryItemId, gallery: { userId }, NOT: { galleryId } } })
+    const gallery = await this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId } })
+
+    const newKey = `gallery-${userId}-${gallery.id}/${galleryItem.fileKey.split('/')[1]}`
+
+    await this.awsService.moveFile(galleryItem.fileKey, newKey)
+    const { url: fileUrl } = await this.awsService.getFileUrl(newKey)
+
+    const updatedGalleryItem = await this.galleryItemRepository.update({ where: { id: galleryItemId, gallery: { userId } }, data: { fileKey: newKey, fileUrl, galleryId } })
+
+    return { message: "Moved galleryItem to other gallery successfully", galleryItem: updatedGalleryItem }
   }
 
   async remove(galleryItemId: number, userId: number): Promise<{ message: string, galleryItem: GalleryItem }> {

@@ -7,6 +7,7 @@ import {
     DeleteObjectsCommand,
     ListObjectsV2Command,
     GetObjectCommand,
+    CopyObjectCommand,
 } from '@aws-sdk/client-s3';
 import { lookup } from 'mime-types';
 import * as path from 'path';
@@ -171,6 +172,20 @@ export class AwsService {
         }
     }
 
+    async moveFile(oldKey: string, newKey: string, isPublic: boolean = true): Promise<void> {
+        const command = new CopyObjectCommand({
+            Bucket: this.bucketName,
+            CopySource: `${this.bucketName}/${oldKey}`,
+            Key: newKey,
+            ACL: isPublic ? "public-read" : "private"
+        })
+
+        const copyResult = await this.client.send(command)
+
+        if (copyResult.$metadata.httpStatusCode !== 200) throw new BadRequestException("Move file failed.")
+
+        await this.removeFile(oldKey)
+    }
 
     private optimizeBuffer(buffer: Buffer): Promise<Buffer> {
         return sharp(buffer)
