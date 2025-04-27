@@ -19,12 +19,7 @@ interface ProfileSidebarProps {
   notificationCount: number;
 }
 
-export default function ProfileSidebar({
-  fullName,
-  phoneNumber,
-  profileImage,
-  notificationCount,
-}: ProfileSidebarProps) {
+export default function ProfileSidebar({ fullName, phoneNumber, profileImage, notificationCount }: ProfileSidebarProps) {
   const pathname = usePathname();
 
   const menuItems = [
@@ -48,22 +43,12 @@ export default function ProfileSidebar({
 
   return (
     <div className="sticky top-32 hidden w-full overflow-hidden rounded-lg bg-muted shadow-base lg:block">
-      <div
-        dir="ltr"
-        className="max-h-[calc(90vh_-_100px)] overflow-y-auto p-4 xl:p-6"
-      >
+      <div dir="ltr" className="max-h-[calc(90vh_-_100px)] overflow-y-auto p-4 xl:p-6">
         <div dir="rtl">
-          {/* Head */}
           <div className="mb-2 flex items-center justify-between border-b border-gray-200 pb-6 dark:border-white/10">
             <div className="flex items-center gap-x-4">
               <div>
-                <Image
-                  src={profileImage || "/images/user.png"}
-                  className="h-12 w-12 rounded-full"
-                  alt="Profile"
-                  width={100}
-                  height={100}
-                />
+                <Image src={profileImage || "/images/user.png"} className="h-12 w-12 rounded-full" alt="Profile" width={100} height={100} />
               </div>
               <div className="flex flex-col">
                 <div className="line-clamp-1">{fullName}</div>

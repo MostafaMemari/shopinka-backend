@@ -1,60 +1,17 @@
 import Link from "next/link";
 import { HiOutlineX } from "react-icons/hi";
-import MobileCartItemCard from "./MobileCartItemCard";
+import MobileCartItemCard from "./MobileBasketItem";
+import { cartItems } from "@/mock/basketItem";
 
 interface MobileBasketDrawerProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function MobileBasketDrawer({
-  isOpen,
-  onClose,
-}: MobileBasketDrawerProps) {
-  const cartItems = [
-    {
-      id: 1,
-      title: "تیشرت اسپورت مردانه",
-      image: "/images/products/p1.png",
-      quantity: 2,
-      color: "طوسی",
-      colorHex: "rgb(128, 128, 128)",
-      price: "1,800,000",
-    },
-    {
-      id: 2,
-      title: "کلاه اسپورت مردانه",
-      image: "/images/products/p2.png",
-      quantity: 2,
-      color: "طوسی",
-      colorHex: "rgb(128, 128, 128)",
-      price: "1,800,000",
-    },
-    {
-      id: 3,
-      title: "کفش اسپورت مردانه",
-      image: "/images/products/p3.png",
-      quantity: 2,
-      color: "طوسی",
-      colorHex: "rgb(128, 128, 128)",
-      price: "1,800,000",
-    },
-    {
-      id: 4,
-      title: "کفش اسپورت مردانه",
-      image: "/images/products/p4.png",
-      quantity: 2,
-      color: "قرمز",
-      colorHex: "red",
-      price: "1,800,000",
-    },
-  ];
-
+export default function MobileBasketDrawer({ isOpen, onClose }: MobileBasketDrawerProps) {
   return (
     <>
-      {isOpen && (
-        <div className="fixed inset-0 z-30 bg-black/50" onClick={onClose}></div>
-      )}
+      {isOpen && <div className="fixed inset-0 z-30 bg-black/50" onClick={onClose}></div>}
 
       <div
         aria-labelledby="user-basket-drawer-navigation-label"
@@ -84,10 +41,7 @@ export default function MobileBasketDrawer({
           <ul className="main-scroll h-full space-y-2 divide-y overflow-y-auto p-4">
             {cartItems.map((item) => (
               <li key={item.id}>
-                <MobileCartItemCard
-                  item={item}
-                  onRemove={() => console.log("remove item", item.id)}
-                />
+                <MobileCartItemCard item={item} onRemove={() => console.log("remove item", item.id)} />
               </li>
             ))}
           </ul>
@@ -101,10 +55,7 @@ export default function MobileBasketDrawer({
               <span className="text-sm">تومان</span>
             </div>
           </div>
-          <Link
-            href="/checkout-cart"
-            className="btn-primary w-32 py-3 text-sm text-center"
-          >
+          <Link href="/checkout-cart" className="btn-primary w-32 py-3 text-sm text-center">
             مشاهده سبد خرید
           </Link>
         </div>

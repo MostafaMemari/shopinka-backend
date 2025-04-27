@@ -1,9 +1,7 @@
-import Header from "@/components/layout/Header/Header";
+import Header from "@/components/layout/Header";
 import ProfileSidebar from "@/components/layout/ProfileSlider";
 
-export default function Layout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <>
       <Header />
@@ -12,12 +10,7 @@ export default function Layout({
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-12 lg:col-span-3">
               {/* <!-- Desktop sidebar --> */}
-              <ProfileSidebar
-                fullName="مصطفی معماری"
-                notificationCount={10}
-                profileImage="/images/user.png"
-                phoneNumber="09388366510"
-              />
+              <ProfileSidebar fullName="مصطفی معماری" notificationCount={10} profileImage="/images/user.png" phoneNumber="09388366510" />
             </div>
             <div className="col-span-12 lg:col-span-9">{children}</div>
           </div>

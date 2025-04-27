@@ -20,6 +20,7 @@ export interface IProductDetails {
   colors?: IColor[];
   sizes?: string[];
   price?: number;
+  newPrice?: number;
 }
 
 export interface IProductThumbnail {

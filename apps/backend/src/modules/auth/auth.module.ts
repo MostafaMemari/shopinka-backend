@@ -7,6 +7,6 @@ import { UserRepository } from "../user/user.repository";
 @Module({
   imports: [JwtModule.register({ global: true })],
   controllers: [AuthController],
-  providers: [AuthService , UserRepository],
+  providers: [AuthService, UserRepository],
 })
 export class AuthModule {}
