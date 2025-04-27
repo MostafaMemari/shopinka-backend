@@ -14,6 +14,10 @@ export class GalleryItemRepository {
         return this.prismaService.galleryItem.findFirst(args)
     }
 
+    findAll(args: Prisma.GalleryItemFindManyArgs): Promise<GalleryItem[]> {
+        return this.prismaService.galleryItem.findMany(args)
+    }
+
     async findOneOrThrow(args: Prisma.GalleryItemFindFirstArgs): Promise<never | GalleryItem> {
         const galleryItem = await this.findOne(args)
 

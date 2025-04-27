@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseIntPipe, Query } from '@nestjs/common';
 import { GalleryItemService } from '../services/gallery-item.service';
 import { CreateGalleryItemDto } from '../dto/create-gallery-item.dto';
 import { UpdateGalleryItemDto } from '../dto/update-gallery-item.dto';
@@ -11,6 +11,7 @@ import { GetUser } from '../../../common/decorators/get-user.decorator';
 import { Role, User } from 'generated/prisma';
 import { AuthDecorator } from '../../../common/decorators/auth.decorator';
 import { Roles } from '../../../common/decorators/role.decorator';
+import { GalleryItemQueryDto } from '../dto/gallery-item-query.dto';
 
 @Controller('gallery-item')
 @ApiTags('gallery-item')
@@ -27,8 +28,8 @@ export class GalleryItemController {
   }
 
   @Get()
-  findAll() {
-    return this.galleryItemService.findAll();
+  findAll(@Query() galleryItemsQueryDto: GalleryItemQueryDto, @GetUser() user: User) {
+    return this.galleryItemService.findAll(user.id, galleryItemsQueryDto);
   }
 
   @Get(':id')
