@@ -8,6 +8,7 @@ import { sortObject } from '../../../common/utils/functions.utils';
 import { CacheKeys } from '../../../common/enums/cache.enum';
 import { CacheService } from '../../../modules/cache/cache.service';
 import { pagination } from '../../../common/utils/pagination.utils';
+import { GalleryMessages } from '../enums/gallery.messages';
 
 @Injectable()
 export class GalleryService {
@@ -21,11 +22,11 @@ export class GalleryService {
   async create(userId: number, createGalleryDto: CreateGalleryDto): Promise<{ message: string, gallery: Gallery }> {
     const existingGallery = await this.galleryRepository.findOne({ where: { title: { equals: createGalleryDto.title, mode: "insensitive" } } })
 
-    if (existingGallery) throw new ConflictException("Gallery with this title already exists.")
+    if (existingGallery) throw new ConflictException(GalleryMessages.AlreadyExistsGallery)
 
     const gallery = await this.galleryRepository.create({ data: { ...createGalleryDto, userId } })
 
-    return { message: 'Gallery created successfully', gallery }
+    return { message: GalleryMessages.CreatedGallerySuccess, gallery }
   }
 
   async findAll(userId: number, { page, take, ...galleriesFiltersDto }: QueryGalleriesDto) {
@@ -76,7 +77,7 @@ export class GalleryService {
       }
     })
 
-    if (existingGallery) throw new ConflictException("Gallery with this title already exists.")
+    if (existingGallery) throw new ConflictException(GalleryMessages.AlreadyExistsGallery)
 
 
     const updatedGallery = await this.galleryRepository.update({
@@ -84,7 +85,7 @@ export class GalleryService {
       data: { ...updateGalleryDto, updatedAt: new Date() }
     })
 
-    return { message: "Updated gallery successfully.", gallery: updatedGallery }
+    return { message: GalleryMessages.UpdatedGallerySuccess, gallery: updatedGallery }
   }
 
   async remove(galleryId: number, userId: number): Promise<{ message: string, gallery: Gallery }> {
@@ -92,6 +93,6 @@ export class GalleryService {
 
     const removedGallery = await this.galleryRepository.delete({ where: { id: galleryId, userId } })
 
-    return { message: "Removed gallery successfully", gallery: removedGallery }
+    return { message: GalleryMessages.RemovedGallerySuccess, gallery: removedGallery }
   }
 }
