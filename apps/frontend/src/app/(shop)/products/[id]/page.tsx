@@ -1,4 +1,4 @@
-import ProductDetails from "@/components/ui/productDetails";
+import ProductDetails from "@/components/productDetails";
 import { mockProductDetails } from "@/mock/productCarousels";
 
 type Props = {
@@ -12,8 +12,8 @@ export default async function Page({ params }: Props) {
     imageSrc: mockProductDetails.mainImage.src,
     title: mockProductDetails.title,
     productLink: `/products/${id}`,
-    newPrice: mockProductDetails.price,
-    oldPrice: mockProductDetails.price + mockProductDetails.discount,
+    newPrice: mockProductDetails.newPrice,
+    oldPrice: mockProductDetails.newPrice + mockProductDetails.discount,
     discount: mockProductDetails.discount,
   };
 

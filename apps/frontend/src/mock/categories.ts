@@ -1,3 +1,56 @@
+import { ICategory } from "@/lib/types/categories";
+
+export const categories: ICategory[] = [
+  {
+    id: 1,
+    name: "مردانه",
+    href: "/shop/men",
+    subCategories: [
+      {
+        id: 1,
+        name: "همه",
+        href: "/shop/men/all",
+      },
+      {
+        id: 2,
+        name: "لباس مردانه",
+        href: "/shop/men/clothing",
+        subItems: [
+          { id: 1, name: "همه", href: "/shop/men/clothing/all" },
+          { id: 2, name: "شلوار", href: "/shop/men/clothing/pants" },
+          { id: 3, name: "تی‌شرت", href: "/shop/men/clothing/tshirts" },
+        ],
+      },
+      {
+        id: 3,
+        name: "کفش مردانه",
+        href: "/shop/men/shoes",
+      },
+    ],
+  },
+  {
+    id: 2,
+    name: "زنانه",
+    href: "/shop/women",
+    subCategories: [
+      {
+        id: 1,
+        name: "همه",
+        href: "/shop/women/all",
+      },
+      {
+        id: 2,
+        name: "لباس زنانه",
+        href: "/shop/women/clothing",
+        subItems: [
+          { id: 1, name: "همه", href: "/shop/women/clothing/all" },
+          { id: 2, name: "مانتو", href: "/shop/women/clothing/coats" },
+        ],
+      },
+    ],
+  },
+];
+
 export const categoryCirclesBanners = [
   {
     id: 1,

@@ -3,14 +3,15 @@
 import { FC } from "react";
 
 import { IProduct } from "@/lib/types/products";
-import BoxedBreadcrumb from "../Common/BoxedBreadcrumb";
+import BoxedBreadcrumb from "../ui/BoxedBreadcrumb";
 import ProductActions from "./ActionButtons";
 import ProductGuarantees from "./ProductGuarantees";
-import CompactBreadcrumb from "../Common/CompactBreadcrumb";
+import CompactBreadcrumb from "../ui/CompactBreadcrumb";
 import ProductImageSwiper from "./ProductImageSwiper";
 import MobileDetails from "./MobileDetails";
 import ProductGallery from "./ProductGallery/ProductGallery";
 import DesktopDetails from "./DesktopDetails";
+import BreadcrumbContainer from "../product/BreadcrumbContainer";
 
 interface Props {
   product: IProduct;
@@ -29,7 +30,7 @@ const ProductDetails: FC<Props> = ({ product }) => {
     <>
       <div className="container">
         <div className="hidden lg:block">
-          <BoxedBreadcrumb items={breadcrumbItems} />
+          <BreadcrumbContainer variant="boxed" items={breadcrumbItems} />
           <div className="mb-6 rounded-lg bg-muted p-6 shadow-base">
             <div className="mb-10 grid grow grid-cols-12 gap-4">
               <div className="col-span-4">
@@ -37,7 +38,7 @@ const ProductDetails: FC<Props> = ({ product }) => {
                 <ProductGallery images={galleryImages} title={`تصاویر محصول ${product.title}`} />
               </div>
               <div className="col-span-8 flex min-h-full flex-col">
-                <CompactBreadcrumb items={breadcrumbItems} />
+                <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
                 <DesktopDetails product={product} />
               </div>
             </div>

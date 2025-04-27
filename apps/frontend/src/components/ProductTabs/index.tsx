@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import ProductDescription from "../ProductDescription";
+import ProductDescription from "./ProductDescription";
 import { IComment } from "@/lib/types/comments";
-import ProductSpecifications from "../ProductSpecifications";
-import ProductComments from "@/components/ui/productDetails/Comment/ProductComments";
+import ProductSpecifications from "./ProductSpecifications";
+import ProductComments from "@/components/productDetails/Comment/ProductComments";
 
 interface Tab {
   id: string;

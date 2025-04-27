@@ -3,7 +3,7 @@
 import { FC } from "react";
 import Link from "next/link";
 import { HiChevronLeft } from "react-icons/hi";
-import ProductCard from "@/components/ui/ProductCard";
+import ProductCard from "@/components/ProductCard";
 import { IProduct } from "@/lib/types/products";
 import { productSwiperConfig } from "@/config/swiper";
 import Carousel from "./Carousel";

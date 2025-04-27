@@ -6,15 +6,9 @@ interface Props {
   selected?: string;
 }
 
-export default function SuggestionRadio({
-  name = "suggest",
-  selected,
-  onChange,
-}: Props) {
+export default function SuggestionRadio({ name = "suggest", selected, onChange }: Props) {
   return (
     <fieldset className="flex items-center gap-4">
-      <legend className="sr-only">Suggestion</legend>
-
       <div className="w-full">
         <input
           type="radio"

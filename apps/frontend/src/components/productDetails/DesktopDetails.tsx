@@ -6,8 +6,8 @@ import SizeSelector from "./SizeSelector";
 
 import { IProductDetails } from "@/lib/types/products";
 import ColorSelector from "./ColorSelector";
-import ProductProperties from "@/components/ui/productDetails/ProductProperties";
-import QuantitySelector from "../Common/QuantitySelector";
+import ProductProperties from "@/components/productDetails/ProductProperties";
+import QuantitySelector from "../ui/QuantitySelector";
 import { useProductSelection } from "@/hooks/useProductSelection";
 import AddToCartButtonDesktop from "./AddToCartButton/AddToCartButtonDesktop";
 import PriceDisplay from "./PriceDisplay";
