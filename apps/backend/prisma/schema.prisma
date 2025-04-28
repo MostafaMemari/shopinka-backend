@@ -90,7 +90,7 @@ model Address {
   province       String
   city           String
   address        String
-  postalCode     String   @map("postal_code")
+  postalCode     String   @map("postal_code") @unique()
   receiverMobile String?  @map("receiver_mobile")
   description    String?
   createdAt      DateTime @default(now())

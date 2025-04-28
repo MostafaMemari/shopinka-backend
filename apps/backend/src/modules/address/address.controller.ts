@@ -2,14 +2,22 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { AddressService } from './address.service';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { AuthDecorator } from '../../common/decorators/auth.decorator';
+import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
+import { GetUser } from '../../common/decorators/get-user.decorator';
+import { User } from 'generated/prisma';
 
 @Controller('address')
+@ApiTags('address')
+@AuthDecorator()
 export class AddressController {
-  constructor(private readonly addressService: AddressService) {}
+  constructor(private readonly addressService: AddressService) { }
 
   @Post()
-  create(@Body() createAddressDto: CreateAddressDto) {
-    return this.addressService.create(createAddressDto);
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  create(@Body() createAddressDto: CreateAddressDto, @GetUser() user: User) {
+    return this.addressService.create(user.id, createAddressDto);
   }
 
   @Get()
