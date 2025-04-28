@@ -2,6 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 import { AddressRepository } from './address.repository';
+import { Address } from 'generated/prisma';
 
 @Injectable()
 export class AddressService {
@@ -21,8 +22,8 @@ export class AddressService {
     return `This action returns all address`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} address`;
+  findOne(userId: number, id: number): Promise<never | Address> {
+    return this.addressRepository.findOneOrThrow({ where: { id, userId } })
   }
 
   update(id: number, updateAddressDto: UpdateAddressDto) {
