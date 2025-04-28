@@ -1,20 +1,7 @@
 import Profile from "@/components/profile/Profile";
+import { mockOrders } from "@/mock/orders";
 
 export default function Page() {
-  const mockOrders = [
-    {
-      id: "1",
-      status: "pending" as const,
-      remainingTime: "23:45:12",
-      orderNumber: "DKC-123456",
-      totalAmount: "2,400,000",
-      statusLabel: "در حال پردازش",
-      progress: 30,
-      statusDate: "1402/12/25",
-      statusTime: "12:30",
-    },
-  ];
-
   return (
     <Profile
       favoriteCount={5}

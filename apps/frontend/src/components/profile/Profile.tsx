@@ -1,22 +1,10 @@
 "use client";
 
-import UserAccountSection from "./UserAccountSection";
-import OrderStatusSection from "./OrderStatusSection";
+import UserAccountSection from "./Profile/UserAccountSection";
+import OrderStatusSection from "./Profile/OrderStatusSection";
 import CurrentOrdersSection from "./CurrentOrdersSection";
 import DashboardHeader from "./DashboardHeader";
-
-interface Order {
-  id: string;
-  status: "pending" | "paid";
-  remainingTime?: string;
-  orderNumber: string;
-  totalAmount: string;
-  date?: string;
-  statusLabel: string;
-  progress: number;
-  statusDate: string;
-  statusTime: string;
-}
+import { IOrder } from "@/lib/types/orders";
 
 interface DashboardProps {
   favoriteCount: number;
@@ -25,7 +13,7 @@ interface DashboardProps {
   deliveredOrders: number;
   canceledOrders: number;
   returnedOrders: number;
-  orders: Order[];
+  orders: IOrder[];
 }
 
 const Profile: React.FC<DashboardProps> = ({
@@ -38,7 +26,9 @@ const Profile: React.FC<DashboardProps> = ({
   orders,
 }) => (
   <>
-    <DashboardHeader title="پیشخوان" />
+    <div className="mb-12">
+      <DashboardHeader title="پیشخوان" />
+    </div>
     <UserAccountSection favoriteCount={favoriteCount} notificationCount={notificationCount} />
     <OrderStatusSection
       currentOrders={currentOrders}

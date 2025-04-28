@@ -85,7 +85,7 @@ const AddressesActions: React.FC<AddressesActionsProps> = ({ addresses: initialA
 
   return (
     <>
-      <div className="mb-10 flex flex-col items-center justify-between gap-y-8 xs:flex-row">
+      <div className="flex mb-12 flex-col items-center justify-between gap-y-8 xs:flex-row">
         <DashboardHeader title="آدرس های شما" />
         <button onClick={() => setIsAddModalOpen(true)} className="btn-primary w-full px-4 py-2 xs:w-fit">
           <FaPlus className="h-6 w-6" />
