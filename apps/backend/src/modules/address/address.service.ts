@@ -8,6 +8,7 @@ import { sortObject } from '../../common/utils/functions.utils';
 import { CacheKeys } from '../../common/enums/cache.enum';
 import { CacheService } from '../cache/cache.service';
 import { pagination } from '../../common/utils/pagination.utils';
+import { AddressMessages } from './enums/address-messages.enum';
 
 @Injectable()
 export class AddressService {
@@ -18,11 +19,11 @@ export class AddressService {
   async create(userId: number, createAddressDto: CreateAddressDto) {
     const address = await this.addressRepository.findOne({ where: { postalCode: createAddressDto.postalCode } })
 
-    if (address) throw new ConflictException("Address with this postal code already exists.")
+    if (address) throw new ConflictException(AddressMessages.AlreadyExistsAddress)
 
     const newAddress = await this.addressRepository.create({ data: { ...createAddressDto, userId } })
 
-    return { message: "Address created successfully.", address: newAddress }
+    return { message: AddressMessages.CreatedAddressSuccess, address: newAddress }
   }
 
   async findAll(userId: number, { page, take, ...queryAddressDto }: QueryAddressDto): Promise<unknown> {
@@ -39,7 +40,7 @@ export class AddressService {
 
     const filters: Prisma.AddressWhereInput = { userId };
 
-    if(address) filters.address = {contains: address , mode: 'insensitive'}
+    if (address) filters.address = { contains: address, mode: 'insensitive' }
     if (city) filters.city = { contains: city, mode: 'insensitive' }
     if (receiverMobile) filters.receiverMobile = { contains: receiverMobile, mode: 'insensitive' }
     if (province) filters.province = { contains: province, mode: 'insensitive' }
@@ -68,11 +69,11 @@ export class AddressService {
   async update(userId: number, id: number, updateAddressDto: UpdateAddressDto): Promise<{ message: string, address: Address }> {
     const address = await this.addressRepository.findOne({ where: { userId: { not: userId }, postalCode: updateAddressDto.postalCode } })
 
-    if (address) throw new ConflictException("Address with this postal code already exists.")
+    if (address) throw new ConflictException(AddressMessages.AlreadyExistsAddress)
 
     const updatedAddress = await this.addressRepository.update({ where: { userId, id }, data: updateAddressDto })
 
-    return { message: "Updated address successfully.", address: updatedAddress }
+    return { message: AddressMessages.UpdatedAddressSuccess, address: updatedAddress }
   }
 
   async remove(userId: number, id: number): Promise<{ message: string, address: Address }> {
@@ -80,6 +81,6 @@ export class AddressService {
 
     const removedAddress = await this.addressRepository.delete({ where: { id, userId } })
 
-    return { message: "Removed address successfully.", address: removedAddress }
+    return { message: AddressMessages.RemovedAddressSuccess, address: removedAddress }
   }
 }
