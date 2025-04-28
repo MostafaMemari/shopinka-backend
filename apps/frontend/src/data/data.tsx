@@ -11,7 +11,7 @@ export const menuItems = [
   { href: "/profile/favorite", icon: HiOutlineHeart, label: "علاقه‌مندی ها" },
   { href: "/profile/recent", icon: RxCountdownTimer, label: "بازدید های اخیر" },
   {
-    href: "/notification",
+    href: "/profile/notification",
     icon: IoMdNotificationsOutline,
     label: "پیام ها",
     hasBadge: true,

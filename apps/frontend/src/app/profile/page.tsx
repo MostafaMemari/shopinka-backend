@@ -1,4 +1,4 @@
-import Dashboard from "./dashboard";
+import Profile from "@/components/profile/Profile";
 
 export default function Page() {
   const mockOrders = [
@@ -16,7 +16,7 @@ export default function Page() {
   ];
 
   return (
-    <Dashboard
+    <Profile
       favoriteCount={5}
       notificationCount={3}
       currentOrders={2}

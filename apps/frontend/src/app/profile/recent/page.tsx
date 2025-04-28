@@ -1,3 +1,31 @@
+import RecentPage from "@/components/profile/RecentPage";
+
+interface Recent {
+  id: string;
+  image: string;
+  title: string;
+  link: string;
+  isAvailable: boolean;
+}
+
 export default function Page() {
-  return <>Orders</>;
+  const recent: Recent[] = [
+    {
+      id: "1",
+      image: "/images/products/p8.png",
+      title: "کیف دوشی زنانه درسا مدل 49787",
+      link: "/product-detail",
+      isAvailable: true,
+    },
+    {
+      id: "2",
+      image: "/images/products/p8.png",
+      title: "کیف دوشی زنانه درسا مدل 49787",
+      link: "/product-detail",
+      isAvailable: false,
+    },
+    // More favorites...
+  ];
+
+  return <RecentPage recent={recent} />;
 }
