@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateGalleryItemDto } from '../dto/create-gallery-item.dto';
 import { UpdateGalleryItemDto } from '../dto/update-gallery-item.dto';
 import { GalleryItemRepository } from '../repositories/gallery-item.repository';
@@ -16,10 +16,12 @@ import { DuplicateGalleryItemDto } from '../dto/duplicate-gallery-item.dto';
 import { RemoveGalleryItemDto } from '../dto/remove-gallery-item.dto';
 import { GalleryItemMessages } from '../enums/gallery-item-messages.enum';
 import { RestoreGalleryItemDto } from '../dto/restore-gallery-item.dto';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class GalleryItemService {
   private readonly CACHE_EXPIRE_TIME: number = 600 //* 5 minutes
+  private readonly logger: Logger = new Logger(GalleryItemService.name)
 
   constructor(
     private readonly galleryItemRepository: GalleryItemRepository,
@@ -27,6 +29,37 @@ export class GalleryItemService {
     private readonly galleryRepository: GalleryRepository,
     private readonly cacheService: CacheService
   ) { }
+
+  @Cron(CronExpression.EVERY_12_HOURS)
+  async handleTrashCleanup() {
+    this.logger.log('Starting trash cleanup process...');
+
+    try {
+      const now = new Date();
+      const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+      const galleryItems = await this.galleryItemRepository.findAll({
+        where: {
+          isDeleted: true,
+          deletedAt: { not: null },
+        },
+      });
+
+      for (const item of galleryItems) {
+        if (item.deletedAt && new Date(item.deletedAt) < oneMonthAgo) {
+          await this.awsService.removeFile(item.fileKey);
+          await this.galleryItemRepository.delete({ where: { id: item.id } });
+
+          this.logger.warn(`GalleryItem ${item.id} permanently deleted after 1 month.`);
+        }
+      }
+
+      this.logger.log('Trash cleanup process completed successfully.');
+    } catch (error) {
+      this.logger.error(`Error during trash cleanup process: ${error.message}`, error.stack);
+    }
+  }
+
 
   async create(userId: number, files: Express.Multer.File[], createGalleryItemDto: CreateGalleryItemDto): Promise<{ message: string, galleryItems: GalleryItem[] }> {
     let uploadedFiles: IUploadSingleFile[] = []

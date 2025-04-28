@@ -9,8 +9,10 @@ import { GalleryItemService } from './services/gallery-item.service';
 import { GalleryItemController } from './controllers/gallery-item.controller';
 import { GalleryItemRepository } from './repositories/gallery-item.repository';
 import { AwsService } from '../s3AWS/s3AWS.service';
+import { ScheduleModule } from "@nestjs/schedule"
 
 @Module({
+  imports: [ScheduleModule.forRoot()],
   controllers: [GalleryController, GalleryItemController],
   providers: [
     GalleryService,
