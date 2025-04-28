@@ -46,10 +46,10 @@ export class GalleryItemController {
     return this.galleryItemService.move(user.id, moveGalleryItemDto)
   }
 
-  @Patch('duplicate/:id')
+  @Patch('duplicate')
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
-  duplicate(@Param("id", ParseIntPipe) id: number, @Body() duplicateGalleryItemDto: DuplicateGalleryItemDto, @GetUser() user: User) {
-    return this.galleryItemService.duplicate(id, user.id, duplicateGalleryItemDto)
+  duplicate(@Body() duplicateGalleryItemDto: DuplicateGalleryItemDto, @GetUser() user: User) {
+    return this.galleryItemService.duplicate(user.id, duplicateGalleryItemDto)
   }
 
   @Patch(':id')

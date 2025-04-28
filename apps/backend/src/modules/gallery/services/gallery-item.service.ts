@@ -130,28 +130,30 @@ export class GalleryItemService {
     return { message: "Moved galleryItems to other gallery successfully", galleryItems: await Promise.all(updatedGalleryItems) }
   }
 
-  async duplicate(galleryItemId: number, userId: number, { galleryId }: DuplicateGalleryItemDto): Promise<{ message: string, galleryItem: GalleryItem }> {
-    const galleryItem = await this.galleryItemRepository.findOneOrThrow({ where: { id: galleryItemId, gallery: { userId }, NOT: { galleryId } } })
-    const gallery = await this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId } })
+  async duplicate(userId: number, { galleryId, galleryItemIds }: DuplicateGalleryItemDto): Promise<{ message: string, galleryItems: GalleryItem[] }> {
+    const galleryItems = await this.galleryItemRepository.findAll({ where: { id: { in: galleryItemIds }, gallery: { userId }, NOT: { galleryId } } })
+     await this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId } })
 
-    const newKey = `gallery-${userId}-${gallery.id}/${galleryItem.fileKey.split('/')[1]}`
+    const copiedFiles = galleryItems.map(async item => {
+      const newKey = `gallery-${galleryId}-${userId}/${item.fileKey.split('/')[1]}`
 
-    await this.awsService.copyFile(galleryItem.fileKey, newKey)
-    const { url: fileUrl } = await this.awsService.getFileUrl(newKey)
+      await this.awsService.copyFile(item.fileKey, newKey)
+      const { url: fileUrl } = await this.awsService.getFileUrl(newKey)
 
-    const newGalleryItem = await this.galleryItemRepository.create({
-      data: {
+      return {
         fileKey: newKey,
         fileUrl,
-        mimetype: galleryItem.mimetype,
-        size: galleryItem.size,
-        title: galleryItem.title,
+        mimetype: item.mimetype,
+        size: item.size,
+        title: item.title,
         galleryId,
-        description: galleryItem.description
+        description: item.description
       }
     })
 
-    return { message: "Duplicated galleryItem to other gallery successfully", galleryItem: newGalleryItem }
+    const newGalleryItems = await this.galleryItemRepository.createMany({ data: await Promise.all(copiedFiles) })
+
+    return { message: "Duplicated galleryItems to other gallery successfully", galleryItems: newGalleryItems }
   }
 
   async remove(userId: number, { galleryItemIds }: RemoveGalleryItemDto): Promise<{ message: string, galleryItems: GalleryItem[] }> {
