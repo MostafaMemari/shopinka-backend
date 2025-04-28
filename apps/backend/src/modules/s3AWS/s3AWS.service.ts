@@ -89,7 +89,7 @@ export class AwsService {
     }
 
     async getFileUrl(key: string) {
-        return { url: `https://node-bucket.storage.c2.liara.space/${key}` };
+        return { url: `${this.configService.get('STORAGE_BASE_URL')}/${key}` };
     }
 
     async getFileBuffer(key: string, bucket: string = this.bucketName): Promise<Buffer> {

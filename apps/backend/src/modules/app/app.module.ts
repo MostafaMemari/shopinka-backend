@@ -13,6 +13,7 @@ import { HttpApiModule } from "../http/http.module";
 import { PaymentModule } from "../payment/payment.module";
 import { GalleryModule } from "../gallery/gallery.module";
 import { AwsModule } from "../s3AWS/s3AWS.module";
+import { AddressModule } from "../address/address.module";
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { AwsModule } from "../s3AWS/s3AWS.module";
     HttpApiModule,
     PaymentModule,
     GalleryModule,
-    AwsModule
+    AwsModule,
+    AddressModule
   ],
   controllers: [],
   providers: [
