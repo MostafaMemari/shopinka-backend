@@ -30,6 +30,10 @@ export class GalleryItemRepository {
         return this.prismaService.galleryItem.delete(args)
     }
 
+    deleteMany(args: Prisma.GalleryItemDeleteManyArgs): Promise<{ count: number }> {
+        return this.prismaService.galleryItem.deleteMany(args)
+    }
+
     async findOneOrThrow(args: Prisma.GalleryItemFindFirstArgs): Promise<never | GalleryItem> {
         const galleryItem = await this.findOne(args)
 

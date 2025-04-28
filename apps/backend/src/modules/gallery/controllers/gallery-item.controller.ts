@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseIntPipe, Query, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, ParseIntPipe, Query, UploadedFiles } from '@nestjs/common';
 import { GalleryItemService } from '../services/gallery-item.service';
 import { CreateGalleryItemDto } from '../dto/create-gallery-item.dto';
 import { UpdateGalleryItemDto } from '../dto/update-gallery-item.dto';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express"
+import { FilesInterceptor } from "@nestjs/platform-express"
 import { memoryStorage } from 'multer'
 import { FileValidatorPipe } from '../../../common/pipes/file-validator.pipe';
 import { SwaggerConsumes } from '../../../common/enums/swagger-consumes.enum';
@@ -14,6 +14,7 @@ import { Roles } from '../../../common/decorators/role.decorator';
 import { GalleryItemQueryDto } from '../dto/gallery-item-query.dto';
 import { MoveGalleryItemDto } from '../dto/move-gallery-item.dto';
 import { DuplicateGalleryItemDto } from '../dto/duplicate-gallery-item.dto';
+import { RemoveGalleryItemDto } from '../dto/remove-gallery-item.dto';
 
 @Controller('gallery-item')
 @ApiTags('gallery-item')
@@ -57,8 +58,9 @@ export class GalleryItemController {
     return this.galleryItemService.update(id, user.id, updateGalleryItemDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
-    return this.galleryItemService.remove(id, user.id);
+  @Delete()
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  remove(@Body() removeGalleryItemDto: RemoveGalleryItemDto, @GetUser() user: User) {
+    return this.galleryItemService.remove(user.id, removeGalleryItemDto);
   }
 }

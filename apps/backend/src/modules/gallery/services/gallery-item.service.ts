@@ -13,6 +13,7 @@ import { CacheKeys } from '../../../common/enums/cache.enum';
 import { pagination } from '../../../common/utils/pagination.utils';
 import { MoveGalleryItemDto } from '../dto/move-gallery-item.dto';
 import { DuplicateGalleryItemDto } from '../dto/duplicate-gallery-item.dto';
+import { RemoveGalleryItemDto } from '../dto/remove-gallery-item.dto';
 
 @Injectable()
 export class GalleryItemService {
@@ -149,13 +150,13 @@ export class GalleryItemService {
     return { message: "Duplicated galleryItem to other gallery successfully", galleryItem: newGalleryItem }
   }
 
-  async remove(galleryItemId: number, userId: number): Promise<{ message: string, galleryItem: GalleryItem }> {
-    const galleryItem = await this.galleryItemRepository.findOneOrThrow({ where: { id: galleryItemId, gallery: { userId } } })
+  async remove(userId: number, { galleryItemIds }: RemoveGalleryItemDto): Promise<{ message: string, galleryItems: GalleryItem[] }> {
+    const galleryItems = await this.galleryItemRepository.findAll({ where: { id: { in: galleryItemIds }, gallery: { userId } } })
 
-    await this.awsService.removeFile(galleryItem.fileKey)
+    await this.awsService.removeFiles(galleryItems.map(item => item.fileKey))
 
-    const removedGalleryItem = await this.galleryItemRepository.delete({ where: { id: galleryItemId, gallery: { userId } } })
+    await this.galleryItemRepository.deleteMany({ where: { id: { in: galleryItemIds }, gallery: { userId } } })
 
-    return { message: "Removed gallery item successfully.", galleryItem: removedGalleryItem }
+    return { message: "Removed gallery items successfully.", galleryItems }
   }
 }
