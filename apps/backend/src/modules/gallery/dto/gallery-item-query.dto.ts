@@ -61,6 +61,15 @@ export class GalleryItemQueryDto extends PaginationDto {
     @ApiPropertyOptional({ type: 'boolean' })
     includeGallery?: boolean
 
+    @IsBoolean()
+    @IsOptional()
+    @Transform(({ value }) => {
+        if (typeof value == 'string') return value == 'true'
+        return value
+    })
+    @ApiPropertyOptional({ type: 'boolean' })
+    isTrashed?: boolean
+
     @IsOptional()
     @IsDate()
     @Transform(({ value }) => new Date(value))

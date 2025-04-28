@@ -61,7 +61,7 @@ export class GalleryItemService {
 
   async findAll(userId: number, { page, take, ...galleryItemsDto }: GalleryItemQueryDto): Promise<unknown> {
     const paginationDto = { page, take };
-    const { endDate, sortBy, sortDirection, startDate, description, includeGallery, title, fileKey, fileUrl, galleryId, mimetype, maxSize, minSize } = galleryItemsDto;
+    const { endDate, sortBy, sortDirection, startDate, description, includeGallery, title, fileKey, fileUrl, galleryId, mimetype, maxSize, minSize, isTrashed } = galleryItemsDto;
 
     const sortedDto = sortObject(galleryItemsDto);
 
@@ -69,9 +69,14 @@ export class GalleryItemService {
 
     const cachedGalleryItems = await this.cacheService.get<null | GalleryItem[]>(cacheKey);
 
-    if (cachedGalleryItems) return { ...pagination(paginationDto, cachedGalleryItems) }
+    if (!cachedGalleryItems) return { ...pagination(paginationDto, cachedGalleryItems) }
 
-    const filters: Prisma.GalleryItemWhereInput = { gallery: { userId } };
+    const filters: Prisma.GalleryItemWhereInput = {
+      gallery: { userId }, deletedAt: {
+        in: isTrashed ? null : undefined,
+        not: !isTrashed ? null : undefined
+      }
+    };
 
     if (fileKey) filters.fileKey = fileKey
     if (fileUrl) filters.fileUrl = fileUrl
@@ -93,7 +98,7 @@ export class GalleryItemService {
     const galleryItems = await this.galleryItemRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { gallery: includeGallery }
+      include: { gallery: includeGallery },
     });
 
     await this.cacheService.set(cacheKey, galleryItems, this.CACHE_EXPIRE_TIME);
