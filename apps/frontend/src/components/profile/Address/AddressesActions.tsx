@@ -2,30 +2,15 @@
 
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
-import DashboardHeader from "./DashboardHeader";
+import DashboardHeader from "../DashboardHeader";
 import AddressItem from "./AddressItem";
 import AddressAddModal from "./AddressAddModal";
 import AddressEditModal from "./AddressEditModal";
 import AddressDeleteModal from "./AddressDeleteModal";
-
-interface Address {
-  id: string;
-  fullAddress: string;
-  receiverName: string;
-  name: string;
-  family: string;
-  phoneNumber: string;
-  nationalCode: string;
-  address: string;
-  city: string;
-  province: string;
-  buildingNumber: string;
-  buildingUnit: string;
-  postalCode: string;
-}
+import { IAddress } from "@/lib/types/address";
 
 interface AddressesActionsProps {
-  addresses: Address[];
+  addresses: IAddress[];
 }
 
 const AddressesActions: React.FC<AddressesActionsProps> = ({ addresses: initialAddresses }) => {
@@ -100,7 +85,7 @@ const AddressesActions: React.FC<AddressesActionsProps> = ({ addresses: initialA
 
   return (
     <>
-      <div className="mb-16 flex flex-col items-center justify-between gap-y-8 xs:flex-row">
+      <div className="mb-10 flex flex-col items-center justify-between gap-y-8 xs:flex-row">
         <DashboardHeader title="آدرس های شما" />
         <button onClick={() => setIsAddModalOpen(true)} className="btn-primary w-full px-4 py-2 xs:w-fit">
           <FaPlus className="h-6 w-6" />
