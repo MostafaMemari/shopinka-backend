@@ -27,6 +27,10 @@ export class GalleryItemRepository {
         return this.prismaService.galleryItem.update(args)
     }
 
+    updateMany(args: Prisma.GalleryItemUpdateManyAndReturnArgs): Promise<GalleryItem[]> {
+        return this.prismaService.galleryItem.updateManyAndReturn(args)
+    }
+
     delete(args: Prisma.GalleryItemDeleteArgs): Promise<GalleryItem> {
         return this.prismaService.galleryItem.delete(args)
     }

@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, ArrayUnique, IsNotEmpty } from "class-validator";
+import { IsArray, ArrayUnique, IsNotEmpty, IsBoolean, IsOptional } from "class-validator";
 import { Transform } from "class-transformer";
 import { transformNumberArray } from "../../../common/utils/functions.utils";
 
@@ -15,4 +15,17 @@ export class RemoveGalleryItemDto {
     @ArrayUnique()
     @IsNotEmpty()
     galleryItemIds: number[]
+
+    @IsBoolean()
+    @IsOptional()
+    @Transform(({ value }) => {
+        if (typeof value == 'string') return value == 'true'
+        return value
+    })
+    @ApiProperty({
+        type: 'boolean',
+        nullable: true,
+        required: false
+    })
+    isForce?: boolean
 }

@@ -157,13 +157,19 @@ export class GalleryItemService {
     return { message: GalleryItemMessages.DuplicatedGalleryItemsSuccess, galleryItems: newGalleryItems }
   }
 
-  async remove(userId: number, { galleryItemIds }: RemoveGalleryItemDto): Promise<{ message: string, galleryItems: GalleryItem[] }> {
+  async remove(userId: number, { galleryItemIds, isForce }: RemoveGalleryItemDto): Promise<{ message: string, galleryItems: GalleryItem[] }> {
     const galleryItems = await this.galleryItemRepository.findAll({ where: { id: { in: galleryItemIds }, gallery: { userId } } })
 
-    await this.awsService.removeFiles(galleryItems.map(item => item.fileKey))
+    if (isForce) {
+      await this.awsService.removeFiles(galleryItems.map(item => item.fileKey))
 
-    await this.galleryItemRepository.deleteMany({ where: { id: { in: galleryItemIds }, gallery: { userId } } })
+      await this.galleryItemRepository.deleteMany({ where: { id: { in: galleryItemIds }, gallery: { userId } } })
 
-    return { message: GalleryItemMessages.RemovedGalleryItemsSuccess, galleryItems }
+      return { message: GalleryItemMessages.RemovedGalleryItemsSuccess, galleryItems }
+    }
+
+    const updatedGalleryItem = await this.galleryItemRepository.updateMany({ where: { id: { in: galleryItemIds } }, data: { deletedAt: new Date() } })
+
+    return { message: GalleryItemMessages.TrashedGalleryItemsSuccess, galleryItems: updatedGalleryItem }
   }
 }
