@@ -171,16 +171,7 @@ export class AwsService {
         if (keys.length === 0) return;
 
         try {
-            const command = new DeleteObjectsCommand({
-                Bucket: this.bucketName,
-                Delete: {
-                    Objects: keys.map((key) => ({ Key: key })),
-                },
-            });
-
-            const deleteResult = await this.client.send(command);
-
-            return deleteResult;
+            for (const key of keys) await this.removeFile(key)
         } catch (error) {
             throw new InternalServerErrorException(error);
         }
