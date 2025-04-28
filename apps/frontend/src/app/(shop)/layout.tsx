@@ -1,7 +1,7 @@
-import Footer from "@/components/layout/Footer";
-import Header from "@/components/layout/Header";
-import CarouselProduct from "@/components/ui/Carousel/CarouselProduct";
-import ProductTabs from "@/features/product/ProductTabs";
+import Footer from "@/components/Footer";
+import Header from "@/components/Header";
+import CarouselProduct from "@/components/Carousel/CarouselProduct";
+import ProductTabs from "@/components/ProductTabs";
 import { mockProductDetails, popularProducts } from "@/mock/productCarousels";
 
 export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
