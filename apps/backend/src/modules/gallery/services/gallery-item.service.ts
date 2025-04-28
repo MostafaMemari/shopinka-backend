@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateGalleryItemDto } from '../dto/create-gallery-item.dto';
 import { UpdateGalleryItemDto } from '../dto/update-gallery-item.dto';
 import { GalleryItemRepository } from '../repositories/gallery-item.repository';
@@ -112,18 +112,22 @@ export class GalleryItemService {
     return { message: "Updated gallery item successfully.", galleryItem: updatedGalleryItem }
   }
 
-  async move(galleryItemId: number, userId: number, { galleryId }: MoveGalleryItemDto): Promise<{ message: string, galleryItem: GalleryItem }> {
-    const galleryItem = await this.galleryItemRepository.findOneOrThrow({ where: { id: galleryItemId, gallery: { userId }, NOT: { galleryId } } })
-    const gallery = await this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId } })
+  async move(userId: number, { galleryId, galleryItemIds }: MoveGalleryItemDto): Promise<{ message: string, galleryItems: GalleryItem[] }> {
+    const galleryItems = await this.galleryItemRepository.findAll({ where: { id: { in: galleryItemIds }, gallery: { userId }, NOT: { galleryId } } })
+    await this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId } })
 
-    const newKey = `gallery-${userId}-${gallery.id}/${galleryItem.fileKey.split('/')[1]}`
+    const updatedGalleryItems = galleryItems.map(async item => {
+      const newKey = `gallery-${galleryId}-${userId}/${item.fileKey.split('/')[1]}`
 
-    await this.awsService.moveFile(galleryItem.fileKey, newKey)
-    const { url: fileUrl } = await this.awsService.getFileUrl(newKey)
+      await this.awsService.moveFile(item.fileKey, newKey)
+      const { url: fileUrl } = await this.awsService.getFileUrl(newKey)
 
-    const updatedGalleryItem = await this.galleryItemRepository.update({ where: { id: galleryItemId, gallery: { userId } }, data: { fileKey: newKey, fileUrl, galleryId } })
+      const updatedGalleryItem = await this.galleryItemRepository.update({ where: { id: item.id, gallery: { userId } }, data: { fileKey: newKey, fileUrl, galleryId } })
 
-    return { message: "Moved galleryItem to other gallery successfully", galleryItem: updatedGalleryItem }
+      return updatedGalleryItem
+    })
+
+    return { message: "Moved galleryItems to other gallery successfully", galleryItems: await Promise.all(updatedGalleryItems) }
   }
 
   async duplicate(galleryItemId: number, userId: number, { galleryId }: DuplicateGalleryItemDto): Promise<{ message: string, galleryItem: GalleryItem }> {
