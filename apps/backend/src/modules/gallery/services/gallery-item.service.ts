@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateGalleryItemDto } from '../dto/create-gallery-item.dto';
 import { UpdateGalleryItemDto } from '../dto/update-gallery-item.dto';
 import { GalleryItemRepository } from '../repositories/gallery-item.repository';
@@ -15,6 +15,7 @@ import { MoveGalleryItemDto } from '../dto/move-gallery-item.dto';
 import { DuplicateGalleryItemDto } from '../dto/duplicate-gallery-item.dto';
 import { RemoveGalleryItemDto } from '../dto/remove-gallery-item.dto';
 import { GalleryItemMessages } from '../enums/gallery-item-messages.enum';
+import { RestoreGalleryItemDto } from '../dto/restore-gallery-item.dto';
 
 @Injectable()
 export class GalleryItemService {
@@ -61,7 +62,7 @@ export class GalleryItemService {
 
   async findAll(userId: number, { page, take, ...galleryItemsDto }: GalleryItemQueryDto): Promise<unknown> {
     const paginationDto = { page, take };
-    const { endDate, sortBy, sortDirection, startDate, description, includeGallery, title, fileKey, fileUrl, galleryId, mimetype, maxSize, minSize, isTrashed } = galleryItemsDto;
+    const { endDate, sortBy, sortDirection, startDate, description, includeGallery, title, fileKey, fileUrl, galleryId, mimetype, maxSize, minSize, isDeleted, deletedAt } = galleryItemsDto;
 
     const sortedDto = sortObject(galleryItemsDto);
 
@@ -69,15 +70,12 @@ export class GalleryItemService {
 
     const cachedGalleryItems = await this.cacheService.get<null | GalleryItem[]>(cacheKey);
 
-    if (!cachedGalleryItems) return { ...pagination(paginationDto, cachedGalleryItems) }
+    if (cachedGalleryItems) return { ...pagination(paginationDto, cachedGalleryItems) }
 
-    const filters: Prisma.GalleryItemWhereInput = {
-      gallery: { userId }, deletedAt: {
-        in: isTrashed ? null : undefined,
-        not: !isTrashed ? null : undefined
-      }
-    };
+    const filters: Prisma.GalleryItemWhereInput = { gallery: { userId } };
 
+    if (isDeleted !== undefined) filters.isDeleted = isDeleted
+    if (deletedAt) filters.deletedAt = new Date(deletedAt)
     if (fileKey) filters.fileKey = fileKey
     if (fileUrl) filters.fileUrl = fileUrl
     if (mimetype) filters.mimetype = mimetype
@@ -162,6 +160,12 @@ export class GalleryItemService {
     return { message: GalleryItemMessages.DuplicatedGalleryItemsSuccess, galleryItems: newGalleryItems }
   }
 
+  async restore(userId: number, { galleryItemIds }: RestoreGalleryItemDto): Promise<{ message: string, galleryItems: GalleryItem[] }> {
+    const updatedGalleryItems = await this.galleryItemRepository.updateMany({ where: { id: { in: galleryItemIds }, gallery: { userId } }, data: { isDeleted: false, deletedAt: null } })
+
+    return { message: GalleryItemMessages.RestoredGalleryItemsSuccess, galleryItems: updatedGalleryItems }
+  }
+
   async remove(userId: number, { galleryItemIds, isForce }: RemoveGalleryItemDto): Promise<{ message: string, galleryItems: GalleryItem[] }> {
     const galleryItems = await this.galleryItemRepository.findAll({ where: { id: { in: galleryItemIds }, gallery: { userId } } })
 
@@ -173,7 +177,7 @@ export class GalleryItemService {
       return { message: GalleryItemMessages.RemovedGalleryItemsSuccess, galleryItems }
     }
 
-    const updatedGalleryItem = await this.galleryItemRepository.updateMany({ where: { id: { in: galleryItemIds } }, data: { deletedAt: new Date() } })
+    const updatedGalleryItem = await this.galleryItemRepository.updateMany({ where: { id: { in: galleryItemIds } }, data: { deletedAt: new Date(), isDeleted: true } })
 
     return { message: GalleryItemMessages.TrashedGalleryItemsSuccess, galleryItems: updatedGalleryItem }
   }

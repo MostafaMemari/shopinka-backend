@@ -15,6 +15,7 @@ import { GalleryItemQueryDto } from '../dto/gallery-item-query.dto';
 import { MoveGalleryItemDto } from '../dto/move-gallery-item.dto';
 import { DuplicateGalleryItemDto } from '../dto/duplicate-gallery-item.dto';
 import { RemoveGalleryItemDto } from '../dto/remove-gallery-item.dto';
+import { RestoreGalleryItemDto } from '../dto/restore-gallery-item.dto';
 
 @Controller('gallery-item')
 @ApiTags('gallery-item')
@@ -50,6 +51,12 @@ export class GalleryItemController {
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   duplicate(@Body() duplicateGalleryItemDto: DuplicateGalleryItemDto, @GetUser() user: User) {
     return this.galleryItemService.duplicate(user.id, duplicateGalleryItemDto)
+  }
+
+  @Patch('restore')
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  restore(@Body() restoreGalleryItemDto: RestoreGalleryItemDto, @GetUser() user: User) {
+    return this.galleryItemService.restore(user.id, restoreGalleryItemDto)
   }
 
   @Patch(':id')

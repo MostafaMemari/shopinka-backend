@@ -68,7 +68,13 @@ export class GalleryItemQueryDto extends PaginationDto {
         return value
     })
     @ApiPropertyOptional({ type: 'boolean' })
-    isTrashed?: boolean
+    isDeleted?: boolean
+
+    @IsOptional()
+    @IsDate()
+    @Transform(({ value }) => new Date(value))
+    @ApiPropertyOptional({ type: 'string', format: 'date-time' })
+    deletedAt?: Date;
 
     @IsOptional()
     @IsDate()

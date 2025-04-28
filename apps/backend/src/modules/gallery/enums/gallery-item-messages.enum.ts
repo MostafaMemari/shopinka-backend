@@ -5,5 +5,6 @@ export enum GalleryItemMessages {
     RemovedGalleryItemsSuccess = 'Gallery items removed successfully.',
     MovedGalleryItemsSuccess = "Moved galleryItems to other gallery successfully",
     TrashedGalleryItemsSuccess = "Trashed galleryItems successfully",
+    RestoredGalleryItemsSuccess = "Restored gallery items successfully.",
     DuplicatedGalleryItemsSuccess = "Duplicated galleryItems to other gallery successfully"
 }
