@@ -37,7 +37,7 @@ export class AddressController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.addressService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.addressService.remove(user.id, id);
   }
 }

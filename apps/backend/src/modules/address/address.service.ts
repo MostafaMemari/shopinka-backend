@@ -36,7 +36,11 @@ export class AddressService {
     return { message: "Updated address successfully.", address: updatedAddress }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} address`;
+  async remove(userId: number, id: number): Promise<{ message: string, address: Address }> {
+    await this.addressRepository.findOneOrThrow({ where: { id, userId } })
+
+    const removedAddress = await this.addressRepository.delete({ where: { id, userId } })
+
+    return { message: "Removed address successfully.", address: removedAddress }
   }
 }
