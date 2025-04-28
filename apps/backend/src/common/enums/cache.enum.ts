@@ -2,5 +2,6 @@ export enum CacheKeys {
     Users = "users",
     Transactions = 'transactions',
     Galleries = 'galleries',
-    GalleryItems = 'galleryItems'
+    GalleryItems = 'galleryItems',
+    Addresses = "addresses"
 }

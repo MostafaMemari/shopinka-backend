@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
 import { AddressService } from './address.service';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
@@ -7,6 +7,7 @@ import { AuthDecorator } from '../../common/decorators/auth.decorator';
 import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 import { GetUser } from '../../common/decorators/get-user.decorator';
 import { User } from 'generated/prisma';
+import { QueryAddressDto } from './dto/query-address.dto';
 
 @Controller('address')
 @ApiTags('address')
@@ -21,8 +22,8 @@ export class AddressController {
   }
 
   @Get()
-  findAll() {
-    return this.addressService.findAll();
+  findAll(@Query() queryAddressDto: QueryAddressDto, @GetUser() user: User) {
+    return this.addressService.findAll(user.id, queryAddressDto);
   }
 
   @Get(':id')
