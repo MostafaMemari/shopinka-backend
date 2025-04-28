@@ -1,16 +1,12 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { FaRegEdit } from "react-icons/fa";
-import { TbSmartHome } from "react-icons/tb";
-import { HiOutlineShoppingBag, HiOutlineHeart } from "react-icons/hi";
-import { RxCountdownTimer } from "react-icons/rx";
-import { IoMdNotificationsOutline } from "react-icons/io";
-import { GrLocation } from "react-icons/gr";
-import { RiAccountCircle2Line } from "react-icons/ri";
-import { BiExit } from "react-icons/bi";
+
 import Image from "next/image";
 import Link from "next/link";
+import { FaRegEdit } from "react-icons/fa";
+import { menuItems } from "@/data/data";
+import { BiExit } from "react-icons/bi";
 
 interface ProfileSidebarProps {
   fullName: string;
@@ -21,25 +17,6 @@ interface ProfileSidebarProps {
 
 export default function ProfileSidebar({ fullName, phoneNumber, profileImage, notificationCount }: ProfileSidebarProps) {
   const pathname = usePathname();
-
-  const menuItems = [
-    { href: "/profile", icon: TbSmartHome, label: "پیشخوان" },
-    { href: "/orders", icon: HiOutlineShoppingBag, label: "سفارش ها" },
-    { href: "/favorite", icon: HiOutlineHeart, label: "علاقه‌مندی ها" },
-    { href: "/recent", icon: RxCountdownTimer, label: "بازدید های اخیر" },
-    {
-      href: "/notification",
-      icon: IoMdNotificationsOutline,
-      label: "پیام ها",
-      hasBadge: true,
-    },
-    { href: "/address", icon: GrLocation, label: "آدرس ها" },
-    {
-      href: "/personal-info",
-      icon: RiAccountCircle2Line,
-      label: "اطلاعات حساب کاربری",
-    },
-  ];
 
   return (
     <div className="sticky top-32 hidden w-full overflow-hidden rounded-lg bg-muted shadow-base lg:block">
