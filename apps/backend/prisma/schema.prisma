@@ -39,6 +39,7 @@ model User {
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @default(now())
   galleries        Gallery[]
+  addresses          Address[]
 }
 
 model Transaction {
@@ -65,17 +66,33 @@ model Gallery {
 }
 
 model GalleryItem {
-  id          Int      @id() @default(autoincrement())
+  id          Int       @id() @default(autoincrement())
   galleryId   Int
-  gallery     Gallery  @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+  gallery     Gallery   @relation(fields: [galleryId], references: [id], onDelete: Cascade)
   title       String
   description String?
   fileUrl     String
   fileKey     String
   mimetype    String
   size        Int
-  isDeleted Boolean @default(false)
+  isDeleted   Boolean   @default(false)
   deletedAt   DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now())
+
+  @@index([deletedAt])
+}
+
+model Address {
+  id             Int      @id() @default(autoincrement())
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  province       String
+  city           String
+  address        String
+  postalCode     String   @map("postal_code")
+  receiverMobile String   @map("receiver_mobile")
+  description    String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now())
 }
