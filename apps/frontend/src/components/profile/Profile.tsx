@@ -2,9 +2,7 @@
 
 import UserAccountSection from "./Profile/UserAccountSection";
 import OrderStatusSection from "./Profile/OrderStatusSection";
-import CurrentOrdersSection from "./CurrentOrdersSection";
 import DashboardHeader from "./DashboardHeader";
-import { IOrder } from "@/lib/types/orders";
 
 interface DashboardProps {
   favoriteCount: number;
@@ -13,7 +11,6 @@ interface DashboardProps {
   deliveredOrders: number;
   canceledOrders: number;
   returnedOrders: number;
-  orders: IOrder[];
 }
 
 const Profile: React.FC<DashboardProps> = ({
@@ -23,10 +20,9 @@ const Profile: React.FC<DashboardProps> = ({
   deliveredOrders,
   canceledOrders,
   returnedOrders,
-  orders,
 }) => (
   <>
-    <div className="mb-12">
+    <div className="mb-8">
       <DashboardHeader title="پیشخوان" />
     </div>
     <UserAccountSection favoriteCount={favoriteCount} notificationCount={notificationCount} />
@@ -36,9 +32,6 @@ const Profile: React.FC<DashboardProps> = ({
       canceledOrders={canceledOrders}
       returnedOrders={returnedOrders}
     />
-    {orders.map((order) => (
-      <CurrentOrdersSection key={order.id} order={order} />
-    ))}
   </>
 );
 

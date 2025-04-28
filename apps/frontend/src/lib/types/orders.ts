@@ -1,4 +1,4 @@
-export type OrderStatus = "pending" | "paid" | "awaiting-confirmation" | "processing" | "shipped" | "delivered";
+export type OrderStatus = "pending" | "paid" | "awaiting-confirmation" | "processing" | "shipped" | "delivered" | "canceled";
 
 export interface IOrder {
   id: string;
@@ -6,8 +6,7 @@ export interface IOrder {
   remainingTime?: string;
   orderNumber: string;
   totalAmount: string;
-  statusLabel: string;
-  progress: number;
   statusDate?: string;
   statusTime?: string;
+  products?: { id: string; name: string; image: string; link: string }[];
 }

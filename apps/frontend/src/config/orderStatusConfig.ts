@@ -1,7 +1,7 @@
 import React from "react";
-import { FaExclamationTriangle, FaCheckCircle, FaHourglassHalf, FaCog, FaTruck, FaBoxOpen, FaClock } from "react-icons/fa";
+import { FaExclamationTriangle, FaCheckCircle, FaHourglassHalf, FaCog, FaTruck, FaBoxOpen, FaClock, FaTimes } from "react-icons/fa";
 
-type OrderStatus = "pending" | "paid" | "awaiting-confirmation" | "processing" | "shipped" | "delivered";
+export type OrderStatus = "pending" | "paid" | "awaiting-confirmation" | "processing" | "shipped" | "delivered" | "canceled";
 
 interface StatusConfig {
   headerLabel: string;
@@ -16,10 +16,10 @@ interface StatusConfig {
 }
 
 export const getStatusConfig = (status: OrderStatus): StatusConfig => {
-  const isPending = status === "pending";
-  const headerLabel = isPending ? "در انتظار پرداخت" : "پرداخت شده";
-  const headerColor = isPending ? "text-yellow-500 dark:text-yellow-400" : "text-green-500 dark:text-green-400";
-  const headerIcon = isPending
+  const isPendingOrCanceled = status === "pending" || status === "canceled";
+  const headerLabel = isPendingOrCanceled ? "در انتظار پرداخت" : "پرداخت شده";
+  const headerColor = isPendingOrCanceled ? "text-yellow-500 dark:text-yellow-400" : "text-green-500 dark:text-green-400";
+  const headerIcon = isPendingOrCanceled
     ? React.createElement(FaExclamationTriangle, { className: "h-6 w-6" })
     : React.createElement(FaCheckCircle, { className: "h-6 w-6" });
 
@@ -35,6 +35,18 @@ export const getStatusConfig = (status: OrderStatus): StatusConfig => {
         statusIcon: React.createElement(FaClock, { className: "h-5 w-5 md:h-6 md:w-6" }),
         statusColor: "text-yellow-500 dark:text-yellow-400",
         progressColor: "bg-yellow-500 dark:bg-yellow-400",
+      };
+    case "canceled":
+      return {
+        headerLabel,
+        headerColor,
+        headerIcon,
+        showProgress: true,
+        progress: 0,
+        statusLabel: "لغو شده",
+        statusIcon: React.createElement(FaTimes, { className: "h-5 w-5 md:h-6 md:w-6" }),
+        statusColor: "text-red-500 dark:text-red-400",
+        progressColor: "bg-red-500 dark:bg-red-400",
       };
     case "paid":
     case "awaiting-confirmation":

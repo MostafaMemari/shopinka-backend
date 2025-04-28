@@ -1,65 +1,70 @@
 import { IOrder } from "@/lib/types/orders";
+import { OrderStatus } from "@/config/orderStatusConfig";
 
-export const mockOrders: IOrder[] = [
-  {
-    id: "1",
-    status: "pending",
-    remainingTime: "23:45:12",
-    orderNumber: "DKC-123456",
-    totalAmount: "2,400,000",
-    statusLabel: "زمان باقی مانده",
-    progress: 0,
-    statusDate: "1402/12/25",
-    statusTime: "12:30",
-  },
-  {
-    id: "2",
-    status: "paid",
-    orderNumber: "DKC-123457",
-    totalAmount: "1,800,000",
-    statusLabel: "در انتظار تایید",
-    progress: 20,
-    statusDate: "1402/12/26",
-    statusTime: "14:00",
-  },
-  {
-    id: "3",
-    status: "awaiting-confirmation",
-    orderNumber: "DKC-123458",
-    totalAmount: "3,200,000",
-    statusLabel: "در انتظار تایید",
-    progress: 20,
-    statusDate: "1402/12/27",
-    statusTime: "09:15",
-  },
-  {
-    id: "4",
-    status: "processing",
-    orderNumber: "DKC-123459",
-    totalAmount: "1,200,000",
-    statusLabel: "در حال پردازش",
-    progress: 50,
-    statusDate: "1402/12/28",
-    statusTime: "16:45",
-  },
-  {
-    id: "5",
-    status: "shipped",
-    orderNumber: "DKC-123460",
-    totalAmount: "2,800,000",
-    statusLabel: "ارسال شده",
-    progress: 80,
-    statusDate: "1402/12/29",
-    statusTime: "11:20",
-  },
-  {
-    id: "6",
-    status: "delivered",
-    orderNumber: "DKC-123461",
-    totalAmount: "1,500,000",
-    statusLabel: "تحویل شده",
-    progress: 100,
-    statusDate: "1402/12/30",
-    statusTime: "10:00",
-  },
-];
+// یه دیتای ساده و معقول ساختیم
+const mockOrders: Record<string, IOrder[]> = {
+  current: [
+    {
+      id: "1",
+      status: "pending" as OrderStatus,
+      remainingTime: "23:45:12",
+      orderNumber: "DKC-123456",
+      totalAmount: "2,400,000",
+      statusDate: "1402/12/25",
+      statusTime: "12:30",
+      products: [
+        { id: "p5", name: "شلوار لیوایز LVZ78", image: "/images/products/p5.png", link: "/product-detail" },
+        { id: "p5", name: "شلوار لیوایز LVZ78", image: "/images/products/p2.png", link: "/product-detail" },
+        { id: "p5", name: "شلوار لیوایز LVZ78", image: "/images/products/p4.png", link: "/product-detail" },
+      ],
+    },
+    {
+      id: "2",
+      status: "processing" as OrderStatus,
+      orderNumber: "DKC-123457",
+      totalAmount: "3,500,000",
+      statusDate: "1402/12/26",
+      statusTime: "14:00",
+      products: [{ id: "p5", name: "شلوار لیوایز LVZ78", image: "/images/products/p5.png", link: "/product-detail" }],
+    },
+  ],
+  delivered: [
+    {
+      id: "3",
+      status: "delivered" as OrderStatus,
+      orderNumber: "DKC-123458",
+      totalAmount: "5,200,000",
+      statusDate: "1402/12/27",
+      statusTime: "09:15",
+      products: [{ id: "p5", name: "شلوار لیوایز LVZ78", image: "/images/products/p5.png", link: "/product-detail" }],
+    },
+  ],
+  canceled: [
+    {
+      id: "4",
+      status: "canceled" as OrderStatus,
+      remainingTime: "00:30:00",
+      orderNumber: "DKC-123459",
+      totalAmount: "1,800,000",
+      statusDate: "1402/12/28",
+      statusTime: "16:45",
+      products: [{ id: "p5", name: "شلوار لیوایز LVZ78", image: "/images/products/p5.png", link: "/product-detail" }],
+    },
+  ],
+};
+
+// تابع هم دست نمی‌زنیم فقط طبق همین دیتای جدید کار میکنه
+export const fetchOrdersByTab = async (
+  tab: string,
+  page: number = 1,
+  itemsPerPage: number = 10
+): Promise<{ orders: IOrder[]; total: number }> => {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  const orders = mockOrders[tab] || [];
+  const start = (page - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return {
+    orders: orders.slice(start, end),
+    total: orders.length,
+  };
+};
