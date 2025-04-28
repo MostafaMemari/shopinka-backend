@@ -26,8 +26,14 @@ export class AddressService {
     return this.addressRepository.findOneOrThrow({ where: { id, userId } })
   }
 
-  update(id: number, updateAddressDto: UpdateAddressDto) {
-    return `This action updates a #${id} address`;
+  async update(userId: number, id: number, updateAddressDto: UpdateAddressDto): Promise<{ message: string, address: Address }> {
+    const address = await this.addressRepository.findOne({ where: { userId: { not: userId }, postalCode: updateAddressDto.postalCode } })
+
+    if (address) throw new ConflictException("Address with this postal code already exists.")
+
+    const updatedAddress = await this.addressRepository.update({ where: { userId, id }, data: updateAddressDto })
+
+    return { message: "Updated address successfully.", address: updatedAddress }
   }
 
   remove(id: number) {

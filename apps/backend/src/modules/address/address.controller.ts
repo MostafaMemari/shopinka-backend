@@ -31,8 +31,9 @@ export class AddressController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAddressDto: UpdateAddressDto) {
-    return this.addressService.update(+id, updateAddressDto);
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateAddressDto: UpdateAddressDto, @GetUser() user: User) {
+    return this.addressService.update(user.id, id, updateAddressDto);
   }
 
   @Delete(':id')
