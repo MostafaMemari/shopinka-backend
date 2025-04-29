@@ -33,8 +33,9 @@ export class AttributeController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAttributeDto: UpdateAttributeDto) {
-    return this.attributeService.update(+id, updateAttributeDto);
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateAttributeDto: UpdateAttributeDto, @GetUser() user: User) {
+    return this.attributeService.update(user.id, id, updateAttributeDto);
   }
 
   @Delete(':id')

@@ -16,15 +16,7 @@ export class AttributeService {
       if (existingAttribute) throw new ConflictException("Attribute with this slug already exists.")
     }
 
-    let slug = createAttributeDto.slug || slugify(createAttributeDto.name, { locale: 'fa', lower: true, trim: true, strict: true })
-
-    let suffix = 0
-    let uniqueSlug = slug
-
-    while (await this.attributeRepository.findOne({ where: { slug: uniqueSlug } })) {
-      suffix++
-      uniqueSlug = `${slug}-${suffix}`
-    }
+    const uniqueSlug = createAttributeDto.slug || await this.generateUniqueSlug(createAttributeDto.name)
 
     const newAttribute = await this.attributeRepository.create({ data: { ...createAttributeDto, slug: uniqueSlug, userId } })
 
@@ -39,11 +31,35 @@ export class AttributeService {
     return this.attributeRepository.findOneOrThrow({ where: { id: attributeId, OR: [{ userId }, { isPublic: true }] } })
   }
 
-  update(id: number, updateAttributeDto: UpdateAttributeDto) {
-    return `This action updates a #${id} attribute`;
+  async update(userId: number, attributeId: number, updateAttributeDto: UpdateAttributeDto) {
+    await this.attributeRepository.findOneOrThrow({ where: { userId, id: attributeId } })
+
+    if (updateAttributeDto.slug) {
+      const existingAttribute = await this.attributeRepository.findOne({ where: { slug: updateAttributeDto.slug } })
+      if (existingAttribute) throw new ConflictException("Attribute with this slug already exists.")
+    }
+
+    const updatedAttribute = await this.attributeRepository.update({ where: { id: attributeId }, data: updateAttributeDto })
+
+    return { message: "Updated attribute successfully.", attribute: updatedAttribute }
   }
 
   remove(id: number) {
     return `This action removes a #${id} attribute`;
   }
+
+  private async generateUniqueSlug(name: string): Promise<string> {
+    let slug = slugify(name, { locale: 'fa', lower: true, trim: true, strict: true })
+
+    let suffix = 0
+    let uniqueSlug = slug
+
+    while (await this.attributeRepository.findOne({ where: { slug: uniqueSlug } })) {
+      suffix++
+      uniqueSlug = `${slug}-${suffix}`
+    }
+
+    return uniqueSlug
+  }
+
 }
