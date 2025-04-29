@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateAttributeDto } from '../dto/create-attribute.dto';
 import { UpdateAttributeDto } from '../dto/update-attribute.dto';
 import { AttributeRepository } from '../repositories/attribute.repository';
-import { Attribute } from 'generated/prisma';
+import { Attribute, Prisma } from 'generated/prisma';
 import slugify from 'slugify';
 
 @Injectable()
@@ -35,8 +35,8 @@ export class AttributeService {
     return `This action returns all attribute`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} attribute`;
+  findOne(userId: number, attributeId: number): Promise<never | Attribute> {
+    return this.attributeRepository.findOneOrThrow({ where: { id: attributeId, OR: [{ userId }, { isPublic: true }] } })
   }
 
   update(id: number, updateAttributeDto: UpdateAttributeDto) {

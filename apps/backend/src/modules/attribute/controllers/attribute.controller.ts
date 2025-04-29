@@ -1,13 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { AttributeService } from '../services/attribute.service';
 import { CreateAttributeDto } from '../dto/create-attribute.dto';
 import { UpdateAttributeDto } from '../dto/update-attribute.dto';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { AuthDecorator } from 'src/common/decorators/auth.decorator';
-import { Roles } from 'src/common/decorators/role.decorator';
+import { AuthDecorator } from '../../../common/decorators/auth.decorator';
+import { Roles } from '../../../common/decorators/role.decorator';
 import { Role, User } from 'generated/prisma';
-import { GetUser } from 'src/common/decorators/get-user.decorator';
-import { SwaggerConsumes } from 'src/common/enums/swagger-consumes.enum';
+import { GetUser } from '../../../common/decorators/get-user.decorator';
+import { SwaggerConsumes } from '../../../common/enums/swagger-consumes.enum';
 
 @Controller('attribute')
 @ApiTags('attribute')
@@ -28,8 +28,8 @@ export class AttributeController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.attributeService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.attributeService.findOne(user.id, id);
   }
 
   @Patch(':id')
