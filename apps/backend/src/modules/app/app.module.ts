@@ -14,6 +14,7 @@ import { PaymentModule } from "../payment/payment.module";
 import { GalleryModule } from "../gallery/gallery.module";
 import { AwsModule } from "../s3AWS/s3AWS.module";
 import { AddressModule } from "../address/address.module";
+import { AttributeModule } from "../attribute/attribute.module";
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { AddressModule } from "../address/address.module";
     PaymentModule,
     GalleryModule,
     AwsModule,
-    AddressModule
+    AddressModule,
+    AttributeModule
   ],
   controllers: [],
   providers: [
