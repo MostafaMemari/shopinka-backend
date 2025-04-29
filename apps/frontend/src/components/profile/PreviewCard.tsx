@@ -9,12 +9,12 @@ interface Favorite {
   isAvailable: boolean;
 }
 
-interface FavoriteCardProps {
+interface PreviewCardProps {
   favorite: Favorite;
   onDelete: (id: string) => void;
 }
 
-const FavoriteCard: React.FC<FavoriteCardProps> = ({ favorite, onDelete }) => (
+const PreviewCard: React.FC<PreviewCardProps> = ({ favorite, onDelete }) => (
   <div className="border-gradient group relative rounded-base border p-px before:absolute before:-inset-px before:h-[calc(100%+2px)] before:w-[calc(100%+2px)] before:rounded-base">
     <div className="relative rounded-xl bg-muted p-2 shadow-base md:p-5">
       <div className="mb-2 md:mb-5" draggable="false">
@@ -43,4 +43,4 @@ const FavoriteCard: React.FC<FavoriteCardProps> = ({ favorite, onDelete }) => (
   </div>
 );
 
-export default FavoriteCard;
+export default PreviewCard;

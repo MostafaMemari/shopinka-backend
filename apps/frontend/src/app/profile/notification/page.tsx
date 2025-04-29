@@ -1,4 +1,4 @@
-import NotificationsPage from "@/components/profile/NotificationsPage";
+import NotificationsActions from "@/components/profile/Notifications/NotificationsActions";
 
 interface Notification {
   id: string;
@@ -47,5 +47,9 @@ export default function Page() {
     },
   ];
 
-  return <NotificationsPage notifications={notifications} />;
+  return (
+    <div className="col-span-12 lg:col-span-9">
+      <NotificationsActions notifications={notifications} />
+    </div>
+  );
 }

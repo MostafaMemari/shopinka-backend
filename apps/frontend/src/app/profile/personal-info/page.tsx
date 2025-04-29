@@ -1,4 +1,4 @@
-import ProfileEditPage from "@/components/profile/ProfileEditPage";
+import ProfileEditActions from "@/components/profile/ProfileEditActions";
 
 const profileData = {
   fullName: "تایماز اکبری",
@@ -10,5 +10,9 @@ const profileData = {
 };
 
 export default function Page() {
-  return <ProfileEditPage profileData={profileData} />;
+  return (
+    <div className="col-span-12 lg:col-span-9">
+      <ProfileEditActions initialData={profileData} />
+    </div>
+  );
 }

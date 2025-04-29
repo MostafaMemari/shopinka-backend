@@ -9,12 +9,7 @@ import "swiper/css/pagination";
 import { IOrder } from "@/lib/types/orders";
 import { formatRemainingTime } from "@/utils/utils";
 import { getStatusConfig } from "@/config/orderStatusConfig";
-import ProductSlider from "./ProductSlider";
-
-interface OrderCardProps {
-  order: IOrder;
-  retryPayment?: boolean;
-}
+import ProductSlider from "../ProductSlider";
 
 interface OrderCardProps {
   order: IOrder;

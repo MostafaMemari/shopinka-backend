@@ -1,4 +1,4 @@
-import NotificationsActions from "./NotificationsActions";
+import NotificationsActions from "../NotificationsActions";
 
 interface Product {
   id: string;
@@ -24,9 +24,7 @@ interface NotificationsPageProps {
 
 const NotificationsPage: React.FC<NotificationsPageProps> = ({ notifications }) => (
   <div className="col-span-12 lg:col-span-9">
-    <div className="rounded-lg bg-muted p-5 shadow-base">
-      <NotificationsActions notifications={notifications} />
-    </div>
+    <NotificationsActions notifications={notifications} />
   </div>
 );
 

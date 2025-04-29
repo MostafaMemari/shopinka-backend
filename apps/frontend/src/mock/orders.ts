@@ -1,7 +1,6 @@
 import { IOrder } from "@/lib/types/orders";
 import { OrderStatus } from "@/config/orderStatusConfig";
 
-// یه دیتای ساده و معقول ساختیم
 const mockOrders: Record<string, IOrder[]> = {
   current: [
     {
@@ -53,7 +52,6 @@ const mockOrders: Record<string, IOrder[]> = {
   ],
 };
 
-// تابع هم دست نمی‌زنیم فقط طبق همین دیتای جدید کار میکنه
 export const fetchOrdersByTab = async (
   tab: string,
   page: number = 1,

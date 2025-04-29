@@ -1,4 +1,4 @@
-import FavoritesPage from "@/components/profile/FavoritesPage";
+import FavoriteActions from "@/components/profile/Favorite/FavoriteActions";
 
 interface Favorite {
   id: string;
@@ -27,5 +27,5 @@ export default function Page() {
     // More favorites...
   ];
 
-  return <FavoritesPage favorites={favorites} />;
+  return <FavoriteActions favorites={favorites} />;
 }

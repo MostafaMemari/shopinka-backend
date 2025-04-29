@@ -1,4 +1,4 @@
-import RecentPage from "@/components/profile/RecentPage";
+import RecentActions from "@/components/profile/Recent/RecentActions";
 
 interface Recent {
   id: string;
@@ -27,5 +27,5 @@ export default function Page() {
     // More favorites...
   ];
 
-  return <RecentPage recent={recent} />;
+  return <RecentActions recent={recent} />;
 }

@@ -2,10 +2,10 @@
 
 import { FaChevronLeft } from "react-icons/fa";
 import Link from "next/link";
-import DashboardHeader from "./DashboardHeader";
+import DashboardHeader from "../DashboardHeader";
 import OrderCard from "./OrderCard";
 import OrderCostDetails from "./OrderCostDetails";
-import DeliveryAddress from "./DeliveryAddress";
+import DeliveryAddress from "../Address/DeliveryAddress";
 import OrderItems from "./OrderItems";
 
 interface Product {
@@ -59,7 +59,7 @@ const OrderDetailsPage: React.FC<OrderDetailsPageProps> = ({ order, costs, shipp
           <FaChevronLeft className="h-5 w-5" />
         </Link>
       </div>
-      <OrderCard order={order} retryPayment={order.status === "pending"} />
+      <OrderCard order={order} />
       <OrderCostDetails costs={costs} shipping={shipping} />
       <DeliveryAddress address={address.address} recipient={address.recipient} />
       <OrderItems items={items} itemCount={items.length} />

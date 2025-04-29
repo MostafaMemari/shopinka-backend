@@ -1,4 +1,4 @@
-import OrderDetailsPage from "@/components/profile/OrderDetailsPage";
+import OrderDetailsPage from "@/components/profile/Order/OrderDetailsPage";
 
 interface Order {
   id: string;

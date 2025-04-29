@@ -1,6 +1,6 @@
 import { FaShoppingCart, FaTruck, FaChevronLeft } from "react-icons/fa";
 import Link from "next/link";
-import ProductSlider from "./ProductSlider";
+import ProductSlider from "../ProductSlider";
 
 interface Product {
   id: string;

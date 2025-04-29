@@ -159,7 +159,7 @@ const ProfileEditActions: React.FC<ProfileEditActionsProps> = ({ initialData }) 
   return (
     <>
       <DashboardHeader title="اطلاعات حساب کاربری شما" />
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 mt-10">
         {fields.map((field) => (
           <ProfileField
             key={field.label}
