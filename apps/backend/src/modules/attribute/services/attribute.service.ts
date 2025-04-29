@@ -31,7 +31,7 @@ export class AttributeService {
     return this.attributeRepository.findOneOrThrow({ where: { id: attributeId, OR: [{ userId }, { isPublic: true }] } })
   }
 
-  async update(userId: number, attributeId: number, updateAttributeDto: UpdateAttributeDto) {
+  async update(userId: number, attributeId: number, updateAttributeDto: UpdateAttributeDto): Promise<{ message: string, attribute: Attribute }> {
     await this.attributeRepository.findOneOrThrow({ where: { userId, id: attributeId } })
 
     if (updateAttributeDto.slug) {
@@ -44,8 +44,12 @@ export class AttributeService {
     return { message: "Updated attribute successfully.", attribute: updatedAttribute }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} attribute`;
+  async remove(userId: number, attributeId: number): Promise<{ message: string, attribute: Attribute }> {
+    await this.attributeRepository.findOneOrThrow({ where: { id: attributeId, userId } })
+
+    const removedAttribute = await this.attributeRepository.delete({ where: { id: attributeId } })
+
+    return { message: 'Removed attribute successfully.', attribute: removedAttribute }
   }
 
   private async generateUniqueSlug(name: string): Promise<string> {
