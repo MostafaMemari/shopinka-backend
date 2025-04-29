@@ -27,6 +27,11 @@ enum TransactionStatus {
   REFUNDED
 }
 
+enum AttributeType {
+  COLOR
+  BUTTON
+}
+
 model User {
   id               Int           @id() @default(autoincrement()) @db.Integer()
   fullName         String?       @map("full_name")
@@ -102,10 +107,11 @@ model Attribute {
   id          Int              @id() @default(autoincrement())
   name        String
   slug        String           @unique()
+  isPublic    Boolean          @default(false)
   userId      Int
   user        User             @relation(fields: [userId], references: [id], onDelete: NoAction)
-  type        String
-  description String
+  type        AttributeType
+  description String?
   values      AttributeValue[]
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @default(now())
@@ -115,8 +121,8 @@ model AttributeValue {
   id          Int      @id() @default(autoincrement())
   name        String
   slug        String   @unique()
-  colorCode   String   @map("color_code")
-  buttonLabel String   @map("button_label")
+  colorCode   String?  @map("color_code")
+  buttonLabel String?  @map("button_label")
   attributeId Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())

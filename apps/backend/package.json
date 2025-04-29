@@ -37,6 +37,7 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
     "sharp": "^0.34.1",
+    "slugify": "^1.6.6",
     "sms-typescript": "^1.0.2",
     "swagger": "^0.7.5",
     "swagger-themes": "^1.4.3",
