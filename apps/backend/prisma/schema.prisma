@@ -32,6 +32,7 @@ model User {
   fullName         String?       @map("full_name")
   mobile           String        @unique()
   transactions     Transaction[]
+  attributes       Attribute[]
   perviousMobile   String?
   lastMobileChange DateTime?
   isVerifiedMobile Boolean       @default(false)
@@ -101,6 +102,8 @@ model Attribute {
   id          Int              @id() @default(autoincrement())
   name        String
   slug        String           @unique()
+  userId      Int
+  user        User             @relation(fields: [userId], references: [id], onDelete: NoAction)
   type        String
   description String
   values      AttributeValue[]
@@ -109,12 +112,14 @@ model Attribute {
 }
 
 model AttributeValue {
-  id          Int    @id() @default(autoincrement())
+  id          Int      @id() @default(autoincrement())
   name        String
-  slug        String @unique()
-  colorCode   String @map("color_code")
-  buttonLabel String @map("button_label")
+  slug        String   @unique()
+  colorCode   String   @map("color_code")
+  buttonLabel String   @map("button_label")
   attributeId Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
 
-  attribute Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  attribute Attribute @relation(fields: [attributeId], references: [id], onDelete: NoAction)
 }
