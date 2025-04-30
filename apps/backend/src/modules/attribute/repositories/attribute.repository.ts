@@ -1,6 +1,7 @@
 import { Attribute, Prisma } from "generated/prisma";
 import { PrismaService } from "../../prisma/prisma.service";
 import { Injectable, NotFoundException } from "@nestjs/common";
+import { AttributeMessages } from "../enums/attribute-messages.enum";
 
 @Injectable()
 export class AttributeRepository {
@@ -29,7 +30,7 @@ export class AttributeRepository {
     async findOneOrThrow(args: Prisma.AttributeFindFirstArgs): Promise<Attribute | never> {
         const Attribute = await this.findOne(args)
 
-        if (!Attribute) throw new NotFoundException("Not found attribute.")
+        if (!Attribute) throw new NotFoundException(AttributeMessages.NotFoundAttribute)
 
         return Attribute
     }

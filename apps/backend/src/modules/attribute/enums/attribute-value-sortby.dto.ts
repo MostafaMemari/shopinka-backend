@@ -1,4 +1,4 @@
-export enum AttributeSortOrder {
+export enum AttributeValueSortOrder {
     CreatedAt = 'createdAt',
     UpdatedAt = 'updatedAt',
 }

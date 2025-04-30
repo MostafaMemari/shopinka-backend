@@ -9,6 +9,7 @@ import { QueryAttributeDto } from '../dto/query-attribute.dto';
 import { sortObject } from '../../../common/utils/functions.utils';
 import { CacheKeys } from '../../../common/enums/cache.enum';
 import { pagination } from '../../../common/utils/pagination.utils';
+import { AttributeMessages } from '../enums/attribute-messages.enum';
 
 @Injectable()
 export class AttributeService {
@@ -23,14 +24,14 @@ export class AttributeService {
     if (createAttributeDto.slug) {
       const existingAttribute = await this.attributeRepository.findOne({ where: { slug: createAttributeDto.slug } })
 
-      if (existingAttribute) throw new ConflictException("Attribute with this slug already exists.")
+      if (existingAttribute) throw new ConflictException(AttributeMessages.AlreadyExistsAttribute)
     }
 
     const uniqueSlug = createAttributeDto.slug || await this.generateUniqueSlug(createAttributeDto.name)
 
     const newAttribute = await this.attributeRepository.create({ data: { ...createAttributeDto, slug: uniqueSlug, userId } })
 
-    return { message: "Created attribute successfully.", attribute: newAttribute }
+    return { message: AttributeMessages.CreatedAttributeSuccess, attribute: newAttribute }
   }
 
   async findAll({ page, take, ...queryAttributeDto }: QueryAttributeDto): Promise<unknown> {
@@ -43,7 +44,7 @@ export class AttributeService {
 
     const cachedAttributes = await this.cacheService.get<null | Attribute[]>(cacheKey);
 
-    if (!cachedAttributes) return { ...pagination(paginationDto, cachedAttributes) }
+    if (cachedAttributes) return { ...pagination(paginationDto, cachedAttributes) }
 
     const filters: Prisma.AttributeWhereInput = {};
 
@@ -79,12 +80,12 @@ export class AttributeService {
 
     if (updateAttributeDto.slug) {
       const existingAttribute = await this.attributeRepository.findOne({ where: { slug: updateAttributeDto.slug } })
-      if (existingAttribute) throw new ConflictException("Attribute with this slug already exists.")
+      if (existingAttribute) throw new ConflictException(AttributeMessages.AlreadyExistsAttribute)
     }
 
     const updatedAttribute = await this.attributeRepository.update({ where: { id: attributeId }, data: updateAttributeDto })
 
-    return { message: "Updated attribute successfully.", attribute: updatedAttribute }
+    return { message: AttributeMessages.UpdatedAttributeSuccess, attribute: updatedAttribute }
   }
 
   async remove(userId: number, attributeId: number): Promise<{ message: string, attribute: Attribute }> {
@@ -92,7 +93,7 @@ export class AttributeService {
 
     const removedAttribute = await this.attributeRepository.delete({ where: { id: attributeId } })
 
-    return { message: 'Removed attribute successfully.', attribute: removedAttribute }
+    return { message: AttributeMessages.RemovedAttributeSuccess, attribute: removedAttribute }
   }
 
   private async generateUniqueSlug(name: string): Promise<string> {
