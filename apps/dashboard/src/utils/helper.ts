@@ -4,6 +4,11 @@ import { parseColor } from "tailwindcss/lib/util/color";
 
 dayjs.extend(duration);
 
+export function extractTimeFromMessage(message: string) {
+  const match = message.match(/(\d{2}:\d{2})/);
+  return match ? match[1] : null;
+}
+
 const cutText = (text: string, length: number) => {
   if (text.split(" ").length > 1) {
     const string = text.substring(0, length);
@@ -86,9 +91,7 @@ const diffTimeByNow = (time: string) => {
   const days = Math.round(milliseconds / 86400000);
   const hours = Math.round((milliseconds % 86400000) / 3600000);
   let minutes = Math.round(((milliseconds % 86400000) % 3600000) / 60000);
-  const seconds = Math.round(
-    (((milliseconds % 86400000) % 3600000) % 60000) / 1000
-  );
+  const seconds = Math.round((((milliseconds % 86400000) % 3600000) % 60000) / 1000);
 
   if (seconds < 30 && seconds >= 0) {
     minutes += 1;
@@ -137,11 +140,7 @@ const stringToHTML = (arg: string) => {
   return DOM.body.childNodes[0] as HTMLElement;
 };
 
-const slideUp = (
-  el: HTMLElement,
-  duration = 300,
-  callback = (el: HTMLElement) => {}
-) => {
+const slideUp = (el: HTMLElement, duration = 300, callback = (el: HTMLElement) => {}) => {
   el.style.transitionProperty = "height, margin, padding";
   el.style.transitionDuration = duration + "ms";
   el.style.height = el.offsetHeight + "px";
@@ -166,11 +165,7 @@ const slideUp = (
   }, duration);
 };
 
-const slideDown = (
-  el: HTMLElement,
-  duration = 300,
-  callback = (el: HTMLElement) => {}
-) => {
+const slideDown = (el: HTMLElement, duration = 300, callback = (el: HTMLElement) => {}) => {
   el.style.removeProperty("display");
   let display = window.getComputedStyle(el).display;
   if (display === "none") display = "block";
