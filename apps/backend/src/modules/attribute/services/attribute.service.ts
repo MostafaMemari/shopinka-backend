@@ -4,10 +4,21 @@ import { UpdateAttributeDto } from '../dto/update-attribute.dto';
 import { AttributeRepository } from '../repositories/attribute.repository';
 import { Attribute, Prisma } from 'generated/prisma';
 import slugify from 'slugify';
+import { QueryAddressDto } from 'src/modules/address/dto/query-address.dto';
+import { CacheService } from 'src/modules/cache/cache.service';
+import { QueryAttributeDto } from '../dto/query-attribute.dto';
+import { sortObject } from 'src/common/utils/functions.utils';
+import { CacheKeys } from 'src/common/enums/cache.enum';
+import { pagination } from 'src/common/utils/pagination.utils';
 
 @Injectable()
 export class AttributeService {
-  constructor(private readonly attributeRepository: AttributeRepository) { }
+  private readonly CACHE_EXPIRE_TIME: number = 600 //* 5 minutes
+
+  constructor(
+    private readonly attributeRepository: AttributeRepository,
+    private readonly cacheService: CacheService
+  ) { }
 
   async create(userId: number, createAttributeDto: CreateAttributeDto): Promise<{ message: string, attribute: Attribute }> {
     if (createAttributeDto.slug) {
@@ -23,12 +34,45 @@ export class AttributeService {
     return { message: "Created attribute successfully.", attribute: newAttribute }
   }
 
-  findAll() {
-    return `This action returns all attribute`;
+  async findAll({ page, take, ...queryAttributeDto }: QueryAttributeDto): Promise<unknown> {
+    const paginationDto = { page, take };
+    const { description, endDate, includeUser, includeValues, name, slug, sortBy, sortDirection, startDate, type, userId } = queryAttributeDto
+
+    const sortedDto = sortObject(queryAttributeDto);
+
+    const cacheKey = `${CacheKeys.Attributes}_${JSON.stringify(sortedDto)}`;
+
+    const cachedAttributes = await this.cacheService.get<null | Attribute[]>(cacheKey);
+
+    if (!cachedAttributes) return { ...pagination(paginationDto, cachedAttributes) }
+
+    const filters: Prisma.AttributeWhereInput = {};
+
+    if (description) filters.description = { contains: description, mode: "insensitive" };
+    if (description) filters.description = { contains: description, mode: "insensitive" };
+    if (name) filters.name = { contains: name, mode: "insensitive" };
+    if (slug) filters.slug = { contains: slug, mode: "insensitive" };
+    if (userId) filters.userId = userId
+    if (type) filters.type = type
+    if (startDate || endDate) {
+      filters.createdAt = {};
+      if (startDate) filters.createdAt.gte = new Date(startDate);
+      if (endDate) filters.createdAt.lte = new Date(endDate);
+    }
+
+    const attributes = await this.attributeRepository.findAll({
+      where: filters,
+      orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
+      include: { user: includeUser, values: includeValues }
+    });
+
+    await this.cacheService.set(cacheKey, attributes, this.CACHE_EXPIRE_TIME);
+
+    return { ...pagination(paginationDto, attributes) }
   }
 
-  findOne(userId: number, attributeId: number): Promise<never | Attribute> {
-    return this.attributeRepository.findOneOrThrow({ where: { id: attributeId, OR: [{ userId }, { isPublic: true }] } })
+  findOne(attributeId: number): Promise<never | Attribute> {
+    return this.attributeRepository.findOneOrThrow({ where: { id: attributeId }, include: { user: true } })
   }
 
   async update(userId: number, attributeId: number, updateAttributeDto: UpdateAttributeDto): Promise<{ message: string, attribute: Attribute }> {

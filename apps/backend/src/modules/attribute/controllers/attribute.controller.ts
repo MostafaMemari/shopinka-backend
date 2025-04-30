@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
 import { AttributeService } from '../services/attribute.service';
 import { CreateAttributeDto } from '../dto/create-attribute.dto';
 import { UpdateAttributeDto } from '../dto/update-attribute.dto';
@@ -8,6 +8,7 @@ import { Roles } from '../../../common/decorators/role.decorator';
 import { Role, User } from 'generated/prisma';
 import { GetUser } from '../../../common/decorators/get-user.decorator';
 import { SwaggerConsumes } from '../../../common/enums/swagger-consumes.enum';
+import { QueryAttributeDto } from '../dto/query-attribute.dto';
 
 @Controller('attribute')
 @ApiTags('attribute')
@@ -23,13 +24,13 @@ export class AttributeController {
   }
 
   @Get()
-  findAll() {
-    return this.attributeService.findAll();
+  findAll(@Query() queryAttributeDto: QueryAttributeDto) {
+    return this.attributeService.findAll(queryAttributeDto);
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
-    return this.attributeService.findOne(user.id, id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.attributeService.findOne(id);
   }
 
   @Patch(':id')

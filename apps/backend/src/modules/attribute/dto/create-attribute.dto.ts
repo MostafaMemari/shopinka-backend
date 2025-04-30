@@ -20,15 +20,6 @@ export class CreateAttributeDto {
     @ApiProperty({ type: "string", required: false, nullable: true })
     slug?: string
 
-    @IsBoolean()
-    @IsOptional()
-    @Transform(({ value }) => {
-        if (typeof value == 'string') return value == 'true'
-        return value
-    })
-    @ApiProperty({ type: 'boolean', nullable: true, required: false })
-    isPublic?: boolean
-
     @IsEnum(AttributeType)
     @IsNotEmpty()
     @ApiProperty({ type: "string", enum: AttributeType, required: true, nullable: false })
