@@ -1,61 +1,48 @@
-import clsx from "clsx";
-import React, { FC } from "react";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
 
+import React from "react";
+import { FormInput } from "../../base-components/Form";
+import Button from "../../base-components/Button";
 
-interface OtpFormProps {
-  phone: string;
+const phoneRegExp = /^(0|0098|\+98)9(0[1-5]|[1 3]\d|2[0-2]|98)\d{7}$/;
+
+const validationSchema = Yup.object({
+  phone: Yup.string().matches(phoneRegExp, "شماره تلفن معتبر نیست").required("شماره تلفن الزامی است"),
+});
+
+interface LoginFormProps {
+  initialPhone: string;
+  phoneInputRef: React.RefObject<HTMLInputElement>;
+  onSubmit: (values: { phone: string }) => void;
 }
 
-interface OtpInputProps {
-  value: string;
-  index: number;
-  onChange: (index: number, value: string) => void;
-  onKeyDown: (index: number, e: React.KeyboardEvent<HTMLInputElement>) => void;
-  inputRef: (el: HTMLInputElement | null) => void;
-  disabled: boolean;
-  errorShake: boolean;
-}
-
-const OtpInput: FC<OtpInputProps> = ({ value, index, onChange, onKeyDown, inputRef, disabled, errorShake }) => (
-  <input
-    type="text"
-    maxLength={1}
-    value={value}
-    onChange={(e) => onChange(index, e.target.value)}
-    onKeyDown={(e) => onKeyDown(index, e)}
-    ref={inputRef}
-    className={clsx([
-      "block px-4 py-3 text-center intro-x w-12 min-w-[50px] xl:min-w-[50px] rounded-md focus:outline-none focus:ring-2",
-      errorShake ? "border-red-500 ring-red-500" : "border-slate-300 focus:ring-primary",
-    ])}
-    disabled={disabled}
-  />
+const LoginForm: React.FC<LoginFormProps> = ({ initialPhone, phoneInputRef, onSubmit }) => (
+  <Formik initialValues={{ phone: initialPhone }} validationSchema={validationSchema} onSubmit={onSubmit} enableReinitialize>
+    {({ errors, touched, isSubmitting }) => (
+      <Form>
+        <div className="mt-8 intro-x">
+          <Field name="phone">
+            {({ field }: any) => (
+              <FormInput
+                {...field}
+                type="text"
+                className="block px-4 py-3 text-right intro-x min-w-full xl:min-w-[350px]"
+                placeholder="شماره تلفن (مثال: 09123456789)"
+                ref={phoneInputRef}
+              />
+            )}
+          </Field>
+          {errors.phone && touched.phone && <div className="text-red-500 text-right mt-1">{errors.phone}</div>}
+        </div>
+        <div className="mt-5 text-center intro-x xl:mt-8 xl:text-right">
+          <Button variant="primary" className="w-full px-4 py-3 align-top xl:w-32 xl:ml-3" disabled={isSubmitting} type="submit">
+            {isSubmitting ? "در حال ارسال..." : "ارسال کد"}
+          </Button>
+        </div>
+      </Form>
+    )}
+  </Formik>
 );
 
-interface OtpInputsContainerProps {
-  otp: string[];
-  handleChange: (index: number, value: string) => void;
-  handleKeyDown: (index: number, e: React.KeyboardEvent<HTMLInputElement>) => void;
-  inputRefs: React.MutableRefObject<(HTMLInputElement | null)[]>;
-  loading: boolean;
-  errorShake: boolean;
-}
-
-const OtpInputsContainer: React.FC<OtpInputsContainerProps> = ({ otp, handleChange, handleKeyDown, inputRefs, loading, errorShake }) => (
-  <div className="mt-8 intro-x flex justify-center gap-2" dir="ltr">
-    {otp.map((digit, index) => (
-      <OtpInput
-        key={5 - index}
-        value={otp[5 - index]}
-        index={5 - index}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        inputRef={(el) => (inputRefs.current[5 - index] = el)}
-        disabled={loading}
-        errorShake={errorShake}
-      />
-    ))}
-  </div>
-);
-
-export default OtpInputsContainer
+export default LoginForm;

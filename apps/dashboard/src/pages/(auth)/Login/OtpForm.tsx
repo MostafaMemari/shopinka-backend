@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import Login from ".";
 import clsx from "clsx";
-import useOtpFormLogic from "../../../hooks/useOtpFormLogic";
+import useOtpFormLogic from "../../../hooks/auth/useOtpFormLogic";
 import Button from "../../../base-components/Button";
 import TimerDisplay from "../../../base-components/Timer";
-import OtpInputsContainer from "../../../forms/auth/loginForm";
+import OtpInputsContainer from "../../../forms/auth/otpForm";
+import DarkModeSwitcher from "../../../components/DarkModeSwitcher";
+import MainColorSwitcher from "../../../components/MainColorSwitcher";
 
 interface OtpFormProps {
   phone: string;
@@ -27,6 +29,8 @@ const OtpForm: React.FC<OtpFormProps> = ({ phone }) => {
         "after:hidden after:xl:block after:content-[''] after:w-[57%] after:-mt-[20%] after:-mb-[13%] after:-ml-[13%] after:absolute after:inset-y-0 after:left-0 after:transform after:rotate-[-4.5deg] after:bg-primary after:rounded-[100%] after:dark:bg-darkmode-700",
       ])}
     >
+      <DarkModeSwitcher />
+      <MainColorSwitcher />
       <div className="container relative z-10 sm:px-10">
         <div className="block grid-cols-2 gapOsm-4 xl:grid">
           <div className="flex h-screen py-5 my-10 xl:h-auto xl:py-0 xl:my-0">

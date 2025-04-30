@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Toast } from "../base-components/Toast";
-import { verifyOtp } from "../services/Axios/Request/auth";
-import { extractTimeFromMessage } from "../utils/helper";
+import { Toast } from "../../base-components/Toast";
+import { verifyOtp } from "../../services/Axios/Request/auth";
+import { extractTimeFromMessage } from "../../utils/helper";
 
 interface OtpFormLogicProps {
   phone: string;
