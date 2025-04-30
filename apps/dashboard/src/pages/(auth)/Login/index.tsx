@@ -3,7 +3,7 @@ import OtpForm from "./OtpForm";
 import clsx from "clsx";
 import DarkModeSwitcher from "../../../components/DarkModeSwitcher";
 import MainColorSwitcher from "../../../components/MainColorSwitcher";
-import LoginForm from "../../../forms/auth/loginForm";
+import LoginForm from "../../../forms/auth/loginPhoneForm";
 import useLoginPhoneLogic from "../../../hooks/auth/useLoginFormLogic";
 
 interface LoginProps {
