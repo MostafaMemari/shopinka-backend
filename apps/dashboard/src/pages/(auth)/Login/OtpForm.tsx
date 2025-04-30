@@ -6,15 +6,13 @@ import { verifyOtp } from "../../../services/Axios/Request/auth";
 import Login from ".";
 import { extractTimeFromMessage } from "../../../utils/helper";
 import { Toast } from "../../../base-components/Toast";
+import TimerDisplay from "../../../base-components/Timer";
 
-// Mock dependencies for standalone
-// const Toast = (message: string, type: string) => console.log(`${type}: ${message}`);
 
 interface OtpFormProps {
   phone: string;
 }
 
-// Component for individual OTP input
 interface OtpInputProps {
   value: string;
   index: number;
@@ -41,7 +39,6 @@ const OtpInput: React.FC<OtpInputProps> = ({ value, index, onChange, onKeyDown, 
   />
 );
 
-// Component for the group of OTP inputs
 interface OtpInputsContainerProps {
   otp: string[];
   handleChange: (index: number, value: string) => void;
@@ -68,27 +65,8 @@ const OtpInputsContainer: React.FC<OtpInputsContainerProps> = ({ otp, handleChan
   </div>
 );
 
-// Component for timer display
-interface TimerDisplayProps {
-  timer: number;
-  isExpired: boolean;
-}
 
-const TimerDisplay: React.FC<TimerDisplayProps> = ({ timer, isExpired }) => {
-  const formatTime = (seconds: number) => {
-    const m = String(Math.floor(seconds / 60)).padStart(2, "0");
-    const s = String(seconds % 60).padStart(2, "0");
-    return `${m}:${s}`;
-  };
 
-  return (
-    <div className="mt-4 text-center text-sm text-slate-500">
-      {isExpired ? <span className="text-red-500">مهلت وارد کردن کد تمام شد!</span> : <>مهلت باقی‌مانده: {formatTime(timer)}</>}
-    </div>
-  );
-};
-
-// Component for action buttons
 interface ActionButtonsProps {
   loading: boolean;
   otp: string[];
@@ -112,7 +90,6 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ loading, otp, onSubmit, o
   </div>
 );
 
-// Main OtpForm component
 const OtpForm: React.FC<OtpFormProps> = ({ phone }) => {
   const navigate = useNavigate();
   const location = useLocation();
