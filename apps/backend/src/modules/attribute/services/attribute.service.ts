@@ -4,12 +4,11 @@ import { UpdateAttributeDto } from '../dto/update-attribute.dto';
 import { AttributeRepository } from '../repositories/attribute.repository';
 import { Attribute, Prisma } from 'generated/prisma';
 import slugify from 'slugify';
-import { QueryAddressDto } from 'src/modules/address/dto/query-address.dto';
-import { CacheService } from 'src/modules/cache/cache.service';
+import { CacheService } from '../../../modules/cache/cache.service';
 import { QueryAttributeDto } from '../dto/query-attribute.dto';
-import { sortObject } from 'src/common/utils/functions.utils';
-import { CacheKeys } from 'src/common/enums/cache.enum';
-import { pagination } from 'src/common/utils/pagination.utils';
+import { sortObject } from '../../../common/utils/functions.utils';
+import { CacheKeys } from '../../../common/enums/cache.enum';
+import { pagination } from '../../../common/utils/pagination.utils';
 
 @Injectable()
 export class AttributeService {
