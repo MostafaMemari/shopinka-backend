@@ -9,9 +9,15 @@ async function bootstrap() {
 
   const { PORT = 3000 } = process.env;
 
-  app.setGlobalPrefix('/api/v1')
+  app.setGlobalPrefix("/api/v1");
 
-  swaggerConfigInit(app)
+  app.enableCors({
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+  });
+
+  swaggerConfigInit(app);
 
   await app.listen(PORT, () => logger.log(`App running on port ${PORT}`));
 }
