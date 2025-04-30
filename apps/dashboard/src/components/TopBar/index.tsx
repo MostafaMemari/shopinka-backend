@@ -22,8 +22,8 @@ function Main() {
     setSearchDropdown(false);
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate("/login");
   };
 
@@ -53,7 +53,7 @@ function Main() {
               <FormInput
                 type="text"
                 className="border-transparent w-56 shadow-none rounded-full bg-slate-200 pl-8 transition-[width] duration-300 ease-in-out focus:border-transparent focus:w-72 dark:bg-darkmode-400/70"
-                placeholder="Search..."
+                placeholder="جستجو..."
                 onFocus={showSearchDropdown}
                 onBlur={hideSearchDropdown}
               />

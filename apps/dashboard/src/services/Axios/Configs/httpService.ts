@@ -14,12 +14,11 @@ const axiosInstance: AxiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = Cookies.get("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
   (error) => {
+    console.error("Request interceptor error:", error);
     return Promise.reject(error);
   },
 );
@@ -36,16 +35,18 @@ axiosInstance.interceptors.response.use(
       try {
         const refreshToken = Cookies.get("refreshToken");
         if (!refreshToken) throw new Error("No refresh token found");
+
         const response = await axios.post(`${apiPath}/api/v1/auth/refresh-token`, { refreshToken });
         const { accessToken, refreshToken: newRefreshToken } = response.data;
 
-        Cookies.set("token", accessToken);
-        Cookies.set("refreshToken", newRefreshToken);
+        Cookies.set("token", accessToken, { secure: true, sameSite: "strict" });
+        Cookies.set("refreshToken", newRefreshToken, { secure: true, sameSite: "strict" });
 
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
 
         return axiosInstance(originalRequest);
       } catch (refreshError) {
+        console.error("Token refresh failed:", refreshError);
         Cookies.remove("token");
         Cookies.remove("refreshToken");
         window.location.href = "/login";
@@ -53,6 +54,7 @@ axiosInstance.interceptors.response.use(
       }
     }
 
+    console.error("Response error:", error.response?.data || error.message);
     return Promise.reject(error);
   },
 );
