@@ -21,46 +21,11 @@ const initialState: SideMenuState = {
       title: "محصولات",
       subMenu: [
         {
-          icon: "Activity",
-          pathname: "/products",
-          title: "مدیریت",
-        },
-        {
-          icon: "Activity",
-          pathname: "/products/purchase",
-          title: "خرید",
-        },
-        {
-          icon: "Activity",
-          pathname: "/products/sales",
-          title: "فروش",
-        },
-        {
-          icon: "Activity",
-          pathname: "/products/robot",
-          title: "ربات",
+          icon: "Layers",
+          pathname: "/products/attributes",
+          title: "ویژگی ها",
         },
       ],
-    },
-    {
-      icon: "ShoppingBag",
-      title: "تراکنش ها",
-      pathname: "/transactions",
-    },
-    {
-      icon: "Droplet",
-      title: "رنگ",
-      pathname: "/colors",
-    },
-    {
-      icon: "ShoppingBag",
-      title: "دسته بندی",
-      pathname: "/categories",
-    },
-    {
-      icon: "Users",
-      title: "فروشنده",
-      pathname: "/sellers",
     },
   ],
 };
