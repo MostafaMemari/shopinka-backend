@@ -107,7 +107,6 @@ model Attribute {
   id          Int              @id() @default(autoincrement())
   name        String
   slug        String           @unique()
-  isPublic    Boolean          @default(false)
   userId      Int
   user        User             @relation(fields: [userId], references: [id], onDelete: NoAction)
   type        AttributeType
