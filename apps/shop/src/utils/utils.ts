@@ -1,0 +1,12 @@
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+export const formatRemainingTime = (time?: string): string => {
+  if (!time) return "";
+  const [hours, minutes] = time.split(":").map(Number);
+  if (hours > 0) return `${hours} ساعت و ${minutes} دقیقه`;
+  return `${minutes} دقیقه`;
+};

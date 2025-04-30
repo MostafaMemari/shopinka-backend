@@ -1,0 +1,29 @@
+@font-face {
+  font-family: IRANYekan-B;
+  font-style: normal;
+  font-weight: 600;
+  src: url(../fonts/iranyekanwebbold.eot);
+  src: url(../fonts/iranyekanwebbold.eot?#iefix) format("embedded-opentype"),
+    url(../fonts/iranyekanwebbold.woff2) format("woff2"), url(../fonts/iranyekanwebbold.woff) format("woff"),
+    url(../fonts/iranyekanwebbold.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: IRANYekan-L;
+  font-style: normal;
+  font-weight: 300;
+  src: url(../fonts/iranyekanweblight.eot);
+  src: url(../fonts/iranyekanweblight.eot?#iefix) format("embedded-opentype"),
+    url(../fonts/iranyekanweblight.woff2) format("woff2"), url(../fonts/iranyekanweblight.woff) format("woff"),
+    url(../fonts/iranyekanweblight.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: IRANYekan;
+  font-style: normal;
+  font-weight: 400;
+  src: url(../fonts/iranyekanwebregular.eot);
+  src: url(../fonts/iranyekanwebregular.eot?#iefix) format("embedded-opentype"),
+    url(../fonts/iranyekanwebregular.woff2) format("woff2"), url(../fonts/iranyekanwebregular.woff) format("woff"),
+    url(../fonts/iranyekanwebregular.ttf) format("truetype");
+}
