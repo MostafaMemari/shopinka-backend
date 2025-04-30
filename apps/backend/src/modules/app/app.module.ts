@@ -15,6 +15,7 @@ import { GalleryModule } from "../gallery/gallery.module";
 import { AwsModule } from "../s3AWS/s3AWS.module";
 import { AddressModule } from "../address/address.module";
 import { AttributeModule } from "../attribute/attribute.module";
+import { ProductModule } from "../product/product.module";
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { AttributeModule } from "../attribute/attribute.module";
     GalleryModule,
     AwsModule,
     AddressModule,
-    AttributeModule
+    AttributeModule,
+    ProductModule
   ],
   controllers: [],
   providers: [
