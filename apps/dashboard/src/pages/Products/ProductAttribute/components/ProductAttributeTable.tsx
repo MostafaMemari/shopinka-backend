@@ -1,47 +1,16 @@
-import Table from "../../../base-components/Table";
-import Lucide from "../../../base-components/Lucide";
-import { Toast } from "../../../base-components/Toast";
-import { removeProductAttributeService } from "../../../services/Axios/Request/productAttribute/attribute";
-import { IProductAttribute } from "../../../features/productAttribute/types/type";
-import Swal from "sweetalert2";
+import Table from "../../../../base-components/Table";
+import Lucide from "../../../../base-components/Lucide";
+import { IProductAttribute } from "../../../../features/productAttribute/types/type";
+import useRemoveProductAttribute from "../../../../features/productAttribute/hooks/useRemoveProductAttribute";
 
 interface Props {
   productAttributes?: IProductAttribute[];
   onSuccess: () => void;
-  onEdit: (attribute: IProductAttribute) => void; // برای باز کردن فرم ویرایش
+  onEdit: (attribute: IProductAttribute) => void;
 }
 
 const ProductAttributeTable = ({ productAttributes = [], onSuccess, onEdit }: Props) => {
-  const handleDeleteProduct = async (productId: number) => {
-    const result = await Swal.fire({
-      title: "آیا مطمئن هستید؟",
-      text: "این ویژگی به‌طور دائم حذف خواهد شد!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "بله، حذف کن",
-      cancelButtonText: "خیر",
-    });
-
-    if (result.isConfirmed) {
-      try {
-        const res = await removeProductAttributeService(productId);
-        if (res.status === 200) {
-          Toast("حذف ویژگی با موفقیت انجام شد", "success");
-          onSuccess();
-          Swal.fire("حذف شد!", "ویژگی با موفقیت حذف شد.", "success");
-        } else {
-          Toast("حذف ویژگی با خطا مواجه شد", "error");
-          Swal.fire("خطا!", "حذف ویژگی ناموفق بود.", "error");
-        }
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "مشکلی در حذف ویژگی رخ داد";
-        Toast(errorMessage, "error");
-        Swal.fire("خطا!", errorMessage, "error");
-      }
-    }
-  };
+  const { handleDeleteProduct } = useRemoveProductAttribute({ onSuccess });
 
   return (
     <Table className="border-separate rounded-lg shadow-sm">

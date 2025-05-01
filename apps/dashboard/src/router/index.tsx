@@ -1,6 +1,5 @@
 import { useRoutes } from "react-router-dom";
 import SideMenu from "../layouts/SideMenu";
-import { TransactionType } from "../features/transaction/types/enym";
 
 import Login from "../pages/(auth)/Login";
 import ErrorPage from "../pages/ErrorPage";

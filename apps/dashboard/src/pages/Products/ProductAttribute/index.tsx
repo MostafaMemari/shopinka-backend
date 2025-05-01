@@ -4,7 +4,7 @@ import { Slideover } from "../../../base-components/Headless";
 import useProductAttributeLogic from "../../../features/productAttribute/hooks/useCreateProductAttribute";
 import ProductAttributeForm from "../../../features/productAttribute/form/productAttributeForm";
 import { useProductAttribute } from "../../../features/productAttribute/hooks/useProductAttribute";
-import ProductAttributeTable from "./ProductAttributeTable";
+import ProductAttributeTable from "./components/ProductAttributeTable";
 import Table from "../../../base-components/Table";
 import LoadingIcon from "../../../base-components/LoadingIcon";
 import { IProductAttribute, IProductAttributeFormValues } from "../../../features/productAttribute/types/type";
@@ -13,6 +13,7 @@ const ProductAttribute = () => {
   const [headerFooterSlideoverPreview, setHeaderFooterSlideoverPreview] = useState(false);
   const [editingAttribute, setEditingAttribute] = useState<IProductAttributeFormValues | null>(null);
   const { data, isLoading, isFetching, error, refetch } = useProductAttribute({});
+
   const { loading, handleSubmitForm, handleUpdateForm } = useProductAttributeLogic({
     refetch,
     closeSlideAttribute: () => setHeaderFooterSlideoverPreview(false),
