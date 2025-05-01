@@ -46,8 +46,8 @@ export class ProductService {
     return `This action returns all product`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  findOne(id: number): Promise<Product> {
+    return this.productRepository.findOneOrThrow({ where: { id }, include: { galleryImages: true, mainImage: true, user: true } })
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
