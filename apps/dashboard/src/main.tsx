@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import { store } from "./stores/store";
 import Router from "./router";
 import "./assets/css/app.css";
+import "./assets/fonts/fonts.css";
 import ReactQueryProvider from "./contexts/QueryClientProvider";
 import AuthGuard from "./components/AuthGuard";
 
@@ -18,5 +19,5 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       </Provider>
       <ScrollToTop />
     </BrowserRouter>
-  </ReactQueryProvider>
+  </ReactQueryProvider>,
 );

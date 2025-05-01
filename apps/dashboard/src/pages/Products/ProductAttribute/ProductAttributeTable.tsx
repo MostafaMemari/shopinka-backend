@@ -12,8 +12,6 @@ interface Props {
 }
 
 const ProductAttributeTable = ({ productAttributes = [], onSuccess, onEdit }: Props) => {
-  console.log("productAttributes:", productAttributes);
-
   const handleDeleteProduct = async (productId: number) => {
     const result = await Swal.fire({
       title: "آیا مطمئن هستید؟",
@@ -73,7 +71,7 @@ const ProductAttributeTable = ({ productAttributes = [], onSuccess, onEdit }: Pr
                     className="flex items-center text-primary"
                     onClick={(e) => {
                       e.preventDefault();
-                      onEdit(item); // باز کردن فرم ویرایش
+                      onEdit(item);
                     }}
                   >
                     <Lucide icon="CheckSquare" className="w-4 h-4 ml-1" />

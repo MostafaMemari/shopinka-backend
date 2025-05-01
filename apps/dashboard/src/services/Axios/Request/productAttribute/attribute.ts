@@ -13,7 +13,8 @@ export const createdProductAttributeService = async (data: Partial<IProductAttri
 };
 export const updateProductAttributeService = async (attributeId: number, data: Partial<IProductAttribute>) => {
   try {
-    return await httpService.put(`/attribute/${attributeId}`, { ...data });
+    console.log(`/attribute/${attributeId}`, { ...data });
+    return await httpService.patch(`/attribute/${attributeId}`, { ...data });
   } catch (error: any) {
     throw {
       status: error?.response?.status || 500,

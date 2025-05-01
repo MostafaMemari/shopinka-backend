@@ -2,14 +2,7 @@ import { useState } from "react";
 import { Toast } from "../../../base-components/Toast";
 import { createdProductAttributeService, updateProductAttributeService } from "../../../services/Axios/Request/productAttribute/attribute";
 import { removeEmptyFields } from "../../../utils/helper";
-
-interface FormValues {
-  id?: string | number;
-  name: string;
-  slug: string;
-  type: "COLOR" | "BUTTON";
-  description: string;
-}
+import { IProductAttributeFormValues, IProductAttributeUpdatePayload } from "../types/type";
 
 interface Props {
   refetch: () => void;
@@ -19,22 +12,17 @@ interface Props {
 const useProductAttributeLogic = ({ refetch, closeSlideAttribute }: Props) => {
   const [loading, setLoading] = useState(false);
 
-  const handleSubmitForm = async (values: FormValues) => {
+  const handleSubmitForm = async (values: IProductAttributeFormValues) => {
     try {
       setLoading(true);
-
-      const validValues = removeEmptyFields(values);
-
-      const res = await createdProductAttributeService(validValues);
-
-      if (res.status == 200 || res.status == 201) {
+      const res = await createdProductAttributeService(values);
+      if (res.status === 200 || res.status === 201) {
         Toast("ویژگی با موفقیت ثبت شد", "success");
         refetch();
         closeSlideAttribute();
       }
     } catch (err: any) {
-      if (err.status == 409) {
-        console.log(err);
+      if (err.status === 409) {
         Toast("ویژگی قبلا ثبت شده است", "error");
       } else {
         Toast("ثبت ویژگی با خطا مواجه شد", "error");
@@ -44,12 +32,17 @@ const useProductAttributeLogic = ({ refetch, closeSlideAttribute }: Props) => {
     }
   };
 
-  const handleUpdateForm = async (values: FormValues & { id: number }) => {
+  const handleUpdateForm = async (values: IProductAttributeFormValues & { id: number }) => {
     try {
       setLoading(true);
-      const res = await updateProductAttributeService(values.id, values);
+      const { id, ...updateData } = values;
+      const payload: IProductAttributeUpdatePayload = removeEmptyFields(updateData);
+
+      const res = await updateProductAttributeService(id, payload);
       if (res.status === 200) {
         Toast("ویژگی با موفقیت به‌روزرسانی شد", "success");
+        refetch();
+        closeSlideAttribute();
       } else {
         Toast("به‌روزرسانی ویژگی با خطا مواجه شد", "error");
       }

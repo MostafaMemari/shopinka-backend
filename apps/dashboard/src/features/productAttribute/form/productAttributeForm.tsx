@@ -5,26 +5,19 @@ import { Slideover } from "../../../base-components/Headless";
 import { FormInput, FormLabel, FormSelect, FormTextarea } from "../../../base-components/Form";
 import { formatSlug } from "../../../utils/helper";
 import Button from "../../../base-components/Button";
-
-interface FormValues {
-  id?: number; // برای ویرایش
-  name: string;
-  slug: string;
-  type: "COLOR" | "BUTTON";
-  description: string;
-}
+import { IProductAttributeFormValues } from "../types/type";
 
 interface ProductAttributeFormProps {
-  onSubmit: (values: FormValues) => void;
-  initialValues: FormValues;
-  onChange?: (values: FormValues) => void;
+  onSubmit: (values: IProductAttributeFormValues) => void;
+  initialValues: IProductAttributeFormValues;
+  onChange?: (values: IProductAttributeFormValues) => void;
 }
 
 const ProductAttributeForm: React.FC<ProductAttributeFormProps> = ({ onSubmit, initialValues, onChange }) => (
   <Formik
     initialValues={initialValues}
     validationSchema={productAttributeSchema}
-    onSubmit={(values, { setSubmitting }: FormikHelpers<FormValues>) => {
+    onSubmit={(values, { setSubmitting }: FormikHelpers<IProductAttributeFormValues>) => {
       onSubmit(values);
       setSubmitting(false);
     }}
