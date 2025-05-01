@@ -125,6 +125,7 @@ model Attribute {
   type        AttributeType
   description String?
   values      AttributeValue[]
+  products    Product[]
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @default(now())
 }
@@ -143,7 +144,7 @@ model AttributeValue {
 }
 
 model Product {
-  id               String        @id @default(uuid())
+  id               Int           @id @default(autoincrement())
   sku              String        @unique()
   name             String
   mainImageId      Int
@@ -159,6 +160,7 @@ model Product {
   mainImage        GalleryItem   @relation("MainImage", fields: [mainImageId], references: [id], onDelete: NoAction)
   galleryImages    GalleryItem[] @relation("ProductToGalleryItem")
   user             User          @relation(fields: [userId], references: [id], onDelete: NoAction)
+  attributes       Attribute[]
   width            Int?
   height           Int?
   length           Int?

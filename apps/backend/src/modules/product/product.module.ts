@@ -1,9 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ProductService } from './services/product.service';
 import { ProductController } from './controllers/product.controller';
+import { ProductRepository } from './repositories/product.repository';
+import { UserRepository } from '../user/user.repository';
+import { AuthService } from '../auth/auth.service';
+import { CacheService } from '../cache/cache.service';
+import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
+import { AttributeRepository } from '../attribute/repositories/attribute.repository';
 
 @Module({
   controllers: [ProductController],
-  providers: [ProductService],
+  providers: [ProductService, ProductRepository, UserRepository, AuthService, CacheService, GalleryItemRepository , AttributeRepository],
 })
 export class ProductModule { }
