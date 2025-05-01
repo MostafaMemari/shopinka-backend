@@ -8,7 +8,7 @@ export const sortObject: SortedObject = (object) => {
 
 export const transformNumberArray = (value: any) => {
     try {
-        if (Array.isArray(value)) return value.map((v) => +v);
+        if (Array.isArray(value)) return value.map((v) => +v).filter(v => v > 0);
 
         const uniqueItems = new Set();
         const parsedValue = JSON.parse(value);
