@@ -4,10 +4,12 @@ import httpService from "../Configs/httpService";
 export const sendOtp = async (mobile: string) => {
   try {
     const response = await httpService.post("/auth/authenticate", { mobile });
-
-    return response.data;
+    return response;
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || "Failed to send OTP");
+    throw {
+      status: error?.response?.status || 500,
+      message: error?.response?.data?.message || "Failed to send OTP",
+    };
   }
 };
 
@@ -21,7 +23,10 @@ export const verifyOtp = async (mobile: string, otp: string) => {
     }
     return response.data;
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || "Failed to verify OTP");
+    throw {
+      status: error?.response?.status || 500,
+      message: error?.response?.data?.message || "Failed to verify OTP",
+    };
   }
 };
 
@@ -44,9 +49,7 @@ export const logout = async () => {
   if (!refreshToken) throw new Error("No refresh token found");
 
   try {
-
     const response = await httpService.post("/auth/signout", { refreshToken });
-
 
     if (response.status === 201) {
       Cookies.remove("token", { path: "/", secure: true, sameSite: "strict" });

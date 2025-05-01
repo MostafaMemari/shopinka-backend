@@ -2,11 +2,11 @@ import Swal, { SweetAlertOptions } from "sweetalert2";
 
 export const toastConfig: SweetAlertOptions = {
   toast: true,
-  position: "top",
+  position: "top-right",
   showConfirmButton: false,
   timer: 3000,
-  width: "auto",
   timerProgressBar: true,
+  width: "auto",
   didOpen: (toast) => {
     toast.addEventListener("mouseenter", Swal.stopTimer);
     toast.addEventListener("mouseleave", Swal.resumeTimer);

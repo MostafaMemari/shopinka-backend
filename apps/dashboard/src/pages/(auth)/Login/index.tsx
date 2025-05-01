@@ -10,6 +10,7 @@ import { Toast } from "../../../base-components/Toast";
 import { useNavigate } from "react-router-dom";
 import OtpForm from "./OtpForm";
 import { sendOtp } from "../../../services/Axios/Request/auth";
+import { extractTimeFromMessage } from "../../../utils/helper";
 
 const phoneRegExp = /^(0|0098|\+98)9(0[1-5]|[1 3]\d|2[0-2]|98)\d{7}$/;
 
@@ -29,7 +30,6 @@ function Login({ initialPhone = "" }: LoginProps) {
   const phoneInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // اضافه کردن تأخیر کوچک برای اطمینان از رندر DOM
     const timer = setTimeout(() => {
       if (phoneInputRef.current) {
         phoneInputRef.current.focus();
@@ -40,22 +40,24 @@ function Login({ initialPhone = "" }: LoginProps) {
   }, []);
 
   const handleSendOtp = async (values: { phone: string }) => {
-    setLoading(true);
     try {
-      await sendOtp(values.phone);
-      Toast("کد تأیید ارسال شد", "success");
-      setPhone(values.phone);
-      setShowOtpForm(true);
-    } catch (error: any) {
-      Toast(error.response?.data?.message || "خطا در ارسال کد", "error");
+      setLoading(true);
+      const res = await sendOtp(values.phone);
+      if (res.status === 200 || res.status === 201) {
+        Toast("کد تأیید ارسال شد", "success");
+        setPhone(values.phone);
+        setShowOtpForm(true);
+      }
+    } catch (err: any) {
+      if (err?.status == 409) Toast(`شما به مدت ${extractTimeFromMessage(err?.message)} دقیقه محدود شده اید`, "error");
+      else if (err?.status == 403) Toast(`شما به مدت ${extractTimeFromMessage(err?.message)} دقیقه محدود شده اید`, "error");
+      else Toast(err?.message || "خطا در ارسال کد", "error");
     } finally {
       setLoading(false);
     }
   };
 
-  if (showOtpForm) {
-    return <OtpForm phone={phone} />;
-  }
+  if (showOtpForm) return <OtpForm phone={phone} />;
 
   return (
     <div
@@ -89,7 +91,7 @@ function Login({ initialPhone = "" }: LoginProps) {
                             type="text"
                             className="block px-4 py-3 text-right intro-x min-w-full xl:min-w-[350px]"
                             placeholder="شماره تلفن (مثال: 09123456789)"
-                            ref={phoneInputRef} // تغییر inputRef به ref
+                            ref={phoneInputRef}
                           />
                         )}
                       </Field>
