@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger"
 import { Transform, Type } from "class-transformer"
-import { ArrayUnique, IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, MaxLength, ValidateNested } from "class-validator"
+import { ArrayUnique, IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Matches, MaxLength, ValidateNested } from "class-validator"
 import { ProductStatus, ProductType } from "generated/prisma"
 import { transformNumberArray } from "../../../common/utils/functions.utils"
 
@@ -21,6 +21,7 @@ export class CreateProductDto {
     @IsString()
     @IsNotEmpty()
     @MaxLength(120)
+    @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
     @ApiProperty({ type: "string", required: false, nullable: true, maxLength: 120 })
     slug?: string
 
@@ -84,7 +85,7 @@ export class CreateProductDto {
     @IsArray()
     @ArrayUnique()
     @IsNotEmpty()
-    galleryImages: number[]
+    galleryImageIds: number[]
 
     @IsOptional()
     @IsNumber()

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { GalleryItem, Prisma } from "generated/prisma";
 import { PrismaService } from "../../../modules/prisma/prisma.service";
-import { GalleryMessages } from "../enums/gallery.messages";
+import { GalleryItemMessages } from "../enums/gallery-item-messages.enum";
 
 @Injectable()
 export class GalleryItemRepository {
@@ -42,7 +42,7 @@ export class GalleryItemRepository {
     async findOneOrThrow(args: Prisma.GalleryItemFindFirstArgs): Promise<never | GalleryItem> {
         const galleryItem = await this.findOne(args)
 
-        if (!galleryItem) throw new NotFoundException(GalleryMessages.NotFoundGallery)
+        if (!galleryItem) throw new NotFoundException(GalleryItemMessages.NotFoundGalleryItem)
 
         return galleryItem
     }
