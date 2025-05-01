@@ -1,0 +1,49 @@
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { GalleryItem, Prisma } from "generated/prisma";
+import { PrismaService } from "../../../modules/prisma/prisma.service";
+import { GalleryMessages } from "../enums/gallery.messages";
+
+@Injectable()
+export class GalleryItemRepository {
+    constructor(private readonly prismaService: PrismaService) { }
+
+    create(args: Prisma.GalleryItemCreateArgs): Promise<GalleryItem> {
+        return this.prismaService.galleryItem.create(args)
+    }
+
+    createMany(args: Prisma.GalleryItemCreateManyAndReturnArgs): Promise<GalleryItem[]> {
+        return this.prismaService.galleryItem.createManyAndReturn(args)
+    }
+
+    findOne(args: Prisma.GalleryItemFindFirstArgs): Promise<null | GalleryItem> {
+        return this.prismaService.galleryItem.findFirst(args)
+    }
+
+    findAll(args: Prisma.GalleryItemFindManyArgs): Promise<GalleryItem[]> {
+        return this.prismaService.galleryItem.findMany(args)
+    }
+
+    update(args: Prisma.GalleryItemUpdateArgs): Promise<GalleryItem> {
+        return this.prismaService.galleryItem.update(args)
+    }
+
+    updateMany(args: Prisma.GalleryItemUpdateManyAndReturnArgs): Promise<GalleryItem[]> {
+        return this.prismaService.galleryItem.updateManyAndReturn(args)
+    }
+
+    delete(args: Prisma.GalleryItemDeleteArgs): Promise<GalleryItem> {
+        return this.prismaService.galleryItem.delete(args)
+    }
+
+    deleteMany(args: Prisma.GalleryItemDeleteManyArgs): Promise<{ count: number }> {
+        return this.prismaService.galleryItem.deleteMany(args)
+    }
+
+    async findOneOrThrow(args: Prisma.GalleryItemFindFirstArgs): Promise<never | GalleryItem> {
+        const galleryItem = await this.findOne(args)
+
+        if (!galleryItem) throw new NotFoundException(GalleryMessages.NotFoundGallery)
+
+        return galleryItem
+    }
+}

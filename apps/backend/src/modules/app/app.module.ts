@@ -9,6 +9,13 @@ import { APP_PIPE } from "@nestjs/core";
 import { PrismaService } from "../prisma/prisma.service";
 import { PrismaModule } from "../prisma/prisma.module";
 import { CacheModule } from "../cache/cache.module";
+import { HttpApiModule } from "../http/http.module";
+import { PaymentModule } from "../payment/payment.module";
+import { GalleryModule } from "../gallery/gallery.module";
+import { AwsModule } from "../s3AWS/s3AWS.module";
+import { AddressModule } from "../address/address.module";
+import { AttributeModule } from "../attribute/attribute.module";
+import { ProductModule } from "../product/product.module";
 
 @Module({
   imports: [
@@ -17,7 +24,14 @@ import { CacheModule } from "../cache/cache.module";
     AuthModule,
     UserModule,
     PrismaModule,
-    CacheModule
+    CacheModule,
+    HttpApiModule,
+    PaymentModule,
+    GalleryModule,
+    AwsModule,
+    AddressModule,
+    AttributeModule,
+    ProductModule
   ],
   controllers: [],
   providers: [

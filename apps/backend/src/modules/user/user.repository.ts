@@ -1,6 +1,7 @@
 import { Prisma, User } from "generated/prisma";
 import { PrismaService } from "../prisma/prisma.service";
 import { Injectable, NotFoundException } from "@nestjs/common";
+import { UserMessages } from "./enums/user.messages";
 
 @Injectable()
 export class UserRepository {
@@ -33,7 +34,7 @@ export class UserRepository {
     async findOneOrThrow(args: Prisma.UserFindFirstArgs): Promise<User | never> {
         const user = await this.findOne(args)
 
-        if (!user) throw new NotFoundException('User not found')
+        if (!user) throw new NotFoundException(UserMessages.NotFoundUser)
 
         return user
     }
