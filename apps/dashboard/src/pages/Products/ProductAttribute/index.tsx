@@ -1,96 +1,124 @@
-import { useForm } from "react-hook-form";
-import Toastify from "toastify-js";
-import clsx from "clsx";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import React from "react";
-import { Highlight, Preview, PreviewComponent, Source } from "../../../base-components/PreviewComponent";
-import { FormInput, FormLabel, FormSwitch, FormTextarea } from "../../../base-components/Form";
+import { useState } from "react";
 import Button from "../../../base-components/Button";
-import Notification from "../../../base-components/Notification";
-import Lucide from "../../../base-components/Lucide";
+import { Slideover } from "../../../base-components/Headless";
+import useProductAttributeLogic from "../../../features/productAttribute/hooks/useCreateProductAttribute";
+import ProductAttributeForm from "../../../features/productAttribute/form/productAttributeForm";
+import { useProductAttribute } from "../../../features/productAttribute/hooks/useProductAttribute";
+import ProductAttributeTable from "./ProductAttributeTable";
+import Table from "../../../base-components/Table";
+import LoadingIcon from "../../../base-components/LoadingIcon";
+import { IProductAttribute } from "../../../features/productAttribute/types/type";
+
+interface FormValues {
+  id?: number;
+  name: string;
+  slug: string;
+  type: "COLOR" | "BUTTON";
+  description: string;
+}
 
 const ProductAttribute = () => {
-  const schema = yup
-    .object({
-      name: yup.string().required().min(2),
-      email: yup.string().required().email(),
-      password: yup.string().required().min(6),
-      age: yup
-        .number()
-        .required()
-        .test("len", "age must be less than or equal to 3", (val) => (val && val.toString().length <= 3 ? true : false)),
-      url: yup.string().url(),
-      comment: yup.string().required().min(10),
-    })
-    .required();
-
-  const {
-    register,
-    trigger,
-    formState: { errors },
-  } = useForm({
-    mode: "onChange",
-    resolver: yupResolver(schema),
+  const [headerFooterSlideoverPreview, setHeaderFooterSlideoverPreview] = useState(false);
+  const [editingAttribute, setEditingAttribute] = useState<FormValues | null>(null); // ویژگی در حال ویرایش
+  const { data, isLoading, isFetching, error, refetch } = useProductAttribute({});
+  const { loading, handleSubmitForm, handleUpdateForm } = useProductAttributeLogic({
+    refetch,
+    closeSlideAttribute: () => setHeaderFooterSlideoverPreview(false),
   });
-  const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const result = await trigger();
-    if (!result) {
-      const failedEl = document.querySelectorAll("#failed-notification-content")[0].cloneNode(true) as HTMLElement;
-      failedEl.classList.remove("hidden");
-      Toastify({
-        node: failedEl,
-        duration: 3000,
-        newWindow: true,
-        close: true,
-        gravity: "top",
-        position: "right",
-        stopOnFocus: true,
-      }).showToast();
+
+  console.log("Product Attributes Data:", data);
+
+  const [formValues, setFormValues] = useState<FormValues>({
+    name: "",
+    slug: "",
+    type: "COLOR",
+    description: "",
+  });
+
+  const handleFormChange = (values: FormValues) => {
+    setFormValues(values);
+  };
+
+  const onSubmit = (values: FormValues) => {
+    if (editingAttribute && editingAttribute.id) {
+      // حالت ویرایش
+      handleUpdateForm({ ...values, id: editingAttribute.id });
     } else {
-      const successEl = document.querySelectorAll("#success-notification-content")[0].cloneNode(true) as HTMLElement;
-      successEl.classList.remove("hidden");
-      Toastify({
-        node: successEl,
-        duration: 3000,
-        newWindow: true,
-        close: true,
-        gravity: "top",
-        position: "right",
-        stopOnFocus: true,
-      }).showToast();
+      // حالت ثبت جدید
+      handleSubmitForm(values);
     }
+    // ریست فرم و حالت ویرایش
+    setFormValues({ name: "", slug: "", type: "COLOR", description: "" });
+    setEditingAttribute(null);
+    setHeaderFooterSlideoverPreview(false);
+  };
+
+  const handleEdit = (attribute: IProductAttribute) => {
+    const formData = {
+      id: typeof attribute.id === "string" ? parseInt(attribute.id) : attribute.id,
+      name: attribute.name,
+      slug: attribute.slug,
+      type: attribute.type,
+      description: attribute.description || "",
+    };
+    setEditingAttribute(formData);
+    setFormValues(formData);
+    setHeaderFooterSlideoverPreview(true);
   };
 
   return (
     <>
-      <div className="flex items-center mt-8 intro-y">
-        <h2 className="ml-auto text-lg font-medium">Form Validation</h2>
-      </div>
-      <div className="grid grid-cols-12 gap-6 mt-5">
-        <div className="col-span-12 intro-y lg:col-span-6">
-          {/* BEGIN: Form Validation */}
-          <PreviewComponent className="intro-y box">
-            <>
-              <div className="flex flex-col items-center p-5 border-b sm:flex-row border-slate-200/60 dark:border-darkmode-400">
-                <h2 className="mr-auto text-base font-medium">Implementation</h2>
-                <FormSwitch className="w-full mt-3 sm:w-auto sm:ml-auto sm:mt-0"></FormSwitch>
-              </div>
-              <div className="p-5">
-                <Preview></Preview>
-              </div>
-            </>
-          </PreviewComponent>
-          {/* END: Form Validation */}
-          {/* BEGIN: Success Notification Content */}
+      <h2 className="mt-10 text-lg font-medium intro-y">ویژگی‌ها</h2>
 
-          {/* END: Success Notification Content */}
-          {/* BEGIN: Failed Notification Content */}
-
-          {/* END: Failed Notification Content */}
-        </div>
+      <div className="grid grid-cols-12 gap-6 mt-5"></div>
+      <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y sm:flex-nowrap">
+        <Button
+          variant="primary"
+          className="mr-2 shadow-md"
+          onClick={(event: React.MouseEvent) => {
+            event.preventDefault();
+            setEditingAttribute(null); // اطمینان از حالت ثبت جدید
+            setFormValues({ name: "", slug: "", type: "COLOR", description: "" });
+            setHeaderFooterSlideoverPreview(true);
+          }}
+        >
+          ثبت ویژگی جدید
+        </Button>
       </div>
+      <div className="col-span-12 overflow-auto intro-y lg:overflow-visible">
+        <Table className="border-spacing-y-[10px] border-separate -mt-2">
+          {isLoading || isFetching ? (
+            <div className="flex items-center justify-center h-[300px]">
+              <div className="flex flex-col items-center">
+                <LoadingIcon icon="puff" className="w-12 h-12" />
+                <div className="mt-2 text-sm text-center text-gray-500">در حال بارگذاری...</div>
+              </div>
+            </div>
+          ) : data?.items && data.items.length > 0 ? (
+            <ProductAttributeTable productAttributes={data.items} onSuccess={refetch} onEdit={handleEdit} />
+          ) : (
+            <div className="flex items-center justify-center h-[300px]">
+              <h2 className="text-center text-gray-500">هیچ محصولی یافت نشد</h2>
+            </div>
+          )}
+        </Table>
+      </div>
+
+      <Slideover
+        size="md"
+        open={headerFooterSlideoverPreview}
+        onClose={() => {
+          setHeaderFooterSlideoverPreview(false);
+          setEditingAttribute(null); // ریست حالت ویرایش
+        }}
+      >
+        <Slideover.Panel>
+          <Slideover.Title>
+            <h2 className="ml-auto text-base font-medium">{editingAttribute ? "ویرایش ویژگی" : "ثبت ویژگی جدید"}</h2>
+          </Slideover.Title>
+          <ProductAttributeForm onSubmit={onSubmit} initialValues={editingAttribute || formValues} onChange={handleFormChange} />
+        </Slideover.Panel>
+      </Slideover>
     </>
   );
 };

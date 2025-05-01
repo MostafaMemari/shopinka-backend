@@ -9,6 +9,17 @@ export function extractTimeFromMessage(message: string) {
   return match ? match[1] : null;
 }
 
+export function formatSlug(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-_]/g, "");
+}
+
+export function removeEmptyFields<T extends Record<string, any>>(obj: T): Partial<T> {
+  return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined && v !== "")) as Partial<T>;
+}
+
 const cutText = (text: string, length: number) => {
   if (text.split(" ").length > 1) {
     const string = text.substring(0, length);

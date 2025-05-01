@@ -16,7 +16,6 @@ const Login: React.FC<LoginProps> = ({ initialPhone = "" }) => {
   const phoneInputRef = useRef<HTMLInputElement>(null);
 
   const { handleSendOtp } = useLoginPhoneLogic({
-    initialPhone,
     onShowOtpForm: (show, phone) => {
       setShowOtpForm(show);
       setPhone(phone);

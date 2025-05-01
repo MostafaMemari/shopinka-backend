@@ -114,19 +114,11 @@ Slideover.Panel = ({
   );
 };
 
-Slideover.Title = ({
-  children,
-  className,
-  as = "div",
-  ...props
-}: ExtractProps<typeof HeadlessDialog.Title>) => {
+Slideover.Title = ({ children, className, as = "div", ...props }: ExtractProps<typeof HeadlessDialog.Title>) => {
   return (
     <HeadlessDialog.Title
       as={as}
-      className={twMerge([
-        "flex items-center px-5 py-3 border-b border-slate-200/60 dark:border-darkmode-400",
-        className,
-      ])}
+      className={twMerge(["flex items-center px-5 py-3 border-b border-slate-200/60 dark:border-darkmode-400", className])}
       {...props}
     >
       {children}
@@ -134,18 +126,9 @@ Slideover.Title = ({
   );
 };
 
-Slideover.Description = ({
-  children,
-  className,
-  as = "div",
-  ...props
-}: ExtractProps<typeof HeadlessDialog.Description>) => {
+Slideover.Description = ({ children, className, as = "div", ...props }: ExtractProps<typeof HeadlessDialog.Description>) => {
   return (
-    <HeadlessDialog.Description
-      as={as}
-      className={twMerge(["p-5 overflow-y-auto flex-1", className])}
-      {...props}
-    >
+    <HeadlessDialog.Description as={as} className={twMerge(["p-5 overflow-y-auto flex-1", className])} {...props}>
       {children}
     </HeadlessDialog.Description>
   );
@@ -163,13 +146,7 @@ Slideover.Footer = <C extends React.ElementType = "div">({
   const Component = as || "div";
 
   return (
-    <Component
-      className={twMerge([
-        "px-5 py-3 text-right border-t border-slate-200/60 dark:border-darkmode-400",
-        className,
-      ])}
-      {...props}
-    >
+    <Component className={twMerge(["px-5 py-3 text-right border-t border-slate-200/60 dark:border-darkmode-400", className])} {...props}>
       {children}
     </Component>
   );

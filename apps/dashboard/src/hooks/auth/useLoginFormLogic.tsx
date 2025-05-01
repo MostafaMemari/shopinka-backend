@@ -1,17 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
-import { useNavigate } from "react-router-dom";
 import { sendOtp } from "../../services/Axios/Request/auth";
 import { Toast } from "../../base-components/Toast";
 import { extractTimeFromMessage } from "../../utils/helper";
 
 interface LoginLogicProps {
-  initialPhone: string;
   onShowOtpForm: (show: boolean, phone: string) => void;
 }
 
-const useLoginPhoneLogic = ({ initialPhone, onShowOtpForm }: LoginLogicProps) => {
-  const navigate = useNavigate();
+const useLoginPhoneLogic = ({ onShowOtpForm }: LoginLogicProps) => {
   const [loading, setLoading] = useState(false);
 
   const handleSendOtp = async (values: { phone: string }) => {
