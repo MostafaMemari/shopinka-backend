@@ -12,7 +12,7 @@ import { SkipAuth } from 'src/common/decorators/skip-auth.decorator';
 
 @Controller('product')
 @ApiTags('product')
-// @AuthDecorator()
+@AuthDecorator()
 @Roles(Role.ADMIN, Role.SUPER_ADMIN)
 export class ProductController {
   constructor(private readonly productService: ProductService) { }
@@ -41,7 +41,7 @@ export class ProductController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.productService.remove(user.id, id);
   }
 }

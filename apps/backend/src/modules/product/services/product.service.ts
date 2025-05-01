@@ -54,8 +54,12 @@ export class ProductService {
     return `This action updates a #${id} product`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(userId: number, productId: number): Promise<{ message: string, product: Product }> {
+    await this.productRepository.findOneOrThrow({ where: { id: productId, userId } })
+
+    const removedProduct = await this.productRepository.delete({ where: { id: productId } })
+
+    return { message: "Product removed successfully.", product: removedProduct }
   }
 
   private async generateUniqueSlug(name: string): Promise<string> {
