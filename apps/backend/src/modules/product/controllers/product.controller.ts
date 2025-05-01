@@ -20,7 +20,7 @@ export class ProductController {
   @Post()
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   create(@Body() createProductDto: CreateProductDto, @GetUser() user: User) {
-    return this.productService.create(1, createProductDto);
+    return this.productService.create(user.id, createProductDto);
   }
 
   @Get()
@@ -36,8 +36,9 @@ export class ProductController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(+id, updateProductDto);
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateProductDto: UpdateProductDto, @GetUser() user: User) {
+    return this.productService.update(user.id, id, updateProductDto);
   }
 
   @Delete(':id')

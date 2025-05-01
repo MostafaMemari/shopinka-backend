@@ -6,7 +6,7 @@ import { Product, ProductType } from 'generated/prisma';
 import { CacheService } from '../../cache/cache.service';
 import { GalleryItemRepository } from '../../gallery/repositories/gallery-item.repository';
 import slugify from 'slugify';
-import { AttributeRepository } from 'src/modules/attribute/repositories/attribute.repository';
+import { AttributeRepository } from '../../attribute/repositories/attribute.repository';
 
 @Injectable()
 export class ProductService {
@@ -21,6 +21,9 @@ export class ProductService {
     const { galleryImageIds, mainImageId, name, slug, sku, basePrice, salePrice, attributeIds, type } = createProductDto
 
     if (salePrice > basePrice) throw new BadRequestException("SalePrice cannot be higher than basePrice.")
+
+    if (type == ProductType.VARIABLE && !attributeIds?.length)
+      throw new BadRequestException("Attribute ids is required.")
 
     if (slug || sku) {
       const existingProduct = await this.productRepository.findOne({ where: { OR: [{ slug }, { sku }] } })
@@ -58,8 +61,46 @@ export class ProductService {
     return this.productRepository.findOneOrThrow({ where: { id }, include: { galleryImages: true, mainImage: true, user: true } })
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(userId: number, productId: number, updateProductDto: UpdateProductDto): Promise<{ message: string, product: Product }> {
+    const { galleryImageIds, mainImageId, slug, sku, basePrice, salePrice, attributeIds, type } = updateProductDto
+
+    const product = await this.productRepository.findOneOrThrow({ where: { id: productId, userId } })
+
+    if (type && type == ProductType.VARIABLE && !attributeIds?.length)
+      throw new BadRequestException("Attribute ids is required.")
+
+    if (salePrice && basePrice && salePrice > basePrice || salePrice && salePrice > product.basePrice) {
+      throw new BadRequestException("SalePrice cannot be higher than basePrice.")
+    }
+
+    if (slug || sku) {
+      const existingProduct = await this.productRepository.findOne({ where: { id: { not: productId }, OR: [{ slug }, { sku }] } })
+      if (existingProduct) throw new ConflictException("Product with this slug or sku already exists.")
+    }
+
+    if (mainImageId) await this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } })
+
+    const images = galleryImageIds ? await this.galleryItemRepository.findAll({ where: { id: { in: galleryImageIds } } }) : undefined
+
+    const attributes = attributeIds ? await this.attributeRepository.findAll({ where: { id: { in: attributeIds } } }) : undefined
+
+    const isAllowedProductType = attributeIds && product.type == ProductType.VARIABLE || type && type == ProductType.VARIABLE
+
+    attributeIds && delete updateProductDto.attributeIds
+    galleryImageIds && delete updateProductDto.galleryImageIds
+
+    const updatedProduct = await this.productRepository.update({
+      where: { id: productId },
+      data: {
+        ...updateProductDto,
+        galleryImages: images ? { set: images.map(image => ({ id: image.id })) } : undefined,
+        attributes: isAllowedProductType ? { set: attributes.map(attribute => ({ id: attribute.id })) } : undefined
+      },
+      include: { attributes: true, galleryImages: true, mainImage: true }
+    })
+
+
+    return { message: "Updated product successfully.", product: updatedProduct }
   }
 
   async remove(userId: number, productId: number): Promise<{ message: string, product: Product }> {
