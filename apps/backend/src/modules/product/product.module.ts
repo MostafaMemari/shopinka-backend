@@ -6,9 +6,10 @@ import { UserRepository } from '../user/user.repository';
 import { AuthService } from '../auth/auth.service';
 import { CacheService } from '../cache/cache.service';
 import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
+import { AttributeRepository } from '../attribute/repositories/attribute.repository';
 
 @Module({
   controllers: [ProductController],
-  providers: [ProductService, ProductRepository, UserRepository, AuthService, CacheService, GalleryItemRepository],
+  providers: [ProductService, ProductRepository, UserRepository, AuthService, CacheService, GalleryItemRepository , AttributeRepository],
 })
 export class ProductModule { }

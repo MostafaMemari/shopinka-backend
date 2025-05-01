@@ -8,7 +8,7 @@ import { GetUser } from '../../../common/decorators/get-user.decorator';
 import { Role, User } from 'generated/prisma';
 import { AuthDecorator } from '../../../common/decorators/auth.decorator';
 import { Roles } from '../../../common/decorators/role.decorator';
-import { SkipAuth } from 'src/common/decorators/skip-auth.decorator';
+import { SkipAuth } from '../../../common/decorators/skip-auth.decorator';
 
 @Controller('product')
 @ApiTags('product')

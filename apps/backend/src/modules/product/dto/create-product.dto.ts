@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger"
 import { Transform, Type } from "class-transformer"
-import { ArrayUnique, IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Matches, MaxLength, ValidateNested } from "class-validator"
+import { ArrayUnique, IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Matches, Max, MaxLength, Min, ValidateNested } from "class-validator"
 import { ProductStatus, ProductType } from "generated/prisma"
 import { transformNumberArray } from "../../../common/utils/functions.utils"
 
@@ -48,6 +48,8 @@ export class CreateProductDto {
     @IsOptional()
     @IsNumber()
     @IsPositive()
+    @Max(200_000_000)
+    @Min(1000)
     @Transform(({ value }) => +value)
     @ApiProperty({ type: "number", required: false, nullable: true })
     basePrice?: number
@@ -56,6 +58,8 @@ export class CreateProductDto {
     @IsNumber()
     @IsPositive()
     @Transform(({ value }) => +value)
+    @Max(200_000_000)
+    @Min(1000)
     @ApiProperty({ type: "number", required: false, nullable: true })
     salePrice?: number
 
@@ -86,6 +90,18 @@ export class CreateProductDto {
     @ArrayUnique()
     @IsNotEmpty()
     galleryImageIds: number[]
+
+    @ApiProperty({
+        isArray: true,
+        type: 'array',
+        uniqueItems: true,
+        items: { type: 'number', nullable: false },
+    })
+    @Transform(({ value }) => transformNumberArray(value))
+    @IsArray()
+    @ArrayUnique()
+    @IsNotEmpty()
+    attributeIds: number[]
 
     @IsOptional()
     @IsNumber()
