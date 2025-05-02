@@ -83,4 +83,12 @@ export class ProductVariantService {
 
         return { message: ProductVariantMessages.UpdatedProductVariantSuccess, productVariant: updatedProductVariant }
     }
+
+    async remove(userId: number, productVariantId: number): Promise<{ message: string, productVariant: ProductVariant }> {
+        await this.productVariantRepository.findOneOrThrow({ where: { id: productVariantId, userId } })
+
+        const removedProductVariant = await this.productVariantRepository.delete({ where: { id: productVariantId } })
+
+        return { message: ProductVariantMessages.RemovedProductVariantSuccess, productVariant: removedProductVariant }
+    }
 }

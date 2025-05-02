@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from "@nestjs/common";
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { AuthDecorator } from "../../../common/decorators/auth.decorator";
 import { ProductVariantService } from "../services/product-variant.service";
@@ -29,10 +29,13 @@ export class ProductVariantController {
     }
 
     @Patch(':id')
-    @SkipAuth()
     @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
     update(@Param('id', ParseIntPipe) id: number, @Body() updateProductVariantDto: UpdateProductVariantDto, @GetUser() user: User) {
-        return this.productVariantService.update(1, id, updateProductVariantDto);
+        return this.productVariantService.update(user.id, id, updateProductVariantDto);
     }
 
+    @Delete(':id')
+    remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+        return this.productVariantService.remove(user.id, id);
+    }
 }
