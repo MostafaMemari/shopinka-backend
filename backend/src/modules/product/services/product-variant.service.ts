@@ -5,6 +5,7 @@ import { ProductVariantMessages } from "../enums/product-variant-messages.enum";
 import { ProductVariant } from "generated/prisma";
 import { ProductRepository } from "../repositories/product.repository";
 import { GalleryItemRepository } from "../../gallery/repositories/gallery-item.repository";
+import { AttributeRepository } from "../../attribute/repositories/attribute.repository";
 
 @Injectable()
 export class ProductVariantService {
@@ -12,10 +13,11 @@ export class ProductVariantService {
         private readonly productVariantRepository: ProductVariantRepository,
         private readonly productRepository: ProductRepository,
         private readonly galleryItemRepository: GalleryItemRepository,
+        private readonly attributeRepository: AttributeRepository,
     ) { }
 
     async create(userId: number, createProductVariantDto: CreateProductVariantDto): Promise<{ message: string, productVariant: ProductVariant }> {
-        const { sku, mainImageId, productId, salePrice, basePrice } = createProductVariantDto
+        const { sku, mainImageId, productId, salePrice, basePrice, attributeIds } = createProductVariantDto
 
         if (salePrice > basePrice)
             throw new BadRequestException(ProductVariantMessages.SalePriceTooHigh)
@@ -27,9 +29,16 @@ export class ProductVariantService {
 
         if (existingProductVariant) throw new ConflictException(ProductVariantMessages.AlreadyExistsProductVariant)
 
+        const attributes = attributeIds ? await this.attributeRepository.findAll({ where: { id: { in: attributeIds } } }) : []
+
+        attributeIds && delete createProductVariantDto.attributeIds
+
         const newProductVariant = await this.productVariantRepository.create({
-            data: { ...createProductVariantDto, userId },
-            include: { mainImage: true, product: true }
+            data: {
+                ...createProductVariantDto, userId,
+                attributes: { connect: attributes.map(attribute => ({ id: attribute.id })) }
+            },
+            include: { mainImage: true, product: true, attributes: true }
         })
 
         return { message: ProductVariantMessages.CreatedProductVariantSuccess, productVariant: newProductVariant }

@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger"
 import { Transform } from "class-transformer"
-import {IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Max, MaxLength, Min } from "class-validator"
+import { ArrayUnique, IsArray, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Max, MaxLength, Min } from "class-validator"
+import { transformNumberArray } from "../../../common/utils/functions.utils"
 
 export class CreateProductVariantDto {
     @IsString()
@@ -15,33 +16,37 @@ export class CreateProductVariantDto {
     @ApiProperty({ type: "string", required: false, nullable: true })
     description?: string
 
+    @IsOptional()
     @IsNumber()
     @IsPositive()
     @Transform(({ value }) => +value)
-    @ApiProperty({ type: "number", required: true, nullable: false })
-    quantity: number
+    @ApiProperty({ type: "number", required: false, nullable: true })
+    quantity?: number
 
+    @IsOptional()
     @IsNumber()
     @IsPositive()
     @Max(200_000_000)
     @Min(1000)
     @Transform(({ value }) => +value)
-    @ApiProperty({ type: "number", required: true, nullable: false })
-    basePrice: number
+    @ApiProperty({ type: "number", required: false, nullable: true })
+    basePrice?: number
 
+    @IsOptional()
     @IsNumber()
     @IsPositive()
     @Transform(({ value }) => +value)
     @Max(200_000_000)
     @Min(1000)
-    @ApiProperty({ type: "number", required: true, nullable: false })
-    salePrice: number
+    @ApiProperty({ type: "number", required: false, nullable: true })
+    salePrice?: number
 
+    @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => +value)
     @IsPositive()
-    @ApiProperty({ type: "number", required: true, nullable: false })
-    mainImageId: number
+    @Transform(({ value }) => +value)
+    @ApiProperty({ type: "number", required: false, nullable: true })
+    mainImageId?: number
 
     @IsNumber()
     @Transform(({ value }) => +value)
@@ -49,27 +54,46 @@ export class CreateProductVariantDto {
     @ApiProperty({ type: "number", required: true, nullable: false })
     productId: number
 
-    @IsNumber()
-    @IsPositive()
-    @Transform(({ value }) => +value)
-    @ApiProperty({ type: "number", required: true, nullable: false })
-    width: number
+    @ApiProperty({
+        required: false,
+        nullable: true,
+        isArray: true,
+        type: 'array',
+        uniqueItems: true,
+        items: { type: 'number', nullable: false },
+    })
+    @Transform(({ value }) => transformNumberArray(value))
+    @IsOptional()
+    @IsArray()
+    @ArrayUnique()
+    @IsNotEmpty()
+    attributeIds: number[]
 
+    @IsOptional()
     @IsNumber()
     @IsPositive()
     @Transform(({ value }) => +value)
-    @ApiProperty({ type: "number", required: true, nullable: false })
-    height: number
+    @ApiProperty({ type: "number", required: false, nullable: true })
+    width?: number
 
+    @IsOptional()
     @IsNumber()
     @IsPositive()
     @Transform(({ value }) => +value)
-    @ApiProperty({ type: "number", required: true, nullable: false })
-    length: number
+    @ApiProperty({ type: "number", required: false, nullable: true })
+    height?: number
 
+    @IsOptional()
     @IsNumber()
     @IsPositive()
     @Transform(({ value }) => +value)
-    @ApiProperty({ type: "number", required: true, nullable: false })
-    weight: number
+    @ApiProperty({ type: "number", required: false, nullable: true })
+    length?: number
+
+    @IsOptional()
+    @IsNumber()
+    @IsPositive()
+    @Transform(({ value }) => +value)
+    @ApiProperty({ type: "number", required: false, nullable: true })
+    weight?: number
 }
