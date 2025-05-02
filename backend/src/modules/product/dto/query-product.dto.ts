@@ -4,7 +4,7 @@ import { Transform } from "class-transformer";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { ProductType } from "generated/prisma";
 import { PaginationDto } from "../../../common/dtos/pagination.dto";
-import { ProductSortBy } from "../enums/product-sortby,enum";
+import { ProductSortBy } from "../enums/product-sortby.enum";
 
 export class QueryProductDto extends PaginationDto {
     @IsOptional()
