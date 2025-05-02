@@ -43,4 +43,8 @@ export class ProductVariantService {
 
         return { message: ProductVariantMessages.CreatedProductVariantSuccess, productVariant: newProductVariant }
     }
+
+    findOne(id: number): Promise<ProductVariant> {
+        return this.productVariantRepository.findOneOrThrow({ where: { id }, include: { mainImage: true, user: true, attributes: true, product: true } })
+    }
 }

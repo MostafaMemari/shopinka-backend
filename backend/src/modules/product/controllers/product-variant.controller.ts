@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Get, Param, ParseIntPipe, Post } from "@nestjs/common";
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { AuthDecorator } from "../../../common/decorators/auth.decorator";
 import { ProductVariantService } from "../services/product-variant.service";
@@ -7,6 +7,7 @@ import { GetUser } from "../../../common/decorators/get-user.decorator";
 import { Role, User } from "generated/prisma";
 import { Roles } from "../../../common/decorators/role.decorator";
 import { SwaggerConsumes } from "../../../common/enums/swagger-consumes.enum";
+import { SkipAuth } from "../../../common/decorators/skip-auth.decorator";
 
 @Controller('product-variant')
 @ApiTags('product-variant')
@@ -19,5 +20,10 @@ export class ProductVariantController {
     @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
     create(@Body() createProductVariantDto: CreateProductVariantDto, @GetUser() user: User) {
         return this.productVariantService.create(user.id, createProductVariantDto)
+    }
+
+    @Get(':id')
+    findOne(@Param('id', ParseIntPipe) id: number) {
+        return this.productVariantService.findOne(id);
     }
 }
