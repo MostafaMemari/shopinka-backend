@@ -82,7 +82,8 @@ export class ProductService {
       shortDescription,
       sku,
       weight,
-      width
+      width,
+      includeVariants
     } = queryProductDto
 
     const sortedDto = sortObject(queryProductDto);
@@ -121,7 +122,13 @@ export class ProductService {
     const products = await this.productRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { attributes: includeAttributes, galleryImages: includeGalleryImages, mainImage: includeMainImage, user: includeUser }
+      include: {
+        attributes: includeAttributes,
+        galleryImages: includeGalleryImages,
+        mainImage: includeMainImage,
+        user: includeUser,
+        variants: includeVariants
+      }
     });
 
     await this.cacheService.set(cacheKey, products, this.CACHE_EXPIRE_TIME);
@@ -130,11 +137,11 @@ export class ProductService {
   }
 
   findOne(id: number): Promise<Product> {
-    return this.productRepository.findOneOrThrow({ where: { id, status: ProductStatus.PUBLISHED }, include: { galleryImages: true, mainImage: true, user: true } })
+    return this.productRepository.findOneOrThrow({ where: { id, status: ProductStatus.PUBLISHED }, include: { galleryImages: true, mainImage: true, user: true, variants: true } })
   }
 
   findOneDraft(userId: number, id: number): Promise<Product> {
-    return this.productRepository.findOneOrThrow({ where: { userId, id, status: ProductStatus.DRAFT }, include: { galleryImages: true, mainImage: true, user: true } })
+    return this.productRepository.findOneOrThrow({ where: { userId, id, status: ProductStatus.DRAFT }, include: { galleryImages: true, mainImage: true, user: true, variants: true } })
   }
 
   async update(userId: number, productId: number, updateProductDto: UpdateProductDto): Promise<{ message: string, product: Product }> {

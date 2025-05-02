@@ -71,7 +71,7 @@ export class AttributeService {
   }
 
   findOne(attributeId: number): Promise<never | Attribute> {
-    return this.attributeRepository.findOneOrThrow({ where: { id: attributeId }, include: { user: true } })
+    return this.attributeRepository.findOneOrThrow({ where: { id: attributeId }, include: { values: true, user: true } })
   }
 
   async update(userId: number, attributeId: number, updateAttributeDto: UpdateAttributeDto): Promise<{ message: string, attribute: Attribute }> {
