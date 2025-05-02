@@ -7,21 +7,23 @@ import Link from 'next/link'
 
 import { useForm } from 'react-hook-form'
 
+import CustomTextField from '@core/components/mui/TextField'
+
 // MUI Imports
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
+
 import Button from '@mui/material/Button'
-
-// Component Imports
-import Logo from '@components/layout/shared/Logo'
-import CustomTextField from '@core/components/mui/TextField'
-import AuthIllustrationWrapper from './AuthIllustrationWrapper'
-
-import OtpInputComponent from './OtpInputComponent'
 
 // Config Imports
 import themeConfig from '@configs/themeConfig'
+
+// Component Imports
+import Logo from '@components/layout/shared/Logo'
+import AuthIllustrationWrapper from './AuthIllustrationWrapper'
+
+import OtpInputComponent from './OtpInputComponent'
 
 // Step 2 Component (ورود کد تایید)
 // const OtpInputComponent = ({ phoneNumber }: { phoneNumber: string }) => {
