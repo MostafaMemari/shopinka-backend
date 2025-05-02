@@ -49,7 +49,6 @@ export class AttributeService {
     const filters: Prisma.AttributeWhereInput = {};
 
     if (description) filters.description = { contains: description, mode: "insensitive" };
-    if (description) filters.description = { contains: description, mode: "insensitive" };
     if (name) filters.name = { contains: name, mode: "insensitive" };
     if (slug) filters.slug = { contains: slug, mode: "insensitive" };
     if (userId) filters.userId = userId

@@ -5,5 +5,6 @@ export enum CacheKeys {
     GalleryItems = 'galleryItems',
     Addresses = "addresses",
     Attributes = 'attributes',
-    AttributeValues = 'attributeValues'
+    AttributeValues = 'attributeValues',
+    Products = 'products'
 }

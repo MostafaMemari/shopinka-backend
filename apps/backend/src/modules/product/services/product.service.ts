@@ -2,14 +2,20 @@ import { BadRequestException, ConflictException, Injectable } from '@nestjs/comm
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductRepository } from '../repositories/product.repository';
-import { Product, ProductType } from 'generated/prisma';
+import { Prisma, Product, ProductType } from 'generated/prisma';
 import { CacheService } from '../../cache/cache.service';
 import { GalleryItemRepository } from '../../gallery/repositories/gallery-item.repository';
 import slugify from 'slugify';
 import { AttributeRepository } from '../../attribute/repositories/attribute.repository';
+import { QueryProductDto } from '../dto/query-product.dto';
+import { sortObject } from '../../../common/utils/functions.utils';
+import { CacheKeys } from '../../../common/enums/cache.enum';
+import { pagination } from '../../../common/utils/pagination.utils';
 
 @Injectable()
 export class ProductService {
+  private readonly CACHE_EXPIRE_TIME: number = 600 //* 5 minutes
+
   constructor(
     private readonly productRepository: ProductRepository,
     private readonly cacheService: CacheService,
@@ -53,8 +59,75 @@ export class ProductService {
     return { message: "Created product successfully", product: newProduct }
   }
 
-  findAll() {
-    return `This action returns all product`;
+  async findAll({ page, take, ...queryProductDto }: QueryProductDto): Promise<unknown> {
+    const paginationDto = { page, take };
+    const {
+      description,
+      endDate,
+      includeUser,
+      name,
+      slug,
+      sortBy,
+      sortDirection,
+      startDate,
+      type,
+      height,
+      includeAttributes,
+      includeGalleryImages,
+      includeMainImage,
+      length,
+      maxPrice,
+      minPrice,
+      quantity,
+      salePrice,
+      shortDescription,
+      sku,
+      weight,
+      width
+    } = queryProductDto
+
+    const sortedDto = sortObject(queryProductDto);
+
+    const cacheKey = `${CacheKeys.Products}_${JSON.stringify(sortedDto)}`;
+
+    const cachedProducts = await this.cacheService.get<null | Product[]>(cacheKey);
+
+    if (cachedProducts) return { ...pagination(paginationDto, cachedProducts) }
+
+    const filters: Prisma.ProductWhereInput = {};
+
+    if (sku) filters.sku = { contains: sku, mode: "insensitive" };
+    if (shortDescription) filters.shortDescription = { contains: shortDescription, mode: "insensitive" };
+    if (description) filters.description = { contains: description, mode: "insensitive" };
+    if (name) filters.name = { contains: name, mode: "insensitive" };
+    if (slug) filters.slug = { contains: slug, mode: "insensitive" };
+    if (type) filters.type = type
+    if (salePrice) filters.salePrice = salePrice
+    if (height) filters.height = height
+    if (weight) filters.weight = weight
+    if (width) filters.width = width
+    if (length) filters.length = length
+    if (quantity) filters.quantity = quantity
+    if (startDate || endDate) {
+      filters.createdAt = {};
+      if (startDate) filters.createdAt.gte = new Date(startDate);
+      if (endDate) filters.createdAt.lte = new Date(endDate);
+    }
+    if (maxPrice || minPrice) {
+      filters.basePrice = {};
+      if (maxPrice) filters.basePrice.gte = maxPrice;
+      if (minPrice) filters.basePrice.lte = minPrice;
+    }
+
+    const products = await this.productRepository.findAll({
+      where: filters,
+      orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
+      include: { attributes: includeAttributes, galleryImages: includeGalleryImages, mainImage: includeMainImage, user: includeUser }
+    });
+
+    await this.cacheService.set(cacheKey, products, this.CACHE_EXPIRE_TIME);
+
+    return { ...pagination(paginationDto, products) }
   }
 
   findOne(id: number): Promise<Product> {

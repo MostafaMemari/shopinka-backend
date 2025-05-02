@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
 import { ProductService } from '../services/product.service';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
@@ -9,6 +9,7 @@ import { Role, User } from 'generated/prisma';
 import { AuthDecorator } from '../../../common/decorators/auth.decorator';
 import { Roles } from '../../../common/decorators/role.decorator';
 import { SkipAuth } from '../../../common/decorators/skip-auth.decorator';
+import { QueryProductDto } from '../dto/query-product.dto';
 
 @Controller('product')
 @ApiTags('product')
@@ -25,8 +26,8 @@ export class ProductController {
 
   @Get()
   @SkipAuth()
-  findAll() {
-    return this.productService.findAll();
+  findAll(@Query() queryProductDto: QueryProductDto) {
+    return this.productService.findAll(queryProductDto);
   }
 
   @Get(':id')
