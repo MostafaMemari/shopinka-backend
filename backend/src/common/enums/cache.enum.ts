@@ -6,5 +6,6 @@ export enum CacheKeys {
     Addresses = "addresses",
     Attributes = 'attributes',
     AttributeValues = 'attributeValues',
-    Products = 'products'
+    Products = 'products',
+    ProductVariants = 'productVariants'
 }
