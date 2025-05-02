@@ -24,6 +24,9 @@ async function bootstrap() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
   await app.listen(PORT, () => logger.log(`App running on port ${PORT}`));
-  console.log(`http://localhost:${PORT}/swagger`);
+
+  if (process.env.NODE_ENV !== 'production')
+    logger.log(`App docs running on url: http://localhost:${PORT}/swagger`)
+
 }
 bootstrap();
