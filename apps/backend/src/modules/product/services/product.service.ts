@@ -2,7 +2,7 @@ import { BadRequestException, ConflictException, Injectable } from '@nestjs/comm
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductRepository } from '../repositories/product.repository';
-import { Prisma, Product, ProductType } from 'generated/prisma';
+import { Prisma, Product, ProductStatus, ProductType } from 'generated/prisma';
 import { CacheService } from '../../cache/cache.service';
 import { GalleryItemRepository } from '../../gallery/repositories/gallery-item.repository';
 import slugify from 'slugify';
@@ -11,6 +11,7 @@ import { QueryProductDto } from '../dto/query-product.dto';
 import { sortObject } from '../../../common/utils/functions.utils';
 import { CacheKeys } from '../../../common/enums/cache.enum';
 import { pagination } from '../../../common/utils/pagination.utils';
+import { PaginationDto } from '../../../common/dtos/pagination.dto';
 
 @Injectable()
 export class ProductService {
@@ -91,7 +92,7 @@ export class ProductService {
 
     if (cachedProducts) return { ...pagination(paginationDto, cachedProducts) }
 
-    const filters: Prisma.ProductWhereInput = {};
+    const filters: Prisma.ProductWhereInput = { status: ProductStatus.PUBLISHED };
 
     if (sku) filters.sku = { contains: sku, mode: "insensitive" };
     if (shortDescription) filters.shortDescription = { contains: shortDescription, mode: "insensitive" };
@@ -128,7 +129,7 @@ export class ProductService {
   }
 
   findOne(id: number): Promise<Product> {
-    return this.productRepository.findOneOrThrow({ where: { id }, include: { galleryImages: true, mainImage: true, user: true } })
+    return this.productRepository.findOneOrThrow({ where: { id, status: ProductStatus.PUBLISHED }, include: { galleryImages: true, mainImage: true, user: true } })
   }
 
   async update(userId: number, productId: number, updateProductDto: UpdateProductDto): Promise<{ message: string, product: Product }> {
@@ -176,6 +177,11 @@ export class ProductService {
     const removedProduct = await this.productRepository.delete({ where: { id: productId } })
 
     return { message: "Product removed successfully.", product: removedProduct }
+  }
+
+  async findAllDrafts(userId: number, paginationDto: PaginationDto): Promise<unknown> {
+    const products = await this.productRepository.findAll({ where: { userId, status: ProductStatus.DRAFT } })
+    return pagination(paginationDto, products)
   }
 
   private async generateUniqueSlug(name: string): Promise<string> {

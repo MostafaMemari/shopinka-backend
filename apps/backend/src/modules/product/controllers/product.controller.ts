@@ -10,6 +10,7 @@ import { AuthDecorator } from '../../../common/decorators/auth.decorator';
 import { Roles } from '../../../common/decorators/role.decorator';
 import { SkipAuth } from '../../../common/decorators/skip-auth.decorator';
 import { QueryProductDto } from '../dto/query-product.dto';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Controller('product')
 @ApiTags('product')
@@ -28,6 +29,11 @@ export class ProductController {
   @SkipAuth()
   findAll(@Query() queryProductDto: QueryProductDto) {
     return this.productService.findAll(queryProductDto);
+  }
+
+  @Get('drafts')
+  findAllDrafts(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
+    return this.productService.findAllDrafts(user.id, paginationDto);
   }
 
   @Get(':id')
