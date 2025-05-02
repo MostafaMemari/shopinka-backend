@@ -25,16 +25,6 @@ import AuthIllustrationWrapper from './AuthIllustrationWrapper'
 
 import OtpInputComponent from './OtpInputComponent'
 
-// Step 2 Component (ورود کد تایید)
-// const OtpInputComponent = ({ phoneNumber }: { phoneNumber: string }) => {
-//   return (
-//     <div className='text-center'>
-//       <Typography variant='h6'>کد ارسال‌شده به {phoneNumber} را وارد کنید</Typography>
-//       {/* اینجا ورودی کد تاییدت رو می‌سازی */}
-//     </div>
-//   )
-// }
-
 const LoginOtp = () => {
   const [step, setStep] = useState<'login' | 'otp'>('login')
   const [phone, setPhone] = useState('')
