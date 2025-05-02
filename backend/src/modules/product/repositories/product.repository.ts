@@ -1,6 +1,7 @@
 import { Product, Prisma } from "generated/prisma";
 import { PrismaService } from "../../prisma/prisma.service";
 import { Injectable, NotFoundException } from "@nestjs/common";
+import { ProductMessages } from "../enums/product-messages.enum";
 
 @Injectable()
 export class ProductRepository {
@@ -29,7 +30,7 @@ export class ProductRepository {
     async findOneOrThrow(args: Prisma.ProductFindFirstArgs): Promise<Product | never> {
         const Product = await this.findOne(args)
 
-        if (!Product) throw new NotFoundException("Not found product.")
+        if (!Product) throw new NotFoundException(ProductMessages.NotFoundProduct)
 
         return Product
     }

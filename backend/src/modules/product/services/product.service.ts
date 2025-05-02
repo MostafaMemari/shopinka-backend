@@ -12,6 +12,7 @@ import { sortObject } from '../../../common/utils/functions.utils';
 import { CacheKeys } from '../../../common/enums/cache.enum';
 import { pagination } from '../../../common/utils/pagination.utils';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
+import { ProductMessages } from '../enums/product-messages.enum';
 
 @Injectable()
 export class ProductService {
@@ -27,11 +28,11 @@ export class ProductService {
   async create(userId: number, createProductDto: CreateProductDto): Promise<{ message: string, product: Product }> {
     const { galleryImageIds, mainImageId, name, slug, sku, basePrice, salePrice, attributeIds, type } = createProductDto
 
-    if (salePrice > basePrice) throw new BadRequestException("SalePrice cannot be higher than basePrice.")
+    if (salePrice > basePrice) throw new BadRequestException(ProductMessages.SalePriceTooHigh)
 
     if (slug || sku) {
       const existingProduct = await this.productRepository.findOne({ where: { OR: [{ slug }, { sku }] } })
-      if (existingProduct) throw new ConflictException("Product with this slug or sku already exists.")
+      if (existingProduct) throw new ConflictException(ProductMessages.AlreadyExistsProduct)
     }
 
     await this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } })
@@ -54,7 +55,7 @@ export class ProductService {
       include: { mainImage: true, galleryImages: true, attributes: true }
     })
 
-    return { message: "Created product successfully", product: newProduct }
+    return { message: ProductMessages.CreatedProductSuccess, product: newProduct }
   }
 
   async findAll({ page, take, ...queryProductDto }: QueryProductDto): Promise<unknown> {
@@ -142,12 +143,12 @@ export class ProductService {
     const product = await this.productRepository.findOneOrThrow({ where: { id: productId, userId } })
 
     if (salePrice && basePrice && salePrice > basePrice || salePrice && salePrice > product.basePrice) {
-      throw new BadRequestException("SalePrice cannot be higher than basePrice.")
+      throw new BadRequestException(ProductMessages.SalePriceTooHigh)
     }
 
     if (slug || sku) {
       const existingProduct = await this.productRepository.findOne({ where: { id: { not: productId }, OR: [{ slug }, { sku }] } })
-      if (existingProduct) throw new ConflictException("Product with this slug or sku already exists.")
+      if (existingProduct) throw new ConflictException(ProductMessages.AlreadyExistsProduct)
     }
 
     if (mainImageId) await this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } })
@@ -172,7 +173,7 @@ export class ProductService {
     })
 
 
-    return { message: "Updated product successfully.", product: updatedProduct }
+    return { message: ProductMessages.UpdatedProductSuccess, product: updatedProduct }
   }
 
   async remove(userId: number, productId: number): Promise<{ message: string, product: Product }> {
@@ -180,7 +181,7 @@ export class ProductService {
 
     const removedProduct = await this.productRepository.delete({ where: { id: productId } })
 
-    return { message: "Product removed successfully.", product: removedProduct }
+    return { message: ProductMessages.RemovedProductSuccess, product: removedProduct }
   }
 
   async findAllDrafts(userId: number, paginationDto: PaginationDto): Promise<unknown> {
