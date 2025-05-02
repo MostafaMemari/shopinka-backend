@@ -28,9 +28,6 @@ export class ProductService {
 
     if (salePrice > basePrice) throw new BadRequestException("SalePrice cannot be higher than basePrice.")
 
-    if (type == ProductType.VARIABLE && !attributeIds?.length)
-      throw new BadRequestException("Attribute ids is required.")
-
     if (slug || sku) {
       const existingProduct = await this.productRepository.findOne({ where: { OR: [{ slug }, { sku }] } })
       if (existingProduct) throw new ConflictException("Product with this slug or sku already exists.")
@@ -138,9 +135,6 @@ export class ProductService {
     const { galleryImageIds, mainImageId, slug, sku, basePrice, salePrice, attributeIds, type } = updateProductDto
 
     const product = await this.productRepository.findOneOrThrow({ where: { id: productId, userId } })
-
-    if (type && type == ProductType.VARIABLE && !attributeIds?.length)
-      throw new BadRequestException("Attribute ids is required.")
 
     if (salePrice && basePrice && salePrice > basePrice || salePrice && salePrice > product.basePrice) {
       throw new BadRequestException("SalePrice cannot be higher than basePrice.")
