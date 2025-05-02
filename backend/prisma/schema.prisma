@@ -119,17 +119,18 @@ model Address {
 }
 
 model Attribute {
-  id          Int              @id() @default(autoincrement())
-  name        String
-  slug        String           @unique()
-  userId      Int
-  user        User             @relation(fields: [userId], references: [id], onDelete: NoAction)
-  type        AttributeType
-  description String?
-  values      AttributeValue[]
-  products    Product[]
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @default(now())
+  id              Int              @id() @default(autoincrement())
+  name            String
+  slug            String           @unique()
+  userId          Int
+  user            User             @relation(fields: [userId], references: [id], onDelete: NoAction)
+  type            AttributeType
+  description     String?
+  values          AttributeValue[]
+  productVariants ProductVariant[]
+  products        Product[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @default(now())
 }
 
 model AttributeValue {
@@ -173,22 +174,23 @@ model Product {
 }
 
 model ProductVariant {
-  id          Int         @id @default(autoincrement())
-  sku         String      @unique()
-  mainImageId Int
+  id          Int          @id @default(autoincrement())
+  sku         String       @unique()
+  mainImageId Int?
   productId   Int
   userId      Int
   description String?
-  quantity    Int
-  basePrice   Int         @map("base_price")
-  salePrice   Int         @map("sale_price")
-  mainImage   GalleryItem @relation("VariantMainImage", fields: [mainImageId], references: [id], onDelete: NoAction)
-  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  user        User        @relation(fields: [userId], references: [id], onDelete: NoAction)
-  width       Int
-  height      Int
-  length      Int
-  weight      Int
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt()
+  quantity    Int?
+  basePrice   Int?         @map("base_price")
+  salePrice   Int?         @map("sale_price")
+  mainImage   GalleryItem? @relation("VariantMainImage", fields: [mainImageId], references: [id], onDelete: NoAction)
+  product     Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user        User         @relation(fields: [userId], references: [id], onDelete: NoAction)
+  attributes  Attribute[]
+  width       Int?
+  height      Int?
+  length      Int?
+  weight      Int?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt()
 }
