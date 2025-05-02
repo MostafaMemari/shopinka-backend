@@ -132,6 +132,10 @@ export class ProductService {
     return this.productRepository.findOneOrThrow({ where: { id, status: ProductStatus.PUBLISHED }, include: { galleryImages: true, mainImage: true, user: true } })
   }
 
+  findOneDraft(userId: number, id: number): Promise<Product> {
+    return this.productRepository.findOneOrThrow({ where: { userId, id, status: ProductStatus.DRAFT }, include: { galleryImages: true, mainImage: true, user: true } })
+  }
+
   async update(userId: number, productId: number, updateProductDto: UpdateProductDto): Promise<{ message: string, product: Product }> {
     const { galleryImageIds, mainImageId, slug, sku, basePrice, salePrice, attributeIds, type } = updateProductDto
 

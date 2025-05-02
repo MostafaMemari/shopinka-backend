@@ -42,6 +42,11 @@ export class ProductController {
     return this.productService.findOne(id);
   }
 
+  @Get('draft/:id')
+  findOneDraft(@Param('id', ParseIntPipe) id: number , @GetUser() user: User) {
+    return this.productService.findOneDraft(user.id ,id);
+  }
+
   @Patch(':id')
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateProductDto: UpdateProductDto, @GetUser() user: User) {
