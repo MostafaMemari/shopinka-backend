@@ -24,6 +24,10 @@ import Logo from '@components/layout/shared/Logo'
 import AuthIllustrationWrapper from './AuthIllustrationWrapper'
 
 import OtpInputComponent from './OtpInputComponent'
+import { sendOtp } from '@/libs/api/auth'
+import { ToastContainer } from 'react-toastify'
+import { showToast } from '@/utils/showToast'
+import { extractTime } from '@/utils/getInitials'
 
 const LoginOtp = () => {
   const [step, setStep] = useState<'login' | 'otp'>('login')
@@ -35,9 +39,19 @@ const LoginOtp = () => {
     formState: { errors }
   } = useForm()
 
-  const onSubmit = (data: any) => {
-    setPhone(data.mobile)
-    setStep('otp')
+  const onSubmit = async (data: any) => {
+    try {
+      await sendOtp(data?.mobile)
+      showToast({ type: 'success', message: 'کد اعبتار سنجی با موفیت ارسال شد', position: 'top-left' })
+
+      setPhone(data?.mobile)
+      setStep('otp')
+    } catch (err: any) {
+      if (err?.status == 400) return showToast({ type: 'error', message: 'شماره نامعتبر است' })
+      if (err?.status == 403) return showToast({ type: 'error', message: 'درخواست زیاد بود، بعداً تلاش کنید' })
+      if (err?.status == 409) return showToast({ type: 'error', message: 'کد قبلاً ارسال شده است' })
+      showToast({ type: 'error', message: 'خطای سیستم' })
+    }
   }
 
   return (

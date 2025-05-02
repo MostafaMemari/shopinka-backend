@@ -50,6 +50,11 @@ ul:not([class]) {
   padding-inline-start: 40px;
 }
 
+.Toastify__toast {
+  font-family: var(--font-iranyekan), sans-serif !important;
+  direction: rtl;
+}
+
 /*! Do not remove the following styles */
 /*
   Fix the popout / submenu closing issue when using hover trigger to open the menu and using
