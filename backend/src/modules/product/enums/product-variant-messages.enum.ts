@@ -4,4 +4,5 @@ export enum ProductVariantMessages {
     RemovedProductVariantSuccess = 'ProductVariant removed successfully',
     CreatedProductVariantSuccess = 'ProductVariant created successfully',
     UpdatedProductVariantSuccess = 'ProductVariant Updated successfully.',
+    SalePriceTooHigh = 'SalePrice cannot be higher than basePrice.'
 }

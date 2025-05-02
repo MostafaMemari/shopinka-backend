@@ -7,9 +7,22 @@ import { AuthService } from '../auth/auth.service';
 import { CacheService } from '../cache/cache.service';
 import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
 import { AttributeRepository } from '../attribute/repositories/attribute.repository';
+import { ProductVariantRepository } from './repositories/product-variant.repository';
+import { ProductVariantService } from './services/product-variant.service';
+import { ProductVariantController } from './controllers/product-variant.controller';
 
 @Module({
-  controllers: [ProductController],
-  providers: [ProductService, ProductRepository, UserRepository, AuthService, CacheService, GalleryItemRepository , AttributeRepository],
+  controllers: [ProductController , ProductVariantController],
+  providers: [
+    ProductService,
+    ProductRepository,
+    UserRepository,
+    AuthService,
+    CacheService,
+    GalleryItemRepository,
+    AttributeRepository,
+    ProductVariantRepository,
+    ProductVariantService
+  ],
 })
 export class ProductModule { }
