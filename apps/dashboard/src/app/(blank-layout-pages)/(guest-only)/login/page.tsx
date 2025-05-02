@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 import Login from '@/views/pages/auth/Login'
 
 // Server Action Imports
-import { getServerMode } from '@core/utils/serverHelpers'
+// import { getServerMode } from '@core/utils/serverHelpers'
 
 export const metadata: Metadata = {
   title: 'ورود',
@@ -14,11 +14,11 @@ export const metadata: Metadata = {
 
 const LoginPage = async () => {
   // Vars
-  const mode = await getServerMode()
+  // const mode = await getServerMode()
 
   return (
     <div className='flex flex-col justify-center items-center min-bs-[100dvh] p-6'>
-      <Login mode={mode} />
+      <Login />
     </div>
   )
 }

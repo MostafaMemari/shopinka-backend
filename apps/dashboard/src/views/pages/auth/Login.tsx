@@ -1,8 +1,5 @@
 'use client'
 
-// React Imports
-import { useState } from 'react'
-
 // Next Imports
 import Link from 'next/link'
 
@@ -11,10 +8,7 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
-import InputAdornment from '@mui/material/InputAdornment'
-import Checkbox from '@mui/material/Checkbox'
 import Button from '@mui/material/Button'
-import FormControlLabel from '@mui/material/FormControlLabel'
 import Divider from '@mui/material/Divider'
 
 // Component Imports
@@ -28,11 +22,6 @@ import AuthIllustrationWrapper from './AuthIllustrationWrapper'
 import themeConfig from '@configs/themeConfig'
 
 const LoginV1 = () => {
-  // States
-  const [isPasswordShown, setIsPasswordShown] = useState(false)
-
-  const handleClickShowPassword = () => setIsPasswordShown(show => !show)
-
   return (
     <AuthIllustrationWrapper>
       <Card className='flex flex-col sm:is-[450px]'>
@@ -41,43 +30,19 @@ const LoginV1 = () => {
             <Logo />
           </Link>
           <div className='flex flex-col gap-1 mbe-6'>
-            <Typography variant='h4'>{`Welcome to ${themeConfig.templateName}! 👋🏻`}</Typography>
-            <Typography>Please sign-in to your account and start the adventure</Typography>
+            <Typography variant='h4'>{`به ${themeConfig.templateName} خوش آمدید! 👋🏻`}</Typography>
+            <Typography>لطفاً با شماره موبایل خود وارد شوید و ماجرا را آغاز کنید</Typography>
           </div>
           <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()} className='flex flex-col gap-6'>
-            <CustomTextField autoFocus fullWidth label='Email or Username' placeholder='Enter your email or username' />
-            <CustomTextField
-              fullWidth
-              label='Password'
-              placeholder='············'
-              id='outlined-adornment-password'
-              type={isPasswordShown ? 'text' : 'password'}
-              slotProps={{
-                input: {
-                  endAdornment: (
-                    <InputAdornment position='end'>
-                      <IconButton edge='end' onClick={handleClickShowPassword} onMouseDown={e => e.preventDefault()}>
-                        <i className={isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }
-              }}
-            />
-            <div className='flex justify-between items-center gap-x-3 gap-y-1 flex-wrap'>
-              <FormControlLabel control={<Checkbox />} label='Remember me' />
-              <Typography className='text-end' color='primary.main'>
-                Forgot password?
-              </Typography>
-            </div>
+            <CustomTextField autoFocus fullWidth label='شماره موبایل' placeholder='شماره موبایل خود را وارد کنید' type='tel' dir='rtl' />
             <Button fullWidth variant='contained' type='submit'>
-              Login
+              ورود
             </Button>
             <div className='flex justify-center items-center flex-wrap gap-2'>
-              <Typography>New on our platform?</Typography>
-              <Typography color='primary.main'>Create an account</Typography>
+              <Typography>کاربر جدید هستید؟</Typography>
+              <Typography color='primary.main'>ایجاد حساب کاربری</Typography>
             </div>
-            <Divider className='gap-2 text-textPrimary'>or</Divider>
+            <Divider className='gap-2 text-textPrimary'>یا</Divider>
             <div className='flex justify-center items-center gap-1.5'>
               <IconButton className='text-facebook' size='small'>
                 <i className='tabler-brand-facebook-filled' />

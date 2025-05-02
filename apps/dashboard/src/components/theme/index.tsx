@@ -30,6 +30,9 @@ import { useSettings } from '@core/hooks/useSettings'
 // Core Theme Imports
 import defaultCoreTheme from '@core/theme'
 
+// font
+import { iranyekan } from '@/fonts/iranyekan'
+
 type Props = ChildrenType & {
   direction: Direction
   systemMode: SystemMode
@@ -68,6 +71,9 @@ const CustomThemeProvider = (props: Props) => {
               light: lighten(settings.primaryColor as string, 0.2),
               dark: darken(settings.primaryColor as string, 0.1)
             }
+          },
+          typography: {
+            fontFamily: iranyekan.style.fontFamily
           }
         },
         dark: {
@@ -77,9 +83,13 @@ const CustomThemeProvider = (props: Props) => {
               light: lighten(settings.primaryColor as string, 0.2),
               dark: darken(settings.primaryColor as string, 0.1)
             }
+          },
+          typography: {
+            fontFamily: iranyekan.style.fontFamily
           }
         }
       },
+
       cssVariables: {
         colorSchemeSelector: 'data'
       }
@@ -102,11 +112,7 @@ const CustomThemeProvider = (props: Props) => {
         })
       }}
     >
-      <ThemeProvider
-        theme={theme}
-        defaultMode={systemMode}
-        modeStorageKey={`${themeConfig.templateName.toLowerCase().split(' ').join('-')}-mui-template-mode`}
-      >
+      <ThemeProvider theme={theme} defaultMode={systemMode} modeStorageKey={`${themeConfig.templateName.toLowerCase().split(' ').join('-')}-mui-template-mode`}>
         <>
           <ModeChanger systemMode={systemMode} />
           <CssBaseline />
