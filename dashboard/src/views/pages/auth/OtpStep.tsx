@@ -19,7 +19,10 @@ import { useOtpTimer } from '@/hooks/useOtpTimer'
 import styles from '@/libs/styles/inputOtp.module.css'
 
 // Messages
-import { otpStepMessages } from './messages'
+import { errorOtpStepMessages, otpStepMessages } from '@/messages/auth/otpMessages'
+import { showToast } from '@/utils/showToast'
+import { verifyOtp } from '@/libs/api/auth'
+import { handleApiError } from '@/utils/handleApiError'
 
 const Slot = (props: SlotProps & { isError?: boolean }) => (
   <div
@@ -45,6 +48,13 @@ const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBac
   const otpInputRef = useRef<HTMLInputElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
 
+  const resetOtpForm = () => {
+    setIsError(true)
+    setOtp('')
+    setTimeout(() => setIsError(false), 500)
+    otpInputRef.current?.focus()
+  }
+
   const { timeLeft, isExpired, formatTime, resetTimer } = useOtpTimer(300)
 
   useEffect(() => {
@@ -57,23 +67,53 @@ const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBac
     }
   }, [otp])
 
-  const handleSubmit = () => {
-    if (otp.length === 6 && /^\d{6}$/.test(otp)) {
-      console.log('OTP Submitted:', otp)
+  // This is the default CSS fallback.
+  // Feel free to change it entirely and apply to your design system.
+  const NOSCRIPT_CSS_FALLBACK = `
+[data-input-otp] {
+  --nojs-bg: white !important;
+  --nojs-fg: black !important;
 
-      // مثال: شبیه‌سازی خطا
-      const isSuccess = false
+  background-color: var(--nojs-bg) !important;
+  color: var(--nojs-fg) !important;
+  caret-color: var(--nojs-fg) !important;
+  letter-spacing: .25em !important;
+  text-align: center !important;
+  border: 1px solid var(--nojs-fg) !important;
+  border-radius: 4px !important;
+  width: 100% !important;
+}
+@media (prefers-color-scheme: dark) {
+  [data-input-otp] {
+    --nojs-bg: black !important;
+    --nojs-fg: white !important;
+  }
+}`
 
-      if (!isSuccess) {
-        setIsError(true)
-        setOtp('')
-        setTimeout(() => setIsError(false), 500)
-        otpInputRef.current?.focus()
+  const handleSubmit = async () => {
+    try {
+      if (otp.length === 6 && /^\d{6}$/.test(otp)) {
+        if (isExpired) {
+          resetOtpForm()
+
+          return showToast({ type: 'error', message: 'زمان شما به اتمام رسیده' })
+        }
+
+        const res = await verifyOtp(phoneNumber, otp)
+        const errorMessage = handleApiError(res.status, errorOtpStepMessages)
+
+        if (errorMessage) {
+          resetOtpForm()
+
+          return showToast({ type: 'error', message: errorMessage })
+        }
+
+        formRef.current?.requestSubmit()
+      } else {
+        showToast({ type: 'error', message: 'کد اعتبار سنجی اشتباه است' })
       }
-
-      formRef.current?.requestSubmit()
-    } else {
-      console.error('Invalid OTP')
+    } catch (error) {
+      showToast({ type: 'error', message: 'خطای سیستمی' })
     }
   }
 
@@ -105,13 +145,14 @@ const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBac
           <Typography>{messages.inputLabel}</Typography>
           <div dir='ltr'>
             <OTPInput
+              noScriptCSSFallback={NOSCRIPT_CSS_FALLBACK}
               ref={otpInputRef}
               onChange={(value: string) => /^\d*$/.test(value) && setOtp(value)}
               value={otp}
               maxLength={6}
               containerClassName='flex items-center justify-between w-full gap-4'
               render={({ slots }) => (
-                <div className='flex items-center justify-between w-full gap-4'>
+                <div className='flex items-center justify-between w-full gap-4 '>
                   {slots.slice(0, 6).map((slot, idx) => (
                     <Slot key={idx} {...slot} isError={isError} />
                   ))}

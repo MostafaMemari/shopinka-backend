@@ -29,7 +29,7 @@ import { showToast } from '@/utils/showToast'
 import { handleApiError } from '@/utils/handleApiError'
 
 // Messages
-import { errorMessagesLoginOtp, phoneNumberStepMessages } from './messages'
+import { errorPhoneNumberStepMessages, phoneNumberStepMessages } from '@/messages/auth/loginMessages'
 
 const LoginOtp = () => {
   const [step, setStep] = useState<'login' | 'otp'>('login')
@@ -45,7 +45,7 @@ const LoginOtp = () => {
     try {
       const res = await sendOtp(data.mobile)
 
-      const errorMessage = handleApiError(res.status, errorMessagesLoginOtp)
+      const errorMessage = handleApiError(res.status, errorPhoneNumberStepMessages)
 
       if (errorMessage) return showToast({ type: 'error', message: errorMessage })
 

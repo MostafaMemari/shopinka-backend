@@ -10,18 +10,7 @@ export const phoneNumberStepMessages = {
   backButton: 'بازگشت'
 }
 
-export const otpStepMessages = {
-  title: 'تأیید دو مرحله‌ای 💬',
-  subtitle: 'ما یک کد تأیید به شماره موبایل شما ارسال کردیم. کد را در کادر زیر وارد کنید.',
-  inputLabel: 'کد امنیتی ۶ رقمی را وارد کنید',
-  submitButton: 'تأیید حساب من',
-  resendPrompt: 'کد را دریافت نکردید؟',
-  resendLink: 'ارسال مجدد',
-  timerExpired: 'زمان به پایان رسید!',
-  back: 'بازگشت'
-}
-
-export const errorMessagesLoginOtp: Record<number, string> = {
+export const errorPhoneNumberStepMessages: Record<number, string> = {
   400: 'شماره نامعتبر است',
   403: 'درخواست زیاد بود، بعداً تلاش کنید',
   409: 'کد قبلاً ارسال شده است',

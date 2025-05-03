@@ -1,39 +1,39 @@
 .slot {
+  position: relative;
+  inline-size: 100%;
+  block-size: 3.5rem;
+  font-size: 1.25rem;
   display: flex;
-  align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1.5rem;
-  text-align: center;
-  background-color: #fff;
-  transition: border-color 0.2s ease-in-out;
-}
-
-.slotError {
-  border: 2px solid red !important;
-  transition: border 0.5s ease-in-out;
+  align-items: center;
+  transition: all 100ms;
+  border-width: 1px;
+  border-radius: var(--border-radius);
 }
 
 .slotActive {
-  border-color: #1976d2;
-  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+  outline: 1px solid var(--mui-palette-primary-main);
+  border-color: var(--mui-palette-primary-main);
 }
 
-.fakeCaret {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.fakeCaret > div {
-  animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
+@keyframes caret-blink {
+  0%,
+  70%,
+  100% {
+    opacity: 1;
+  }
+  20%,
   50% {
     opacity: 0;
   }
+}
+
+.fakeCaret {
+  position: absolute;
+  pointer-events: none;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: caret-blink 1.2s ease-out infinite;
 }
