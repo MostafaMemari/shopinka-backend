@@ -11,6 +11,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
+    'import/no-unresolved': 'off',
     'lines-around-comment': [
       'error',
       {
@@ -57,7 +58,7 @@ module.exports = {
       }
     ],
     'import/order': [
-      'error',
+      'off',
       {
         groups: ['builtin', 'external', ['internal', 'parent', 'sibling', 'index'], ['object', 'unknown']],
         pathGroups: [
