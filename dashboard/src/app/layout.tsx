@@ -32,7 +32,18 @@ const RootLayout = async (props: ChildrenType) => {
   return (
     <html id='__next' lang='fa' dir={direction} suppressHydrationWarning>
       <body className='flex is-full min-bs-full flex-auto flex-col'>
-        <ToastContainer position='top-left' autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={true} pauseOnFocusLoss draggable pauseOnHover />
+        <ToastContainer
+          position='top-left'
+          theme={systemMode}
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={true}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
         <InitColorSchemeScript attribute='data' defaultMode={systemMode} />
         {children}
       </body>

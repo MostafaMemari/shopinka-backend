@@ -67,29 +67,6 @@ const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBac
     }
   }, [otp])
 
-  // This is the default CSS fallback.
-  // Feel free to change it entirely and apply to your design system.
-  const NOSCRIPT_CSS_FALLBACK = `
-[data-input-otp] {
-  --nojs-bg: white !important;
-  --nojs-fg: black !important;
-
-  background-color: var(--nojs-bg) !important;
-  color: var(--nojs-fg) !important;
-  caret-color: var(--nojs-fg) !important;
-  letter-spacing: .25em !important;
-  text-align: center !important;
-  border: 1px solid var(--nojs-fg) !important;
-  border-radius: 4px !important;
-  width: 100% !important;
-}
-@media (prefers-color-scheme: dark) {
-  [data-input-otp] {
-    --nojs-bg: black !important;
-    --nojs-fg: white !important;
-  }
-}`
-
   const handleSubmit = async () => {
     try {
       if (otp.length === 6 && /^\d{6}$/.test(otp)) {
@@ -107,6 +84,8 @@ const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBac
 
           return showToast({ type: 'error', message: errorMessage })
         }
+
+        showToast({ type: 'success', message: 'ورود شما با موفقیت انجام شد' })
 
         formRef.current?.requestSubmit()
       } else {
@@ -145,7 +124,6 @@ const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBac
           <Typography>{messages.inputLabel}</Typography>
           <div dir='ltr'>
             <OTPInput
-              noScriptCSSFallback={NOSCRIPT_CSS_FALLBACK}
               ref={otpInputRef}
               onChange={(value: string) => /^\d*$/.test(value) && setOtp(value)}
               value={otp}
