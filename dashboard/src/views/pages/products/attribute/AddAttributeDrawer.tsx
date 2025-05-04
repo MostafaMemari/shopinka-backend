@@ -1,5 +1,7 @@
+'use client'
+
 // React Imports
-import { useState } from 'react'
+import { useCallback } from 'react'
 
 // MUI Imports
 import Button from '@mui/material/Button'
@@ -14,87 +16,81 @@ import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 
 // Type Imports
+import type { attributeType } from './ProductAttributeTable'
+import { createAttributeSchema } from '@/libs/validators/attribute.schemas'
 import { AttributeType } from '@/types/attributes'
-import type { CreateAttributeFormValues } from '@/types/attributes'
 
 // Components Imports
 import CustomTextField from '@core/components/mui/TextField'
-import { createAttributeSchema } from '@/libs/validators/attribute.schemas'
 
 type Props = {
   open: boolean
   handleClose: () => void
-  attributeData: AttributeType[]
-  setData: (data: AttributeType[]) => void
+  data: attributeType[]
+  setData: (data: attributeType[]) => void
 }
 
-const AddattributeDrawer = (props: Props) => {
-  // Props
-  const { open, handleClose, attributeData, setData } = props
-
-  // Hooks
+const AddAttributeDrawer = ({ open, handleClose, data, setData }: Props) => {
+  // Form hook
   const {
     control,
-    reset: resetForm,
+    reset,
     handleSubmit,
     formState: { errors }
-  } = useForm<CreateAttributeFormValues>({
+  } = useForm({
     resolver: yupResolver(createAttributeSchema),
     defaultValues: {
       name: '',
-      slug: null, // برای سازگاری با nullable
+      slug: null,
       type: AttributeType.COLOR,
-      description: null // برای سازگاری با nullable
+      description: null
     }
   })
 
-  // Handle Form Submit
-  const handleFormSubmit = (data: CreateAttributeFormValues) => {
-    console.log('Form Values:', data) // لاگ کردن مقادیر فرم
+  // Handle form submission
+  const onSubmit = useCallback(
+    (formData: any) => {
+      const newAttribute: attributeType = {
+        id: data.length + 1, // Simple ID generation, replace with UUID or backend ID later
+        attributeName: formData.name,
+        description: formData.description || '',
+        values: formData.type // Map type to values
+      }
 
-    // اگر نیاز به افزودن داده به attributeData داری، این بخش رو فعال کن
-    /*
-    const newData = {
-      id: attributeData.length + 1,
-      attributeName: data.name,
-      description: data.description || '',
-      totalProduct: Math.floor(Math.random() * 9000) + 1000,
-      totalEarning: Math.floor(Math.random() * 90000) + 10000,
-      image: `/images/apps/ecommerce/product-${Math.floor(Math.random() * 20) + 1}.png`
-    }
-    setData([...attributeData, newData])
-    */
+      setData([...data, newAttribute])
+      reset() // Reset form
+      handleClose() // Close drawer
+    },
+    [data, setData, reset, handleClose]
+  )
 
-    handleReset()
-  }
-
-  // Handle Form Reset
-  const handleReset = () => {
-    handleClose()
-    resetForm({
+  // Handle form reset
+  const onReset = useCallback(() => {
+    reset({
       name: '',
       slug: null,
       type: AttributeType.COLOR,
       description: null
     })
-  }
+    handleClose()
+  }, [reset, handleClose])
 
   return (
-    <Drawer open={open} anchor='right' variant='temporary' onClose={handleReset} ModalProps={{ keepMounted: true }} sx={{ '& .MuiDrawer-paper': { width: { xs: 300, sm: 400 } } }}>
+    <Drawer open={open} anchor='right' variant='temporary' onClose={onReset} ModalProps={{ keepMounted: true }} sx={{ '& .MuiDrawer-paper': { width: { xs: 300, sm: 400 } } }}>
       <div className='flex items-center justify-between pli-6 plb-5'>
         <Typography variant='h5'>ثبت ویژگی جدید</Typography>
-        <IconButton size='small' onClick={handleReset}>
+        <IconButton size='small' onClick={onReset}>
           <i className='tabler-x text-textSecondary text-2xl' />
         </IconButton>
       </div>
       <Divider />
       <div className='p-6'>
-        <form onSubmit={handleSubmit(handleFormSubmit)} className='flex flex-col gap-5'>
+        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
           <Controller
             name='name'
             control={control}
             render={({ field }) => (
-              <CustomTextField {...field} fullWidth label='نام' placeholder='لطفا نام ویژگی را وارد کنید' error={!!errors.name} helperText={errors.name?.message} />
+              <CustomTextField {...field} fullWidth label='نام ویژگی' placeholder='لطفا نام ویژگی را وارد کنید' error={!!errors.name} helperText={errors.name?.message} />
             )}
           />
           <Controller
@@ -103,7 +99,7 @@ const AddattributeDrawer = (props: Props) => {
             render={({ field }) => (
               <CustomTextField
                 {...field}
-                value={field.value ?? ''} // برای جلوگیری از uncontrolled input
+                value={field.value ?? ''}
                 fullWidth
                 label='نامک'
                 placeholder='لطفا نامک ویژگی را وارد کنید'
@@ -124,8 +120,8 @@ const AddattributeDrawer = (props: Props) => {
                 label='نوع'
                 error={!!errors.type}
                 helperText={errors.type?.message}
-                onChange={e => field.onChange(e.target.value)}
                 value={field.value}
+                onChange={e => field.onChange(e.target.value)}
               >
                 <MenuItem value={AttributeType.COLOR}>رنگ</MenuItem>
                 <MenuItem value={AttributeType.BUTTON}>دکمه</MenuItem>
@@ -138,7 +134,7 @@ const AddattributeDrawer = (props: Props) => {
             render={({ field }) => (
               <CustomTextField
                 {...field}
-                value={field.value ?? ''} // برای جلوگیری از uncontrolled input
+                value={field.value ?? ''}
                 fullWidth
                 multiline
                 rows={4}
@@ -154,7 +150,7 @@ const AddattributeDrawer = (props: Props) => {
             <Button variant='contained' type='submit'>
               ثبت
             </Button>
-            <Button variant='tonal' color='error' type='reset' onClick={handleReset}>
+            <Button variant='tonal' color='error' type='reset' onClick={onReset}>
               انصراف
             </Button>
           </div>
@@ -164,4 +160,4 @@ const AddattributeDrawer = (props: Props) => {
   )
 }
 
-export default AddattributeDrawer
+export default AddAttributeDrawer
