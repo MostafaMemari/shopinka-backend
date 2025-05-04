@@ -10,12 +10,15 @@ import { CacheKeys } from "../../common/enums/cache.enum";
 import { AuthService } from "../auth/auth.service";
 import { UserMessages } from "./enums/user.messages";
 import { ChangeRoleDto } from "./dto/change-role.dto";
+import { FavoriteRepository } from "../product/repositories/favorite.repository";
+import { PaginationDto } from "../../common/dtos/pagination.dto";
 
 @Injectable()
 export class UserService {
   private readonly CACHE_EXPIRE_TIME: number = 600 //* 5 minutes
 
   constructor(
+    private readonly favoriteRepository: FavoriteRepository,
     private readonly userRepository: UserRepository,
     private readonly cacheService: CacheService,
     private readonly authService: AuthService
@@ -54,6 +57,11 @@ export class UserService {
     await this.cacheService.set(cacheKey, users, this.CACHE_EXPIRE_TIME)
 
     return { ...pagination(paginationDto, users) }
+  }
+
+  async findAllFavorites(userId: number, paginationDto: PaginationDto): Promise<unknown> {
+    const favorites = await this.favoriteRepository.findAll({ where: { userId }, include: { product: true } })
+    return pagination(paginationDto, favorites)
   }
 
   findOne(id: number): Promise<User | never> {

@@ -11,6 +11,7 @@ import { GetUser } from "../../common/decorators/get-user.decorator";
 import { SkipVerifyMobile } from "../../common/decorators/skip-verify-mobile.decorator";
 import { ChangeRoleDto } from "./dto/change-role.dto";
 import { UserMessages } from "./enums/user.messages";
+import { PaginationDto } from "../../common/dtos/pagination.dto";
 
 @Controller("user")
 @ApiTags('user')
@@ -29,6 +30,10 @@ export class UserController {
     return this.userService.findAll(queryUsersDto);
   }
 
+  @Get('favorites')
+  findAllFavorites(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
+    return this.userService.findAllFavorites(user.id, paginationDto)
+  }
 
   @Post("change-role")
   @Roles(Role.SUPER_ADMIN)
@@ -68,5 +73,4 @@ export class UserController {
 
     return this.userService.remove(id);
   }
-
 }
