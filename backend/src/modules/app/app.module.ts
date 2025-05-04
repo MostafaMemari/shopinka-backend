@@ -16,6 +16,7 @@ import { AwsModule } from "../s3AWS/s3AWS.module";
 import { AddressModule } from "../address/address.module";
 import { AttributeModule } from "../attribute/attribute.module";
 import { ProductModule } from "../product/product.module";
+import { CategoryModule } from "../category/category.module";
 
 @Module({
   imports: [
@@ -31,7 +32,8 @@ import { ProductModule } from "../product/product.module";
     AwsModule,
     AddressModule,
     AttributeModule,
-    ProductModule
+    ProductModule,
+    CategoryModule
   ],
   controllers: [],
   providers: [
