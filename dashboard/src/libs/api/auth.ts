@@ -3,53 +3,89 @@
 import 'server-only'
 import { cookies } from 'next/headers'
 import { COOKIE_NAMES } from '../constants'
-
-const API_BASE_URL = process.env.API_BASE_URL
+import { serverApiFetch } from '@/utils/api'
 
 export const sendOtp = async (mobile: string): Promise<{ status: number; data: any }> => {
-  const response = await fetch(`${API_BASE_URL}/auth/authenticate`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ mobile })
-  })
+  try {
+    const res = await serverApiFetch('/auth/authenticate', {
+      method: 'POST',
+      body: JSON.stringify({ mobile })
+    })
 
-  const data = await response.json()
-
-  return {
-    status: response.status,
-    data
+    return {
+      ...res
+    }
+  } catch (error: any) {
+    return {
+      status: error.message.includes('401') ? 401 : 500,
+      data: { message: error.message || 'Failed to send OTP' }
+    }
   }
 }
 
-export const verifyOtp = async (mobile: string, otp: string): Promise<{ status: number; data: any }> => {
+interface VerifyOtpResponse {
+  accessToken: string
+  refreshToken: string
+}
+
+export const verifyOtp = async (mobile: string, otp: string): Promise<{ status: number; data: VerifyOtpResponse | { message: string } }> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/verify-authenticate-otp`, {
+    const res = await serverApiFetch('/auth/verify-authenticate-otp', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ mobile, otp })
     })
 
-    const data = await response.json()
-
-    console.log('API Response:', data)
-
-    if (response.status === 200 || response.status === 201) {
-      const { accessToken, refreshToken } = data
-
-      if (!accessToken || !refreshToken) throw new Error('Missing tokens in API response')
+    if (res?.status === 201 && res?.data?.accessToken && res?.data?.refreshToken) {
+      const { accessToken, refreshToken }: VerifyOtpResponse = res.data
 
       const cookieStore = await cookies()
 
-      cookieStore.set(COOKIE_NAMES.ACCESS_TOKEN, accessToken, { httpOnly: true, path: '/', expires: new Date(Date.now() + Number(process.env.ACCESS_TOKEN_EXPIRE_TIME) * 1000) })
-      cookieStore.set(COOKIE_NAMES.REFRESH_TOKEN, refreshToken, { httpOnly: true, path: '/', expires: new Date(Date.now() + Number(process.env.REFRESH_TOKEN_EXPIRE_TIME) * 1000) })
-    }
+      cookieStore.set(COOKIE_NAMES.ACCESS_TOKEN, accessToken, {
+        httpOnly: true,
+        path: '/',
+        expires: new Date(Date.now() + Number(process.env.ACCESS_TOKEN_EXPIRE_TIME) * 1000)
+      })
 
-    return {
-      status: response.status,
-      data
+      cookieStore.set(COOKIE_NAMES.REFRESH_TOKEN, refreshToken, {
+        httpOnly: true,
+        path: '/',
+        expires: new Date(Date.now() + Number(process.env.REFRESH_TOKEN_EXPIRE_TIME) * 1000)
+      })
+
+      return {
+        ...res
+      }
+    } else {
+      throw new Error('Missing accessToken or refreshToken in API response')
     }
   } catch (error: any) {
-    console.error('Verify OTP Error:', error.message)
-    throw new Error(error.message || 'Failed to verify OTP')
+    return {
+      status: error.message.includes('401') ? 401 : 500,
+      data: { message: error.message || 'Failed to verify OTP' }
+    }
+  }
+}
+
+export const logout = async (): Promise<{ status: number; data: any }> => {
+  try {
+    const cookieStore = await cookies()
+    const refreshToken = cookieStore.get(COOKIE_NAMES.REFRESH_TOKEN)?.value
+
+    const data = await serverApiFetch('/auth/signout', {
+      method: 'POST',
+      body: JSON.stringify({ refreshToken })
+    })
+
+    cookieStore.delete(COOKIE_NAMES.ACCESS_TOKEN)
+    cookieStore.delete(COOKIE_NAMES.REFRESH_TOKEN)
+
+    return {
+      ...data
+    }
+  } catch (error: any) {
+    return {
+      status: error.message.includes('401') ? 401 : 500,
+      data: { message: error.message || 'Logout failed' }
+    }
   }
 }

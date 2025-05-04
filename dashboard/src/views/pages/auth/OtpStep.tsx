@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 // MUI
 import Typography from '@mui/material/Typography'
@@ -47,6 +48,7 @@ const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBac
   const [isError, setIsError] = useState(false)
   const otpInputRef = useRef<HTMLInputElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
+  const router = useRouter()
 
   const resetOtpForm = () => {
     setIsError(true)
@@ -85,7 +87,10 @@ const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBac
           return showToast({ type: 'error', message: errorMessage })
         }
 
-        showToast({ type: 'success', message: 'ورود شما با موفقیت انجام شد' })
+        if (res?.status === 201) {
+          showToast({ type: 'success', message: 'ورود شما با موفقیت انجام شد' })
+          router.push('/home')
+        }
 
         formRef.current?.requestSubmit()
       } else {
