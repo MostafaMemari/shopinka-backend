@@ -2,7 +2,7 @@
 import type { Metadata } from 'next'
 
 // Component Imports
-import LoginOtp from '@/views/pages/auth/LoginOtp'
+import PhoneNumberStep from '@/views/pages/auth/PhoneNumberStep'
 
 // Server Action Imports
 // import { getServerMode } from '@core/utils/serverHelpers'
@@ -18,7 +18,7 @@ const LoginPage = async () => {
 
   return (
     <div className='flex flex-col justify-center items-center min-bs-[100dvh] p-6'>
-      <LoginOtp />
+      <PhoneNumberStep />
     </div>
   )
 }

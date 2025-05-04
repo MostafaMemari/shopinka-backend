@@ -16,6 +16,9 @@
   --drawer-z-index: var(--mui-zIndex-drawer);
   --backdrop-color: rgb(var(--mui-mainColorChannels-light) / 0.5);
   --mui-mainColorChannels-shadow: var(--mui-mainColorChannels-lightShadow);
+
+  --toastify-color-light: #fff !important;
+  --toastify-color-dark: var(--mui-palette-background-default) !important;
 }
 
 [data-dark] {
@@ -48,6 +51,11 @@ a {
 ul:not([class]) {
   margin-block: 1rem;
   padding-inline-start: 40px;
+}
+
+.Toastify__toast {
+  font-family: var(--font-iranyekan), sans-serif !important;
+  direction: rtl;
 }
 
 /*! Do not remove the following styles */
