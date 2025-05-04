@@ -101,6 +101,7 @@ model GalleryItem {
   mainImageOf         Product[]        @relation("MainImage")
   mainImageOfVariants ProductVariant[] @relation("VariantMainImage")
   sharedIn            Product[]        @relation("ProductToGalleryItem")
+  categories          Category[]
 
   @@index([deletedAt])
 }
@@ -198,7 +199,7 @@ model ProductVariant {
 }
 
 model Favorite {
-  id        Int      @id @default(autoincrement())
+  id        Int      @id() @default(autoincrement())
   userId    Int
   productId Int
   createdAt DateTime @default(now())
@@ -207,4 +208,19 @@ model Favorite {
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([userId, productId])
+}
+
+model Category {
+  id               Int      @id @default(autoincrement())
+  slug             String   @unique()
+  description      String?
+  parentId         Int?
+  thumbnailImageId Int?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt()
+
+  parent   Category?  @relation("CategoryToCategory", fields: [parentId], references: [id], onDelete: NoAction)
+  children Category[] @relation("CategoryToCategory")
+
+  thumbnailImage GalleryItem? @relation(fields: [thumbnailImageId], references: [id], onDelete: NoAction)
 }
