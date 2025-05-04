@@ -58,6 +58,7 @@ model User {
   addresses        Address[]
   products         Product[]
   productVariants  ProductVariant[]
+  favorites        Favorite[]
 }
 
 model Transaction {
@@ -165,6 +166,7 @@ model Product {
   user             User             @relation(fields: [userId], references: [id], onDelete: NoAction)
   attributes       Attribute[]
   variants         ProductVariant[]
+  favorites        Favorite[]
   width            Int?
   height           Int?
   length           Int?
@@ -193,4 +195,16 @@ model ProductVariant {
   weight      Int?
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt()
+}
+
+model Favorite {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  productId Int
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
 }
