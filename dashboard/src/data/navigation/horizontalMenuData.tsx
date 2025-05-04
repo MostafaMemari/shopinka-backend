@@ -8,9 +8,15 @@ const horizontalMenuData = (): HorizontalMenuDataType[] => [
     icon: 'tabler-smart-home'
   },
   {
-    label: 'About',
-    href: '/about',
-    icon: 'tabler-info-circle'
+    label: 'محصولات',
+    icon: 'tabler-shopping-cart',
+    children: [
+      {
+        label: 'ویژگی ها',
+        href: '/products/attributes',
+        icon: 'tabler-layers-difference'
+      }
+    ]
   }
 ]
 

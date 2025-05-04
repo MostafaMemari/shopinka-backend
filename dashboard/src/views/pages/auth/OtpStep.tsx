@@ -79,6 +79,7 @@ const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBac
         }
 
         const res = await verifyOtp(phoneNumber, otp)
+
         const errorMessage = handleApiError(res.status, errorOtpStepMessages)
 
         if (errorMessage) {

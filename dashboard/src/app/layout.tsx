@@ -1,6 +1,9 @@
 // MUI Imports
 import InitColorSchemeScript from '@mui/material/InitColorSchemeScript'
 
+import { ToastContainer } from 'react-toastify'
+import NextTopLoader from 'nextjs-toploader'
+
 // Third-party Imports
 import 'react-perfect-scrollbar/dist/css/styles.css'
 
@@ -15,7 +18,6 @@ import '@/app/globals.css'
 
 // Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
-import { ToastContainer } from 'react-toastify'
 
 export const metadata = {
   title: 'ووکسی - قالب داشبورد مدیریتی Next.js و MUI',
@@ -32,6 +34,8 @@ const RootLayout = async (props: ChildrenType) => {
   return (
     <html id='__next' lang='fa' dir={direction} suppressHydrationWarning>
       <body className='flex is-full min-bs-full flex-auto flex-col'>
+        <NextTopLoader color='var(--primary-color)' showSpinner={false} />
+
         <ToastContainer
           position='top-left'
           theme={systemMode}

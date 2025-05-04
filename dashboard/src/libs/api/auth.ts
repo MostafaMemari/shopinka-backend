@@ -51,12 +51,10 @@ export const verifyOtp = async (mobile: string, otp: string): Promise<{ status: 
         path: '/',
         expires: new Date(Date.now() + Number(process.env.REFRESH_TOKEN_EXPIRE_TIME) * 1000)
       })
+    }
 
-      return {
-        ...res
-      }
-    } else {
-      throw new Error('Missing accessToken or refreshToken in API response')
+    return {
+      ...res
     }
   } catch (error: any) {
     return {
@@ -71,7 +69,7 @@ export const logout = async (): Promise<{ status: number; data: any }> => {
     const cookieStore = await cookies()
     const refreshToken = cookieStore.get(COOKIE_NAMES.REFRESH_TOKEN)?.value
 
-    const data = await serverApiFetch('/auth/signout', {
+    const res = await serverApiFetch('/auth/signout', {
       method: 'POST',
       body: JSON.stringify({ refreshToken })
     })
@@ -80,7 +78,7 @@ export const logout = async (): Promise<{ status: number; data: any }> => {
     cookieStore.delete(COOKIE_NAMES.REFRESH_TOKEN)
 
     return {
-      ...data
+      ...res
     }
   } catch (error: any) {
     return {
