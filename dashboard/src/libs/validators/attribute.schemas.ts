@@ -1,5 +1,5 @@
 import * as yup from 'yup'
-import { AttributeType } from '@/types/attributes'
+import { AttributeType } from '@/types/productAttributes'
 
 export const createAttributeSchema = yup
   .object({

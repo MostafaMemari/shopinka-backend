@@ -18,7 +18,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 // Type Imports
 import type { attributeType } from './ProductAttributeTable'
 import { createAttributeSchema } from '@/libs/validators/attribute.schemas'
-import { AttributeType } from '@/types/attributes'
+import { AttributeType } from '@/types/productAttributes'
 
 // Components Imports
 import CustomTextField from '@core/components/mui/TextField'

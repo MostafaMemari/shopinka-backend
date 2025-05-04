@@ -19,6 +19,7 @@ import CustomTextField from '@core/components/mui/TextField'
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
+import type { Attribute } from '@/types/productAttributes'
 
 // Attribute data type
 export type attributeType = {
@@ -54,10 +55,10 @@ const DebouncedInput = ({
   return <CustomTextField {...props} value={value} onChange={e => setValue(e.target.value)} />
 }
 
-const ProductAttributeTable = ({ data: initialData, setData }: { data: attributeType[]; setData: (data: attributeType[]) => void }) => {
+const ProductAttributeTable = ({ data: initialData }: { data: Attribute[] }) => {
   // States
   const [addOpen, setAddOpen] = useState(false)
-  const [data, setLocalData] = useState<attributeType[]>(initialData || [])
+  const [data, setLocalData] = useState<Attribute[]>(initialData || [])
   const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
@@ -70,9 +71,9 @@ const ProductAttributeTable = ({ data: initialData, setData }: { data: attribute
   // Filter data based on search term
   const filteredData = data.filter(
     item =>
-      item.attributeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.values.toLowerCase().includes(searchTerm.toLowerCase())
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item?.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.createdAt.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   // Paginate filtered data
@@ -82,16 +83,16 @@ const ProductAttributeTable = ({ data: initialData, setData }: { data: attribute
     <>
       <Card>
         <div className='flex flex-wrap justify-between gap-4 p-6'>
-          <DebouncedInput value={searchTerm} onChange={value => setSearchTerm(String(value))} placeholder='جستجو' className='max-sm:w-full' />
+          <Button variant='contained' className='max-sm:w-full' onClick={() => setAddOpen(!addOpen)} startIcon={<i className='tabler-plus' />}>
+            افزودن ویژگی
+          </Button>
           <div className='flex max-sm:flex-col items-start sm:items-center gap-4 max-sm:w-full'>
             <CustomTextField select value={rowsPerPage} onChange={e => setRowsPerPage(Number(e.target.value))} className='flex-auto max-sm:w-full sm:w-[70px]'>
               <MenuItem value='10'>10</MenuItem>
               <MenuItem value='15'>15</MenuItem>
               <MenuItem value='25'>25</MenuItem>
             </CustomTextField>
-            <Button variant='contained' className='max-sm:w-full' onClick={() => setAddOpen(!addOpen)} startIcon={<i className='tabler-plus' />}>
-              افزودن ویژگی
-            </Button>
+            <DebouncedInput value={searchTerm} onChange={value => setSearchTerm(String(value))} placeholder='جستجو' className='max-sm:w-full' />
           </div>
         </div>
         <div className='overflow-x-auto max-md:overflow-x-hidden'>
@@ -133,7 +134,8 @@ const ProductAttributeTable = ({ data: initialData, setData }: { data: attribute
                             const newData = data.filter(item => item.id !== row.id)
 
                             setLocalData(newData)
-                            setData(newData)
+
+                            // setData(newData)
                           }}
                         >
                           <i className='tabler-trash text-gray-600' />
@@ -173,7 +175,8 @@ const ProductAttributeTable = ({ data: initialData, setData }: { data: attribute
                         const newData = data.filter(item => item.id !== row.id)
 
                         setLocalData(newData)
-                        setData(newData)
+
+                        // setData(newData)
                       }}
                     >
                       <i className='tabler-trash text-gray-500 text-lg' />
@@ -196,7 +199,7 @@ const ProductAttributeTable = ({ data: initialData, setData }: { data: attribute
           onRowsPerPageChange={e => setRowsPerPage(Number(e.target.value))}
         />
       </Card>
-      <AddAttributeDrawer open={addOpen} data={data} setData={setData} handleClose={() => setAddOpen(!addOpen)} />
+      {/* <AddAttributeDrawer open={addOpen} data={data} setData={setData} handleClose={() => setAddOpen(!addOpen)} /> */}
     </>
   )
 }

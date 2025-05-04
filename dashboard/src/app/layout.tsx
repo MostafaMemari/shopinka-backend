@@ -18,6 +18,7 @@ import '@/app/globals.css'
 
 // Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
+import Providers from './providers'
 
 export const metadata = {
   title: 'ووکسی - قالب داشبورد مدیریتی Next.js و MUI',
@@ -49,7 +50,7 @@ const RootLayout = async (props: ChildrenType) => {
           pauseOnHover
         />
         <InitColorSchemeScript attribute='data' defaultMode={systemMode} />
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   )
