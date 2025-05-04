@@ -35,6 +35,11 @@ export class UserController {
     return this.userService.findAllFavorites(user.id, paginationDto)
   }
 
+  @Get('favorites')
+  findAllFavorites(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
+    return this.userService.findAllFavorites(user.id, paginationDto)
+  }
+
   @Post("change-role")
   @Roles(Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
