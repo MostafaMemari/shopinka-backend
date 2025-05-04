@@ -13,6 +13,8 @@ import { CacheKeys } from '../../../common/enums/cache.enum';
 import { pagination } from '../../../common/utils/pagination.utils';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
 import { ProductMessages } from '../enums/product-messages.enum';
+import { FavoriteRepository } from '../repositories/favorite.repository';
+import { FavoriteMessages } from '../enums/favorite-messages.enum';
 
 @Injectable()
 export class ProductService {
@@ -20,6 +22,7 @@ export class ProductService {
 
   constructor(
     private readonly productRepository: ProductRepository,
+    private readonly favoriteRepository: FavoriteRepository,
     private readonly cacheService: CacheService,
     private readonly galleryItemRepository: GalleryItemRepository,
     private readonly attributeRepository: AttributeRepository
@@ -194,6 +197,22 @@ export class ProductService {
   async findAllDrafts(userId: number, paginationDto: PaginationDto): Promise<unknown> {
     const products = await this.productRepository.findAll({ where: { userId, status: ProductStatus.DRAFT } })
     return pagination(paginationDto, products)
+  }
+
+  async favoriteToggle(userId: number, productId: number) {
+    await this.productRepository.findOneOrThrow({ where: { id: productId } })
+
+    const existingFavorite = await this.favoriteRepository.findOne({ where: { productId, userId } })
+
+    if (existingFavorite) {
+      const removedFavorite = await this.favoriteRepository.delete({ where: { id: existingFavorite.id } })
+
+      return { message: FavoriteMessages.RemovedFavoriteSuccess, favorite: removedFavorite }
+    }
+
+    const newFavorite = await this.favoriteRepository.create({ data: { productId, userId } })
+
+    return { message: FavoriteMessages.CreatedFavoriteSuccess, favorite: newFavorite }
   }
 
   private async generateUniqueSlug(name: string): Promise<string> {

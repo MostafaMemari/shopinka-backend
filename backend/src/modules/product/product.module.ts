@@ -10,6 +10,7 @@ import { AttributeRepository } from '../attribute/repositories/attribute.reposit
 import { ProductVariantRepository } from './repositories/product-variant.repository';
 import { ProductVariantService } from './services/product-variant.service';
 import { ProductVariantController } from './controllers/product-variant.controller';
+import { FavoriteRepository } from './repositories/favorite.repository';
 
 @Module({
   controllers: [ProductController , ProductVariantController],
@@ -22,7 +23,8 @@ import { ProductVariantController } from './controllers/product-variant.controll
     GalleryItemRepository,
     AttributeRepository,
     ProductVariantRepository,
-    ProductVariantService
+    ProductVariantService,
+    FavoriteRepository
   ],
 })
 export class ProductModule { }

@@ -43,8 +43,13 @@ export class ProductController {
   }
 
   @Get('draft/:id')
-  findOneDraft(@Param('id', ParseIntPipe) id: number , @GetUser() user: User) {
-    return this.productService.findOneDraft(user.id ,id);
+  findOneDraft(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.productService.findOneDraft(user.id, id);
+  }
+
+  @Patch("favorite-toggle/:id")
+  favoriteToggle(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.productService.favoriteToggle(user.id, id)
   }
 
   @Patch(':id')
