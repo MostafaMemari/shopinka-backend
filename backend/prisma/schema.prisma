@@ -59,6 +59,7 @@ model User {
   products         Product[]
   productVariants  ProductVariant[]
   favorites        Favorite[]
+  categories       Category[]
 }
 
 model Transaction {
@@ -215,12 +216,14 @@ model Category {
   slug             String   @unique()
   description      String?
   parentId         Int?
+  userId           Int
   thumbnailImageId Int?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt()
 
   parent   Category?  @relation("CategoryToCategory", fields: [parentId], references: [id], onDelete: NoAction)
   children Category[] @relation("CategoryToCategory")
+  user     User       @relation(fields: [userId], references: [id], onDelete: NoAction)
 
   thumbnailImage GalleryItem? @relation(fields: [thumbnailImageId], references: [id], onDelete: NoAction)
 }
