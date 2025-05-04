@@ -14,7 +14,7 @@ export class CategoryService {
 
   async create(userId: number, createCategoryDto: CreateCategoryDto): Promise<{ message: string, category: Category }> {
     const { slug, parentId, thumbnailImageId } = createCategoryDto
-    if (createCategoryDto.parentId) await this.categoryRepository.findOneOrThrow({ where: { parentId } })
+    if (createCategoryDto.parentId) await this.categoryRepository.findOneOrThrow({ where: { id: parentId } })
 
     const existingCategory = await this.categoryRepository.findOne({ where: { slug } })
 
@@ -34,8 +34,8 @@ export class CategoryService {
     return `This action returns all category`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  findOne(id: number): Promise<Category | never> {
+    return this.categoryRepository.findOneOrThrow({ where: { id }, include: { user: true, children: true, parent: true, thumbnailImage: true } })
   }
 
   update(id: number, updateCategoryDto: UpdateCategoryDto) {

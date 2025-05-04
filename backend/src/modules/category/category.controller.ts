@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -7,6 +7,7 @@ import { AuthDecorator } from '../../common/decorators/auth.decorator';
 import { GetUser } from '../../common/decorators/get-user.decorator';
 import { User } from 'generated/prisma';
 import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
+import { SkipAuth } from '../../common/decorators/skip-auth.decorator';
 
 @Controller('category')
 @ApiTags('category')
@@ -26,8 +27,9 @@ export class CategoryController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoryService.findOne(+id);
+  @SkipAuth()
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.categoryService.findOne(id);
   }
 
   @Patch(':id')

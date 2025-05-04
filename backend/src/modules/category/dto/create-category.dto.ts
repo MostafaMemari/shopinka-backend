@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger"
 import { Transform } from "class-transformer"
-import { IsOptional, IsString, IsNotEmpty, MaxLength, Matches, IsNumber } from "class-validator"
+import { IsOptional, IsString, IsNotEmpty, MaxLength, Matches, IsNumber, IsPositive } from "class-validator"
 
 export class CreateCategoryDto {
     @IsString()
@@ -18,12 +18,14 @@ export class CreateCategoryDto {
 
     @IsOptional()
     @IsNumber()
+    @IsPositive()
     @Transform(({ value }) => +value)
     @ApiProperty({ type: "number", required: false, nullable: true })
     parentId?: number
 
     @IsOptional()
     @IsNumber()
+    @IsPositive()
     @Transform(({ value }) => +value)
     @ApiProperty({ type: "number", required: false, nullable: true })
     thumbnailImageId?: number
