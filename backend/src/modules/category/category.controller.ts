@@ -16,10 +16,9 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) { }
 
   @Post()
-  @SkipAuth()
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   create(@Body() createCategoryDto: CreateCategoryDto, @GetUser() user: User) {
-    return this.categoryService.create(1, createCategoryDto);
+    return this.categoryService.create(user.id, createCategoryDto);
   }
 
   @Get()
@@ -35,13 +34,12 @@ export class CategoryController {
 
   @Patch(':id')
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
-  @SkipAuth()
   update(@Param('id', ParseIntPipe) id: number, @Body() updateCategoryDto: UpdateCategoryDto, @GetUser() user: User) {
-    return this.categoryService.update(1, id, updateCategoryDto);
+    return this.categoryService.update(user.id, id, updateCategoryDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoryService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.categoryService.remove(user.id, id);
   }
 }

@@ -65,8 +65,15 @@ export class CategoryService {
     return { message: "Updated category successfully.", category: updatedCategory }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(userId: number, categoryId: number): Promise<{ message: string, category: Category }> {
+    const category = await this.categoryRepository.findOneOrThrow({ where: { id: categoryId, userId }, include: { children: true } })
+
+    if (category['children']?.length > 0)
+      throw new BadRequestException("Cannot delete a category that has child categories.")
+
+    const removedCategory = await this.categoryRepository.delete({ where: { id: categoryId }, include: { children: true, parent: true, thumbnailImage: true } })
+
+    return { message: "Removed category successfully.", category: removedCategory }
   }
 
   private async isParentIdInChildren(categoryId: number, parentId: number) {
