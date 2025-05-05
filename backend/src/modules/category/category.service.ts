@@ -3,13 +3,21 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryRepository } from './category.repository';
 import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
-import { Category } from 'generated/prisma';
+import { Category, Prisma } from 'generated/prisma';
+import { QueryCategoryDto } from './dto/query-category.dto';
+import { sortObject } from '../../common/utils/functions.utils';
+import { CacheKeys } from '../../common/enums/cache.enum';
+import { CacheService } from '../cache/cache.service';
+import { pagination } from '../../common/utils/pagination.utils';
 
 @Injectable()
 export class CategoryService {
+  private readonly CACHE_EXPIRE_TIME: number = 600 //* 5 minutes
+
   constructor(
     private readonly categoryRepository: CategoryRepository,
-    private readonly galleryItemRepository: GalleryItemRepository
+    private readonly galleryItemRepository: GalleryItemRepository,
+    private readonly cacheService: CacheService
   ) { }
 
   async create(userId: number, createCategoryDto: CreateCategoryDto): Promise<{ message: string, category: Category }> {
@@ -30,8 +38,37 @@ export class CategoryService {
     return { message: "Created category successfully.", category: newCategory }
   }
 
-  findAll() {
-    return `This action returns all category`;
+  async findAll({ page, take, ...queryCategoryDto }: QueryCategoryDto): Promise<unknown> {
+    const paginationDto = { page, take };
+    const { description, endDate, includeUser, slug, sortBy, sortDirection, startDate, includeChildren, includeParent, includeThumbnailImage } = queryCategoryDto
+
+    const sortedDto = sortObject(queryCategoryDto);
+
+    const cacheKey = `${CacheKeys.Categories}_${JSON.stringify(sortedDto)}`;
+
+    const cachedCategories = await this.cacheService.get<null | Category[]>(cacheKey);
+
+    if (cachedCategories) return { ...pagination(paginationDto, cachedCategories) }
+
+    const filters: Prisma.CategoryWhereInput = {};
+
+    if (description) filters.description = { contains: description, mode: "insensitive" };
+    if (slug) filters.slug = { contains: slug, mode: "insensitive" };
+    if (startDate || endDate) {
+      filters.createdAt = {};
+      if (startDate) filters.createdAt.gte = new Date(startDate);
+      if (endDate) filters.createdAt.lte = new Date(endDate);
+    }
+
+    const categories = await this.categoryRepository.findAll({
+      where: filters,
+      orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
+      include: { user: includeUser, children: includeChildren, parent: includeParent, thumbnailImage: includeThumbnailImage }
+    });
+
+    await this.cacheService.set(cacheKey, categories, this.CACHE_EXPIRE_TIME);
+
+    return { ...pagination(paginationDto, categories) }
   }
 
   findOne(id: number): Promise<Category | never> {
