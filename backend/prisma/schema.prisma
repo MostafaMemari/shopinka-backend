@@ -236,13 +236,13 @@ model Comment {
   id Int @id() @default(autoincrement())
   title String
   content String
-  active Boolean @default(false)
+  isActive Boolean @default(false)
   isRecommended Boolean @default(true)
-  rate Int
+  rate Int @default(5)
   userId Int
   productId Int
-  parentId Int
-  parent Comment @relation("CommentToComment",fields: [parentId] , references: [id] , onDelete: Cascade)
+  parentId Int?
+  parent Comment? @relation("CommentToComment",fields: [parentId] , references: [id] , onDelete: Cascade)
   replies Comment[] @relation("CommentToComment")
 
   product Product @relation(fields: [productId] , references: [id] , onDelete: Cascade)

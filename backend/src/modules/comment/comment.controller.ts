@@ -2,14 +2,24 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { AuthDecorator } from '../../common/decorators/auth.decorator';
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
+import { GetUser } from '../../common/decorators/get-user.decorator';
+import { User } from 'generated/prisma';
+import { SkipAuth } from '../../common/decorators/skip-auth.decorator';
 
 @Controller('comment')
+@ApiTags('comment')
+@AuthDecorator()
 export class CommentController {
-  constructor(private readonly commentService: CommentService) {}
+  constructor(private readonly commentService: CommentService) { }
 
   @Post()
-  create(@Body() createCommentDto: CreateCommentDto) {
-    return this.commentService.create(createCommentDto);
+  @SkipAuth()
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  create(@Body() createCommentDto: CreateCommentDto, @GetUser() user: User) {
+    return this.commentService.create(1, createCommentDto);
   }
 
   @Get()
