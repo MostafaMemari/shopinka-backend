@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryRepository } from './category.repository';
@@ -38,11 +38,51 @@ export class CategoryService {
     return this.categoryRepository.findOneOrThrow({ where: { id }, include: { user: true, children: true, parent: true, thumbnailImage: true } })
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(userId: number, categoryId: number, updateCategoryDto: UpdateCategoryDto): Promise<{ message: string, category: Category }> {
+    const { parentId, slug, thumbnailImageId } = updateCategoryDto
+
+    const category = await this.categoryRepository.findOneOrThrow({ where: { id: categoryId, userId }, include: { children: true } })
+
+    if (category.id === parentId) throw new BadRequestException()
+
+    if (await this.isParentIdInChildren(categoryId, parentId))
+      throw new BadRequestException("This parentId is child.")
+
+    if (slug) {
+      const existingCategory = await this.categoryRepository.findOne({ where: { slug, id: { not: categoryId } } })
+      if (existingCategory) throw new ConflictException("Category with this slug already exists.")
+    }
+
+    if (parentId) await this.categoryRepository.findOneOrThrow({ where: { id: parentId } })
+
+    if (thumbnailImageId) await this.galleryItemRepository.findOneOrThrow({ where: { id: thumbnailImageId } })
+
+    const updatedCategory = await this.categoryRepository.update({
+      where: { id: categoryId }, data: updateCategoryDto,
+      include: { children: true, parent: true, thumbnailImage: true }
+    })
+
+    return { message: "Updated category successfully.", category: updatedCategory }
   }
 
   remove(id: number) {
     return `This action removes a #${id} category`;
+  }
+
+  private async isParentIdInChildren(categoryId: number, parentId: number) {
+    const queue = [categoryId]
+
+    while (queue.length > 0) {
+      const currentId = queue.shift()
+
+      const children = await this.categoryRepository.findAll({ where: { parentId: currentId }, select: { id: true } })
+
+      for (const child of children) {
+        if (child.id == parentId) return true
+        queue.push(child.id)
+      }
+    }
+
+    return false
   }
 }
