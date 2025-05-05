@@ -35,7 +35,7 @@ export class CategoryService {
   }
 
   findOne(id: number): Promise<Category | never> {
-    return this.categoryRepository.findOneOrThrow({ where: { id }, include: { user: true, children: true, parent: true, thumbnailImage: true } })
+    return this.getCategoryWithAllChildren(id)
   }
 
   async update(userId: number, categoryId: number, updateCategoryDto: UpdateCategoryDto): Promise<{ message: string, category: Category }> {
@@ -91,5 +91,23 @@ export class CategoryService {
     }
 
     return false
+  }
+
+  private async getCategoryWithAllChildren(categoryId: number): Promise<Category> {
+    const category = await this.categoryRepository.findOneOrThrow({
+      where: { id: categoryId },
+      include: {
+        parent: { select: { id: true, slug: true, description: true } },
+        thumbnailImage: { select: { id: true, size: true, fileUrl: true } },
+        children: true,
+        user: { select: { id: true, fullName: true } }
+      }
+    })
+
+    category['children'] = await Promise.all(
+      category['children'].map(async child => this.getCategoryWithAllChildren(child.id))
+    )
+
+    return category
   }
 }
