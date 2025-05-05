@@ -91,6 +91,21 @@ export class CreateProductDto {
     @IsNotEmpty()
     galleryImageIds: number[]
 
+    @IsOptional()
+    @ApiProperty({
+        isArray: true,
+        required: false,
+        nullable: true,
+        type: 'array',
+        uniqueItems: true,
+        items: { type: 'number', nullable: false },
+    })
+    @Transform(({ value }) => transformNumberArray(value))
+    @IsArray()
+    @ArrayUnique()
+    @IsNotEmpty()
+    categoryIds?: number[]
+
     @ApiProperty({
         isArray: true,
         type: 'array',

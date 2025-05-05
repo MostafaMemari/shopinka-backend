@@ -15,6 +15,7 @@ import { PaginationDto } from '../../../common/dtos/pagination.dto';
 import { ProductMessages } from '../enums/product-messages.enum';
 import { FavoriteRepository } from '../repositories/favorite.repository';
 import { FavoriteMessages } from '../enums/favorite-messages.enum';
+import { CategoryRepository } from '../../category/category.repository';
 
 @Injectable()
 export class ProductService {
@@ -25,11 +26,12 @@ export class ProductService {
     private readonly favoriteRepository: FavoriteRepository,
     private readonly cacheService: CacheService,
     private readonly galleryItemRepository: GalleryItemRepository,
-    private readonly attributeRepository: AttributeRepository
+    private readonly attributeRepository: AttributeRepository,
+    private readonly categoryRepository: CategoryRepository
   ) { }
 
   async create(userId: number, createProductDto: CreateProductDto): Promise<{ message: string, product: Product }> {
-    const { galleryImageIds, mainImageId, name, slug, sku, basePrice, salePrice, attributeIds, type } = createProductDto
+    const { categoryIds, galleryImageIds, mainImageId, name, slug, sku, basePrice, salePrice, attributeIds, type } = createProductDto
 
     if (salePrice > basePrice) throw new BadRequestException(ProductMessages.SalePriceTooHigh)
 
@@ -37,6 +39,8 @@ export class ProductService {
       const existingProduct = await this.productRepository.findOne({ where: { OR: [{ slug }, { sku }] } })
       if (existingProduct) throw new ConflictException(ProductMessages.AlreadyExistsProduct)
     }
+
+    const categories = categoryIds ? await this.categoryRepository.findAll({ where: { id: { in: categoryIds } } }) : []
 
     await this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } })
 
@@ -48,14 +52,16 @@ export class ProductService {
 
     delete createProductDto.galleryImageIds
     delete createProductDto.attributeIds
+    categoryIds && delete createProductDto.categoryIds
 
     const newProduct = await this.productRepository.create({
       data: {
         ...createProductDto, userId, slug: uniqueSlug, mainImageId,
         galleryImages: { connect: images.map((image => ({ id: image.id }))) },
-        attributes: type == ProductType.VARIABLE ? { connect: attributes.map(attribute => ({ id: attribute.id })) } : undefined
+        attributes: type == ProductType.VARIABLE ? { connect: attributes.map(attribute => ({ id: attribute.id })) } : undefined,
+        categories: { connect: categories.map(cat => ({ id: cat.id })) }
       },
-      include: { mainImage: true, galleryImages: true, attributes: true }
+      include: { mainImage: true, galleryImages: true, attributes: true, categories: true }
     })
 
     return { message: ProductMessages.CreatedProductSuccess, product: newProduct }
@@ -148,7 +154,7 @@ export class ProductService {
   }
 
   async update(userId: number, productId: number, updateProductDto: UpdateProductDto): Promise<{ message: string, product: Product }> {
-    const { galleryImageIds, mainImageId, slug, sku, basePrice, salePrice, attributeIds, type } = updateProductDto
+    const { categoryIds, galleryImageIds, mainImageId, slug, sku, basePrice, salePrice, attributeIds, type } = updateProductDto
 
     const product = await this.productRepository.findOneOrThrow({ where: { id: productId, userId } })
 
@@ -163,6 +169,8 @@ export class ProductService {
 
     if (mainImageId) await this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } })
 
+    const categories = categoryIds ? await this.categoryRepository.findAll({ where: { id: { in: categoryIds } } }) : []
+
     const images = galleryImageIds ? await this.galleryItemRepository.findAll({ where: { id: { in: galleryImageIds } } }) : undefined
 
     const attributes = attributeIds ? await this.attributeRepository.findAll({ where: { id: { in: attributeIds } } }) : undefined
@@ -171,13 +179,15 @@ export class ProductService {
 
     attributeIds && delete updateProductDto.attributeIds
     galleryImageIds && delete updateProductDto.galleryImageIds
+    categoryIds && delete updateProductDto.categoryIds
 
     const updatedProduct = await this.productRepository.update({
       where: { id: productId },
       data: {
         ...updateProductDto,
         galleryImages: images ? { set: images.map(image => ({ id: image.id })) } : undefined,
-        attributes: isAllowedProductType ? { set: attributes.map(attribute => ({ id: attribute.id })) } : undefined
+        attributes: isAllowedProductType ? { set: attributes.map(attribute => ({ id: attribute.id })) } : undefined,
+        categories: { set: categories.map(cat => ({ id: cat.id })) }
       },
       include: { attributes: true, galleryImages: true, mainImage: true }
     })

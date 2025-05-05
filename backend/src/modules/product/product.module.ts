@@ -11,6 +11,7 @@ import { ProductVariantRepository } from './repositories/product-variant.reposit
 import { ProductVariantService } from './services/product-variant.service';
 import { ProductVariantController } from './controllers/product-variant.controller';
 import { FavoriteRepository } from './repositories/favorite.repository';
+import { CategoryRepository } from '../category/category.repository';
 
 @Module({
   controllers: [ProductController , ProductVariantController],
@@ -24,7 +25,8 @@ import { FavoriteRepository } from './repositories/favorite.repository';
     AttributeRepository,
     ProductVariantRepository,
     ProductVariantService,
-    FavoriteRepository
+    FavoriteRepository,
+    CategoryRepository
   ],
 })
 export class ProductModule { }
