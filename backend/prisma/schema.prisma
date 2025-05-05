@@ -60,6 +60,7 @@ model User {
   productVariants  ProductVariant[]
   favorites        Favorite[]
   categories       Category[]
+  comments Comment[]
 }
 
 model Transaction {
@@ -170,6 +171,7 @@ model Product {
   variants         ProductVariant[]
   favorites        Favorite[]
   categories       Category[]
+  comments Comment[]
   width            Int?
   height           Int?
   length           Int?
@@ -228,4 +230,24 @@ model Category {
   products Product[]
 
   thumbnailImage GalleryItem? @relation(fields: [thumbnailImageId], references: [id], onDelete: NoAction)
+}
+
+model Comment {
+  id Int @id() @default(autoincrement())
+  title String
+  content String
+  active Boolean @default(false)
+  isRecommended Boolean @default(true)
+  rate Int
+  userId Int
+  productId Int
+  parentId Int
+  parent Comment @relation("CommentToComment",fields: [parentId] , references: [id] , onDelete: Cascade)
+  replies Comment[] @relation("CommentToComment")
+
+  product Product @relation(fields: [productId] , references: [id] , onDelete: Cascade)
+  user    User @relation(fields: [userId] , references: [id] , onDelete: Cascade)
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt()
 }
