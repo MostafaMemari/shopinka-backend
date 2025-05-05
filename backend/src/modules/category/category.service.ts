@@ -9,6 +9,7 @@ import { sortObject } from '../../common/utils/functions.utils';
 import { CacheKeys } from '../../common/enums/cache.enum';
 import { CacheService } from '../cache/cache.service';
 import { pagination } from '../../common/utils/pagination.utils';
+import { CategoryMessages } from './enums/category-messages.enum';
 
 @Injectable()
 export class CategoryService {
@@ -26,7 +27,7 @@ export class CategoryService {
 
     const existingCategory = await this.categoryRepository.findOne({ where: { slug } })
 
-    if (existingCategory) throw new ConflictException("Category with this slug already exists.")
+    if (existingCategory) throw new ConflictException(CategoryMessages.AlreadyExistsCategory)
 
     await this.galleryItemRepository.findOneOrThrow({ where: { id: thumbnailImageId } })
 
@@ -35,7 +36,7 @@ export class CategoryService {
       include: { thumbnailImage: true, parent: true }
     })
 
-    return { message: "Created category successfully.", category: newCategory }
+    return { message: CategoryMessages.CreatedCategorySuccess, category: newCategory }
   }
 
   async findAll({ page, take, ...queryCategoryDto }: QueryCategoryDto): Promise<unknown> {
@@ -80,14 +81,14 @@ export class CategoryService {
 
     const category = await this.categoryRepository.findOneOrThrow({ where: { id: categoryId, userId }, include: { children: true } })
 
-    if (category.id === parentId) throw new BadRequestException()
+    if (category.id === parentId) throw new BadRequestException(CategoryMessages.CannotSetItselfAsParent)
 
     if (await this.isParentIdInChildren(categoryId, parentId))
-      throw new BadRequestException("This parentId is child.")
+      throw new BadRequestException(CategoryMessages.ParentIsChild)
 
     if (slug) {
       const existingCategory = await this.categoryRepository.findOne({ where: { slug, id: { not: categoryId } } })
-      if (existingCategory) throw new ConflictException("Category with this slug already exists.")
+      if (existingCategory) throw new ConflictException(CategoryMessages.AlreadyExistsCategory)
     }
 
     if (parentId) await this.categoryRepository.findOneOrThrow({ where: { id: parentId } })
@@ -99,18 +100,15 @@ export class CategoryService {
       include: { children: true, parent: true, thumbnailImage: true }
     })
 
-    return { message: "Updated category successfully.", category: updatedCategory }
+    return { message: CategoryMessages.UpdatedCategorySuccess, category: updatedCategory }
   }
 
   async remove(userId: number, categoryId: number): Promise<{ message: string, category: Category }> {
-    const category = await this.categoryRepository.findOneOrThrow({ where: { id: categoryId, userId }, include: { children: true } })
-
-    if (category['children']?.length > 0)
-      throw new BadRequestException("Cannot delete a category that has child categories.")
+    await this.categoryRepository.findOneOrThrow({ where: { id: categoryId, userId }, include: { children: true } })
 
     const removedCategory = await this.categoryRepository.delete({ where: { id: categoryId }, include: { children: true, parent: true, thumbnailImage: true } })
 
-    return { message: "Removed category successfully.", category: removedCategory }
+    return { message: CategoryMessages.RemovedCategorySuccess, category: removedCategory }
   }
 
   private async isParentIdInChildren(categoryId: number, parentId: number) {

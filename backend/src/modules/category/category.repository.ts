@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { Category, Prisma } from "generated/prisma";
+import { CategoryMessages } from "./enums/category-messages.enum";
 
 @Injectable()
 export class CategoryRepository {
@@ -29,7 +30,7 @@ export class CategoryRepository {
     async findOneOrThrow(args: Prisma.CategoryFindFirstArgs): Promise<Category | never> {
         const category = await this.findOne(args)
 
-        if (!category) throw new NotFoundException("Not found category.")
+        if (!category) throw new NotFoundException(CategoryMessages.NotFoundCategory)
 
         return category
     }
