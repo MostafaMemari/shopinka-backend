@@ -5,20 +5,7 @@ const typography = (fontFamily: string): Theme['typography'] =>
   ({
     fontFamily:
       typeof fontFamily === 'undefined' || fontFamily === ''
-        ? [
-            '"Public Sans"',
-            'sans-serif',
-            '-apple-system',
-            'BlinkMacSystemFont',
-            '"Segoe UI"',
-            'Roboto',
-            '"Helvetica Neue"',
-            'Arial',
-            'sans-serif',
-            '"Apple Color Emoji"',
-            '"Segoe UI Emoji"',
-            '"Segoe UI Symbol"'
-          ].join(',')
+        ? 'IRANYekan, sans-serif'
         : fontFamily,
     fontSize: 13.125,
     h1: {

@@ -49,10 +49,11 @@ const LoginOtp = () => {
 
       if (errorMessage) return showToast({ type: 'error', message: errorMessage })
 
-      showToast({ type: 'success', message: 'کد اعتبار سنجی با موفقیت ارسال شد' })
-
-      setPhone(data.mobile)
-      setStep('otp')
+      if (res?.status === 201) {
+        showToast({ type: 'success', message: 'کد اعتبار سنجی با موفقیت ارسال شد' })
+        setPhone(data.mobile)
+        setStep('otp')
+      }
     } catch (err) {
       showToast({ type: 'error', message: 'خطای سیستمی' })
     }
