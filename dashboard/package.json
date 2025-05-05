@@ -36,6 +36,7 @@
     "react-toastify": "^11.0.5",
     "react-use": "17.6.0",
     "server-only": "0.0.1",
+    "sweetalert2": "^11.21.0",
     "yup": "^1.6.1"
   },
   "devDependencies": {

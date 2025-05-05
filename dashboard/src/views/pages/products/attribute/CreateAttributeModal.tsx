@@ -1,90 +1,88 @@
-'use client'
-
-// React Imports
-import { useCallback } from 'react'
-
-// MUI Imports
+import { useState } from 'react'
 import Button from '@mui/material/Button'
-import Drawer from '@mui/material/Drawer'
-import IconButton from '@mui/material/IconButton'
-import MenuItem from '@mui/material/MenuItem'
-import Typography from '@mui/material/Typography'
-import Divider from '@mui/material/Divider'
-
-// Third-party Imports
-import { useForm, Controller } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-
-// Type Imports
-import type { attributeType } from './ProductAttributeTable'
-import { createAttributeSchema } from '@/libs/validators/attribute.schemas'
-import { AttributeType } from '@/types/productAttributes'
-
-// Components Imports
 import CustomTextField from '@core/components/mui/TextField'
+import CustomDialog from '@/@core/components/mui/CustomDialog'
+import { Controller, useForm } from 'react-hook-form'
+import { MenuItem } from '@mui/material'
+import { AttributeType } from '@/types/productAttributes'
+import { createAttributeSchema } from '@/libs/validators/attribute.schemas'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { createAttribute } from '@/libs/api/productAttributes'
+import { showToast } from '@/utils/showToast'
+import { handleApiError } from '@/utils/handleApiError'
+import { errorAttributeMessage } from '@/messages/auth/attributeMessages'
+import { useRouter } from 'next/navigation'
 
-type Props = {
-  open: boolean
-  handleClose: () => void
-  data: attributeType[]
-  setData: (data: attributeType[]) => void
-}
+const CreateAttributeModal = () => {
+  const [open, setOpen] = useState<boolean>(false)
+  const router = useRouter()
 
-const AddAttributeDrawer = ({ open, handleClose, data, setData }: Props) => {
-  // Form hook
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
+
   const {
     control,
     reset,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    setValue
   } = useForm({
     resolver: yupResolver(createAttributeSchema),
     defaultValues: {
       name: '',
-      slug: null,
+      slug: null as string | null,
       type: AttributeType.COLOR,
-      description: null
+      description: null as string | null
     }
   })
 
-  // Handle form submission
-  const onSubmit = useCallback(
-    (formData: any) => {
-      const newAttribute: attributeType = {
-        id: data.length + 1, // Simple ID generation, replace with UUID or backend ID later
-        attributeName: formData.name,
-        description: formData.description || '',
-        values: formData.type // Map type to values
+  const onSubmit = async (formData: any) => {
+    try {
+      const res = await createAttribute({
+        name: formData.name,
+        slug: formData.slug || null,
+        type: formData.type,
+        description: formData.description || null
+      })
+
+      const errorMessage = handleApiError(res.status, errorAttributeMessage)
+
+      if (errorMessage) return showToast({ type: 'error', message: errorMessage })
+
+      if (res.status === 201) {
+        showToast({ type: 'success', message: 'ویژگی با موفقیت ثبت شد' })
+        router.push('/products/attributes')
       }
 
-      setData([...data, newAttribute])
-      reset() // Reset form
-      handleClose() // Close drawer
-    },
-    [data, setData, reset, handleClose]
-  )
-
-  // Handle form reset
-  const onReset = useCallback(() => {
-    reset({
-      name: '',
-      slug: null,
-      type: AttributeType.COLOR,
-      description: null
-    })
-    handleClose()
-  }, [reset, handleClose])
+      reset()
+      handleClose()
+    } catch (error: any) {
+      showToast({ type: 'error', message: 'خطای سیستمی' })
+    }
+  }
 
   return (
-    <Drawer open={open} anchor='right' variant='temporary' onClose={onReset} ModalProps={{ keepMounted: true }} sx={{ '& .MuiDrawer-paper': { width: { xs: 300, sm: 400 } } }}>
-      <div className='flex items-center justify-between pli-6 plb-5'>
-        <Typography variant='h5'>ثبت ویژگی جدید</Typography>
-        <IconButton size='small' onClick={onReset}>
-          <i className='tabler-x text-textSecondary text-2xl' />
-        </IconButton>
-      </div>
-      <Divider />
-      <div className='p-6'>
+    <div>
+      <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />}>
+        افزودن ویژگی
+      </Button>
+
+      <CustomDialog
+        open={open}
+        onClose={handleClose}
+        title='افزودن ویژگی جدید'
+        defaultMaxWidth='xs'
+        actions={
+          <>
+            <Button onClick={handleClose} color='secondary'>
+              انصراف
+            </Button>
+            <Button onClick={handleSubmit(onSubmit)} variant='contained'>
+              ثبت
+            </Button>
+          </>
+        }
+      >
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
           <Controller
             name='name'
@@ -146,18 +144,10 @@ const AddAttributeDrawer = ({ open, handleClose, data, setData }: Props) => {
               />
             )}
           />
-          <div className='flex items-center gap-4'>
-            <Button variant='contained' type='submit'>
-              ثبت
-            </Button>
-            <Button variant='tonal' color='error' type='reset' onClick={onReset}>
-              انصراف
-            </Button>
-          </div>
         </form>
-      </div>
-    </Drawer>
+      </CustomDialog>
+    </div>
   )
 }
 
-export default AddAttributeDrawer
+export default CreateAttributeModal

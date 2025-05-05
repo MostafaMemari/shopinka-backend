@@ -12,22 +12,22 @@ import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
 import type { TextFieldProps } from '@mui/material/TextField'
 
+// SweetAlert Import
+import Swal from 'sweetalert2'
+
 // Component Imports
-import AddAttributeDrawer from './AddAttributeDrawer'
 import CustomTextField from '@core/components/mui/TextField'
 
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
-import type { Attribute } from '@/types/productAttributes'
 
-// Attribute data type
-export type attributeType = {
-  id: number
-  attributeName: string
-  description: string
-  values: string
-}
+// API Import
+import { Attribute as ProductAttribute, AttributeType } from '@/types/productAttributes'
+import CreateUpdateAttributeModal from './CreateAttributeModal'
+import RemoveAttributeModal from './RemoveAttributeModal'
+import UpdateAttributeModal from './UpdateAttributeModal'
+import { Box, CardContent } from '@mui/material'
 
 // Debounced input component
 const DebouncedInput = ({
@@ -55,10 +55,10 @@ const DebouncedInput = ({
   return <CustomTextField {...props} value={value} onChange={e => setValue(e.target.value)} />
 }
 
-const ProductAttributeTable = ({ data: initialData }: { data: Attribute[] }) => {
+const ProductAttributeTable = ({ data: initialData }: { data: ProductAttribute[] }) => {
   // States
   const [addOpen, setAddOpen] = useState(false)
-  const [data, setLocalData] = useState<Attribute[]>(initialData || [])
+  const [data, setLocalData] = useState<ProductAttribute[]>(initialData || [])
   const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
@@ -68,30 +68,16 @@ const ProductAttributeTable = ({ data: initialData }: { data: Attribute[] }) => 
     setLocalData(initialData)
   }, [initialData])
 
-  // Filter data based on search term
-  const filteredData = data.filter(
-    item =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item?.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.createdAt.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
   // Paginate filtered data
-  const paginatedData = filteredData.slice(page * rowsPerPage, (page + 1) * rowsPerPage)
+  const paginatedData = data.slice(page * rowsPerPage, (page + 1) * rowsPerPage)
 
   return (
     <>
       <Card>
         <div className='flex flex-wrap justify-between gap-4 p-6'>
-          <Button variant='contained' className='max-sm:w-full' onClick={() => setAddOpen(!addOpen)} startIcon={<i className='tabler-plus' />}>
-            افزودن ویژگی
-          </Button>
+          <CreateUpdateAttributeModal />
+
           <div className='flex max-sm:flex-col items-start sm:items-center gap-4 max-sm:w-full'>
-            <CustomTextField select value={rowsPerPage} onChange={e => setRowsPerPage(Number(e.target.value))} className='flex-auto max-sm:w-full sm:w-[70px]'>
-              <MenuItem value='10'>10</MenuItem>
-              <MenuItem value='15'>15</MenuItem>
-              <MenuItem value='25'>25</MenuItem>
-            </CustomTextField>
             <DebouncedInput value={searchTerm} onChange={value => setSearchTerm(String(value))} placeholder='جستجو' className='max-sm:w-full' />
           </div>
         </div>
@@ -102,14 +88,15 @@ const ProductAttributeTable = ({ data: initialData }: { data: Attribute[] }) => 
               <tr>
                 <th>نام ویژگی</th>
                 <th>توضیحات</th>
-                <th>مقادیر</th>
+                <th>نوع</th>
+                <th>تاریخ ایجاد</th>
                 <th>عملیات</th>
               </tr>
             </thead>
             <tbody>
               {paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className='text-center'>
+                  <td colSpan={5} className='text-center'>
                     داده‌ای موجود نیست
                   </td>
                 </tr>
@@ -118,31 +105,22 @@ const ProductAttributeTable = ({ data: initialData }: { data: Attribute[] }) => 
                   <tr key={row.id}>
                     <td>
                       <Typography className='font-medium' color='text.primary'>
-                        {row.attributeName}
+                        {row.name}
                       </Typography>
                     </td>
                     <td>
-                      <Typography>{row.description}</Typography>
+                      <Typography>{row.description || '-'}</Typography>{' '}
                     </td>
                     <td>
-                      <Typography>{row.values}</Typography>
+                      <Typography>{row.type === AttributeType.BUTTON ? 'دکمه' : 'رنگ'}</Typography>
+                    </td>
+                    <td>
+                      <Typography>{new Date(row.createdAt).toLocaleDateString('fa-IR')}</Typography>
                     </td>
                     <td>
                       <div className='flex items-center gap-2'>
-                        <IconButton
-                          onClick={() => {
-                            const newData = data.filter(item => item.id !== row.id)
-
-                            setLocalData(newData)
-
-                            // setData(newData)
-                          }}
-                        >
-                          <i className='tabler-trash text-gray-600' />
-                        </IconButton>
-                        <IconButton>
-                          <i className='tabler-edit text-gray-600' />
-                        </IconButton>
+                        <RemoveAttributeModal id={row.id} />
+                        <UpdateAttributeModal initialData={row} />
                       </div>
                     </td>
                   </tr>
@@ -150,56 +128,60 @@ const ProductAttributeTable = ({ data: initialData }: { data: Attribute[] }) => 
               )}
             </tbody>
           </table>
-          {/* Mobile Cards */}
-          <div className='md:hidden p-4 flex flex-col gap-3'>
-            {paginatedData.length === 0 ? (
-              <Typography className='text-center'>داده‌ای موجود نیست</Typography>
-            ) : (
-              paginatedData.map(row => (
-                <div key={row.id} className='border border-gray-200 rounded-lg p-3 bg-white hover:bg-gray-50 transition-colors'>
-                  <Typography className='font-medium text-base mb-2' color='text.primary'>
-                    {row.attributeName}
-                  </Typography>
-                  <div className='flex flex-col gap-1 text-sm'>
-                    <Typography variant='body2'>
-                      <strong>توضیحات:</strong> {row.description}
-                    </Typography>
-                    <Typography variant='body2'>
-                      <strong>مقادیر:</strong> {row.values}
-                    </Typography>
-                  </div>
-                  <div className='flex justify-end gap-1 mt-2'>
-                    <IconButton
-                      size='small'
-                      onClick={() => {
-                        const newData = data.filter(item => item.id !== row.id)
-
-                        setLocalData(newData)
-
-                        // setData(newData)
-                      }}
-                    >
-                      <i className='tabler-trash text-gray-500 text-lg' />
-                    </IconButton>
-                    <IconButton size='small'>
-                      <i className='tabler-edit text-gray-500 text-lg' />
-                    </IconButton>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
         </div>
-        <TablePagination
-          component={() => <TablePaginationComponent filteredData={filteredData} page={page} rowsPerPage={rowsPerPage} onPageChange={setPage} />}
-          count={filteredData.length}
-          rowsPerPage={rowsPerPage}
+
+        {/* Mobile Cards */}
+        <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, p: 2 }}>
+          {paginatedData.length === 0 ? (
+            <Typography textAlign='center'>داده‌ای موجود نیست</Typography>
+          ) : (
+            paginatedData.map(row => (
+              <Card
+                key={row.id}
+                sx={{
+                  p: 2,
+                  bgcolor: 'background.paper',
+                  border: 1,
+                  borderColor: 'divider',
+                  '&:hover': {
+                    bgcolor: 'action.hover'
+                  },
+                  transition: 'background-color 0.2s'
+                }}
+              >
+                <CardContent sx={{ p: 0 }}>
+                  <Typography variant='h6' fontWeight='medium' color='text.primary' mb={2}>
+                    {row.name}
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <Typography variant='body2' color='text.secondary'>
+                      <strong>توضیحات:</strong> {row.description || '-'}
+                    </Typography>
+                    <Typography variant='body2' color='text.secondary'>
+                      <strong>نوع:</strong> {row.type === AttributeType.BUTTON ? 'دکمه' : 'رنگ'}
+                    </Typography>
+                    <Typography variant='body2' color='text.secondary'>
+                      <strong>تاریخ ایجاد:</strong> {new Date(row.createdAt).toLocaleDateString('fa-IR')}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
+                    <RemoveAttributeModal id={row.id} />
+                    <UpdateAttributeModal initialData={row} />
+                  </Box>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </Box>
+
+        <TablePaginationComponent
+          filteredData={data}
           page={page}
-          onPageChange={(_, newPage) => setPage(newPage)}
+          rowsPerPage={rowsPerPage}
+          onPageChange={setPage}
           onRowsPerPageChange={e => setRowsPerPage(Number(e.target.value))}
         />
       </Card>
-      {/* <AddAttributeDrawer open={addOpen} data={data} setData={setData} handleClose={() => setAddOpen(!addOpen)} /> */}
     </>
   )
 }

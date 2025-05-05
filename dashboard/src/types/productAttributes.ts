@@ -1,10 +1,10 @@
 export enum AttributeType {
-  COLOR = 'color',
-  BUTTON = 'button'
+  COLOR = 'COLOR',
+  BUTTON = 'BUTTON'
 }
 
 export type Attribute = {
-  id: number
+  id: string
   name: string
   slug: string
   userId: number
@@ -14,7 +14,8 @@ export type Attribute = {
   updatedAt: string
 }
 
-export type CreateAttributeFormValues = {
+export type AttributeFormValues = {
+  id?: string
   name: string
   slug?: string | null
   type: AttributeType
