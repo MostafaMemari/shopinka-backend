@@ -28,8 +28,8 @@ export class CommentService {
     return `This action returns all comment`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} comment`;
+  findOne(id: number): Promise<Comment> {
+    return this.getCommentWithAllReplies(id)
   }
 
   update(id: number, updateCommentDto: UpdateCommentDto) {
@@ -38,5 +38,40 @@ export class CommentService {
 
   remove(id: number) {
     return `This action removes a #${id} comment`;
+  }
+
+  private async isParentIdInReplies(commentId: number, parentId: number) {
+    const queue = [commentId]
+
+    while (queue.length > 0) {
+      const currentId = queue.shift()
+
+      const replies = await this.commentRepository.findAll({ where: { parentId: currentId }, select: { id: true } })
+
+      for (const child of replies) {
+        if (child.id == parentId) return true
+        queue.push(child.id)
+      }
+    }
+
+    return false
+  }
+
+  private async getCommentWithAllReplies(commentId: number): Promise<Comment> {
+    const comment = await this.commentRepository.findOneOrThrow({
+      where: { id: commentId },
+      include: {
+        parent: true,
+        replies: true,
+        product: true,
+        user: { select: { id: true, fullName: true } }
+      }
+    })
+
+    comment['replies'] = await Promise.all(
+      comment['replies'].map(async rep => this.getCommentWithAllReplies(rep.id))
+    )
+
+    return comment
   }
 }
