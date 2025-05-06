@@ -18,6 +18,7 @@ import { AttributeModule } from "../attribute/attribute.module";
 import { ProductModule } from "../product/product.module";
 import { CategoryModule } from "../category/category.module";
 import { CommentModule } from "../comment/comment.module";
+import { CartModule } from "../cart/cart.module";
 
 @Module({
   imports: [
@@ -35,7 +36,8 @@ import { CommentModule } from "../comment/comment.module";
     AttributeModule,
     ProductModule,
     CategoryModule,
-    CommentModule
+    CommentModule,
+    CartModule
   ],
   controllers: [],
   providers: [
