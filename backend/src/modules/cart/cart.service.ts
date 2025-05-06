@@ -51,15 +51,15 @@ export class CartService {
 
     const existingCartItem = await this.cartItemRepository.findOne({ where: { OR: [{ productId }, { productVariantId }] } })
 
-    if (existingCartItem) throw new ConflictException()
+    if (existingCartItem) throw new ConflictException(CartItemMessages.AlreadyExistsCartItem)
 
     const cart = await this.cartRepository.findOneOrThrow({ where: { userId } })
 
     const product = productId && await this.productRepository.findOneOrThrow({ where: { id: productId } })
     const productVariant = productVariantId && await this.productVariantRepository.findOneOrThrow({ where: { id: productVariantId } })
 
-    if (product && product.quantity < quantity) throw new BadRequestException()
-    if (productVariant && productVariant.quantity < quantity) throw new BadRequestException()
+    if (product && product.quantity < quantity) throw new BadRequestException(CartItemMessages.ProductNotAvailable)
+    if (productVariant && productVariant.quantity < quantity) throw new BadRequestException(CartItemMessages.ProductVariantNotAvailable)
 
     const newCartItem = await this.cartItemRepository.create({
       data: { ...createCartItemDto, cartId: cart.id },
@@ -88,8 +88,11 @@ export class CartService {
       include: { product: true, productVariant: true }
     })
 
-    if (cartItem['product'] && cartItem['product']?.quantity < quantity) throw new BadRequestException()
-    if (cartItem['productVariant'] && cartItem['productVariant']?.quantity < quantity) throw new BadRequestException()
+    if (cartItem['product'] && cartItem['product']?.quantity < quantity)
+      throw new BadRequestException(CartItemMessages.ProductNotAvailable)
+
+    if (cartItem['productVariant'] && cartItem['productVariant']?.quantity < quantity)
+      throw new BadRequestException(CartItemMessages.ProductVariantNotAvailable)
 
     const updatedCartItem = await this.cartItemRepository.update({ where: { id: cartItemId }, data: { quantity } })
 
