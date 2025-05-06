@@ -72,7 +72,7 @@ const DebouncedInput = ({
   return <CustomTextField {...props} value={value} onChange={e => setValue(e.target.value)} />
 }
 
-const MediaView = ({ data: initialData = mockFiles }: { data?: Media[] }) => {
+const MediaItemView = ({ data: initialData = mockFiles }: { data?: Media[] }) => {
   // States
   const [data, setLocalData] = useState<Media[]>(initialData)
   const [searchTerm, setSearchTerm] = useState('')
@@ -116,4 +116,4 @@ const MediaView = ({ data: initialData = mockFiles }: { data?: Media[] }) => {
   )
 }
 
-export default MediaView
+export default MediaItemView

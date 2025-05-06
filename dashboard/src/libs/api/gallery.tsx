@@ -1,10 +1,10 @@
-import { Attribute, AttributeValueForm } from '@/types/productAttributes'
+import { Gallery, GalleryForm } from '@/types/gallery'
 import { Response } from '@/types/response'
 import { serverApiFetch } from '@/utils/api'
 
-export const getAttributes = async (): Promise<Response<Attribute[]>> => {
+export const getGalleries = async (): Promise<Response<Gallery[]>> => {
   try {
-    const res = await serverApiFetch('/attribute?includeValues=true', { method: 'GET' })
+    const res = await serverApiFetch('/gallery', { method: 'GET' })
 
     return {
       ...res
@@ -17,9 +17,9 @@ export const getAttributes = async (): Promise<Response<Attribute[]>> => {
   }
 }
 
-export const getAttribute = async (id: number): Promise<{ status: number; data: Attribute | null }> => {
+export const getGallery = async (id: number): Promise<{ status: number; data: GalleryForm | null }> => {
   try {
-    const res = await serverApiFetch(`/attribute/${id}}`, { method: 'REMOVE' })
+    const res = await serverApiFetch(`/gallery/${id}}`, { method: 'REMOVE' })
 
     return {
       ...res
@@ -32,9 +32,9 @@ export const getAttribute = async (id: number): Promise<{ status: number; data: 
   }
 }
 
-export const removeAttribute = async (id: string): Promise<{ status: number; data: { message: string; attribute: Attribute } | null }> => {
+export const removeGallery = async (id: string): Promise<{ status: number; data: { message: string; attribute: GalleryForm } | null }> => {
   try {
-    const res = await serverApiFetch(`/attribute/${id}`, { method: 'DELETE' })
+    const res = await serverApiFetch(`/gallery/${id}`, { method: 'DELETE' })
 
     return {
       ...res
@@ -47,9 +47,9 @@ export const removeAttribute = async (id: string): Promise<{ status: number; dat
   }
 }
 
-export const updateAttribute = async (id: string, data: Partial<AttributeValueForm>): Promise<{ status: number; data: Attribute | null }> => {
+export const updateGallery = async (id: string, data: Partial<GalleryForm>): Promise<{ status: number; data: GalleryForm | null }> => {
   try {
-    const res = await serverApiFetch(`/attribute/${id}`, {
+    const res = await serverApiFetch(`/gallery/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data)
     })
@@ -65,9 +65,9 @@ export const updateAttribute = async (id: string, data: Partial<AttributeValueFo
   }
 }
 
-export const createAttribute = async (data: Omit<Attribute, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<{ status: number; data: Attribute | null }> => {
+export const createGallery = async (data: Omit<GalleryForm, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<{ status: number; data: GalleryForm | null }> => {
   try {
-    const res = await serverApiFetch('/attribute', {
+    const res = await serverApiFetch('/gallery', {
       method: 'POST',
       body: JSON.stringify(data)
     })

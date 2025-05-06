@@ -73,7 +73,7 @@ const CreateAttributeModal = () => {
           type: AttributeType.COLOR,
           description: null
         })
-        handleClose() // بسته شدن دیالوگ
+        handleClose()
       }
     } catch (error: any) {
       showToast({ type: 'error', message: 'خطای سیستمی' })
@@ -102,7 +102,16 @@ const CreateAttributeModal = () => {
           </>
         }
       >
-        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
+        <form
+          onKeyDown={e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault()
+              handleSubmit(onSubmit)()
+            }
+          }}
+          onSubmit={handleSubmit(onSubmit)}
+          className='flex flex-col gap-5'
+        >
           <Controller
             name='name'
             control={control}
