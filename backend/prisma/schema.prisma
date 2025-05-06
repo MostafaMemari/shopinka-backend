@@ -60,7 +60,8 @@ model User {
   productVariants  ProductVariant[]
   favorites        Favorite[]
   categories       Category[]
-  comments Comment[]
+  comments         Comment[]
+  cart             Cart?            @relation("UserCart")
 }
 
 model Transaction {
@@ -171,7 +172,8 @@ model Product {
   variants         ProductVariant[]
   favorites        Favorite[]
   categories       Category[]
-  comments Comment[]
+  comments         Comment[]
+  cartItems        CartItem[]
   width            Int?
   height           Int?
   length           Int?
@@ -194,6 +196,7 @@ model ProductVariant {
   product     Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
   user        User         @relation(fields: [userId], references: [id], onDelete: NoAction)
   attributes  Attribute[]
+  cartItems   CartItem[]
   width       Int?
   height      Int?
   length      Int?
@@ -233,21 +236,48 @@ model Category {
 }
 
 model Comment {
-  id Int @id() @default(autoincrement())
-  title String
-  content String
-  isActive Boolean @default(false)
-  isRecommended Boolean @default(true)
-  rate Int @default(5)
-  userId Int
-  productId Int
-  parentId Int?
-  parent Comment? @relation("CommentToComment",fields: [parentId] , references: [id] , onDelete: Cascade)
-  replies Comment[] @relation("CommentToComment")
+  id            Int       @id() @default(autoincrement())
+  title         String
+  content       String
+  isActive      Boolean   @default(false)
+  isRecommended Boolean   @default(true)
+  rate          Int       @default(5)
+  userId        Int
+  productId     Int
+  parentId      Int?
+  parent        Comment?  @relation("CommentToComment", fields: [parentId], references: [id], onDelete: Cascade)
+  replies       Comment[] @relation("CommentToComment")
 
-  product Product @relation(fields: [productId] , references: [id] , onDelete: Cascade)
-  user    User @relation(fields: [userId] , references: [id] , onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt()
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+}
+
+model Cart {
+  id     Int @id() @default(autoincrement())
+  userId Int @unique()
+
+  user User @relation("UserCart", fields: [userId], references: [id], onDelete: Cascade)
+
+  items CartItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+}
+
+model CartItem {
+  id               Int @id() @default(autoincrement())
+  cartId           Int
+  productId        Int
+  productVariantId Int
+
+  cart           Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product        Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productVariant ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  quantity       Int
+  priceSnapshot  Int            @map("price_snapshot")
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt()
 }
