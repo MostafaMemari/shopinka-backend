@@ -270,14 +270,13 @@ model Cart {
 model CartItem {
   id               Int @id() @default(autoincrement())
   cartId           Int
-  productId        Int
-  productVariantId Int
+  productId        Int? @unique()
+  productVariantId Int? @unique()
 
   cart           Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  product        Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productVariant ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  product        Product?        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productVariant ProductVariant? @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
   quantity       Int
-  priceSnapshot  Int            @map("price_snapshot")
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt()
 }
