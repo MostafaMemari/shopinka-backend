@@ -39,7 +39,7 @@ export class CommentController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.commentService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.commentService.remove(user.id, id);
   }
 }

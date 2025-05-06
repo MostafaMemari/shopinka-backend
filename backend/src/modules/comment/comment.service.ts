@@ -36,8 +36,12 @@ export class CommentService {
     return `This action updates a #${id} comment`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} comment`;
+  async remove(userId: number, id: number): Promise<{ message: string, comment: Comment }> {
+    await this.commentRepository.findOneOrThrow({ where: { id: id, userId } })
+
+    const removedComment = await this.commentRepository.delete({ where: { id } })
+
+    return { message: CommentMessages.RemovedCommentSuccess, comment: removedComment }
   }
 
   private async isParentIdInReplies(commentId: number, parentId: number) {
@@ -48,9 +52,9 @@ export class CommentService {
 
       const replies = await this.commentRepository.findAll({ where: { parentId: currentId }, select: { id: true } })
 
-      for (const child of replies) {
-        if (child.id == parentId) return true
-        queue.push(child.id)
+      for (const reply of replies) {
+        if (reply.id == parentId) return true
+        queue.push(reply.id)
       }
     }
 
