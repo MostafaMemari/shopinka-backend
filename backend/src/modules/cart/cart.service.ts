@@ -16,19 +16,13 @@ export class CartService {
     return this.cartRepository.create({ data: { userId }, include: { items: true } })
   }
 
-  findAll() {
-    return `This action returns all cart`;
-  }
+  async clear(userId: number): Promise<Cart> {
+    const cart = await this.cartRepository.findOneOrThrow({ where: { userId } })
 
-  findOne(id: number) {
-    return `This action returns a #${id} cart`;
-  }
-
-  update(id: number, updateCartDto: UpdateCartDto) {
-    return `This action updates a #${id} cart`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} cart`;
+    return this.cartRepository.update({
+      where: { userId },
+      data: { items: { deleteMany: { cartId: cart.id } } },
+      include: { items: true }
+    })
   }
 }

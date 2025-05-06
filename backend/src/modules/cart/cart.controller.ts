@@ -19,23 +19,8 @@ export class CartController {
     return this.cartService.me(user.id)
   }
 
-  @Get()
-  findAll() {
-    return this.cartService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cartService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto) {
-    return this.cartService.update(+id, updateCartDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cartService.remove(+id);
+  @Post('clear')
+  clear(@GetUser() user: User){
+    return this.cartService.clear(user.id)
   }
 }
