@@ -22,7 +22,7 @@ const RemoveAttributeModal = ({ id }: { id: number }) => {
 
         if (res.status === 200) {
           showToast({ type: 'success', message: 'حذف ویژگی با موفقیت انجام شد' })
-          router.push('/products/attributes')
+          router.refresh()
         } else if (res.status === 400) showToast({ type: 'error', message: 'حذف ویژگی با خطا مواجه شد' })
         else if (res.status === 404) showToast({ type: 'error', message: 'شما دسترسی حذف این ویژگی را ندارید' })
       }

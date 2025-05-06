@@ -20,6 +20,7 @@ import tableStyles from '@core/styles/table.module.css'
 
 // API Import
 import { AttributeType, Attribute } from '@/types/productAttributes'
+import UpdateAttributeValuesModal from './UpdateAttributeValuesModal'
 
 // Debounced input component
 const DebouncedInput = ({
@@ -95,7 +96,10 @@ const DesktopAttributeTable = ({ data, paginatedData }: { data: Attribute[]; pag
                                     border: theme => `1px solid ${theme.palette.divider}`
                                   }}
                                 />
-                                {item.name}
+                                <UpdateAttributeValuesModal
+                                  attributeType={row.type}
+                                  initialData={{ ...item, buttonLabel: item.buttonLabel ?? undefined, attributeId: String(item.attributeId) }}
+                                />
                               </Box>
                             }
                             color='secondary'
@@ -111,7 +115,18 @@ const DesktopAttributeTable = ({ data, paginatedData }: { data: Attribute[]; pag
                     <Box display='flex' flexWrap='wrap' alignItems='center' gap={1}>
                       {row.values.map(item => (
                         <RemoveAttributeValueModal key={item.id} id={item.id}>
-                          <Chip label={item.name} color='secondary' variant='outlined' deleteIcon={<i className='tabler-trash-x' />} sx={{ direction: 'rtl', margin: '2px' }} />
+                          <Chip
+                            label={
+                              <UpdateAttributeValuesModal
+                                attributeType={row.type}
+                                initialData={{ ...item, buttonLabel: item.buttonLabel ?? undefined, attributeId: String(item.attributeId) }}
+                              />
+                            }
+                            color='secondary'
+                            variant='outlined'
+                            deleteIcon={<i className='tabler-trash-x' />}
+                            sx={{ direction: 'rtl', margin: '2px' }}
+                          />
                         </RemoveAttributeValueModal>
                       ))}
                       <CreateAttributeValueModal attributeName={row.name} attributeId={row.id} attributeType={row.type} />

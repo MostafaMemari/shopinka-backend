@@ -44,7 +44,7 @@ const DebouncedInput = ({
 }
 
 // Main Component
-const ProductAttributeTable = ({ data: initialData }: { data: Attribute[] }) => {
+const ProductAttributeView = ({ data: initialData }: { data: Attribute[] }) => {
   // States
   const [data, setLocalData] = useState<Attribute[]>(initialData || [])
   const [searchTerm, setSearchTerm] = useState('')
@@ -77,4 +77,4 @@ const ProductAttributeTable = ({ data: initialData }: { data: Attribute[] }) => 
   )
 }
 
-export default ProductAttributeTable
+export default ProductAttributeView

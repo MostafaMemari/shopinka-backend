@@ -1,11 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react' // اضافه کردن useEffect
 import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
 import { IconButton, MenuItem } from '@mui/material'
-import { AttributeFormValues, AttributeType } from '@/types/productAttributes'
-import { createAttributeSchema } from '@/libs/validators/attribute.schemas'
+import { AttributeForm, AttributeType } from '@/types/productAttributes'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { updateAttribute } from '@/libs/api/productAttributes'
 import { showToast } from '@/utils/showToast'
@@ -13,8 +12,9 @@ import { handleApiError } from '@/utils/handleApiError'
 import { errorAttributeMessage } from '@/messages/auth/attributeMessages'
 import { useRouter } from 'next/navigation'
 import getChangedFields from '@/utils/getChangedFields'
+import { attributeSchema } from '@/libs/validators/attribute.schemas'
 
-const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeFormValues> }) => {
+const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeForm> }) => {
   const [open, setOpen] = useState<boolean>(false)
   const router = useRouter()
 
@@ -28,21 +28,30 @@ const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeF
     formState: { errors },
     setValue
   } = useForm({
-    resolver: yupResolver(createAttributeSchema),
+    resolver: yupResolver(attributeSchema),
     defaultValues: {
       name: initialData?.name,
-      slug: initialData?.slug ?? undefined,
+      slug: initialData?.slug,
       type: initialData?.type,
-      description: initialData.description || null
+      description: initialData?.description || null
     }
   })
 
-  const onSubmit = async (formData: AttributeFormValues) => {
+  useEffect(() => {
+    reset({
+      name: initialData?.name,
+      slug: initialData?.slug,
+      type: initialData?.type,
+      description: initialData?.description || null
+    })
+  }, [initialData, reset])
+
+  const onSubmit = async (formData: AttributeForm) => {
     try {
       if (initialData?.id !== undefined) {
         const changedData = getChangedFields(initialData, {
           ...formData,
-          slug: formData.slug || null,
+          slug: formData.slug,
           description: formData.description || null
         })
 
@@ -56,15 +65,24 @@ const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeF
 
         const errorMessage = handleApiError(res.status, errorAttributeMessage)
 
-        if (errorMessage) return showToast({ type: 'error', message: errorMessage })
+        if (errorMessage) {
+          showToast({ type: 'error', message: errorMessage })
+
+          return
+        }
 
         if (res.status === 200) {
           showToast({ type: 'success', message: 'ویژگی با موفقیت ویرایش شد' })
-          router.push('/products/attributes')
-        }
+          router.refresh()
 
-        reset()
-        handleClose()
+          reset({
+            name: formData.name || '',
+            slug: formData.slug ?? undefined,
+            type: formData.type || AttributeType.COLOR,
+            description: formData.description || null
+          })
+          handleClose() // بسته شدن دیالوگ
+        }
       }
     } catch (error: any) {
       showToast({ type: 'error', message: 'خطای سیستمی' })
@@ -128,7 +146,7 @@ const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeF
                 label='نوع'
                 error={!!errors.type}
                 helperText={errors.type?.message}
-                value={field.value}
+                value={field.value || ''}
                 onChange={e => field.onChange(e.target.value)}
               >
                 <MenuItem value={AttributeType.COLOR}>رنگ</MenuItem>

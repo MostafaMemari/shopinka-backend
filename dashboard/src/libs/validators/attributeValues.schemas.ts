@@ -1,8 +1,8 @@
 import { AttributeType } from '@/types/productAttributes'
 import * as yup from 'yup'
 
-export const createAttributeValueSchema = (attributeType: AttributeType) =>
-  yup.object().shape({
+export const AttributeValueSchema = (type: AttributeType) => {
+  return yup.object().shape({
     name: yup.string().required('نام ویژگی الزامی است').max(100, 'نام ویژگی نمی‌تواند بیشتر از 100 کاراکتر باشد'),
     slug: yup
       .string()
@@ -14,18 +14,24 @@ export const createAttributeValueSchema = (attributeType: AttributeType) =>
       .max(100, 'نامک نمی‌تواند بیشتر از 100 کاراکتر باشد'),
     colorCode: yup
       .string()
-      .when('$attributeType', {
-        is: (type: AttributeType) => type !== AttributeType.BUTTON,
-        then: schema => schema.required('کد رنگ الزامی است').matches(/^#[0-9A-Fa-f]{6}$/, 'کد رنگ باید به فرمت هگزادسیمال باشد، مانند #FFFFFF'),
-        otherwise: schema => schema.nullable().optional()
-      })
-      .max(100, 'کد رنگ نمی‌تواند بیشتر از 100 کاراکتر باشد'),
+      .nullable()
+      .default(null)
+      .when('$type', {
+        is: AttributeType.COLOR,
+        then: schema => schema.required('کد رنگ الزامی است'),
+        otherwise: schema => schema.optional().nullable().default(null)
+      }),
+
     buttonLabel: yup
       .string()
-      .when('$attributeType', {
+      .nullable()
+      .default(null)
+      .when('$type', {
         is: AttributeType.BUTTON,
         then: schema => schema.required('برچسب دکمه الزامی است'),
-        otherwise: schema => schema.nullable().optional()
-      })
-      .max(100, 'برچسب دکمه نمی‌تواند بیشتر از 100 کاراکتر باشد')
+        otherwise: schema => schema.optional().nullable().default(null)
+      }),
+
+    attributeId: yup.string().required('شناسه ویژگی الزامی است')
   })
+}
