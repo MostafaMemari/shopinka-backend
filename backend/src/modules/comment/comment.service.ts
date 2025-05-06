@@ -34,7 +34,7 @@ export class CommentService {
 
   async findAll({ take, page, ...queryCommentDto }: QueryCommentDto): Promise<unknown> {
     const paginationDto = { page, take };
-    const { endDate, includeUser, sortBy, sortDirection, startDate, includeParent, includeProduct, includeReplies, isActive, isRecommended } = queryCommentDto
+    const { endDate, includeUser, sortBy, sortDirection, startDate, includeParent, includeProduct, includeReplies, isRecommended } = queryCommentDto
 
     const sortedDto = sortObject(queryCommentDto);
 
@@ -44,9 +44,8 @@ export class CommentService {
 
     if (cachedComments) return { ...pagination(paginationDto, cachedComments) }
 
-    const filters: Prisma.CommentWhereInput = {};
+    const filters: Prisma.CommentWhereInput = { isActive: true };
 
-    if (isActive !== undefined) filters.isActive = isActive
     if (isRecommended !== undefined) filters.isRecommended = isRecommended
     if (startDate || endDate) {
       filters.createdAt = {};
@@ -74,6 +73,8 @@ export class CommentService {
 
     const comment = await this.commentRepository.findOneOrThrow({ where: { id: commentId, userId } })
 
+    if (!comment.isActive) throw new BadRequestException(CommentMessages.InActiveComment)
+
     if (comment.id === parentId) throw new BadRequestException(CommentMessages.CannotSetItselfAsParent)
 
     if (await this.isParentIdInReplies(commentId, parentId))
@@ -93,11 +94,23 @@ export class CommentService {
   }
 
   async remove(userId: number, id: number): Promise<{ message: string, comment: Comment }> {
-    await this.commentRepository.findOneOrThrow({ where: { id: id, userId } })
+    const comment = await this.commentRepository.findOneOrThrow({ where: { id: id, userId } })
+
+    if (!comment.isActive) throw new BadRequestException(CommentMessages.InActiveComment)
 
     const removedComment = await this.commentRepository.delete({ where: { id } })
 
     return { message: CommentMessages.RemovedCommentSuccess, comment: removedComment }
+  }
+
+  async toggleActive(userId: number, commentId: number): Promise<{ message: string, comment: Comment }> {
+    let { isActive } = await this.commentRepository.findOneOrThrow({ where: { id: commentId, product: { userId } } })
+
+    isActive ? isActive = false : isActive = true
+
+    const updatedComment = await this.commentRepository.update({ where: { id: commentId }, data: { isActive } })
+
+    return { message: isActive ? CommentMessages.ActiveCommentSuccess : CommentMessages.UnActiveCommentSuccess, comment: updatedComment }
   }
 
   private async isParentIdInReplies(commentId: number, parentId: number) {
@@ -119,7 +132,7 @@ export class CommentService {
 
   private async getCommentWithAllReplies(commentId: number): Promise<Comment> {
     const comment = await this.commentRepository.findOneOrThrow({
-      where: { id: commentId },
+      where: { id: commentId, isActive: true },
       include: {
         parent: true,
         replies: true,

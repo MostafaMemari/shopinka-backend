@@ -6,9 +6,10 @@ import { AuthDecorator } from '../../common/decorators/auth.decorator';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 import { GetUser } from '../../common/decorators/get-user.decorator';
-import { User } from 'generated/prisma';
+import { Role, User } from 'generated/prisma';
 import { SkipAuth } from '../../common/decorators/skip-auth.decorator';
 import { QueryCommentDto } from './dto/query-category.dto';
+import { Roles } from '../../common/decorators/role.decorator';
 
 @Controller('comment')
 @ApiTags('comment')
@@ -32,6 +33,12 @@ export class CommentController {
   @SkipAuth()
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.commentService.findOne(id);
+  }
+
+  @Patch('toggle-active/:id')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  toggleActive(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.commentService.toggleActive(user.id, id)
   }
 
   @Patch(':id')

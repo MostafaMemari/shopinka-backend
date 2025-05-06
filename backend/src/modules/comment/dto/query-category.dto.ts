@@ -13,15 +13,6 @@ export class QueryCommentDto extends PaginationDto {
         return value
     })
     @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
-    isActive?: boolean
-
-    @IsOptional()
-    @IsBoolean()
-    @Transform(({ value }) => {
-        if (typeof value == 'string') return value == 'true'
-        return value
-    })
-    @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
     isRecommended?: boolean
 
     @IsOptional()
