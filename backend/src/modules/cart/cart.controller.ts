@@ -1,12 +1,12 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { CartService } from './cart.service';
-import { CreateCartDto } from './dto/create-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
-import { AuthDecorator } from 'src/common/decorators/auth.decorator';
-import { ApiTags } from '@nestjs/swagger';
-import { GetUser } from 'src/common/decorators/get-user.decorator';
+import { AuthDecorator } from '../../common/decorators/auth.decorator';
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { GetUser } from '../../common/decorators/get-user.decorator';
 import { User } from 'generated/prisma';
-import { SkipAuth } from 'src/common/decorators/skip-auth.decorator';
+import { SkipAuth } from '../../common/decorators/skip-auth.decorator';
+import { CreateCartItemDto } from './dto/create-cart-item.dto';
+import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 
 @Controller('cart')
 @ApiTags('cart')
@@ -20,7 +20,13 @@ export class CartController {
   }
 
   @Post('clear')
-  clear(@GetUser() user: User){
+  clear(@GetUser() user: User) {
     return this.cartService.clear(user.id)
+  }
+
+  @Post('item')
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  addItem(@Body() createCatItemDto: CreateCartItemDto, @GetUser() user: User) {
+    return this.cartService.addItem(user.id, createCatItemDto)
   }
 }

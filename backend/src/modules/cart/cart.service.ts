@@ -1,12 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { CreateCartDto } from './dto/create-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
-import { CartRepository } from './cart.repository';
-import { Cart } from 'generated/prisma';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { CartRepository } from './repositories/cart.repository';
+import { Cart, CartItem } from 'generated/prisma';
+import { CreateCartItemDto } from './dto/create-cart-item.dto';
+import { CartItemRepository } from './repositories/cardItem.repository';
+import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
+import { ProductRepository } from '../product/repositories/product.repository';
 
 @Injectable()
 export class CartService {
-  constructor(private readonly cartRepository: CartRepository) { }
+  constructor(
+    private readonly cartRepository: CartRepository,
+    private readonly cartItemRepository: CartItemRepository,
+    private readonly productRepository: ProductRepository,
+    private readonly productVariantRepository: ProductVariantRepository
+  ) { }
 
   async me(userId: number): Promise<Cart> {
     const cart = await this.cartRepository.findOne({ where: { userId }, include: { items: true } })
@@ -24,5 +31,30 @@ export class CartService {
       data: { items: { deleteMany: { cartId: cart.id } } },
       include: { items: true }
     })
+  }
+
+  async addItem(userId: number, createCartItemDto: CreateCartItemDto): Promise<{ message: string, cartItem: CartItem }> {
+    const { quantity, productId, productVariantId } = createCartItemDto
+
+    if (productId && productVariantId) throw new BadRequestException()
+
+    const existingCartItem = await this.cartItemRepository.findOne({ where: { OR: [{ productId }, { productVariantId }] } })
+
+    if (existingCartItem) throw new ConflictException()
+
+    const cart = await this.cartRepository.findOneOrThrow({ where: { userId } })
+
+    const product = productId && await this.productRepository.findOneOrThrow({ where: { id: productId } })
+    const productVariant = productVariantId && await this.productVariantRepository.findOneOrThrow({ where: { id: productVariantId } })
+
+    if (product && product.quantity < quantity) throw new BadRequestException()
+    if (productVariant && productVariant.quantity < quantity) throw new BadRequestException()
+
+    const newCartItem = await this.cartItemRepository.create({
+      data: { ...createCartItemDto, cartId: cart.id },
+      include: { product: true, productVariant: true }
+    })
+
+    return { message: "Created cartItem successfully.", cartItem: newCartItem }
   }
 }
