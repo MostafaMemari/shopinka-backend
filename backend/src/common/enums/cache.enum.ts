@@ -8,5 +8,6 @@ export enum CacheKeys {
     AttributeValues = 'attributeValues',
     Products = 'products',
     ProductVariants = 'productVariants',
-    Categories = 'categories'
+    Categories = 'categories',
+    Comments = "comments"
 }
