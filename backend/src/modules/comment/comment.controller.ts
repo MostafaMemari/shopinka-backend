@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
@@ -8,6 +8,7 @@ import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 import { GetUser } from '../../common/decorators/get-user.decorator';
 import { User } from 'generated/prisma';
 import { SkipAuth } from '../../common/decorators/skip-auth.decorator';
+import { QueryCommentDto } from './dto/query-category.dto';
 
 @Controller('comment')
 @ApiTags('comment')
@@ -22,8 +23,9 @@ export class CommentController {
   }
 
   @Get()
-  findAll() {
-    return this.commentService.findAll();
+  @SkipAuth()
+  findAll(@Query() queryCommentDto: QueryCommentDto) {
+    return this.commentService.findAll(queryCommentDto);
   }
 
   @Get(':id')

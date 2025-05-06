@@ -3,14 +3,22 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { CommentRepository } from './comment.repository';
 import { ProductRepository } from '../product/repositories/product.repository';
-import { Comment } from 'generated/prisma';
+import { Comment, Prisma } from 'generated/prisma';
 import { CommentMessages } from './enums/comment-messages.enum';
+import { QueryCommentDto } from './dto/query-category.dto';
+import { sortObject } from 'src/common/utils/functions.utils';
+import { CacheKeys } from 'src/common/enums/cache.enum';
+import { CacheService } from '../cache/cache.service';
+import { pagination } from 'src/common/utils/pagination.utils';
 
 @Injectable()
 export class CommentService {
+  private readonly CACHE_EXPIRE_TIME: number = 600 //* 5 minutes
+
   constructor(
     private readonly commentRepository: CommentRepository,
-    private readonly productRepository: ProductRepository
+    private readonly productRepository: ProductRepository,
+    private readonly cacheService: CacheService
   ) { }
   async create(userId: number, createCommentDto: CreateCommentDto): Promise<{ message: string, comment: Comment }> {
     const { productId, parentId } = createCommentDto
@@ -24,8 +32,37 @@ export class CommentService {
     return { message: CommentMessages.CreatedCommentSuccess, comment: newComment }
   }
 
-  findAll() {
-    return `This action returns all comment`;
+  async findAll({ take, page, ...queryCommentDto }: QueryCommentDto): Promise<unknown> {
+    const paginationDto = { page, take };
+    const { endDate, includeUser, sortBy, sortDirection, startDate, includeParent, includeProduct, includeReplies, isActive, isRecommended } = queryCommentDto
+
+    const sortedDto = sortObject(queryCommentDto);
+
+    const cacheKey = `${CacheKeys.Comments}_${JSON.stringify(sortedDto)}`;
+
+    const cachedComments = await this.cacheService.get<null | Comment[]>(cacheKey);
+
+    if (cachedComments) return { ...pagination(paginationDto, cachedComments) }
+
+    const filters: Prisma.CommentWhereInput = {};
+
+    if (isActive !== undefined) filters.isActive = isActive
+    if (isRecommended !== undefined) filters.isRecommended = isRecommended
+    if (startDate || endDate) {
+      filters.createdAt = {};
+      if (startDate) filters.createdAt.gte = new Date(startDate);
+      if (endDate) filters.createdAt.lte = new Date(endDate);
+    }
+
+    const categories = await this.commentRepository.findAll({
+      where: filters,
+      orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
+      include: { user: includeUser, product: includeProduct, parent: includeParent, replies: includeReplies }
+    });
+
+    await this.cacheService.set(cacheKey, categories, this.CACHE_EXPIRE_TIME);
+
+    return { ...pagination(paginationDto, categories) }
   }
 
   findOne(id: number): Promise<Comment> {

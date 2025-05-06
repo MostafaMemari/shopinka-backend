@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsString, IsNotEmpty, MaxLength, IsNumber, IsOptional, IsPositive, Min, Max } from "class-validator"
+import { IsString, IsNotEmpty, MaxLength, IsNumber, IsOptional, IsPositive, Min, Max, IsBoolean } from "class-validator"
 import { Transform } from "class-transformer"
 
 export class CreateCommentDto {
@@ -14,6 +14,7 @@ export class CreateCommentDto {
     content: string
 
     @IsOptional()
+    @IsBoolean()
     @Transform(({ value }) => {
         if (typeof value == 'string') return value == 'true'
         return value
