@@ -6,10 +6,11 @@ import { ProductRepository } from '../product/repositories/product.repository';
 import { Comment, Prisma } from 'generated/prisma';
 import { CommentMessages } from './enums/comment-messages.enum';
 import { QueryCommentDto } from './dto/query-category.dto';
-import { sortObject } from 'src/common/utils/functions.utils';
-import { CacheKeys } from 'src/common/enums/cache.enum';
+import { sortObject } from '../../common/utils/functions.utils';
+import { CacheKeys } from '../../common/enums/cache.enum';
 import { CacheService } from '../cache/cache.service';
-import { pagination } from 'src/common/utils/pagination.utils';
+import { pagination } from '../../common/utils/pagination.utils';
+import { PaginationDto } from '../../common/dtos/pagination.dto';
 
 @Injectable()
 export class CommentService {
@@ -111,6 +112,12 @@ export class CommentService {
     const updatedComment = await this.commentRepository.update({ where: { id: commentId }, data: { isActive } })
 
     return { message: isActive ? CommentMessages.ActiveCommentSuccess : CommentMessages.UnActiveCommentSuccess, comment: updatedComment }
+  }
+
+  async findAllUnActive(userId: number, paginationDto: PaginationDto): Promise<unknown> {
+    const comments = await this.commentRepository.findAll({ where: { isActive: false, product: { userId } } })
+
+    return pagination(paginationDto, comments)
   }
 
   private async isParentIdInReplies(commentId: number, parentId: number) {

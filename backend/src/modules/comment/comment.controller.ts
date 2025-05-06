@@ -10,6 +10,7 @@ import { Role, User } from 'generated/prisma';
 import { SkipAuth } from '../../common/decorators/skip-auth.decorator';
 import { QueryCommentDto } from './dto/query-category.dto';
 import { Roles } from '../../common/decorators/role.decorator';
+import { PaginationDto } from '../../common/dtos/pagination.dto';
 
 @Controller('comment')
 @ApiTags('comment')
@@ -27,6 +28,12 @@ export class CommentController {
   @SkipAuth()
   findAll(@Query() queryCommentDto: QueryCommentDto) {
     return this.commentService.findAll(queryCommentDto);
+  }
+
+  @Get('unactive')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  findAllUnActive(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
+    return this.commentService.findAllUnActive(user.id, paginationDto);
   }
 
   @Get(':id')
