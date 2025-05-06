@@ -98,7 +98,7 @@ const DesktopAttributeTable = ({ data, paginatedData }: { data: Attribute[]; pag
                                 />
                                 <UpdateAttributeValuesModal
                                   attributeType={row.type}
-                                  initialData={{ ...item, buttonLabel: item.buttonLabel ?? undefined, attributeId: String(item.attributeId) }}
+                                  initialData={{ ...item, id: String(item.id), buttonLabel: item.buttonLabel ?? undefined, attributeId: String(item.attributeId) }}
                                 />
                               </Box>
                             }
@@ -119,7 +119,7 @@ const DesktopAttributeTable = ({ data, paginatedData }: { data: Attribute[]; pag
                             label={
                               <UpdateAttributeValuesModal
                                 attributeType={row.type}
-                                initialData={{ ...item, buttonLabel: item.buttonLabel ?? undefined, attributeId: String(item.attributeId) }}
+                                initialData={{ ...item, id: String(item.id), buttonLabel: item.buttonLabel ?? undefined, attributeId: String(item.attributeId) }}
                               />
                             }
                             color='secondary'
