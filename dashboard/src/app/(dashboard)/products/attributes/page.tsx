@@ -1,5 +1,5 @@
 import { getAttributes } from '@/libs/api/productAttributes'
-import ProductAttributeTable from '@/views/pages/products/attribute/ProductAttributeTable'
+import ProductAttributeTable from '@/views/pages/products/attribute/ProductAttribute'
 
 const ProductAttribute = async () => {
   const res = await getAttributes()
