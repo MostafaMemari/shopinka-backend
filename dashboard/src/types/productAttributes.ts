@@ -26,19 +26,17 @@ export type AttributeValues = {
   updatedAt: string
 }
 
-export type AttributeFormValues = {
-  id?: string | number
+export type AttributeForm = {
   name: string
-  slug?: string | null
+  slug: string
   type: AttributeType
-  description?: string | null
+  description: string | null
 }
 
-export type AttributeValueFormValues = {
-  id?: string | number
+export type AttributeValueForm = {
   name: string
-  slug?: string | null
-  colorCode?: string | null
-  buttonLabel?: string
-  attributeId: string | string
+  slug: string
+  colorCode: string | null
+  buttonLabel: string | null
+  attributeId: string
 }

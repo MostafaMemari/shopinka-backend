@@ -17,7 +17,7 @@ const RemoveAttributeValueModal = ({ id, children }: { id: number; children: Rea
 
       if (res.status === 200) {
         showToast({ type: 'success', message: 'حذف با موفقیت انجام شد' })
-        router.refresh() // یا router.push(...) برای هدایت مجدد
+        router.refresh()
       } else if (res.status === 400) {
         showToast({ type: 'error', message: 'حذف ویژگی با خطا مواجه شد' })
       } else if (res.status === 400) {

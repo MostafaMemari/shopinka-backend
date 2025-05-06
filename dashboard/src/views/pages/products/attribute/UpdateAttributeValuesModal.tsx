@@ -3,20 +3,21 @@ import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
-import { IconButton } from '@mui/material'
+import { Typography } from '@mui/material'
 import { AttributeType, AttributeValueForm } from '@/types/productAttributes'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { createAttributeValues } from '@/libs/api/productAttributeValues'
+import { updateAttributeValues } from '@/libs/api/productAttributeValues'
 import { showToast } from '@/utils/showToast'
 import { handleApiError } from '@/utils/handleApiError'
 import { errorAttributeMessage } from '@/messages/auth/attributeMessages'
 import { useRouter } from 'next/navigation'
+import getChangedFields from '@/utils/getChangedFields'
 import { AttributeValueSchema } from '@/libs/validators/attributeValues.schemas'
 import { HexColorPicker } from 'react-colorful'
 import ClickAwayListener from '@mui/material/ClickAwayListener'
 import Popper from '@mui/material/Popper'
 
-const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType }: { attributeName: string; attributeId: number; attributeType: AttributeType }) => {
+const UpdateAttributeValuesModal = ({ attributeType, initialData }: { attributeType: AttributeType; initialData: Partial<AttributeValueForm & { id: string }> }) => {
   const [open, setOpen] = useState<boolean>(false)
   const router = useRouter()
   const [colorAnchorEl, setColorAnchorEl] = useState<HTMLElement | null>(null)
@@ -41,86 +42,87 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType }
     formState: { errors },
     setValue
   } = useForm<AttributeValueForm>({
-    resolver: yupResolver(AttributeValueSchema(attributeType)),
     defaultValues: {
-      name: '',
-      slug: '',
-      colorCode: null,
-      buttonLabel: null,
-      attributeId: String(attributeId)
+      name: initialData?.name || '',
+      slug: initialData?.slug ?? '',
+      colorCode: initialData?.colorCode ?? undefined,
+      buttonLabel: initialData?.buttonLabel ?? undefined,
+      attributeId: initialData?.attributeId || ''
     },
-    context: { type: attributeType }
+
+    resolver: yupResolver(AttributeValueSchema(attributeType))
   })
 
   useEffect(() => {
     reset({
-      name: '',
-      slug: '',
-      colorCode: attributeType === AttributeType.COLOR ? '' : undefined,
-      buttonLabel: attributeType === AttributeType.BUTTON ? '' : undefined,
-      attributeId: String(attributeId)
+      name: initialData?.name || '',
+      slug: initialData?.slug ?? '',
+      colorCode: initialData?.colorCode ?? undefined,
+      buttonLabel: initialData?.buttonLabel ?? undefined,
+      attributeId: initialData?.attributeId || ''
     })
-  }, [attributeType, attributeId, reset])
-
-  const onSubmit = async (formData: AttributeValueForm) => {
-    try {
-      const res = await createAttributeValues({
-        name: formData.name,
-        slug: formData.slug,
-        colorCode: formData.colorCode || null,
-        buttonLabel: formData.buttonLabel || null,
-        attributeId: formData.attributeId
-      })
-
-      const errorMessage = handleApiError(res.status, errorAttributeMessage)
-
-      if (errorMessage) {
-        showToast({ type: 'error', message: errorMessage })
-
-        return
-      }
-
-      if (res.status === 201) {
-        showToast({ type: 'success', message: 'ویژگی با موفقیت ثبت شد' })
-        router.refresh()
-
-        reset({
-          name: '',
-          slug: undefined,
-          colorCode: attributeType === AttributeType.COLOR ? '' : undefined,
-          buttonLabel: attributeType === AttributeType.BUTTON ? '' : undefined,
-          attributeId: String(attributeId)
-        })
-        handleClose() // بسته شدن دیالوگ
-      }
-    } catch (error: any) {
-      console.error('Submit Error:', error)
-      showToast({ type: 'error', message: 'خطای سیستمی' })
-    }
-  }
+  }, [initialData, reset])
 
   const onError = (errors: any) => {
     console.log('Form Errors:', errors)
   }
 
+  const onSubmit = async (formData: AttributeValueForm) => {
+    try {
+      if (initialData?.id !== undefined) {
+        const changedData = getChangedFields(initialData, {
+          ...formData,
+          slug: formData.slug,
+          attributeId: formData.attributeId || initialData.attributeId
+        })
+
+        if (Object.keys(changedData).length === 0) {
+          showToast({ type: 'info', message: 'هیچ تغییری اعمال نشده است' })
+
+          return
+        }
+
+        const res = await updateAttributeValues(String(initialData.id), changedData)
+
+        const errorMessage = handleApiError(res.status, errorAttributeMessage)
+
+        if (errorMessage) {
+          showToast({ type: 'error', message: errorMessage })
+
+          return
+        }
+
+        if (res.status === 200) {
+          showToast({ type: 'success', message: 'ویژگی با موفقیت ویرایش شد' })
+          router.refresh()
+
+          reset({
+            name: formData.name || '',
+            slug: formData.slug ?? '',
+            colorCode: formData.colorCode ?? undefined,
+            buttonLabel: formData.buttonLabel ?? undefined,
+            attributeId: formData.attributeId || initialData.attributeId || ''
+          })
+
+          // اگر می‌خواهید دیالوگ بسته شود
+          handleClose()
+        }
+      }
+    } catch (error: any) {
+      showToast({ type: 'error', message: 'خطای سیستمی' })
+    }
+  }
+
   return (
     <div>
-      <IconButton
-        onClick={handleOpen}
-        sx={{
-          direction: 'rtl',
-          margin: '4px',
-          cursor: 'pointer',
-          padding: 0
-        }}
-      >
-        <i className='tabler-plus' style={{ fontSize: '24px' }} />
-      </IconButton>
+      <Typography className='cursor-pointer' onClick={handleOpen}>
+        {initialData.name}
+      </Typography>
 
       <CustomDialog
         open={open}
         onClose={handleClose}
-        title={`ثبت مقدار ویژگی برای ${attributeName}`}
+        title={`بروزرسانی ${initialData.name}`}
         defaultMaxWidth='xs'
         actions={
           <>
@@ -257,4 +259,4 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType }
   )
 }
 
-export default CreateAttributeValueModal
+export default UpdateAttributeValuesModal

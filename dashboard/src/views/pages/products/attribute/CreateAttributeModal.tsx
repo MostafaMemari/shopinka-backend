@@ -1,17 +1,17 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react' // اضافه کردن useEffect
 import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
 import { MenuItem } from '@mui/material'
-import { AttributeType } from '@/types/productAttributes'
-import { createAttributeSchema } from '@/libs/validators/attribute.schemas'
+import { AttributeType, type AttributeForm } from '@/types/productAttributes'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { createAttribute } from '@/libs/api/productAttributes'
 import { showToast } from '@/utils/showToast'
 import { handleApiError } from '@/utils/handleApiError'
 import { errorAttributeMessage } from '@/messages/auth/attributeMessages'
 import { useRouter } from 'next/navigation'
+import { attributeSchema } from '@/libs/validators/attribute.schemas'
 
 const CreateAttributeModal = () => {
   const [open, setOpen] = useState<boolean>(false)
@@ -26,21 +26,30 @@ const CreateAttributeModal = () => {
     handleSubmit,
     formState: { errors },
     setValue
-  } = useForm({
-    resolver: yupResolver(createAttributeSchema),
+  } = useForm<AttributeForm>({
+    resolver: yupResolver(attributeSchema),
     defaultValues: {
       name: '',
-      slug: null as string | null,
+      slug: '',
       type: AttributeType.COLOR,
-      description: null as string | null
+      description: ''
     }
   })
 
-  const onSubmit = async (formData: any) => {
+  useEffect(() => {
+    reset({
+      name: '',
+      slug: '',
+      type: AttributeType.COLOR,
+      description: null
+    })
+  }, [reset])
+
+  const onSubmit = async (formData: AttributeForm) => {
     try {
       const res = await createAttribute({
         name: formData.name,
-        slug: formData.slug || null,
+        slug: formData.slug ?? undefined,
         type: formData.type,
         description: formData.description || null,
         values: []
@@ -48,15 +57,24 @@ const CreateAttributeModal = () => {
 
       const errorMessage = handleApiError(res.status, errorAttributeMessage)
 
-      if (errorMessage) return showToast({ type: 'error', message: errorMessage })
+      if (errorMessage) {
+        showToast({ type: 'error', message: errorMessage })
+
+        return
+      }
 
       if (res.status === 201) {
         showToast({ type: 'success', message: 'ویژگی با موفقیت ثبت شد' })
-        router.push('/products/attributes')
-      }
+        router.refresh()
 
-      reset()
-      handleClose()
+        reset({
+          name: '',
+          slug: undefined,
+          type: AttributeType.COLOR,
+          description: null
+        })
+        handleClose()
+      }
     } catch (error: any) {
       showToast({ type: 'error', message: 'خطای سیستمی' })
     }
@@ -84,7 +102,16 @@ const CreateAttributeModal = () => {
           </>
         }
       >
-        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
+        <form
+          onKeyDown={e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault()
+              handleSubmit(onSubmit)()
+            }
+          }}
+          onSubmit={handleSubmit(onSubmit)}
+          className='flex flex-col gap-5'
+        >
           <Controller
             name='name'
             control={control}

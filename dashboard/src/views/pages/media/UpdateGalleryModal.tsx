@@ -4,19 +4,24 @@ import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
 import { IconButton, MenuItem } from '@mui/material'
-import { AttributeForm, AttributeType } from '@/types/productAttributes'
+import { Gallery, type GalleryForm } from '@/types/gallery'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { updateAttribute } from '@/libs/api/productAttributes'
+import { updateGallery } from '@/libs/api/gallery'
 import { showToast } from '@/utils/showToast'
 import { handleApiError } from '@/utils/handleApiError'
-import { errorAttributeMessage } from '@/messages/auth/attributeMessages'
+import { errorGalleryMessage } from '@/messages/auth/galleryMessages'
 import { useRouter } from 'next/navigation'
 import getChangedFields from '@/utils/getChangedFields'
-import { attributeSchema } from '@/libs/validators/attribute.schemas'
+import { gallerySchema } from '@/libs/validators/gallery.schemas'
 
-const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeForm> }) => {
+const UpdateGalleryModal = ({ initialData }: { initialData: Partial<Gallery> }) => {
   const [open, setOpen] = useState<boolean>(false)
   const router = useRouter()
+
+  const galleryForm: GalleryForm = {
+    title: initialData?.title ?? '',
+    description: initialData?.description ?? ''
+  }
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -28,30 +33,25 @@ const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeF
     formState: { errors },
     setValue
   } = useForm({
-    resolver: yupResolver(attributeSchema),
+    resolver: yupResolver(gallerySchema),
     defaultValues: {
-      name: initialData?.name,
-      slug: initialData?.slug,
-      type: initialData?.type,
-      description: initialData?.description || null
+      title: galleryForm?.title,
+      description: galleryForm?.description || null
     }
   })
 
   useEffect(() => {
     reset({
-      name: initialData?.name,
-      slug: initialData?.slug,
-      type: initialData?.type,
+      title: initialData?.title,
       description: initialData?.description || null
     })
   }, [initialData, reset])
 
-  const onSubmit = async (formData: AttributeForm) => {
+  const onSubmit = async (formData: GalleryForm) => {
     try {
       if (initialData?.id !== undefined) {
         const changedData = getChangedFields(initialData, {
           ...formData,
-          slug: formData.slug,
           description: formData.description || null
         })
 
@@ -61,9 +61,9 @@ const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeF
           return
         }
 
-        const res = await updateAttribute(String(initialData.id), changedData)
+        const res = await updateGallery(String(initialData.id), changedData)
 
-        const errorMessage = handleApiError(res.status, errorAttributeMessage)
+        const errorMessage = handleApiError(res.status, errorGalleryMessage)
 
         if (errorMessage) {
           showToast({ type: 'error', message: errorMessage })
@@ -76,12 +76,10 @@ const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeF
           router.refresh()
 
           reset({
-            name: formData.name || '',
-            slug: formData.slug ?? undefined,
-            type: formData.type || AttributeType.COLOR,
+            title: formData.title || '',
             description: formData.description || null
           })
-          handleClose() // بسته شدن دیالوگ
+          handleClose()
         }
       }
     } catch (error: any) {
@@ -113,45 +111,10 @@ const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeF
       >
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
           <Controller
-            name='name'
+            name='title'
             control={control}
             render={({ field }) => (
-              <CustomTextField {...field} fullWidth label='نام ویژگی' placeholder='لطفا نام ویژگی را وارد کنید' error={!!errors.name} helperText={errors.name?.message} />
-            )}
-          />
-          <Controller
-            name='slug'
-            control={control}
-            render={({ field }) => (
-              <CustomTextField
-                {...field}
-                value={field.value ?? ''}
-                fullWidth
-                label='نامک'
-                placeholder='لطفا نامک ویژگی را وارد کنید'
-                error={!!errors.slug}
-                helperText={errors.slug?.message}
-                onChange={e => field.onChange(e.target.value || null)}
-              />
-            )}
-          />
-          <Controller
-            name='type'
-            control={control}
-            render={({ field }) => (
-              <CustomTextField
-                {...field}
-                select
-                fullWidth
-                label='نوع'
-                error={!!errors.type}
-                helperText={errors.type?.message}
-                value={field.value || ''}
-                onChange={e => field.onChange(e.target.value)}
-              >
-                <MenuItem value={AttributeType.COLOR}>رنگ</MenuItem>
-                <MenuItem value={AttributeType.BUTTON}>دکمه</MenuItem>
-              </CustomTextField>
+              <CustomTextField {...field} fullWidth label='نام ویژگی' placeholder='لطفا نام ویژگی را وارد کنید' error={!!errors.title} helperText={errors.title?.message} />
             )}
           />
           <Controller
@@ -178,4 +141,4 @@ const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeF
   )
 }
 
-export default UpdateAttributeModal
+export default UpdateGalleryModal

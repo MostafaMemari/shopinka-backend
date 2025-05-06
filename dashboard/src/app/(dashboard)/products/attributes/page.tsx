@@ -1,13 +1,10 @@
 import { getAttributes } from '@/libs/api/productAttributes'
-import ProductAttributeTable from '@/views/pages/products/attribute/ProductAttributeTable'
+import ProductAttributeView from '@/views/pages/products/attribute/ProductAttributeView'
 
 const ProductAttribute = async () => {
   const res = await getAttributes()
 
-  console.log(res.data.items.flat())
-  console.log(res.data.items)
-
-  return <ProductAttributeTable data={res.data.items.flat()} />
+  return <ProductAttributeView data={res.data.items.flat()} />
 }
 
 export default ProductAttribute

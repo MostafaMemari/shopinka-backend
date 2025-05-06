@@ -1,24 +1,24 @@
 import { useState } from 'react'
 import ConfirmDeleteDialog from '@/@core/components/mui/ConfirmDeleteDialog'
 import { IconButton } from '@mui/material'
-import { removeAttribute } from '@/libs/api/productAttributes'
+import { removeGallery } from '@/libs/api/gallery'
 import { showToast } from '@/utils/showToast'
 import { useRouter } from 'next/navigation'
 
-const RemoveAttributeModal = ({ id }: { id: number }) => {
+const RemoveGalleryModal = ({ id }: { id: number }) => {
   const [open, setOpen] = useState<boolean>(false)
-  const [attributeId, setAttributeId] = useState<string | null>(null)
+  const [attributeId, setGalleryId] = useState<string | null>(null)
   const router = useRouter()
 
   const handleOpen = (id: string) => {
-    setAttributeId(id)
+    setGalleryId(id)
     setOpen(true)
   }
 
   const handleConfirm = async () => {
     try {
       if (attributeId) {
-        const res = await removeAttribute(attributeId)
+        const res = await removeGallery(attributeId)
 
         if (res.status === 200) {
           showToast({ type: 'success', message: 'حذف ویژگی با موفقیت انجام شد' })
@@ -28,7 +28,7 @@ const RemoveAttributeModal = ({ id }: { id: number }) => {
       }
 
       setOpen(false)
-      setAttributeId(null)
+      setGalleryId(null)
     } catch (error) {
       showToast({ type: 'error', message: 'خطای سیستمی' })
     }
@@ -36,7 +36,7 @@ const RemoveAttributeModal = ({ id }: { id: number }) => {
 
   const handleCancel = () => {
     setOpen(false)
-    setAttributeId(null)
+    setGalleryId(null)
   }
 
   return (
@@ -59,4 +59,4 @@ const RemoveAttributeModal = ({ id }: { id: number }) => {
   )
 }
 
-export default RemoveAttributeModal
+export default RemoveGalleryModal
