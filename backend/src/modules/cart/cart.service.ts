@@ -6,6 +6,7 @@ import { CartItemRepository } from './repositories/cardItem.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
 import { ProductRepository } from '../product/repositories/product.repository';
 import { CartItemMessages } from './enums/cart-item-messages.enum';
+import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 
 @Injectable()
 export class CartService {
@@ -65,5 +66,21 @@ export class CartService {
     const removeCartItem = await this.cartItemRepository.delete({ where: { id: cartItemId } })
 
     return { message: CartItemMessages.RemovedCartItemSuccess, cartItem: removeCartItem }
+  }
+
+  async updateItem(userId: number, cartItemId: number, updateCartItemDto: UpdateCartItemDto): Promise<{ message: string, cartItem: CartItem }> {
+    const { quantity } = updateCartItemDto
+
+    const cartItem = await this.cartItemRepository.findOneOrThrow({
+      where: { id: cartItemId, cart: { userId } },
+      include: { product: true, productVariant: true }
+    })
+
+    if (cartItem['product'] && cartItem['product']?.quantity < quantity) throw new BadRequestException()
+    if (cartItem['productVariant'] && cartItem['productVariant']?.quantity < quantity) throw new BadRequestException()
+
+    const updatedCartItem = await this.cartItemRepository.update({ where: { id: cartItemId }, data: { quantity } })
+
+    return { message: CartItemMessages.UpdatedCartItemSuccess, cartItem: updatedCartItem }
   }
 }

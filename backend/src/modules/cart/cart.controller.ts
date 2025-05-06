@@ -7,6 +7,7 @@ import { User } from 'generated/prisma';
 import { SkipAuth } from '../../common/decorators/skip-auth.decorator';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
+import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 
 @Controller('cart')
 @ApiTags('cart')
@@ -30,8 +31,14 @@ export class CartController {
     return this.cartService.addItem(user.id, createCatItemDto)
   }
 
+  @Patch('item/:id')
+  @ApiConsumes(SwaggerConsumes.Json , SwaggerConsumes.UrlEncoded)
+  updateItem(@Param('id', ParseIntPipe) id: number, @Body() updateCartItemDto: UpdateCartItemDto, @GetUser() user: User) {
+    return this.cartService.updateItem(user.id , id , updateCartItemDto)
+  }
+
   @Delete('item/:id')
   removeItem(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
-    return this.cartService.removeItem(user.id,id)
+    return this.cartService.removeItem(user.id, id)
   }
 }
