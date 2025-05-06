@@ -6,7 +6,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { IconButton } from '@mui/material'
 import { AttributeType } from '@/types/productAttributes'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { createAttribute } from '@/libs/api/productAttributes'
+import { createAttributeValues } from '@/libs/api/productAttributeValues'
 import { showToast } from '@/utils/showToast'
 import { handleApiError } from '@/utils/handleApiError'
 import { errorAttributeMessage } from '@/messages/auth/attributeMessages'
@@ -15,9 +15,9 @@ import { createAttributeValueSchema } from '@/libs/validators/attributeValues.sc
 import { HexColorPicker } from 'react-colorful'
 import ClickAwayListener from '@mui/material/ClickAwayListener'
 import Popper from '@mui/material/Popper'
-import { createAttributeValues } from '@/libs/api/productAttributeValues'
 
 const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType }: { attributeName: string; attributeId: number; attributeType: AttributeType }) => {
+  console.log('Attribute Type:', attributeType) // لاگ برای دیباگ
   const [open, setOpen] = useState<boolean>(false)
   const router = useRouter()
   const [colorAnchorEl, setColorAnchorEl] = useState<HTMLElement | null>(null)
@@ -42,13 +42,14 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType }
     formState: { errors },
     setValue
   } = useForm({
-    resolver: yupResolver(createAttributeValueSchema),
+    resolver: yupResolver(createAttributeValueSchema(attributeType)),
     defaultValues: {
       name: '',
-      slug: null as string | null,
+      slug: '' as string | undefined,
       colorCode: '',
       buttonLabel: ''
-    }
+    },
+    context: { attributeType }
   })
 
   const onSubmit = async (formData: any) => {
@@ -60,6 +61,8 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType }
         buttonLabel: formData.buttonLabel || null,
         attributeId: String(attributeId)
       })
+
+      console.log(res)
 
       const errorMessage = handleApiError(res.status, errorAttributeMessage)
 
@@ -73,8 +76,13 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType }
       reset()
       handleClose()
     } catch (error: any) {
+      console.error('Submit Error:', error)
       showToast({ type: 'error', message: 'خطای سیستمی' })
     }
+  }
+
+  const onError = (errors: any) => {
+    console.log('Form Errors:', errors)
   }
 
   return (
@@ -101,13 +109,13 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType }
             <Button onClick={handleClose} color='secondary'>
               انصراف
             </Button>
-            <Button onClick={handleSubmit(onSubmit)} variant='contained'>
+            <Button onClick={handleSubmit(onSubmit, onError)} variant='contained'>
               ثبت
             </Button>
           </>
         }
       >
-        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
+        <form onSubmit={handleSubmit(onSubmit, onError)} className='flex flex-col gap-5'>
           <Controller
             name='name'
             control={control}

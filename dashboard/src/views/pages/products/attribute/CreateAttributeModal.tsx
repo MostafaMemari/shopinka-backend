@@ -30,7 +30,7 @@ const CreateAttributeModal = () => {
     resolver: yupResolver(createAttributeSchema),
     defaultValues: {
       name: '',
-      slug: null as string | null,
+      slug: '' as string | undefined,
       type: AttributeType.COLOR,
       description: null as string | null
     }

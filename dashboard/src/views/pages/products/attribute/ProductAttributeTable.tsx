@@ -112,46 +112,50 @@ const ProductAttributeTable = ({ data: initialData }: { data: Attribute[] }) => 
                     <td>
                       {!!row.values?.length ? (
                         row.type === AttributeType.COLOR ? (
-                          row.values.map(item => (
-                            <RemoveAttributeValueModal key={item.id} id={item.id}>
-                              <Chip
-                                label={
-                                  <Box display='flex' alignItems='center' gap={1}>
-                                    <Box
-                                      sx={{
-                                        width: 10,
-                                        height: 10,
-                                        borderRadius: '50%',
-                                        backgroundColor: item.colorCode || '#999',
-                                        border: '1px solid #ccc'
-                                      }}
-                                    />
-                                    {item.name}
-                                  </Box>
-                                }
-                                color='secondary'
-                                variant='outlined'
-                                deleteIcon={<i className='tabler-trash-x' />}
-                                sx={{
-                                  direction: 'rtl',
-                                  margin: '2px'
-                                }}
-                              />
-                            </RemoveAttributeValueModal>
-                          ))
+                          <Box display='flex' flexWrap='wrap' alignItems='center'>
+                            {row.values.map(item => (
+                              <RemoveAttributeValueModal key={item.id} id={item.id}>
+                                <Chip
+                                  label={
+                                    <Box display='flex' alignItems='center' gap={1}>
+                                      <Box
+                                        sx={{
+                                          width: 10,
+                                          height: 10,
+                                          borderRadius: '50%',
+                                          backgroundColor: item.colorCode || '#999',
+                                          border: '1px solid #ccc'
+                                        }}
+                                      />
+                                      {item.name}
+                                    </Box>
+                                  }
+                                  color='secondary'
+                                  variant='outlined'
+                                  deleteIcon={<i className='tabler-trash-x' />}
+                                  sx={{ direction: 'rtl', margin: '2px' }}
+                                />
+                              </RemoveAttributeValueModal>
+                            ))}
+
+                            <CreateAttributeValueModal attributeName={row.name} attributeId={row.id} attributeType={row.type} />
+                          </Box>
                         ) : (
-                          row.values.map(item => (
-                            <Chip
-                              key={item.id}
-                              label={item.name}
-                              sx={{
-                                direction: 'rtl',
-                                color: item.colorCode
-                              }}
-                              variant='outlined'
-                              onDelete={handleDelete}
-                            />
-                          ))
+                          <Box display='flex' flexWrap='wrap' alignItems='center'>
+                            {row.values.map(item => (
+                              <RemoveAttributeValueModal key={item.id} id={item.id}>
+                                <Chip
+                                  label={item.name}
+                                  color='secondary'
+                                  variant='outlined'
+                                  deleteIcon={<i className='tabler-trash-x' />}
+                                  sx={{ direction: 'rtl', margin: '2px' }}
+                                />
+                              </RemoveAttributeValueModal>
+                            ))}
+
+                            <CreateAttributeValueModal attributeName={row.name} attributeId={row.id} attributeType={row.type} />
+                          </Box>
                         )
                       ) : (
                         <CreateAttributeValueModal attributeName={row.name} attributeId={row.id} attributeType={row.type} />
@@ -170,7 +174,6 @@ const ProductAttributeTable = ({ data: initialData }: { data: Attribute[] }) => 
           </table>
         </div>
 
-        {/* Mobile Cards */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, p: 2 }}>
           {paginatedData.length === 0 ? (
             <Typography textAlign='center'>داده‌ای موجود نیست</Typography>

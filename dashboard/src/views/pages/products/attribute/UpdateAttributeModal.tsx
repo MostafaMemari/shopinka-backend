@@ -31,7 +31,7 @@ const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeF
     resolver: yupResolver(createAttributeSchema),
     defaultValues: {
       name: initialData?.name,
-      slug: initialData?.slug,
+      slug: initialData?.slug ?? undefined,
       type: initialData?.type,
       description: initialData.description || null
     }
