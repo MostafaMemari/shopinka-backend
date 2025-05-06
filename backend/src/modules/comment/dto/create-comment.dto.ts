@@ -28,7 +28,7 @@ export class CreateCommentDto {
     @IsPositive()
     @Transform(({ value }) => +value)
     @ApiProperty({ type: "number", required: false, nullable: true, minimum: 1, maximum: 5 })
-    rate: number = 5
+    rate?: number
 
     @IsNumber()
     @IsPositive()

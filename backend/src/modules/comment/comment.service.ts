@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { CommentRepository } from './comment.repository';
@@ -32,8 +32,27 @@ export class CommentService {
     return this.getCommentWithAllReplies(id)
   }
 
-  update(id: number, updateCommentDto: UpdateCommentDto) {
-    return `This action updates a #${id} comment`;
+  async update(userId: number, commentId: number, updateCommentDto: UpdateCommentDto): Promise<{ message: string, comment: Comment }> {
+    const { parentId, productId } = updateCommentDto
+
+    const comment = await this.commentRepository.findOneOrThrow({ where: { id: commentId, userId } })
+
+    if (comment.id === parentId) throw new BadRequestException(CommentMessages.CannotSetItselfAsParent)
+
+    if (await this.isParentIdInReplies(commentId, parentId))
+      throw new BadRequestException(CommentMessages.ParentIsChild)
+
+
+    if (parentId) await this.commentRepository.findOneOrThrow({ where: { id: parentId } })
+    if (productId) await this.productRepository.findOneOrThrow({ where: { id: productId } })
+
+    const updatedComment = await this.commentRepository.update({
+      where: { id: commentId },
+      data: updateCommentDto,
+      include: { parent: true, product: true, replies: true }
+    })
+
+    return { message: CommentMessages.UpdatedCommentSuccess, comment: updatedComment }
   }
 
   async remove(userId: number, id: number): Promise<{ message: string, comment: Comment }> {

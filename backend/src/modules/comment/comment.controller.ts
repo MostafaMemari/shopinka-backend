@@ -16,10 +16,9 @@ export class CommentController {
   constructor(private readonly commentService: CommentService) { }
 
   @Post()
-  @SkipAuth()
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   create(@Body() createCommentDto: CreateCommentDto, @GetUser() user: User) {
-    return this.commentService.create(1, createCommentDto);
+    return this.commentService.create(user.id, createCommentDto);
   }
 
   @Get()
@@ -34,8 +33,9 @@ export class CommentController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
-    return this.commentService.update(+id, updateCommentDto);
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateCommentDto: UpdateCommentDto, @GetUser() user: User) {
+    return this.commentService.update(user.id, id, updateCommentDto);
   }
 
   @Delete(':id')
