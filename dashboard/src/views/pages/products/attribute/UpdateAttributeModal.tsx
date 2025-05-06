@@ -46,15 +46,13 @@ const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeF
           description: formData.description || null
         })
 
-        console.log(changedData)
-
         if (Object.keys(changedData).length === 0) {
           showToast({ type: 'info', message: 'هیچ تغییری اعمال نشده است' })
 
           return
         }
 
-        const res = await updateAttribute(initialData.id, changedData)
+        const res = await updateAttribute(String(initialData.id), changedData)
 
         const errorMessage = handleApiError(res.status, errorAttributeMessage)
 
