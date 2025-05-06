@@ -42,7 +42,8 @@ const CreateAttributeModal = () => {
         name: formData.name,
         slug: formData.slug || null,
         type: formData.type,
-        description: formData.description || null
+        description: formData.description || null,
+        values: []
       })
 
       const errorMessage = handleApiError(res.status, errorAttributeMessage)

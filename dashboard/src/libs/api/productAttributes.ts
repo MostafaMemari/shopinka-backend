@@ -4,7 +4,7 @@ import { serverApiFetch } from '@/utils/api'
 
 export const getAttributes = async (): Promise<Response<Attribute[]>> => {
   try {
-    const res = await serverApiFetch('/attribute', { method: 'GET' })
+    const res = await serverApiFetch('/attribute?includeValues=true', { method: 'GET' })
 
     return {
       ...res

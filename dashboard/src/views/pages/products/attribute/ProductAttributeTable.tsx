@@ -5,15 +5,9 @@ import { useEffect, useState } from 'react'
 
 // MUI Imports
 import Card from '@mui/material/Card'
-import Button from '@mui/material/Button'
-import IconButton from '@mui/material/IconButton'
-import TablePagination from '@mui/material/TablePagination'
-import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
 import type { TextFieldProps } from '@mui/material/TextField'
-
-// SweetAlert Import
-import Swal from 'sweetalert2'
+import { Box, CardContent, Chip } from '@mui/material'
 
 // Component Imports
 import CustomTextField from '@core/components/mui/TextField'
@@ -23,11 +17,12 @@ import tableStyles from '@core/styles/table.module.css'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
 
 // API Import
-import { Attribute as ProductAttribute, AttributeType } from '@/types/productAttributes'
+import { AttributeType, Attribute } from '@/types/productAttributes'
 import CreateUpdateAttributeModal from './CreateAttributeModal'
 import RemoveAttributeModal from './RemoveAttributeModal'
 import UpdateAttributeModal from './UpdateAttributeModal'
-import { Box, CardContent } from '@mui/material'
+import RemoveAttributeValueModal from './RemoveAttributeValueModal'
+import CreateAttributeValueModal from './CreateAttributeValueModal'
 
 // Debounced input component
 const DebouncedInput = ({
@@ -55,10 +50,9 @@ const DebouncedInput = ({
   return <CustomTextField {...props} value={value} onChange={e => setValue(e.target.value)} />
 }
 
-const ProductAttributeTable = ({ data: initialData }: { data: ProductAttribute[] }) => {
+const ProductAttributeTable = ({ data: initialData }: { data: Attribute[] }) => {
   // States
-  const [addOpen, setAddOpen] = useState(false)
-  const [data, setLocalData] = useState<ProductAttribute[]>(initialData || [])
+  const [data, setLocalData] = useState<Attribute[]>(initialData || [])
   const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
@@ -70,6 +64,11 @@ const ProductAttributeTable = ({ data: initialData }: { data: ProductAttribute[]
 
   // Paginate filtered data
   const paginatedData = data.slice(page * rowsPerPage, (page + 1) * rowsPerPage)
+
+  const handleDelete = (attributeValueId: number) => {
+    // eslint-disable-next-line no-console
+    console.info('You clicked the delete icon.')
+  }
 
   return (
     <>
@@ -87,9 +86,8 @@ const ProductAttributeTable = ({ data: initialData }: { data: ProductAttribute[]
             <thead>
               <tr>
                 <th>نام ویژگی</th>
-                <th>توضیحات</th>
                 <th>نوع</th>
-                <th>تاریخ ایجاد</th>
+                <th>متغییر ها</th>
                 <th>عملیات</th>
               </tr>
             </thead>
@@ -109,13 +107,55 @@ const ProductAttributeTable = ({ data: initialData }: { data: ProductAttribute[]
                       </Typography>
                     </td>
                     <td>
-                      <Typography>{row.description || '-'}</Typography>{' '}
+                      <Typography>{row.type === AttributeType.BUTTON ? 'دکمه' : 'رنگ'}</Typography>{' '}
                     </td>
                     <td>
-                      <Typography>{row.type === AttributeType.BUTTON ? 'دکمه' : 'رنگ'}</Typography>
-                    </td>
-                    <td>
-                      <Typography>{new Date(row.createdAt).toLocaleDateString('fa-IR')}</Typography>
+                      {!!row.values?.length ? (
+                        row.type === AttributeType.COLOR ? (
+                          row.values.map(item => (
+                            <RemoveAttributeValueModal key={item.id} id={item.id}>
+                              <Chip
+                                label={
+                                  <Box display='flex' alignItems='center' gap={1}>
+                                    <Box
+                                      sx={{
+                                        width: 10,
+                                        height: 10,
+                                        borderRadius: '50%',
+                                        backgroundColor: item.colorCode || '#999',
+                                        border: '1px solid #ccc'
+                                      }}
+                                    />
+                                    {item.name}
+                                  </Box>
+                                }
+                                color='secondary'
+                                variant='outlined'
+                                deleteIcon={<i className='tabler-trash-x' />}
+                                sx={{
+                                  direction: 'rtl',
+                                  margin: '2px'
+                                }}
+                              />
+                            </RemoveAttributeValueModal>
+                          ))
+                        ) : (
+                          row.values.map(item => (
+                            <Chip
+                              key={item.id}
+                              label={item.name}
+                              sx={{
+                                direction: 'rtl',
+                                color: item.colorCode
+                              }}
+                              variant='outlined'
+                              onDelete={handleDelete}
+                            />
+                          ))
+                        )
+                      ) : (
+                        <CreateAttributeValueModal attributeName={row.name} attributeId={row.id} attributeType={row.type} />
+                      )}
                     </td>
                     <td>
                       <div className='flex items-center gap-2'>
@@ -155,13 +195,7 @@ const ProductAttributeTable = ({ data: initialData }: { data: ProductAttribute[]
                   </Typography>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     <Typography variant='body2' color='text.secondary'>
-                      <strong>توضیحات:</strong> {row.description || '-'}
-                    </Typography>
-                    <Typography variant='body2' color='text.secondary'>
                       <strong>نوع:</strong> {row.type === AttributeType.BUTTON ? 'دکمه' : 'رنگ'}
-                    </Typography>
-                    <Typography variant='body2' color='text.secondary'>
-                      <strong>تاریخ ایجاد:</strong> {new Date(row.createdAt).toLocaleDateString('fa-IR')}
                     </Typography>
                   </Box>
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
@@ -174,13 +208,7 @@ const ProductAttributeTable = ({ data: initialData }: { data: ProductAttribute[]
           )}
         </Box>
 
-        <TablePaginationComponent
-          filteredData={data}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          onPageChange={setPage}
-          onRowsPerPageChange={e => setRowsPerPage(Number(e.target.value))}
-        />
+        <TablePaginationComponent filteredData={data} page={page} rowsPerPage={rowsPerPage} onPageChange={setPage} onRowsPerPageChange={rows => setRowsPerPage(rows)} />
       </Card>
     </>
   )
