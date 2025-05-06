@@ -1,4 +1,4 @@
-import { IsOptional, IsDate, IsString, IsEnum, IsNumber, IsPositive, IsNotEmpty, Max, Min } from "class-validator";
+import { IsOptional, IsDate, IsString, IsEnum, IsNumber, IsPositive, IsNotEmpty, Max, Min, IsBoolean } from "class-validator";
 import { SortOrder } from "../../../common/enums/shared.enum";
 import { Transform } from "class-transformer";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
@@ -81,6 +81,7 @@ export class QueryProductVariantDto extends PaginationDto {
     weight?: number
 
     @IsOptional()
+    @IsBoolean()
     @Transform(({ value }) => {
         if (typeof value == 'string') return value == 'true'
         return value
@@ -89,6 +90,7 @@ export class QueryProductVariantDto extends PaginationDto {
     includeProduct?: boolean
 
     @IsOptional()
+    @IsBoolean()
     @Transform(({ value }) => {
         if (typeof value == 'string') return value == 'true'
         return value
@@ -97,6 +99,7 @@ export class QueryProductVariantDto extends PaginationDto {
     includeAttributes?: boolean
 
     @IsOptional()
+    @IsBoolean()
     @Transform(({ value }) => {
         if (typeof value == 'string') return value == 'true'
         return value
@@ -105,6 +108,7 @@ export class QueryProductVariantDto extends PaginationDto {
     includeMainImage?: boolean
 
     @IsOptional()
+    @IsBoolean()
     @Transform(({ value }) => {
         if (typeof value == 'string') return value == 'true'
         return value

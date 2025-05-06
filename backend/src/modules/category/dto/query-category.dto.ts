@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from "@nestjs/swagger"
 import { Transform } from "class-transformer"
-import { IsOptional, IsString, IsNotEmpty, IsDate, IsEnum } from "class-validator"
+import { IsOptional, IsString, IsNotEmpty, IsDate, IsEnum, IsBoolean } from "class-validator"
 import { SortOrder } from "../../../common/enums/shared.enum"
 import { CategorySortBy } from "../enums/category-sortby.enum"
 import { PaginationDto } from "../../../common/dtos/pagination.dto"
@@ -19,6 +19,7 @@ export class QueryCategoryDto extends PaginationDto {
     description?: string
 
     @IsOptional()
+    @IsBoolean()
     @Transform(({ value }) => {
         if (typeof value == 'string') return value == 'true'
         return value
@@ -27,6 +28,7 @@ export class QueryCategoryDto extends PaginationDto {
     includeUser?: boolean
 
     @IsOptional()
+    @IsBoolean()
     @Transform(({ value }) => {
         if (typeof value == 'string') return value == 'true'
         return value
@@ -35,6 +37,7 @@ export class QueryCategoryDto extends PaginationDto {
     includeThumbnailImage?: boolean
 
     @IsOptional()
+    @IsBoolean()
     @Transform(({ value }) => {
         if (typeof value == 'string') return value == 'true'
         return value
@@ -42,7 +45,8 @@ export class QueryCategoryDto extends PaginationDto {
     @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
     includeParent?: boolean
 
-    @IsOptional()
+    @IsOptional()    
+    @IsBoolean()
     @Transform(({ value }) => {
         if (typeof value == 'string') return value == 'true'
         return value
