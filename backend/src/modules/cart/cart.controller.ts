@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { AuthDecorator } from '../../common/decorators/auth.decorator';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
@@ -28,5 +28,10 @@ export class CartController {
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   addItem(@Body() createCatItemDto: CreateCartItemDto, @GetUser() user: User) {
     return this.cartService.addItem(user.id, createCatItemDto)
+  }
+
+  @Delete('item/:id')
+  removeItem(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.cartService.removeItem(user.id,id)
   }
 }

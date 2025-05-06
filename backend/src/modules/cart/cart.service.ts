@@ -5,6 +5,7 @@ import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { CartItemRepository } from './repositories/cardItem.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
 import { ProductRepository } from '../product/repositories/product.repository';
+import { CartItemMessages } from './enums/cart-item-messages.enum';
 
 @Injectable()
 export class CartService {
@@ -55,6 +56,14 @@ export class CartService {
       include: { product: true, productVariant: true }
     })
 
-    return { message: "Created cartItem successfully.", cartItem: newCartItem }
+    return { message: CartItemMessages.CreatedCartItemSuccess, cartItem: newCartItem }
+  }
+
+  async removeItem(userId: number, cartItemId: number): Promise<{ message: string, cartItem: CartItem }> {
+    await this.cartItemRepository.findOneOrThrow({ where: { id: cartItemId, cart: { userId } } })
+
+    const removeCartItem = await this.cartItemRepository.delete({ where: { id: cartItemId } })
+
+    return { message: CartItemMessages.RemovedCartItemSuccess, cartItem: removeCartItem }
   }
 }
