@@ -7,6 +7,8 @@ import { ProductVariantRepository } from '../product/repositories/product-varian
 import { ProductRepository } from '../product/repositories/product.repository';
 import { CartItemMessages } from './enums/cart-item-messages.enum';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
+import { PaginationDto } from '../../common/dtos/pagination.dto';
+import { pagination } from '../../common/utils/pagination.utils';
 
 @Injectable()
 export class CartService {
@@ -35,6 +37,13 @@ export class CartService {
     })
   }
 
+  async findAllItems(userId: number, paginationDto: PaginationDto): Promise<unknown> {
+    await this.cartRepository.findOneOrThrow({ where: { userId } })
+
+    const cartItems = await this.cartItemRepository.findAll({ where: { cart: { userId } }, include: { product: true, productVariant: true } })
+    return pagination(paginationDto, cartItems)
+  }
+
   async addItem(userId: number, createCartItemDto: CreateCartItemDto): Promise<{ message: string, cartItem: CartItem }> {
     const { quantity, productId, productVariantId } = createCartItemDto
 
@@ -61,6 +70,7 @@ export class CartService {
   }
 
   async removeItem(userId: number, cartItemId: number): Promise<{ message: string, cartItem: CartItem }> {
+    await this.cartRepository.findOneOrThrow({ where: { userId } })
     await this.cartItemRepository.findOneOrThrow({ where: { id: cartItemId, cart: { userId } } })
 
     const removeCartItem = await this.cartItemRepository.delete({ where: { id: cartItemId } })
@@ -70,6 +80,8 @@ export class CartService {
 
   async updateItem(userId: number, cartItemId: number, updateCartItemDto: UpdateCartItemDto): Promise<{ message: string, cartItem: CartItem }> {
     const { quantity } = updateCartItemDto
+
+    await this.cartRepository.findOneOrThrow({ where: { userId } })
 
     const cartItem = await this.cartItemRepository.findOneOrThrow({
       where: { id: cartItemId, cart: { userId } },
