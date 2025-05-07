@@ -88,7 +88,7 @@ const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBac
           return showToast({ type: 'error', message: errorMessage })
         }
 
-        if (res?.status === 201) {
+        if (res?.status === 201 || res.status === 200) {
           showToast({ type: 'success', message: 'ورود شما با موفقیت انجام شد' })
           router.push('/home')
         }

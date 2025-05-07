@@ -1,10 +1,12 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, List, ListItem, IconButton, Typography, Avatar } from '@mui/material'
-import { Add } from '@mui/icons-material'
+import { Button, DialogContent, List, ListItem, IconButton, Typography, Avatar, CircularProgress } from '@mui/material'
 import { useDropzone } from 'react-dropzone'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
+import { useParams, useRouter } from 'next/navigation'
+import { showToast } from '@/utils/showToast'
+import { createGalleryItem } from '@/libs/api/client/galleyItem'
 
 type FileProp = {
   name: string
@@ -15,6 +17,11 @@ type FileProp = {
 const CreateMediaModal = () => {
   const [open, setOpen] = useState(false)
   const [files, setFiles] = useState<File[]>([])
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const maxFiles = 5
+  const router = useRouter()
+
+  const { id: galleryId } = useParams<{ id: string }>()
 
   const handleOpen = () => setOpen(true)
 
@@ -23,9 +30,21 @@ const CreateMediaModal = () => {
     setFiles([])
   }
 
-  // تنظیمات react-dropzone
   const { getRootProps, getInputProps } = useDropzone({
-    onDrop: (acceptedFiles: File[]) => {
+    accept: { 'image/*': [] },
+    onDrop: (acceptedFiles: File[], fileRejections) => {
+      if (files.length + acceptedFiles.length > maxFiles) {
+        showToast({ type: 'error', message: `حداکثر ${maxFiles} فایل می‌توانید انتخاب کنید!` })
+
+        return
+      }
+
+      if (fileRejections.length > 0) {
+        showToast({ type: 'error', message: 'فقط فایل‌های تصویری مجاز هستند!' })
+
+        return
+      }
+
       setFiles([...files, ...acceptedFiles.map((file: File) => Object.assign(file))])
     }
   })
@@ -33,9 +52,9 @@ const CreateMediaModal = () => {
   const renderFilePreview = (file: FileProp) => {
     if (file.type.startsWith('image')) {
       return <img width={38} height={38} alt={file.name} src={URL.createObjectURL(file as any)} />
-    } else {
-      return <i className='tabler-file-description' />
     }
+
+    return <i className='tabler-file-description' />
   }
 
   const handleRemoveFile = (file: FileProp) => {
@@ -45,27 +64,38 @@ const CreateMediaModal = () => {
   }
 
   const handleSubmit = async () => {
-    if (!files.length) return
+    if (!files.length) {
+      showToast({ type: 'error', message: 'هیچ فایلی انتخاب نشده است!' })
 
-    const formData = new FormData()
-
-    files.forEach(file => {
-      formData.append('files', file) // اضافه کردن فایل‌ها به FormData
-    })
-
-    // لاگ FormData برای بررسی (می‌تونی اینو به API بفرستی)
-
-    console.log('FormData برای آپلود:', formData)
-
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}:`, value)
+      return
     }
 
-    // اینجا می‌تونی درخواست API رو بنویسی
-    // مثلاً:
-    // await fetch('/api/upload', { method: 'POST', body: formData })
+    setIsSubmitting(true)
 
-    handleClose()
+    try {
+      const formData = new FormData()
+
+      files.forEach(file => {
+        formData.append('image', file)
+      })
+      formData.append('galleryId', galleryId)
+
+      const res = await createGalleryItem(formData)
+
+      if (res?.status === 200 || res?.status === 201) {
+        showToast({ type: 'success', message: 'آپلود فایل با موفقیت انجام شد' })
+
+        router.refresh()
+        handleClose()
+      } else {
+        showToast({ type: 'error', message: 'خطایی در آپلود رخ داد!' })
+      }
+    } catch (error) {
+      console.error('Error uploading files:', error)
+      showToast({ type: 'error', message: 'خطایی در ارتباط با سرور رخ داد!' })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const fileList = files.map((file: FileProp) => (
@@ -86,7 +116,7 @@ const CreateMediaModal = () => {
         <i className='tabler-x' style={{ fontSize: '20px', color: '#ff4d4f' }} />
       </IconButton>
       <div className='file-details' style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
-        <div className='file-preview' style={{ marginRight: '12px' }}>
+        <div className='file-preview' style={{ marginLeft: '10px' }}>
           {renderFilePreview(file)}
         </div>
         <div>
@@ -117,8 +147,13 @@ const CreateMediaModal = () => {
             <Button onClick={handleClose} color='secondary'>
               انصراف
             </Button>
-            <Button onClick={handleSubmit} variant='contained' disabled={!files.length}>
-              آپلود
+            <Button
+              onClick={handleSubmit}
+              variant='contained'
+              disabled={!files.length || isSubmitting}
+              startIcon={isSubmitting ? <CircularProgress size={20} color='inherit' /> : null}
+            >
+              {isSubmitting ? 'در حال آپلود...' : 'آپلود'}
             </Button>
           </>
         }
@@ -131,14 +166,13 @@ const CreateMediaModal = () => {
                 <i className='tabler-upload' />
               </Avatar>
               <Typography variant='h6' className='mbe-2.5'>
-                فایل‌ها را اینجا رها کنید یا کلیک کنید برای آپلود
+                تصاویر را اینجا رها کنید یا کلیک کنید برای آپلود
               </Typography>
               <Typography>
-                فایل‌ها را اینجا رها کنید یا{' '}
+                حداکثر {maxFiles} تصویر می‌توانید آپلود کنید.{' '}
                 <a href='/' onClick={e => e.preventDefault()} className='text-textPrimary no-underline'>
                   مرور
-                </a>{' '}
-                کنید
+                </a>
               </Typography>
             </div>
           </div>

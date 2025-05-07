@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 // MUI Imports
 import Typography from '@mui/material/Typography'
 import type { TextFieldProps } from '@mui/material/TextField'
-import { Box } from '@mui/material'
+import { Box, IconButton } from '@mui/material'
 
 // Component Imports
 import CustomTextField from '@core/components/mui/TextField'
@@ -18,6 +18,7 @@ import tableStyles from '@core/styles/table.module.css'
 
 // API Import
 import { Gallery } from '@/types/gallery'
+import Link from 'next/link'
 
 // Debounced input component
 const DebouncedInput = ({
@@ -51,7 +52,7 @@ const DesktopGalleryTable = ({ data, paginatedData }: { data: Gallery[]; paginat
     <table className={tableStyles.table}>
       <thead>
         <tr>
-          <th>نام ویژگی</th>
+          <th>نام گالری</th>
           <th>توضیحات</th>
           <th>عملیات</th>
         </tr>
@@ -73,7 +74,7 @@ const DesktopGalleryTable = ({ data, paginatedData }: { data: Gallery[]; paginat
               </td>
               <td>
                 <Typography className='font-medium' color='text.primary'>
-                  {row.description}
+                  {row.description ?? '-'}
                 </Typography>
               </td>
 
@@ -81,6 +82,11 @@ const DesktopGalleryTable = ({ data, paginatedData }: { data: Gallery[]; paginat
                 <Box display='flex' alignItems='center' gap={2}>
                   <RemoveGalleryModal id={row.id} />
                   <UpdateGalleryModal initialData={row} />
+                  <Link href={`/media/${row.id}`}>
+                    <IconButton size='small'>
+                      <i className='tabler-eye text-gray-500 text-lg' />
+                    </IconButton>
+                  </Link>
                 </Box>
               </td>
             </tr>

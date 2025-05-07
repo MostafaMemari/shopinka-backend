@@ -9,7 +9,9 @@ export const sendOtp = async (mobile: string): Promise<{ status: number; data: a
   try {
     const res = await serverApiFetch('/auth/authenticate', {
       method: 'POST',
-      body: JSON.stringify({ mobile })
+      body: {
+        mobile
+      }
     })
 
     return {
@@ -32,10 +34,10 @@ export const verifyOtp = async (mobile: string, otp: string): Promise<{ status: 
   try {
     const res = await serverApiFetch('/auth/verify-authenticate-otp', {
       method: 'POST',
-      body: JSON.stringify({ mobile, otp })
+      body: { mobile, otp }
     })
 
-    if (res?.status === 201 && res?.data?.accessToken && res?.data?.refreshToken) {
+    if (res?.status === 201 || (res?.status === 200 && res?.data?.accessToken && res?.data?.refreshToken)) {
       const { accessToken, refreshToken }: VerifyOtpResponse = res.data
 
       const cookieStore = await cookies()
@@ -71,7 +73,7 @@ export const logout = async (): Promise<{ status: number; data: any }> => {
 
     const res = await serverApiFetch('/auth/signout', {
       method: 'POST',
-      body: JSON.stringify({ refreshToken })
+      body: { refreshToken }
     })
 
     cookieStore.delete(COOKIE_NAMES.ACCESS_TOKEN)

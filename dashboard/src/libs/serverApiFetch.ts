@@ -1,8 +1,8 @@
 'use server'
 
-import { ofetch } from 'ofetch'
 import { cookies } from 'next/headers'
 import { COOKIE_NAMES } from '@/libs/constants'
+import { ofetch } from 'ofetch'
 
 export const serverApiFetch = async (
   path: string,
@@ -31,10 +31,7 @@ export const serverApiFetch = async (
       }
     })
 
-    return {
-      status: 200,
-      data
-    }
+    return { status: 200, data }
   } catch (error: any) {
     return {
       status: error?.response?.status || 500,

@@ -1,46 +1,94 @@
-'use client'
+import { useState } from 'react'
+import CustomDialog from '@/@core/components/mui/CustomDialog'
+import { removeGalleryItem } from '@/libs/api/galleyItem'
+import { showToast } from '@/utils/showToast'
+import { useRouter } from 'next/navigation'
+import { Button, CircularProgress, DialogContent, DialogContentText } from '@mui/material'
 
-import React from 'react'
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton } from '@mui/material'
-import { Delete } from '@mui/icons-material'
-
-interface RemoveMediaModalProps {
-  id: number
-  name: string
+interface RemoveGalleryItemModalProps {
+  selectedImages: string[]
+  onClearSelection: () => void
 }
 
-const RemoveMediaModal = ({ id, name }: RemoveMediaModalProps) => {
-  const [open, setOpen] = React.useState(false)
+const RemoveGalleryItemModal = ({ selectedImages, onClearSelection }: RemoveGalleryItemModalProps) => {
+  const [open, setOpen] = useState<boolean>(false)
+  const [galleryItemIds, setGalleryItemIds] = useState<string[] | null>(null)
+  const [isDeleting, setIsDeleting] = useState<boolean>(false) // برای مدیریت حالت حذف
+  const router = useRouter()
 
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
+  const handleOpen = (selected: string[]) => {
+    setGalleryItemIds(selected)
+    setOpen(true)
+  }
 
-  const handleDelete = async () => {
-    console.log(`حذف فایل با ID: ${id}`)
-    handleClose()
+  const handleConfirm = async () => {
+    if (!galleryItemIds || isDeleting) return // جلوگیری از اجرای دوباره در حین حذف
+
+    setIsDeleting(true)
+
+    try {
+      const res = await removeGalleryItem(galleryItemIds)
+
+      console.log(res)
+
+      if (res.status === 200) {
+        showToast({ type: 'success', message: 'حذف فایل با موفقیت انجام شد' })
+        onClearSelection()
+        router.refresh()
+      } else if (res.status === 400) {
+        showToast({ type: 'error', message: 'حذف فایل با خطا مواجه شد' })
+      } else if (res.status === 404) {
+        showToast({ type: 'error', message: 'شما دسترسی حذف این فایل را ندارید' })
+      }
+
+      setOpen(false)
+      setGalleryItemIds(null)
+    } catch (error) {
+      showToast({ type: 'error', message: 'خطای سیستمی' })
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
+  const handleCancel = () => {
+    setOpen(false)
+    setGalleryItemIds(null)
   }
 
   return (
-    <>
-      <IconButton color='error' onClick={handleOpen} title='حذف'>
-        <Delete />
-      </IconButton>
-      <Dialog open={open} onClose={handleClose} sx={{ direction: 'rtl' }}>
-        <DialogTitle>حذف فایل</DialogTitle>
+    <div>
+      <Button variant='contained' color='error' onClick={() => handleOpen(selectedImages)}>
+        حذف {selectedImages.length} مورد
+      </Button>
+
+      <CustomDialog
+        open={open}
+        onClose={handleCancel}
+        title='آیا از حذف فایل اطمینان دارید؟'
+        defaultMaxWidth='sm'
+        actions={
+          <>
+            <Button onClick={handleCancel} color='secondary'>
+              لغو
+            </Button>
+            <Button
+              onClick={handleConfirm}
+              variant='contained'
+              color='error'
+              disabled={!galleryItemIds?.length || isDeleting}
+              startIcon={isDeleting ? <CircularProgress size={20} color='inherit' /> : null}
+            >
+              {isDeleting ? 'در حال حذف...' : 'حذف'}
+            </Button>
+          </>
+        }
+      >
         <DialogContent>
-          <DialogContentText> {`آیا مطمئن هستید که می‌خواهید فایل ${name} را حذف کنید؟`}</DialogContentText>
+          <DialogContentText>این عملیات قابل بازگشت نیست</DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color='primary'>
-            لغو
-          </Button>
-          <Button onClick={handleDelete} color='error' variant='contained'>
-            حذف
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
+      </CustomDialog>
+    </div>
   )
 }
 
-export default RemoveMediaModal
+export default RemoveGalleryItemModal
