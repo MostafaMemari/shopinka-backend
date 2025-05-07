@@ -92,7 +92,7 @@ const UpdateGalleryItemModal = ({ initialData, galleryItemId }: UpdateGalleryIte
         }
 
         if (res.status === 200) {
-          showToast({ type: 'success', message: 'ویژگی با موفقیت ویرایش شد' })
+          showToast({ type: 'success', message: 'فایل با موفقیت ویرایش شد' })
           handleClose()
           router.refresh()
         }
@@ -113,7 +113,7 @@ const UpdateGalleryItemModal = ({ initialData, galleryItemId }: UpdateGalleryIte
       <CustomDialog
         open={open}
         onClose={handleClose}
-        title='بروزرسانی ویژگی'
+        title='بروزرسانی فایل'
         defaultMaxWidth='xs'
         actions={
           <>
@@ -132,7 +132,7 @@ const UpdateGalleryItemModal = ({ initialData, galleryItemId }: UpdateGalleryIte
               name='title'
               control={control}
               render={({ field }) => (
-                <CustomTextField {...field} fullWidth label='نام ویژگی' placeholder='لطفا نام ویژگی را وارد کنید' error={!!errors.title} helperText={errors.title?.message} />
+                <CustomTextField {...field} fullWidth label='نام فایل' placeholder='لطفا نام فایل را وارد کنید' error={!!errors.title} helperText={errors.title?.message} />
               )}
             />
             <Controller
@@ -146,7 +146,7 @@ const UpdateGalleryItemModal = ({ initialData, galleryItemId }: UpdateGalleryIte
                   multiline
                   rows={4}
                   label='توضیحات'
-                  placeholder='لطفا توضیحات ویژگی را وارد کنید'
+                  placeholder='لطفا توضیحات فایل را وارد کنید'
                   error={!!errors.description}
                   helperText={errors.description?.message}
                   onChange={e => field.onChange(e.target.value || null)}
