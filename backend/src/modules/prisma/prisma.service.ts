@@ -24,7 +24,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
         this.$use(async (params, next) => {
             const { action } = params;
 
-            if (['create', 'update', 'delete'].includes(action)) {
+            if (['create', 'update', 'delete', 'updateMany', 'deleteMany', 'createMany', 'createManyAndReturn'].includes(action)) {
                 //* Clear user cache on create, update, or delete
                 for (const key in CacheKeys) await this.cacheService.delByPattern(`${CacheKeys[key]}*`);
             }
