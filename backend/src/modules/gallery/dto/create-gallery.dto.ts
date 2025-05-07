@@ -7,12 +7,12 @@ export class CreateGalleryDto {
     @IsNotEmpty()
     @Transform(({ value }) => value?.trim())
     @MaxLength(100)
-    @MinLength(5)
+    @MinLength(3)
     @ApiProperty({
         type: "string",
         required: true,
         nullable: false,
-        minLength: 5,
+        minLength: 3,
         maxLength: 100
     })
     title: string
@@ -21,12 +21,12 @@ export class CreateGalleryDto {
     @IsString()
     @IsNotEmpty()
     @Transform(({ value }) => value?.trim())
-    @MinLength(5)
+    @MinLength(3)
     @ApiProperty({
         type: "string",
         required: false,
         nullable: true,
-        minLength: 5,
+        minLength: 3,
     })
     description?: string
 }

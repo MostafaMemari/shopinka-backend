@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, ParseIntPipe, Query, UploadedFiles } from '@nestjs/common';
+import { HttpCode, Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, ParseIntPipe, Query, UploadedFiles, HttpStatus } from '@nestjs/common';
 import { GalleryItemService } from '../services/gallery-item.service';
 import { CreateGalleryItemDto } from '../dto/create-gallery-item.dto';
 import { UpdateGalleryItemDto } from '../dto/update-gallery-item.dto';
@@ -25,6 +25,7 @@ export class GalleryItemController {
   constructor(private readonly galleryItemService: GalleryItemService) { }
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FilesInterceptor('image', 5, { storage: memoryStorage(), limits: { files: 5 } }))
   @ApiConsumes(SwaggerConsumes.MultipartData)
   create(@UploadedFiles(FileValidatorPipe) files: Express.Multer.File[], @Body() createGalleryItemDto: CreateGalleryItemDto, @GetUser() user: User) {

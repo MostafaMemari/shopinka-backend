@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query, HttpStatus, HttpCode } from '@nestjs/common';
 import { GalleryService } from '../services/gallery.service';
 import { CreateGalleryDto } from '../dto/create-gallery.dto';
 import { UpdateGalleryDto } from '../dto/update-gallery.dto';
@@ -18,6 +18,7 @@ export class GalleryController {
   constructor(private readonly galleryService: GalleryService) { }
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   create(@Body() createGalleryDto: CreateGalleryDto, @GetUser() user: User) {
     return this.galleryService.create(user.id, createGalleryDto);
