@@ -9,8 +9,8 @@ import { Box, CardContent, Chip } from '@mui/material'
 
 import RemoveAttributeModal from './RemoveAttributeModal'
 import UpdateAttributeModal from './UpdateAttributeModal'
-import RemoveAttributeValueModal from './RemoveAttributeValueModal'
-import CreateAttributeValueModal from './CreateAttributeValueModal'
+import RemoveAttributeValueModal from './attributeValue/RemoveAttributeValueModal'
+import CreateAttributeValueModal from './attributeValue/CreateAttributeValueModal'
 
 // API Import
 import { AttributeType, Attribute } from '@/types/productAttributes'

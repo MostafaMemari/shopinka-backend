@@ -1,14 +1,16 @@
 import { useState } from 'react'
-import ConfirmDeleteDialog from '@/@core/components/mui/ConfirmDeleteDialog'
-import { IconButton } from '@mui/material'
+import { DialogContentText, Button, CircularProgress, DialogContent, IconButton } from '@mui/material'
 import { removeGallery } from '@/libs/api/gallery'
 import { showToast } from '@/utils/showToast'
 import { useRouter } from 'next/navigation'
+import CustomDialog from '@/@core/components/mui/CustomDialog'
 
-const RemoveGalleryModal = ({ id }: { id: number }) => {
+const RemoveGalleryModal = ({ id }: { id: string }) => {
   const [open, setOpen] = useState<boolean>(false)
-  const [attributeId, setGalleryId] = useState<string | null>(null)
+  const [galleryId, setGalleryId] = useState<string | null>(null)
   const router = useRouter()
+
+  const [isDeleting, setIsDeleting] = useState<boolean>(false)
 
   const handleOpen = (id: string) => {
     setGalleryId(id)
@@ -16,21 +18,24 @@ const RemoveGalleryModal = ({ id }: { id: number }) => {
   }
 
   const handleConfirm = async () => {
-    try {
-      if (attributeId) {
-        const res = await removeGallery(attributeId)
+    if (!galleryId || isDeleting) return
+    setIsDeleting(true)
 
-        if (res.status === 200) {
-          showToast({ type: 'success', message: 'حذف ویژگی با موفقیت انجام شد' })
-          router.refresh()
-        } else if (res.status === 400) showToast({ type: 'error', message: 'حذف ویژگی با خطا مواجه شد' })
-        else if (res.status === 404) showToast({ type: 'error', message: 'شما دسترسی حذف این ویژگی را ندارید' })
-      }
+    try {
+      const res = await removeGallery(galleryId)
+
+      if (res.status === 200) {
+        showToast({ type: 'success', message: 'حذف گالری با موفقیت انجام شد' })
+        router.refresh()
+      } else if (res.status === 400) showToast({ type: 'error', message: 'حذف گالری با خطا مواجه شد' })
+      else if (res.status === 404) showToast({ type: 'error', message: 'شما دسترسی حذف این گالری را ندارید' })
 
       setOpen(false)
       setGalleryId(null)
     } catch (error) {
       showToast({ type: 'error', message: 'خطای سیستمی' })
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -41,20 +46,30 @@ const RemoveGalleryModal = ({ id }: { id: number }) => {
 
   return (
     <div>
-      <IconButton size='small' onClick={() => handleOpen(id.toString())}>
+      <IconButton size='small' onClick={() => handleOpen(id)}>
         <i className='tabler-trash text-gray-500 text-lg' />
       </IconButton>
 
-      <ConfirmDeleteDialog
+      <CustomDialog
         open={open}
-        onConfirm={handleConfirm}
-        onCancel={handleCancel}
-        title='آیا از حذف ویژگی اطمینان دارید؟'
-        children='این عملیات قابل بازگشت نیست'
-        confirmText='حذف'
-        cancelText='لغو'
+        onClose={handleCancel}
+        title='آیا از حذف فایل اطمینان دارید؟'
         defaultMaxWidth='sm'
-      />
+        actions={
+          <>
+            <Button onClick={handleCancel} color='secondary'>
+              لغو
+            </Button>
+            <Button onClick={handleConfirm} disabled={isDeleting} variant='contained' color='error' startIcon={isDeleting ? <CircularProgress size={20} color='inherit' /> : null}>
+              {isDeleting ? 'در حال حذف...' : 'حذف'}
+            </Button>
+          </>
+        }
+      >
+        <DialogContent>
+          <DialogContentText>این عملیات قابل بازگشت نیست</DialogContentText>
+        </DialogContent>
+      </CustomDialog>
     </div>
   )
 }

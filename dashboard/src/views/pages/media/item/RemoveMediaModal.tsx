@@ -13,7 +13,7 @@ interface RemoveGalleryItemModalProps {
 const RemoveGalleryItemModal = ({ selectedImages, onClearSelection }: RemoveGalleryItemModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
   const [galleryItemIds, setGalleryItemIds] = useState<string[] | null>(null)
-  const [isDeleting, setIsDeleting] = useState<boolean>(false) // برای مدیریت حالت حذف
+  const [isDeleting, setIsDeleting] = useState<boolean>(false)
   const router = useRouter()
 
   const handleOpen = (selected: string[]) => {
@@ -22,14 +22,11 @@ const RemoveGalleryItemModal = ({ selectedImages, onClearSelection }: RemoveGall
   }
 
   const handleConfirm = async () => {
-    if (!galleryItemIds || isDeleting) return // جلوگیری از اجرای دوباره در حین حذف
-
+    if (!galleryItemIds || isDeleting) return
     setIsDeleting(true)
 
     try {
       const res = await removeGalleryItem(galleryItemIds)
-
-      console.log(res)
 
       if (res.status === 200) {
         showToast({ type: 'success', message: 'حذف فایل با موفقیت انجام شد' })

@@ -3,15 +3,28 @@ import ConfirmDeleteDialog from '@/@core/components/mui/ConfirmDeleteDialog'
 import { showToast } from '@/utils/showToast'
 import { useRouter } from 'next/navigation'
 import { removeAttributeValues } from '@/libs/api/productAttributeValues'
+import { Box, Button, Chip, CircularProgress, DialogContent, DialogContentText } from '@mui/material'
+import UpdateAttributeValuesModal from './UpdateAttributeValuesModal'
+import CustomDialog from '@/@core/components/mui/CustomDialog'
 
 const RemoveAttributeValueModal = ({ id, children }: { id: number; children: React.ReactElement }) => {
   const [open, setOpen] = useState(false)
   const router = useRouter()
+  const [attributeValueId, setAttributeValueId] = useState<string | null>(null)
 
-  const handleOpen = () => setOpen(true)
+  const [isDeleting, setIsDeleting] = useState<boolean>(false)
+
+  const handleOpen = (id: string) => {
+    setAttributeValueId(id)
+    setOpen(true)
+  }
+
   const handleCancel = () => setOpen(false)
 
   const handleConfirm = async () => {
+    if (!attributeValueId || isDeleting) return
+    setIsDeleting(true)
+
     try {
       const res = await removeAttributeValues(id.toString())
 
@@ -26,6 +39,7 @@ const RemoveAttributeValueModal = ({ id, children }: { id: number; children: Rea
     } catch (err) {
       showToast({ type: 'error', message: 'خطای سیستمی' })
     } finally {
+      setIsDeleting(false)
       setOpen(false)
     }
   }
@@ -33,16 +47,27 @@ const RemoveAttributeValueModal = ({ id, children }: { id: number; children: Rea
   return (
     <>
       {cloneElement(children, { onDelete: handleOpen })}
-      <ConfirmDeleteDialog
+
+      <CustomDialog
         open={open}
-        onConfirm={handleConfirm}
-        onCancel={handleCancel}
-        title='آیا از حذف ویژگی اطمینان دارید؟'
-        children='این عملیات قابل بازگشت نیست'
-        confirmText='حذف'
-        cancelText='لغو'
+        onClose={handleCancel}
+        title='آیا از حذف فایل اطمینان دارید؟'
         defaultMaxWidth='sm'
-      />
+        actions={
+          <>
+            <Button onClick={handleCancel} color='secondary'>
+              لغو
+            </Button>
+            <Button onClick={handleConfirm} disabled={isDeleting} variant='contained' color='error' startIcon={isDeleting ? <CircularProgress size={20} color='inherit' /> : null}>
+              {isDeleting ? 'در حال حذف...' : 'حذف'}
+            </Button>
+          </>
+        }
+      >
+        <DialogContent>
+          <DialogContentText>این عملیات قابل بازگشت نیست</DialogContentText>
+        </DialogContent>
+      </CustomDialog>
     </>
   )
 }

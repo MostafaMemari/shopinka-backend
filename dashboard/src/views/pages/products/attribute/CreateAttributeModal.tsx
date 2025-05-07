@@ -3,7 +3,7 @@ import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
-import { MenuItem } from '@mui/material'
+import { CircularProgress, MenuItem } from '@mui/material'
 import { AttributeType, type AttributeForm } from '@/types/productAttributes'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { createAttribute } from '@/libs/api/productAttributes'
@@ -16,6 +16,8 @@ import { attributeSchema } from '@/libs/validators/attribute.schemas'
 const CreateAttributeModal = () => {
   const [open, setOpen] = useState<boolean>(false)
   const router = useRouter()
+
+  const [isCreating, setIsCreating] = useState<boolean>(false)
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -46,6 +48,8 @@ const CreateAttributeModal = () => {
   }, [reset])
 
   const onSubmit = async (formData: AttributeForm) => {
+    setIsCreating(true)
+
     try {
       const res = await createAttribute({
         name: formData.name,
@@ -77,6 +81,8 @@ const CreateAttributeModal = () => {
       }
     } catch (error: any) {
       showToast({ type: 'error', message: 'خطای سیستمی' })
+    } finally {
+      setIsCreating(false)
     }
   }
 
@@ -96,8 +102,14 @@ const CreateAttributeModal = () => {
             <Button onClick={handleClose} color='secondary'>
               انصراف
             </Button>
-            <Button onClick={handleSubmit(onSubmit)} variant='contained'>
-              ثبت
+            <Button
+              onClick={handleSubmit(onSubmit)}
+              disabled={isCreating}
+              color='primary'
+              variant='contained'
+              startIcon={isCreating ? <CircularProgress size={20} color='inherit' /> : null}
+            >
+              {isCreating ? 'در حال ثبت...' : 'ثبت'}
             </Button>
           </>
         }
