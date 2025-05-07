@@ -1,5 +1,4 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { ISendRequest } from '../../common/interfaces/http.interface';
 import { ZarinpalService } from '../http/zarinpal.service';
 import { PaymentRepository } from './payment.repository';
 import { Prisma, Transaction, TransactionStatus } from 'generated/prisma';
@@ -13,6 +12,10 @@ import { sortObject } from '../../common/utils/functions.utils';
 import { pagination } from '../../common/utils/pagination.utils';
 import { CacheService } from '../cache/cache.service';
 import { QueryTransactionsDto } from './dto/transactions-query.dto';
+import { PaymentDto } from './dto/payment.dto';
+import { CartService } from '../cart/cart.service';
+import { OrderService } from '../order/order.service';
+import { OrderRepository } from '../order/order.repository';
 
 @Injectable()
 export class PaymentService {
@@ -22,7 +25,10 @@ export class PaymentService {
     constructor(
         private readonly paymentRepository: PaymentRepository,
         private readonly zarinpalService: ZarinpalService,
-        private readonly cacheService: CacheService
+        private readonly cacheService: CacheService,
+        private readonly cartService: CartService,
+        private readonly orderService: OrderService,
+        private readonly orderRepository: OrderRepository
     ) { }
 
     @Cron(CronExpression.EVERY_12_HOURS)
@@ -48,16 +54,32 @@ export class PaymentService {
         }
     }
 
-    async getGatewayUrl(data: ISendRequest) {
-        const { authority, code, gatewayURL } = await this.zarinpalService.sendRequest({
-            amount: data.amount * 10,
-            description: data.description,
-            user: data?.user,
-        });
+    async getGatewayUrl(userId: number, paymentDto: PaymentDto) {
+        const cart = await this.cartService.me(userId)
+        const order = await this.orderService.create(userId, cart, paymentDto)
 
-        await this.paymentRepository.create({ data: { amount: data.amount * 10, userId: data.userId, authority } });
+        try {
+            const { authority, code, gatewayURL } = await this.zarinpalService.sendRequest({
+                amount: cart.finalPrice * 10,
+                description: paymentDto.description ?? "PAYMENT ORDER",
+                user: { email: "example@gmail.com", mobile: order.user?.mobile }
+            });
 
-        return { authority, code, gatewayURL }
+            await this.paymentRepository.create({
+                data: {
+                    amount: cart.finalPrice,
+                    userId, authority,
+                    orderId: order.id,
+                    invoiceNumber: new Date().getTime().toString()
+                }
+            });
+
+            return { authority, code, gatewayURL }
+        } catch (error) {
+            await this.orderRepository.delete({ where: { id: order.id } })
+            throw error
+        }
+
     }
 
     async verify(data: IVerifyPayment) {

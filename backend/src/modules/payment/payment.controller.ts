@@ -8,7 +8,7 @@ import { PaymentDto } from './dto/payment.dto';
 import { AuthDecorator } from '../../common/decorators/auth.decorator';
 import { RefundPaymentDto } from './dto/refund.dto';
 import { QueryMyTransactionsDto } from './dto/user-transactions-query.dto';
-import { Roles } from 'src/common/decorators/role.decorator';
+import { Roles } from '../../common/decorators/role.decorator';
 import { QueryTransactionsDto } from './dto/transactions-query.dto';
 
 @Controller('payment')
@@ -20,7 +20,7 @@ export class PaymentController {
   @Post()
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   gatewayUrl(@Body() paymentDto: PaymentDto, @GetUser() user: User) {
-    return this.paymentService.getGatewayUrl({ ...paymentDto, user, userId: user.id, amount: 1, description: "" })
+    return this.paymentService.getGatewayUrl(user.id, paymentDto)
   }
 
   @Get('verify')
