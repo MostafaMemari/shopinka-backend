@@ -15,12 +15,12 @@ export type Gallery = {
 export type GalleryItemForm = {
   galleryId: string
   title: string
-  description: string
+  description: string | null
   image: FormData
 }
 
 export type GalleryItem = {
-  id: number
+  id: string
   galleryId: number
   title: string
   description: null

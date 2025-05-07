@@ -7,6 +7,7 @@ import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { useParams, useRouter } from 'next/navigation'
 import { showToast } from '@/utils/showToast'
 import { createGalleryItem } from '@/libs/api/client/galleyItem'
+import { formatFileSize } from '@/utils/formatters'
 
 type FileProp = {
   name: string
@@ -124,7 +125,7 @@ const CreateMediaModal = () => {
             {file.name}
           </Typography>
           <Typography className='file-size' variant='body2' sx={{ color: 'text.secondary' }}>
-            {Math.round(file.size / 100) / 10 > 1000 ? `${(Math.round(file.size / 100) / 10000).toFixed(1)} MB` : `${(Math.round(file.size / 100) / 10).toFixed(1)} KB`}
+            {formatFileSize(file.size)}
           </Typography>
         </div>
       </div>

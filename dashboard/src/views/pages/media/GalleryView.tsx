@@ -17,6 +17,9 @@ import { Gallery } from '@/types/gallery'
 import CustomTextField from '@/@core/components/mui/TextField'
 import MobileGalleryCard from './MobileGalleryCard'
 import DesktopGalleryTable from './DesktopGalleryTable'
+import NoMediaMessage from './NoMediaMessage'
+import CreateGalleryModal from './CreateGalleryModal'
+import { PermMedia } from '@mui/icons-material'
 
 const DebouncedInput = ({
   value: initialValue,
@@ -64,16 +67,28 @@ const GalleryView = ({ data: initialData }: { data: Gallery[] }) => {
   const paginatedData = data.slice(page * rowsPerPage, (page + 1) * rowsPerPage)
 
   return (
-    <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
-        <CreateUpdateGalleryModal />
-        <Box sx={{ display: 'flex', maxWidth: { xs: '100%', sm: 'auto' }, width: { xs: '100%', sm: 'auto' } }}>
-          <DebouncedInput value={searchTerm} onChange={value => setSearchTerm(String(value))} placeholder='جستجو' sx={{ width: '100%' }} />
-        </Box>
-      </Box>
-      {isMobile ? <MobileGalleryCard data={data} paginatedData={paginatedData} /> : <DesktopGalleryTable data={data} paginatedData={paginatedData} />}
-      <TablePaginationComponent filteredData={data} page={page} rowsPerPage={rowsPerPage} onPageChange={setPage} onRowsPerPageChange={rows => setRowsPerPage(rows)} />
-    </Card>
+    <>
+      {paginatedData.length === 0 ? (
+        <NoMediaMessage
+          title='هیچ گالری‌ای یافت نشد'
+          subtitle='به نظر می‌رسه هیچ گالری‌ای در این بخش وجود نداره. می‌تونید رسانه‌های جدید آپلود کنید!'
+          icon={<PermMedia color='action' sx={{ fontSize: 60, mb: 2, opacity: 0.7 }} />}
+        >
+          <CreateGalleryModal />
+        </NoMediaMessage>
+      ) : (
+        <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
+            <CreateUpdateGalleryModal />
+            <Box sx={{ display: 'flex', maxWidth: { xs: '100%', sm: 'auto' }, width: { xs: '100%', sm: 'auto' } }}>
+              <DebouncedInput value={searchTerm} onChange={value => setSearchTerm(String(value))} placeholder='جستجو' sx={{ width: '100%' }} />
+            </Box>
+          </Box>
+          {isMobile ? <MobileGalleryCard data={data} paginatedData={paginatedData} /> : <DesktopGalleryTable data={data} paginatedData={paginatedData} />}
+          <TablePaginationComponent filteredData={data} page={page} rowsPerPage={rowsPerPage} onPageChange={setPage} onRowsPerPageChange={rows => setRowsPerPage(rows)} />
+        </Card>
+      )}
+    </>
   )
 }
 
