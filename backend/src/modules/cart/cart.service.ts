@@ -9,6 +9,7 @@ import { CartItemMessages } from './enums/cart-item-messages.enum';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { pagination } from '../../common/utils/pagination.utils';
+import { IGetCart } from './interfaces/cart.interface';
 
 @Injectable()
 export class CartService {
@@ -19,7 +20,7 @@ export class CartService {
     private readonly productVariantRepository: ProductVariantRepository
   ) { }
 
-  async me(userId: number): Promise<{ finalPrice: number, totalSaved: number, cartItems: CartItem[] }> {
+  async me(userId: number): Promise<IGetCart> {
     const { items: cartItems }: Cart & { items: CartItem[] } =
       await this.cartRepository.findOneOrThrow({ where: { userId }, include: { items: { include: { product: true, productVariant: true } } } }) as any
 

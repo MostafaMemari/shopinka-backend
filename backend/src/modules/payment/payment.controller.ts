@@ -20,7 +20,7 @@ export class PaymentController {
   @Post()
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   gatewayUrl(@Body() paymentDto: PaymentDto, @GetUser() user: User) {
-    return this.paymentService.getGatewayUrl({ ...paymentDto, user, userId: user.id })
+    return this.paymentService.getGatewayUrl({ ...paymentDto, user, userId: user.id, amount: 1, description: "" })
   }
 
   @Get('verify')

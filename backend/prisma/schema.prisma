@@ -296,7 +296,7 @@ model Order {
   id          Int         @id() @default(autoincrement())
   userId      Int
   addressId   Int
-  orderNumber Int         @unique()
+  orderNumber String         @unique()
   quantity    Int
   totalPrice  Int
   status      OrderStatus @default(PENDING)
