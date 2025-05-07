@@ -47,13 +47,13 @@ export class CartService {
   async addItem(userId: number, createCartItemDto: CreateCartItemDto): Promise<{ message: string, cartItem: CartItem }> {
     const { quantity, productId, productVariantId } = createCartItemDto
 
-    if (productId && productVariantId) throw new BadRequestException()
+    if (productId && productVariantId) throw new BadRequestException(CartItemMessages.OneFailedAllowed)
 
     const existingCartItem = await this.cartItemRepository.findOne({ where: { OR: [{ productId }, { productVariantId }] } })
 
     if (existingCartItem) throw new ConflictException(CartItemMessages.AlreadyExistsCartItem)
 
-    const cart = await this.cartRepository.findOneOrThrow({ where: { userId } })
+    const cart = await this.cartRepository.findOneOrThrow({ where: { userId }, include: { items: true } })
 
     const product = productId && await this.productRepository.findOneOrThrow({ where: { id: productId } })
     const productVariant = productVariantId && await this.productVariantRepository.findOneOrThrow({ where: { id: productVariantId } })
