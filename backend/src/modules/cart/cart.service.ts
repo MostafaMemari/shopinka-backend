@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { CartRepository } from './repositories/cart.repository';
-import { Cart, CartItem } from 'generated/prisma';
+import { Cart, CartItem, Prisma } from 'generated/prisma';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { CartItemRepository } from './repositories/cardItem.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
@@ -19,12 +19,31 @@ export class CartService {
     private readonly productVariantRepository: ProductVariantRepository
   ) { }
 
-  async me(userId: number): Promise<Cart> {
-    const cart = await this.cartRepository.findOne({ where: { userId }, include: { items: true } })
+  async me(userId: number): Promise<{ finalPrice: number, totalSaved: number, cartItems: CartItem[] }> {
+    const { items: cartItems }: Cart & { items: CartItem[] } =
+      await this.cartRepository.findOneOrThrow({ where: { userId }, include: { items: { include: { product: true, productVariant: true } } } }) as any
 
-    if (cart) return cart
+    let finalPrice = 0
+    let totalSaved = 0
 
-    return this.cartRepository.create({ data: { userId }, include: { items: true } })
+    cartItems.forEach(item => {
+      if (item.productId) {
+        const discountPerItem = (item['product'].salePrice * item.quantity)
+        totalSaved += discountPerItem
+        finalPrice += (item['product'].basePrice * item.quantity) - discountPerItem
+      }
+      if (item.productVariantId) {
+        const discountPerItem = (item['productVariant'].salePrice * item.quantity)
+        totalSaved += discountPerItem
+        finalPrice += (item['productVariant'].basePrice * item.quantity) - discountPerItem
+      }
+    })
+
+    return {
+      finalPrice,
+      totalSaved,
+      cartItems
+    }
   }
 
   async clear(userId: number): Promise<Cart> {
