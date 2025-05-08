@@ -108,6 +108,8 @@ model GalleryItem {
   description         String?
   fileUrl             String
   fileKey             String
+  thumbnailUrl        String?
+  thumbnailKey        String?
   mimetype            String
   size                Int
   isDeleted           Boolean          @default(false)
