@@ -68,7 +68,7 @@ export class PaymentService {
             const { authority, code, gatewayURL } = await this.zarinpalService.sendRequest({
                 amount: cart.finalPrice * 10,
                 description: paymentDto.description ?? "PAYMENT ORDER",
-                user: { email: "example@gmail.com", mobile: order.user?.mobile }
+                user: { email: "example@gmail.com", mobile: order['user']?.mobile }
             });
 
             await this.paymentRepository.create({

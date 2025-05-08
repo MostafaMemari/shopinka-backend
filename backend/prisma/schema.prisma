@@ -132,6 +132,7 @@ model Address {
   postalCode     String   @unique() @map("postal_code")
   receiverMobile String?  @map("receiver_mobile")
   description    String?
+  orders         Order[]
   createdAt      DateTime @default(now())
   updatedAt      DateTime @default(now())
 }
@@ -307,6 +308,7 @@ model Order {
   status      OrderStatus  @default(PENDING)
   items       OrderItem[]
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address     Address      @relation(fields: [addressId], references: [id], onDelete: SetDefault)
   transaction Transaction? @relation("TransactionOrder")
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt()

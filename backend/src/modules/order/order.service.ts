@@ -1,16 +1,16 @@
 import { BadRequestException, Inject } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { IGetCart } from '../cart/interfaces/cart.interface';
 import { PaymentDto } from '../payment/dto/payment.dto';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { AddressRepository } from '../address/address.repository';
-import { CartItem, OrderItem, OrderStatus } from 'generated/prisma';
+import { CartItem, Order, OrderStatus } from 'generated/prisma';
+import { OrderRepository } from './order.repository';
 
 export class OrderService {
   constructor(
     @Inject(REQUEST) private readonly req: Request,
-    private readonly prismaService: PrismaService,
+    private readonly orderRepository: OrderRepository,
     private readonly addressRepository: AddressRepository
   ) { }
   private generateOrderNumber(): string {
@@ -32,7 +32,7 @@ export class OrderService {
     });
   }
 
-  async create(userId: number, cart: IGetCart, paymentDto: PaymentDto) {
+  async create(userId: number, cart: IGetCart, paymentDto: PaymentDto): Promise<Order> {
     const { addressId } = paymentDto;
     const { cartItems, finalPrice } = cart;
 
@@ -47,19 +47,17 @@ export class OrderService {
     const orderNumber = this.generateOrderNumber();
     const orderItems = this.mapCartItemsToOrderItems(cartItems);
 
-    return this.prismaService.$transaction(async (tx) => {
-      return tx.order.create({
-        data: {
-          addressId,
-          orderNumber,
-          totalPrice: finalPrice,
-          status: OrderStatus.PENDING,
-          userId,
-          quantity: cartItems.length,
-          items: { create: orderItems },
-        },
-        include: { items: true, user: true },
-      });
+    return await this.orderRepository.create({
+      data: {
+        addressId,
+        orderNumber,
+        totalPrice: finalPrice,
+        status: OrderStatus.PENDING,
+        userId,
+        quantity: cartItems.length,
+        items: { create: orderItems },
+      },
+      include: { items: true, user: true },
     });
   }
 
@@ -68,7 +66,7 @@ export class OrderService {
     return `This action returns all order`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  findOne(userId: number, orderId: number): Promise<Order> {
+    return this.orderRepository.findOneOrThrow({ where: { id: orderId, userId }, include: { items: true, address: true } })
   }
 }
