@@ -189,6 +189,7 @@ model Product {
   comments         Comment[]
   cartItems        CartItem[]
   orderItems       OrderItem[]
+  seoMeta          SeoMeta?         @relation("SeoMetaProduct")
   width            Int?
   height           Int?
   length           Int?
@@ -327,4 +328,21 @@ model OrderItem {
   order          Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
+}
+
+model SeoMeta {
+  id            Int      @id @default(autoincrement())
+  productId     Int      @unique
+  title         String?
+  description   String?
+  keywords      String[] @default([])
+  canonicalUrl  String?  @map("canonical_url")
+  ogTitle       String?  @map("og_title")
+  ogDescription String?  @map("og_description")
+  ogImage       String?  @map("og_image")
+  robotsTag     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  product Product @relation("SeoMetaProduct", fields: [productId], references: [id], onDelete: Cascade)
 }
