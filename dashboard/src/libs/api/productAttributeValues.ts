@@ -1,7 +1,7 @@
 import { AttributeValueForm, AttributeValues } from '@/types/productAttributes'
 import { serverApiFetch } from '@/utils/api'
 
-export const removeAttributeValues = async (id: string): Promise<{ status: number; data: { message: string; attribute: AttributeValues } | null }> => {
+export const removeAttributeValue = async (id: string): Promise<{ status: number; data: { message: string; attribute: AttributeValues } | null }> => {
   try {
     const res = await serverApiFetch(`/attribute-value/${id}`, { method: 'DELETE' })
 

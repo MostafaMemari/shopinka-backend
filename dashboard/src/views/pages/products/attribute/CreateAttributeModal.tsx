@@ -4,7 +4,7 @@ import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
 import { CircularProgress, MenuItem } from '@mui/material'
-import { AttributeType, type AttributeForm } from '@/types/productAttributes'
+import { AttributeType, type AttributeFormType } from '@/types/productAttributes'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { createAttribute } from '@/libs/api/productAttributes'
 import { showToast } from '@/utils/showToast'
@@ -26,9 +26,8 @@ const CreateAttributeModal = () => {
     control,
     reset,
     handleSubmit,
-    formState: { errors },
-    setValue
-  } = useForm<AttributeForm>({
+    formState: { errors }
+  } = useForm<AttributeFormType>({
     resolver: yupResolver(attributeSchema),
     defaultValues: {
       name: '',
@@ -47,7 +46,7 @@ const CreateAttributeModal = () => {
     })
   }, [reset])
 
-  const onSubmit = async (formData: AttributeForm) => {
+  const onSubmit = async (formData: AttributeFormType) => {
     setIsCreating(true)
 
     try {
@@ -55,8 +54,7 @@ const CreateAttributeModal = () => {
         name: formData.name,
         slug: formData.slug ?? undefined,
         type: formData.type,
-        description: formData.description || null,
-        values: []
+        description: formData.description || null
       })
 
       const errorMessage = handleApiError(res.status, errorAttributeMessage)

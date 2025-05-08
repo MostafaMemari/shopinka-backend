@@ -1,6 +1,7 @@
 import { removeAttribute } from '@/libs/api/productAttributes'
 import { useRouter } from 'next/navigation'
 import ConfirmDeleteModal from '@/components/ConfirmDeleteModal'
+import { IconButton } from '@mui/material'
 
 const RemoveAttributeModal = ({ id }: { id: number }) => {
   const router = useRouter()
@@ -22,9 +23,11 @@ const RemoveAttributeModal = ({ id }: { id: number }) => {
         notFound: 'ویژگی مورد نظر یافت نشد',
         error: 'خطای عمومی هنگام حذف ویژگی'
       }}
-      buttonText='حذف ویژگی'
+      buttonText='حذف'
     >
-      <i className='tabler-trash text-gray-500 text-lg' />
+      <IconButton size='small'>
+        <i className='tabler-trash text-gray-500 text-lg' />
+      </IconButton>
     </ConfirmDeleteModal>
   )
 }

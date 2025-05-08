@@ -16,9 +16,7 @@ import tableStyles from '@core/styles/table.module.css'
 // API Import
 import { AttributeType, Attribute } from '@/types/productAttributes'
 import UpdateAttributeValuesModal from './attributeValue/UpdateAttributeValuesModal'
-import ConfirmDeleteModal from '@/components/ConfirmDeleteModal'
-import { removeAttribute } from '@/libs/api/productAttributes'
-import { useRouter } from 'next/navigation'
+import { Fragment } from 'react'
 
 const DesktopAttributeTable = ({ paginatedData }: { data: Attribute[]; paginatedData: Attribute[] }) => {
   return (
@@ -56,7 +54,7 @@ const DesktopAttributeTable = ({ paginatedData }: { data: Attribute[]; paginated
                       row.type === AttributeType.COLOR ? (
                         <Box display='flex' flexWrap='wrap' alignItems='center' gap={1}>
                           {row.values.map(item => (
-                            <RemoveAttributeValueModal key={item.id} id={item.id}>
+                            <Fragment key={item.id}>
                               <Chip
                                 label={
                                   <Box display='flex' alignItems='center' gap={1}>
@@ -72,36 +70,54 @@ const DesktopAttributeTable = ({ paginatedData }: { data: Attribute[]; paginated
 
                                     <UpdateAttributeValuesModal
                                       attributeType={row.type}
-                                      initialData={{ ...item, id: String(item.id), buttonLabel: item.buttonLabel ?? undefined, attributeId: String(item.attributeId) }}
+                                      initialData={{
+                                        ...item,
+                                        id: String(item.id),
+                                        buttonLabel: item.buttonLabel ?? undefined,
+                                        attributeId: String(item.attributeId)
+                                      }}
                                     />
+
+                                    <div className='mt-1'>
+                                      <RemoveAttributeValueModal id={row.id} />
+                                    </div>
                                   </Box>
                                 }
                                 color='secondary'
                                 variant='outlined'
-                                deleteIcon={<i className='tabler-trash-x' />}
                                 sx={{ direction: 'rtl', margin: '2px' }}
                               />
-                            </RemoveAttributeValueModal>
+                            </Fragment>
                           ))}
                           <CreateAttributeValueModal attributeName={row.name} attributeId={row.id} attributeType={row.type} />
                         </Box>
                       ) : (
                         <Box display='flex' flexWrap='wrap' alignItems='center' gap={1}>
                           {row.values.map(item => (
-                            <RemoveAttributeValueModal key={item.id} id={item.id}>
+                            <Fragment key={item.id}>
                               <Chip
                                 label={
-                                  <UpdateAttributeValuesModal
-                                    attributeType={row.type}
-                                    initialData={{ ...item, id: String(item.id), buttonLabel: item.buttonLabel ?? undefined, attributeId: String(item.attributeId) }}
-                                  />
+                                  <Box display='flex' alignItems='center' gap={1}>
+                                    <UpdateAttributeValuesModal
+                                      attributeType={row.type}
+                                      initialData={{
+                                        ...item,
+                                        id: String(item.id),
+                                        buttonLabel: item.buttonLabel ?? undefined,
+                                        attributeId: String(item.attributeId)
+                                      }}
+                                    />
+
+                                    <div className='mt-1'>
+                                      <RemoveAttributeValueModal id={row.id} />
+                                    </div>
+                                  </Box>
                                 }
                                 color='secondary'
                                 variant='outlined'
-                                deleteIcon={<i className='tabler-trash-x' />}
                                 sx={{ direction: 'rtl', margin: '2px' }}
                               />
-                            </RemoveAttributeValueModal>
+                            </Fragment>
                           ))}
                           <CreateAttributeValueModal attributeName={row.name} attributeId={row.id} attributeType={row.type} />
                         </Box>

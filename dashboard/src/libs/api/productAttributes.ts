@@ -1,4 +1,4 @@
-import { Attribute, AttributeValueForm } from '@/types/productAttributes'
+import { Attribute, AttributeFormType, AttributeValueForm } from '@/types/productAttributes'
 import { Response } from '@/types/response'
 import { serverApiFetch } from '@/utils/api'
 
@@ -65,7 +65,7 @@ export const updateAttribute = async (id: string, data: Partial<AttributeValueFo
   }
 }
 
-export const createAttribute = async (data: Omit<Attribute, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<{ status: number; data: Attribute | null }> => {
+export const createAttribute = async (data: AttributeFormType): Promise<{ status: number; data: Attribute | null }> => {
   try {
     const res = await serverApiFetch('/attribute', {
       method: 'POST',

@@ -53,38 +53,40 @@ const RemoveGalleryItemModal = ({ selectedImages, onClearSelection }: RemoveGall
   }
 
   return (
-    <div>
-      <Button variant='contained' color='error' onClick={() => handleOpen(selectedImages)}>
-        حذف {selectedImages.length} مورد
-      </Button>
+    <>
+      <div>
+        <Button variant='contained' color='error' onClick={() => handleOpen(selectedImages)}>
+          حذف {selectedImages.length} مورد
+        </Button>
 
-      <CustomDialog
-        open={open}
-        onClose={handleCancel}
-        title='آیا از حذف فایل اطمینان دارید؟'
-        defaultMaxWidth='sm'
-        actions={
-          <>
-            <Button onClick={handleCancel} color='secondary'>
-              لغو
-            </Button>
-            <Button
-              onClick={handleConfirm}
-              variant='contained'
-              color='error'
-              disabled={!galleryItemIds?.length || isDeleting}
-              startIcon={isDeleting ? <CircularProgress size={20} color='inherit' /> : null}
-            >
-              {isDeleting ? 'در حال حذف...' : 'حذف'}
-            </Button>
-          </>
-        }
-      >
-        <DialogContent>
-          <DialogContentText>این عملیات قابل بازگشت نیست</DialogContentText>
-        </DialogContent>
-      </CustomDialog>
-    </div>
+        <CustomDialog
+          open={open}
+          onClose={handleCancel}
+          title='آیا از حذف فایل اطمینان دارید؟'
+          defaultMaxWidth='sm'
+          actions={
+            <>
+              <Button onClick={handleCancel} color='secondary'>
+                لغو
+              </Button>
+              <Button
+                onClick={handleConfirm}
+                variant='contained'
+                color='error'
+                disabled={!galleryItemIds?.length || isDeleting}
+                startIcon={isDeleting ? <CircularProgress size={20} color='inherit' /> : null}
+              >
+                {isDeleting ? 'در حال حذف...' : 'حذف'}
+              </Button>
+            </>
+          }
+        >
+          <DialogContent>
+            <DialogContentText>این عملیات قابل بازگشت نیست</DialogContentText>
+          </DialogContent>
+        </CustomDialog>
+      </div>
+    </>
   )
 }
 
