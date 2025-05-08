@@ -8,7 +8,7 @@ import { IUploadSingleFile } from '../../../common/interfaces/aws.interface';
 import { GalleryItem, Prisma } from 'generated/prisma';
 import { GalleryItemQueryDto } from '../dto/gallery-item-query.dto';
 import { CacheService } from '../../../modules/cache/cache.service';
-import { sortObject } from '../../../common/utils/functions.utils';
+import { resizeImageWithSharp, sortObject } from '../../../common/utils/functions.utils';
 import { CacheKeys } from '../../../common/enums/cache.enum';
 import { pagination } from '../../../common/utils/pagination.utils';
 import { MoveGalleryItemDto } from '../dto/move-gallery-item.dto';
@@ -62,19 +62,26 @@ export class GalleryItemService {
 
 
   async create(userId: number, files: Express.Multer.File[], createGalleryItemDto: CreateGalleryItemDto): Promise<{ message: string, galleryItems: GalleryItem[] }> {
-    let uploadedFiles: IUploadSingleFile[] = []
+    let originals: IUploadSingleFile[] = []
+    let thumbnails: IUploadSingleFile[] = []
+
+    const gallery = await this.galleryRepository.findOneOrThrow({
+      where: { id: createGalleryItemDto.galleryId, userId },
+    })
+
+    const folder = `gallery-${gallery.id}-${userId}`
 
     try {
-      const gallery = await this.galleryRepository.findOneOrThrow({ where: { id: createGalleryItemDto.galleryId, userId } })
+      originals = await this.awsService.uploadMultiFiles(folder, files)
 
-      const folderName = `gallery-${gallery.id}-${userId}`
-
-      uploadedFiles = await this.awsService.uploadMultiFiles(folderName, files)
+      thumbnails = await this.generateAndUploadThumbnails(files, folder)
 
       const galleryItems = await this.galleryItemRepository.createMany({
-        data: uploadedFiles.map((file, index) => ({
+        data: originals.map((file, index) => ({
           fileKey: file.key,
           fileUrl: file.url,
+          thumbnailKey: thumbnails[index].key,
+          thumbnailUrl: thumbnails[index].url,
           mimetype: files[index].mimetype,
           size: files[index].size,
           title: createGalleryItemDto.title ?? files[index].originalname,
@@ -86,7 +93,8 @@ export class GalleryItemService {
 
       return { message: GalleryItemMessages.CreatedGalleryItemsSuccess, galleryItems }
     } catch (error) {
-      if (uploadedFiles.length) await this.awsService.removeFiles(uploadedFiles.map((file => file.key)))
+      if (originals.length) await this.awsService.removeFiles(originals.map((file => file.key)))
+      if (thumbnails.length) await this.awsService.removeFiles(thumbnails.map((file => file.key)))
 
       throw error
     }
@@ -213,5 +221,29 @@ export class GalleryItemService {
     const updatedGalleryItem = await this.galleryItemRepository.updateMany({ where: { id: { in: galleryItemIds } }, data: { deletedAt: new Date(), isDeleted: true } })
 
     return { message: GalleryItemMessages.TrashedGalleryItemsSuccess, galleryItems: updatedGalleryItem }
+  }
+
+  private async generateAndUploadThumbnails(
+    files: Express.Multer.File[],
+    folder: string
+  ): Promise<IUploadSingleFile[]> {
+    const thumbnails: IUploadSingleFile[] = []
+
+    for (const file of files) {
+      const thumbnail = await resizeImageWithSharp(file.buffer, {
+        height: 100,
+        width: 100,
+        name: file.originalname,
+      })
+
+      const upload = await this.awsService.uploadSingleFile({
+        folderName: folder,
+        fileMetadata: { file: thumbnail.buffer, fileName: file.originalname },
+      })
+
+      thumbnails.push(upload)
+    }
+
+    return thumbnails
   }
 }
