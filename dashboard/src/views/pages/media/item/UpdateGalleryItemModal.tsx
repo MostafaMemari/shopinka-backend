@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation'
 import getChangedFields from '@/utils/getChangedFields'
 import { gallerySchema } from '@/libs/validators/gallery.schemas'
 
-const UpdateGalleryModal = ({ initialData }: { initialData: Partial<Gallery> }) => {
+const UpdateGalleryItemModal = ({ initialData }: { initialData: Partial<Gallery> }) => {
   const [open, setOpen] = useState<boolean>(false)
   const router = useRouter()
 
@@ -72,7 +72,7 @@ const UpdateGalleryModal = ({ initialData }: { initialData: Partial<Gallery> }) 
         }
 
         if (res.status === 200) {
-          showToast({ type: 'success', message: 'گالری با موفقیت ویرایش شد' })
+          showToast({ type: 'success', message: 'ویژگی با موفقیت ویرایش شد' })
           router.refresh()
 
           reset({
@@ -96,7 +96,7 @@ const UpdateGalleryModal = ({ initialData }: { initialData: Partial<Gallery> }) 
       <CustomDialog
         open={open}
         onClose={handleClose}
-        title='بروزرسانی گالری'
+        title='بروزرسانی ویژگی'
         defaultMaxWidth='xs'
         actions={
           <>
@@ -114,7 +114,7 @@ const UpdateGalleryModal = ({ initialData }: { initialData: Partial<Gallery> }) 
             name='title'
             control={control}
             render={({ field }) => (
-              <CustomTextField {...field} fullWidth label='نام گالری' placeholder='لطفا نام گالری را وارد کنید' error={!!errors.title} helperText={errors.title?.message} />
+              <CustomTextField {...field} fullWidth label='نام ویژگی' placeholder='لطفا نام ویژگی را وارد کنید' error={!!errors.title} helperText={errors.title?.message} />
             )}
           />
           <Controller
@@ -128,7 +128,7 @@ const UpdateGalleryModal = ({ initialData }: { initialData: Partial<Gallery> }) 
                 multiline
                 rows={4}
                 label='توضیحات'
-                placeholder='لطفا توضیحات گالری را وارد کنید'
+                placeholder='لطفا توضیحات ویژگی را وارد کنید'
                 error={!!errors.description}
                 helperText={errors.description?.message}
                 onChange={e => field.onChange(e.target.value || null)}
@@ -141,4 +141,4 @@ const UpdateGalleryModal = ({ initialData }: { initialData: Partial<Gallery> }) 
   )
 }
 
-export default UpdateGalleryModal
+export default UpdateGalleryItemModal

@@ -1,7 +1,7 @@
-import type { AttributeValueFormValues } from '@/types/productAttributes'
+import { AttributeValueForm, AttributeValues } from '@/types/productAttributes'
 import { serverApiFetch } from '@/utils/api'
 
-export const removeAttributeValues = async (id: string): Promise<{ status: number; data: { message: string; attribute: AttributeValueFormValues } | null }> => {
+export const removeAttributeValues = async (id: string): Promise<{ status: number; data: { message: string; attribute: AttributeValues } | null }> => {
   try {
     const res = await serverApiFetch(`/attribute-value/${id}`, { method: 'DELETE' })
 
@@ -16,11 +16,11 @@ export const removeAttributeValues = async (id: string): Promise<{ status: numbe
   }
 }
 
-export const updateAttributeValues = async (id: string, data: Partial<AttributeValueFormValues>): Promise<{ status: number; data: AttributeValueFormValues | null }> => {
+export const updateAttributeValues = async (id: string, data: Partial<AttributeValueForm>): Promise<{ status: number; data: AttributeValues | null }> => {
   try {
     const res = await serverApiFetch(`/attribute-value/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(data)
+      body: { ...data }
     })
 
     return {
@@ -34,11 +34,11 @@ export const updateAttributeValues = async (id: string, data: Partial<AttributeV
   }
 }
 
-export const createAttributeValues = async (data: Omit<AttributeValueFormValues, 'id'>): Promise<{ status: number; data: AttributeValueFormValues | null }> => {
+export const createAttributeValues = async (data: Omit<AttributeValueForm, 'id'>): Promise<{ status: number; data: AttributeValues | null }> => {
   try {
     const res = await serverApiFetch('/attribute-value', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: { ...data }
     })
 
     return {

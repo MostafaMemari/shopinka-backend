@@ -1,10 +1,8 @@
-'use server'
-
 import { ofetch } from 'ofetch'
-import { cookies } from 'next/headers'
+import Cookies from 'js-cookie'
 import { COOKIE_NAMES } from '@/libs/constants'
 
-export const serverApiFetch = async (
+export const clientApiFetch = async (
   path: string,
   options: {
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
@@ -13,14 +11,13 @@ export const serverApiFetch = async (
     headers?: HeadersInit
   } = {}
 ) => {
-  const cookieStore = await cookies()
-  const token = cookieStore.get(COOKIE_NAMES.ACCESS_TOKEN)?.value || ''
+  const token = Cookies.get(COOKIE_NAMES.ACCESS_TOKEN) || ''
 
   const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData
 
   try {
     const data = await ofetch(path, {
-      baseURL: process.env.API_BASE_URL,
+      baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
       method: options.method || 'GET',
       body: isFormData ? options.body : options.body,
       query: options.query,
@@ -31,14 +28,11 @@ export const serverApiFetch = async (
       }
     })
 
-    return {
-      status: 200,
-      data
-    }
+    return { status: 200, data }
   } catch (error: any) {
     return {
       status: error?.response?.status || 500,
-      data: error?.data || { message: 'خطای ناشناخته' }
+      data: error?.data || { message: 'خطای ناشناخته در کلاینت' }
     }
   }
 }

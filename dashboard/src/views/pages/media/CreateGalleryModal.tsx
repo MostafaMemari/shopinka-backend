@@ -55,8 +55,8 @@ const CreateGalleryModal = () => {
         return
       }
 
-      if (res.status === 201) {
-        showToast({ type: 'success', message: 'ویژگی با موفقیت ثبت شد' })
+      if (res.status === 201 || res.status === 200) {
+        showToast({ type: 'success', message: 'گالری با موفقیت ثبت شد' })
         router.refresh()
 
         reset({
@@ -97,7 +97,7 @@ const CreateGalleryModal = () => {
             name='title'
             control={control}
             render={({ field }) => (
-              <CustomTextField {...field} fullWidth label='نام ویژگی' placeholder='لطفا نام ویژگی را وارد کنید' error={!!errors.title} helperText={errors.title?.message} />
+              <CustomTextField {...field} fullWidth label='نام گالری' placeholder='لطفا نام گالری را وارد کنید' error={!!errors.title} helperText={errors.title?.message} />
             )}
           />
 
@@ -112,7 +112,7 @@ const CreateGalleryModal = () => {
                 multiline
                 rows={4}
                 label='توضیحات'
-                placeholder='لطفا توضیحات ویژگی را وارد کنید'
+                placeholder='لطفا توضیحات گالری را وارد کنید'
                 error={!!errors.description}
                 helperText={errors.description?.message}
                 onChange={e => field.onChange(e.target.value || null)}
