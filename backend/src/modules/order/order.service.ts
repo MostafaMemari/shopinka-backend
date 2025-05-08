@@ -5,7 +5,7 @@ import { PaymentDto } from '../payment/dto/payment.dto';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { AddressRepository } from '../address/address.repository';
-import { OrderStatus } from 'generated/prisma';
+import { CartItem, OrderItem, OrderStatus } from 'generated/prisma';
 
 export class OrderService {
   constructor(
@@ -13,43 +13,56 @@ export class OrderService {
     private readonly prismaService: PrismaService,
     private readonly addressRepository: AddressRepository
   ) { }
+  private generateOrderNumber(): string {
+    const number = Math.floor(Math.random() * 1_000_000_000).toString().padStart(9, '0');
+    return number.match(/.{1,3}/g)?.join('-') || '';
+  }
+
+  private mapCartItemsToOrderItems(cartItems: CartItem[]) {
+    return cartItems.map((item) => {
+      const base = item['product'] ?? item['productVariant'];
+      const price = (base.basePrice - base.salePrice) * item.quantity;
+
+      return {
+        productId: item.productId,
+        productVariantId: item.productVariantId,
+        quantity: item.quantity,
+        price,
+      };
+    });
+  }
 
   async create(userId: number, cart: IGetCart, paymentDto: PaymentDto) {
-    const { addressId } = paymentDto
-    const { cartItems, finalPrice } = cart
+    const { addressId } = paymentDto;
+    const { cartItems, finalPrice } = cart;
 
-    await this.addressRepository.findOneOrThrow({ where: { userId, id: addressId } })
-    console.log(cartItems)
-    return await this.prismaService.$transaction(async tx => {
-      const order = await tx.order.create({
+    if (!cartItems.length) {
+      throw new BadRequestException("Your cart list is empty.");
+    }
+
+    await this.addressRepository.findOneOrThrow({
+      where: { userId, id: addressId },
+    });
+
+    const orderNumber = this.generateOrderNumber();
+    const orderItems = this.mapCartItemsToOrderItems(cartItems);
+
+    return this.prismaService.$transaction(async (tx) => {
+      return tx.order.create({
         data: {
           addressId,
-          orderNumber: `${Math.random() * 10000}`, //TODO: Generate unique
+          orderNumber,
           totalPrice: finalPrice,
           status: OrderStatus.PENDING,
           userId,
           quantity: cartItems.length,
-          items: {
-            create: cartItems.map((item => ({
-              productId: item.productId,
-              productVariantId: item.productVariantId,
-              quantity: item.quantity,
-              price:
-                item['product']?.basePrice
-                  ? (item['product'].basePrice * item.quantity) - (item['product'].salePrice * item.quantity)
-                  : (item['productVariant'].basePrice * item.quantity) - (item['productVariant'].salePrice * item.quantity),
-            }
-            )))
-          }
+          items: { create: orderItems },
         },
-        include: { items: true , user: true }
-      })
-
-      if (!order['items'].length) throw new BadRequestException("Your cart list is empty.")
-
-      return order
-    })
+        include: { items: true, user: true },
+      });
+    });
   }
+
 
   findAll() {
     return `This action returns all order`;
@@ -57,13 +70,5 @@ export class OrderService {
 
   findOne(id: number) {
     return `This action returns a #${id} order`;
-  }
-
-  update(id: number) {
-    return `This action updates a #${id} order`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} order`;
   }
 }
