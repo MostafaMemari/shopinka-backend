@@ -1,17 +1,23 @@
-import { BadRequestException, Inject } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { IGetCart } from '../cart/interfaces/cart.interface';
 import { PaymentDto } from '../payment/dto/payment.dto';
-import { REQUEST } from '@nestjs/core';
-import { Request } from 'express';
 import { AddressRepository } from '../address/address.repository';
-import { CartItem, Order, OrderStatus } from 'generated/prisma';
+import { CartItem, Order, OrderStatus, Prisma } from 'generated/prisma';
 import { OrderRepository } from './order.repository';
+import { QueryOrderDto } from './dto/query-order.dto';
+import { CacheService } from '../cache/cache.service';
+import { sortObject } from '../../common/utils/functions.utils';
+import { CacheKeys } from '../../common/enums/cache.enum';
+import { pagination } from '../../common/utils/pagination.utils';
 
+@Injectable()
 export class OrderService {
+  private readonly CACHE_EXPIRE_TIME: number = 600 //* 5 minutes
+
   constructor(
-    @Inject(REQUEST) private readonly req: Request,
     private readonly orderRepository: OrderRepository,
-    private readonly addressRepository: AddressRepository
+    private readonly addressRepository: AddressRepository,
+    private readonly cacheService: CacheService
   ) { }
   private generateOrderNumber(): string {
     const number = Math.floor(Math.random() * 1_000_000_000).toString().padStart(9, '0');
@@ -62,8 +68,54 @@ export class OrderService {
   }
 
 
-  findAll() {
-    return `This action returns all order`;
+  async findAll(userId: number, { page, take, ...queryOrderDto }: QueryOrderDto): Promise<unknown> {
+    const paginationDto = { page, take };
+    const {
+      endDate,
+      sortBy,
+      sortDirection,
+      startDate,
+      includeItems,
+      addressId,
+      includeAddress,
+      maxPrice,
+      minPrice,
+      quantity,
+      includeTransaction
+    } = queryOrderDto;
+
+    const sortedDto = sortObject(queryOrderDto);
+
+    const cacheKey = `${CacheKeys.Orders}_${JSON.stringify(sortedDto)}`;
+
+    const cachedOrders = await this.cacheService.get<null | Order[]>(cacheKey);
+
+    if (cachedOrders) return { ...pagination(paginationDto, cachedOrders) }
+
+    const filters: Prisma.OrderWhereInput = { userId };
+
+    if (addressId) filters.addressId = addressId
+    if (quantity) filters.quantity = quantity
+    if (maxPrice || minPrice) {
+      filters.totalPrice = {};
+      if (maxPrice) filters.totalPrice.gte = maxPrice
+      if (minPrice) filters.totalPrice.lte = minPrice
+    }
+    if (startDate || endDate) {
+      filters.createdAt = {};
+      if (startDate) filters.createdAt.gte = new Date(startDate);
+      if (endDate) filters.createdAt.lte = new Date(endDate);
+    }
+
+    const orders = await this.orderRepository.findAll({
+      where: filters,
+      orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
+      include: { items: includeItems, address: includeAddress, transaction: includeTransaction }
+    });
+
+    await this.cacheService.set(cacheKey, orders, this.CACHE_EXPIRE_TIME);
+
+    return { ...pagination(paginationDto, orders) }
   }
 
   findOne(userId: number, orderId: number): Promise<Order> {
