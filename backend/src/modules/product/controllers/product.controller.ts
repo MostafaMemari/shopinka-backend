@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query, Put } from '@nestjs/common';
 import { ProductService } from '../services/product.service';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
@@ -11,6 +11,7 @@ import { Roles } from '../../../common/decorators/role.decorator';
 import { SkipAuth } from '../../../common/decorators/skip-auth.decorator';
 import { QueryProductDto } from '../dto/query-product.dto';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
+import { SeoMetaDto } from '../dto/seo-meta.dto';
 
 @Controller('product')
 @ApiTags('product')
@@ -56,6 +57,11 @@ export class ProductController {
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateProductDto: UpdateProductDto, @GetUser() user: User) {
     return this.productService.update(user.id, id, updateProductDto);
+  }
+
+  @Put(':id/seo-meta')
+  upsertSeo(@Param('id', ParseIntPipe) id: number, @Body() seoMetaDto: SeoMetaDto, @GetUser() user: User) {
+    return this.productService.upsertSeoMeta(user.id, id, seoMetaDto)
   }
 
   @Delete(':id')
