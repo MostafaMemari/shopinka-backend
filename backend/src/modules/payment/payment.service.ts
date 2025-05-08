@@ -47,12 +47,12 @@ export class PaymentService {
             const now = new Date();
             const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-            transactions.forEach(async (transaction) => {
+            for (const transaction of transactions) {
                 if (new Date(transaction.createdAt) < twentyFourHoursAgo) {
                     await this.paymentRepository.update({ where: { id: transaction.id }, data: { status: TransactionStatus.FAILED } });
                     this.logger.warn(`Transaction ${transaction.id} marked as FAILED due to timeout.`);
                 }
-            });
+            }
 
             this.logger.log('Expired transactions processing completed.');
         } catch (error) {
