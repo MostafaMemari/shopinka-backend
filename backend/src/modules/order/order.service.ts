@@ -1,8 +1,8 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { IGetCart } from '../cart/interfaces/cart.interface';
 import { PaymentDto } from '../payment/dto/payment.dto';
 import { AddressRepository } from '../address/address.repository';
-import { CartItem, Order, OrderStatus, Prisma } from 'generated/prisma';
+import { CartItem, Order, OrderItem, OrderStatus, Prisma } from 'generated/prisma';
 import { OrderRepository } from './repositories/order.repository';
 import { QueryOrderDto } from './dto/query-order.dto';
 import { CacheService } from '../cache/cache.service';
@@ -11,17 +11,60 @@ import { CacheKeys } from '../../common/enums/cache.enum';
 import { pagination } from '../../common/utils/pagination.utils';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { OrderItemRepository } from './repositories/order-item.repository';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { CartRepository } from '../cart/repositories/cart.repository';
 
 @Injectable()
 export class OrderService {
   private readonly CACHE_EXPIRE_TIME: number = 600 //* 5 minutes
+  private readonly logger: Logger = new Logger(OrderService.name)
 
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly orderItemRepository: OrderItemRepository,
     private readonly addressRepository: AddressRepository,
+    private readonly cartRepository: CartRepository,
     private readonly cacheService: CacheService
   ) { }
+
+  @Cron(CronExpression.EVERY_12_HOURS)
+  async handleExpiredPendingOrders() {
+    this.logger.log('Checking for expired pending orders...');
+
+    const TIMEOUT_MS = 24 * 60 * 60 * 1000; //* 24 hours
+    const expirationTime = new Date(Date.now() - TIMEOUT_MS);
+
+    try {
+      const expiredOrders = await this.orderRepository.findAll({
+        where: {
+          status: OrderStatus.PENDING,
+          createdAt: { lt: expirationTime },
+        },
+        include: { items: true }
+      });
+
+      for (const order of expiredOrders) {
+        await this.cartRepository.update({
+          where: { userId: order.userId },
+          data: {
+            items: {
+              connect: order['items'].map((item: OrderItem) => ({ ...item })),
+            },
+          },
+        });
+
+        await this.orderRepository.update({ where: { id: order.id }, data: { status: OrderStatus.CANCELED } });
+
+        this.logger.warn(`Order ${order.id} canceled due to timeout (created at ${order.createdAt}). Items returned to cart.`);
+      }
+
+      this.logger.log(`Expired pending orders processed successfully. Count: ${expiredOrders.length}`);
+    } catch (error) {
+      this.logger.error(`Error processing expired pending orders: ${error.message}`, error.stack);
+    }
+  }
+
+
   private generateOrderNumber(): string {
     const number = Math.floor(Math.random() * 1_000_000_000).toString().padStart(9, '0');
     return number.match(/.{1,3}/g)?.join('-') || '';
@@ -69,7 +112,6 @@ export class OrderService {
       include: { items: true, user: true },
     });
   }
-
 
   async findAll(userId: number, { page, take, ...queryOrderDto }: QueryOrderDto): Promise<unknown> {
     const paginationDto = { page, take };

@@ -8,6 +8,7 @@ import { OrderController } from './order.controller';
 import { AuthService } from '../auth/auth.service';
 import { UserRepository } from '../user/user.repository';
 import { OrderItemRepository } from './repositories/order-item.repository';
+import { CartRepository } from '../cart/repositories/cart.repository';
 
 @Module({
   controllers: [OrderController],
@@ -19,7 +20,8 @@ import { OrderItemRepository } from './repositories/order-item.repository';
     OrderRepository,
     AuthService,
     UserRepository,
-    OrderItemRepository
+    OrderItemRepository,
+    CartRepository
   ],
 })
 export class OrderModule { }

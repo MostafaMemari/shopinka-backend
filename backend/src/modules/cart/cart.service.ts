@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { CartRepository } from './repositories/cart.repository';
-import { Cart, CartItem, Prisma } from 'generated/prisma';
+import { Cart, CartItem, Prisma, ProductStatus } from 'generated/prisma';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { CartItemRepository } from './repositories/cardItem.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
@@ -28,16 +28,11 @@ export class CartService {
     let totalSaved = 0
 
     cartItems.forEach(item => {
-      if (item.productId) {
-        const discountPerItem = (item['product'].salePrice * item.quantity)
-        totalSaved += discountPerItem
-        finalPrice += (item['product'].basePrice * item.quantity) - discountPerItem
-      }
-      if (item.productVariantId) {
-        const discountPerItem = (item['productVariant'].salePrice * item.quantity)
-        totalSaved += discountPerItem
-        finalPrice += (item['productVariant'].basePrice * item.quantity) - discountPerItem
-      }
+      const base = item['product'] ?? item['productVariant']
+      const discountPerItem = (base.salePrice * item.quantity)
+
+      totalSaved += discountPerItem
+      finalPrice += (base.basePrice * item.quantity) - discountPerItem
     })
 
     return {
@@ -75,7 +70,7 @@ export class CartService {
 
     const cart = await this.cartRepository.findOneOrThrow({ where: { userId }, include: { items: true } })
 
-    const product = productId && await this.productRepository.findOneOrThrow({ where: { id: productId } })
+    const product = productId && await this.productRepository.findOneOrThrow({ where: { id: productId, status: ProductStatus.PUBLISHED } })
     const productVariant = productVariantId && await this.productVariantRepository.findOneOrThrow({ where: { id: productVariantId } })
 
     if (product && product.quantity < quantity) throw new BadRequestException(CartItemMessages.ProductNotAvailable)
