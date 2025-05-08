@@ -6,6 +6,7 @@ import { GetUser } from "../../common/decorators/get-user.decorator";
 import { User } from "generated/prisma";
 import { SkipAuth } from "../../common/decorators/skip-auth.decorator";
 import { QueryOrderDto } from "./dto/query-order.dto";
+import { PaginationDto } from "../../common/dtos/pagination.dto";
 
 @Controller('order')
 @ApiTags('order')
@@ -14,11 +15,16 @@ export class OrderController {
     constructor(private readonly orderService: OrderService) { }
 
     @Get()
-    @SkipAuth()
     findAll(@Query() queryOrderDto: QueryOrderDto, @GetUser() user: User) {
-        return this.orderService.findAll(1, queryOrderDto)
+        return this.orderService.findAll(user.id, queryOrderDto)
     }
 
+    @Get('item')
+    @SkipAuth()
+    findAllItems(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
+        return this.orderService.findAllItems(1, paginationDto)
+    }
+    
     @Get(":id")
     findOne(@Param("id", ParseIntPipe) id: number, @GetUser() user: User) {
         return this.orderService.findOne(user.id, id)

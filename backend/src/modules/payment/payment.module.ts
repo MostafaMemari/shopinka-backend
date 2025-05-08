@@ -13,7 +13,8 @@ import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 import { ProductRepository } from '../product/repositories/product.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
 import { AddressRepository } from '../address/address.repository';
-import { OrderRepository } from '../order/order.repository';
+import { OrderRepository } from '../order/repositories/order.repository';
+import { OrderItemRepository } from '../order/repositories/order-item.repository';
 
 @Module({
   imports: [ScheduleModule.forRoot()],
@@ -31,7 +32,8 @@ import { OrderRepository } from '../order/order.repository';
     ProductRepository,
     ProductVariantRepository,
     AddressRepository,
-    OrderRepository
+    OrderRepository,
+    OrderItemRepository
   ],
 })
 export class PaymentModule { }
