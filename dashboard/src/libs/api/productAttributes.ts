@@ -1,6 +1,6 @@
 import { Attribute, AttributeFormType, AttributeValueForm } from '@/types/productAttributes'
 import { Response } from '@/types/response'
-import { serverApiFetch } from '@/utils/api'
+import { serverApiFetch } from '@/utils/api/serverApiFetch'
 
 export const getAttributes = async (): Promise<Response<Attribute[]>> => {
   try {

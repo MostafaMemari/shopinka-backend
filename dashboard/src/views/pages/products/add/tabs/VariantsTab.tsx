@@ -181,7 +181,13 @@ const VariantsTab = () => {
                         fullWidth
                         label='مقادیر'
                         value={variant.values}
-                        onChange={e => handleVariantValuesChange(index, e.target.value.split(','))}
+                        onChange={e => {
+                          const value = e.target.value
+
+                          if (Array.isArray(value)) {
+                            handleVariantValuesChange(index, value as string[])
+                          }
+                        }}
                         SelectProps={{ multiple: true }}
                       >
                         {variantOptions[variant.type].map(option => (

@@ -1,14 +1,11 @@
 'use client'
 
+import { clientApiFetch } from '@/libs/clientApiFetch'
 import { GalleryItemForm } from '@/types/gallery'
-import { serverApiFetch } from '@/utils/api'
 
-export const createGalleryItem = async (formData: FormData): Promise<{ status: number; data: GalleryItemForm | null }> => {
+export const getGalleryItemClient = async (id: number): Promise<{ status: number; data: GalleryItemForm | null }> => {
   try {
-    const res = await serverApiFetch('/gallery-item', {
-      method: 'POST',
-      body: formData
-    })
+    const res = await clientApiFetch(`/gallery-item/${id}}`, { method: 'GET' })
 
     return {
       ...res

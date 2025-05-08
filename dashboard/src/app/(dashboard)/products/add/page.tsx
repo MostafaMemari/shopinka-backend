@@ -1,7 +1,9 @@
 // Component Imports
 import ProductAddHeader from '@/views/pages/products/add/ProductAddHeader'
+import ProductCategories from '@/views/pages/products/add/ProductCategories'
+import ProductGallery from '@/views/pages/products/add/ProductGallery'
 import ProductInformation from '@/views/pages/products/add/ProductInformation'
-import ProductOrganize from '@/views/pages/products/add/ProductOrganize'
+import ProductMainImage from '@/views/pages/products/add/ProductMainImage'
 import ProductPricing from '@/views/pages/products/add/ProductPricing'
 import ProductTab from '@/views/pages/products/add/tabs/ProductForm'
 import Grid from '@mui/material/Grid2'
@@ -17,12 +19,6 @@ const eCommerceProductsAdd = () => {
           <Grid size={{ xs: 12 }}>
             <ProductInformation />
           </Grid>
-          {/* <Grid size={{ xs: 12 }}>
-            <ProductImage />
-          </Grid> */}
-          {/* <Grid size={{ xs: 12 }}>
-            <ProductVariants />
-          </Grid> */}
           <Grid size={{ xs: 12 }}>
             <ProductTab />
           </Grid>
@@ -34,7 +30,13 @@ const eCommerceProductsAdd = () => {
             <ProductPricing />
           </Grid>
           <Grid size={{ xs: 12 }}>
-            <ProductOrganize />
+            <ProductMainImage />
+          </Grid>
+          <Grid size={{ xs: 12 }}>
+            <ProductGallery />
+          </Grid>
+          <Grid size={{ xs: 12 }}>
+            <ProductCategories />
           </Grid>
         </Grid>
       </Grid>

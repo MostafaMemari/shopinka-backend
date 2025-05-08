@@ -1,6 +1,7 @@
+'use client'
+
 import { ofetch } from 'ofetch'
-import Cookies from 'js-cookie'
-import { COOKIE_NAMES } from '@/libs/constants'
+import { getAccessToken } from '../getToken'
 
 export const clientApiFetch = async (
   path: string,
@@ -11,9 +12,7 @@ export const clientApiFetch = async (
     headers?: HeadersInit
   } = {}
 ) => {
-  const token = Cookies.get(COOKIE_NAMES.ACCESS_TOKEN) || ''
-
-  console.log(token)
+  const token = await getAccessToken()
 
   const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData
 
@@ -21,7 +20,7 @@ export const clientApiFetch = async (
     const data = await ofetch(path, {
       baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
       method: options.method || 'GET',
-      body: isFormData ? options.body : options.body,
+      body: isFormData ? options.body : JSON.stringify(options.body),
       query: options.query,
       headers: {
         Authorization: `Bearer ${token}`,
@@ -30,11 +29,24 @@ export const clientApiFetch = async (
       }
     })
 
-    return { status: 200, data }
-  } catch (error: any) {
     return {
-      status: error?.response?.status || 500,
-      data: error?.data || { message: 'خطای ناشناخته در کلاینت' }
+      status: 200,
+      data
+    }
+  } catch (error: any) {
+    const statusCode = error?.response?.status || error?.status || 500
+    const message = error?.data?.message || 'خطای ناشناخته'
+
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Client API Error:', { statusCode, message, error })
+    }
+
+    return {
+      status: statusCode,
+      data: {
+        message,
+        ...(error?.data || {})
+      }
     }
   }
 }

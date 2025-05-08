@@ -1,6 +1,6 @@
 import { GalleryItem, GalleryItemForm } from '@/types/gallery'
 import { Response } from '@/types/response'
-import { serverApiFetch } from '@/utils/api'
+import { serverApiFetch } from '@/utils/api/serverApiFetch'
 
 export const getItemGalleries = async (params: Record<string, string>): Promise<Response<GalleryItem[]>> => {
   try {
@@ -8,6 +8,8 @@ export const getItemGalleries = async (params: Record<string, string>): Promise<
       method: 'GET',
       query: { ...params }
     })
+
+    console.log(res)
 
     return {
       ...res
@@ -29,9 +31,24 @@ export const getItemGalleries = async (params: Record<string, string>): Promise<
   }
 }
 
-export const getGalleryItem = async (id: number): Promise<{ status: number; data: GalleryItemForm | null }> => {
+export const getGalleryItemById = async (id: number): Promise<{ status: number; data: GalleryItemForm | null }> => {
   try {
-    const res = await serverApiFetch(`/gallery-item/${id}}`, { method: 'DELETE' })
+    const res = await serverApiFetch(`/gallery-item/${id}}`, { method: 'GET' })
+
+    return {
+      ...res
+    }
+  } catch (error: any) {
+    return {
+      status: error.message.includes('401') ? 401 : 500,
+      data: null
+    }
+  }
+}
+
+export const getGalleryItems = async (): Promise<{ status: number; data: GalleryItemForm | null }> => {
+  try {
+    const res = await serverApiFetch(`/gallery-item`, { method: 'GET' })
 
     return {
       ...res

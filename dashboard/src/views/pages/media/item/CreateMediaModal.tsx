@@ -6,13 +6,13 @@ import { useDropzone } from 'react-dropzone'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { useParams, useRouter } from 'next/navigation'
 import { showToast } from '@/utils/showToast'
-import { createGalleryItem } from '@/libs/api/client/galleyItem'
 import { formatFileSize } from '@/utils/formatters'
 import { styled } from '@mui/material/styles'
 import type { BoxProps } from '@mui/material/Box'
 
 // Styled Component Imports
 import AppReactDropzone from '@/libs/styles/AppReactDropzone'
+import { createGalleryItem } from '@/libs/api/galleyItem'
 
 // Styled Dropzone Component
 const Dropzone = styled(AppReactDropzone)<BoxProps>(({ theme }) => ({

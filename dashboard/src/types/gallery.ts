@@ -19,15 +19,17 @@ export type GalleryItemForm = {
   image: FormData
 }
 
-export type GalleryItem = {
-  id: string
+export interface GalleryItem {
+  id: number
   galleryId: number
   title: string
-  description: null
+  description: string | null
   fileUrl: string
   fileKey: string
   mimetype: string
   size: number
   createdAt: string
   updatedAt: string
+  deletedAt: string | null
+  isDeleted: boolean
 }

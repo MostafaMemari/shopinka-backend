@@ -3,7 +3,7 @@
 import 'server-only'
 import { cookies } from 'next/headers'
 import { COOKIE_NAMES } from '../constants'
-import { serverApiFetch } from '@/utils/api'
+import { serverApiFetch } from '@/utils/api/serverApiFetch'
 
 export const sendOtp = async (mobile: string): Promise<{ status: number; data: any }> => {
   try {
