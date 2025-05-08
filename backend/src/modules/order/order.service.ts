@@ -3,12 +3,14 @@ import { IGetCart } from '../cart/interfaces/cart.interface';
 import { PaymentDto } from '../payment/dto/payment.dto';
 import { AddressRepository } from '../address/address.repository';
 import { CartItem, Order, OrderStatus, Prisma } from 'generated/prisma';
-import { OrderRepository } from './order.repository';
+import { OrderRepository } from './repositories/order.repository';
 import { QueryOrderDto } from './dto/query-order.dto';
 import { CacheService } from '../cache/cache.service';
 import { sortObject } from '../../common/utils/functions.utils';
 import { CacheKeys } from '../../common/enums/cache.enum';
 import { pagination } from '../../common/utils/pagination.utils';
+import { PaginationDto } from '../../common/dtos/pagination.dto';
+import { OrderItemRepository } from './repositories/order-item.repository';
 
 @Injectable()
 export class OrderService {
@@ -16,6 +18,7 @@ export class OrderService {
 
   constructor(
     private readonly orderRepository: OrderRepository,
+    private readonly orderItemRepository: OrderItemRepository,
     private readonly addressRepository: AddressRepository,
     private readonly cacheService: CacheService
   ) { }
@@ -116,6 +119,17 @@ export class OrderService {
     await this.cacheService.set(cacheKey, orders, this.CACHE_EXPIRE_TIME);
 
     return { ...pagination(paginationDto, orders) }
+  }
+
+  async findAllItems(userId: number, paginationDto: PaginationDto): Promise<unknown> {
+    const orderItems = await this.orderItemRepository.findAll(
+      {
+        where: { order: { userId } },
+        include: { order: true, product: true, productVariant: true },
+        orderBy: { createdAt: 'desc' }
+      })
+
+    return pagination(paginationDto, orderItems)
   }
 
   findOne(userId: number, orderId: number): Promise<Order> {

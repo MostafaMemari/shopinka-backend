@@ -15,7 +15,7 @@ import { QueryTransactionsDto } from './dto/transactions-query.dto';
 import { PaymentDto } from './dto/payment.dto';
 import { CartService } from '../cart/cart.service';
 import { OrderService } from '../order/order.service';
-import { OrderRepository } from '../order/order.repository';
+import { OrderRepository } from '../order/repositories/order.repository';
 import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
 import { ProductRepository } from '../product/repositories/product.repository';
