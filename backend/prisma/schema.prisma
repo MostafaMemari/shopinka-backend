@@ -83,7 +83,7 @@ model Transaction {
   authority     String
   sessionId     String?
 
-  transaction Order @relation("TransactionOrder", fields: [orderId], references: [id], onDelete: NoAction)
+  transaction Order @relation("TransactionOrder", fields: [orderId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
@@ -315,8 +315,8 @@ model Order {
 model OrderItem {
   id               Int  @id() @default(autoincrement())
   orderId          Int
-  productId        Int? @unique()
-  productVariantId Int? @unique()
+  productId        Int?
+  productVariantId Int?
   price            Int
   quantity         Int
 
