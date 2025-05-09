@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Button, DialogContent, List, IconButton, Typography, Avatar, CircularProgress, ListItem } from '@mui/material'
+import { Button, DialogContent, List, IconButton, Typography, Avatar, CircularProgress, ListItem, Box } from '@mui/material'
 import { useDropzone } from 'react-dropzone'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { useParams, useRouter } from 'next/navigation'

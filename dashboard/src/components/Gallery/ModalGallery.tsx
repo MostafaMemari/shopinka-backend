@@ -159,8 +159,24 @@ const ModalGallery = ({ btnLabel, multi = false, onSelect, initialSelected }: Pr
             <Box sx={{ width: { xs: '100%', sm: 'auto' } }}>
               <CreateMediaModal />
             </Box>
-            <Box sx={{ width: { xs: '100%', sm: 'auto' } }}>
-              <GallerySelect value={gallerySelected} onChange={handleGalleryChange} search={searchTerm} enabled={open} />
+
+            <Box
+              sx={{
+                width: { xs: '100%', sm: 'auto' },
+                flexShrink: 0
+              }}
+            >
+              <GallerySelect
+                value={gallerySelected}
+                onChange={handleGalleryChange}
+                search={searchTerm}
+                enabled={open}
+                showAllOption
+                sx={{
+                  width: { xs: '100%', sm: 'auto' },
+                  minWidth: 200
+                }}
+              />
             </Box>
           </Box>
 

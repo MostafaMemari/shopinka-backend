@@ -9,8 +9,6 @@ export const getItemGalleries = async (params: Record<string, string>): Promise<
       query: { ...params }
     })
 
-    console.log(res)
-
     return {
       ...res
     }
@@ -46,9 +44,10 @@ export const getGalleryItemById = async (id: number): Promise<{ status: number; 
   }
 }
 
-export const getGalleryItems = async (): Promise<{ status: number; data: GalleryItemForm | null }> => {
+export const getGalleryItems = async (params: Record<string, string>): Promise<{ status: number; data: GalleryItemForm | null }> => {
   try {
-    const res = await serverApiFetch(`/gallery-item`, { method: 'GET' })
+    console.log(params)
+    const res = await serverApiFetch(`/gallery-item`, { method: 'GET', query: { ...params } })
 
     return {
       ...res

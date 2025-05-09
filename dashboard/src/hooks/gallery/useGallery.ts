@@ -11,14 +11,20 @@ interface UseGalleryItemsParams {
   staleTime?: number
 }
 
-export function useGalleryItems({ enabled = true, search = '', galleryId, staleTime = 5 * 60 * 1000 }: UseGalleryItemsParams) {
-  const fetchGallery = () => getGalleryItems().then(res => res)
+export function useGalleryItems({ enabled = true, search = '', galleryId }: UseGalleryItemsParams) {
+  const fetchGallery = () => {
+    const params: Record<string, string> = {}
+
+    if (galleryId) params.galleryId = galleryId
+    if (search) params.title = search
+
+    return getGalleryItems(params).then(res => res)
+  }
 
   return useQuery<any, Error>({
     queryKey: ['gallery-items', galleryId, search],
     queryFn: fetchGallery,
     enabled,
-    staleTime,
     refetchOnWindowFocus: false
   })
 }
@@ -29,7 +35,7 @@ interface UseGalleryParams {
   staleTime?: number
 }
 
-export function useGallery({ enabled = true, search = '', staleTime = 5 * 60 * 1000 }: UseGalleryParams) {
+export function useGallery({ enabled = true, search = '', staleTime = 1 * 60 * 1000 }: UseGalleryParams) {
   const fetchGallery = () => getGalleries().then(res => res)
 
   return useQuery<any, Error>({

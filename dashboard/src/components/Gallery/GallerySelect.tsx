@@ -8,13 +8,14 @@ import { useGallery } from '@/hooks/gallery/useGallery'
 
 interface GallerySelectProps {
   value: string
-  onChange: (event: SelectChangeEvent<string>, child: ReactNode) => void
+  onChange: (event: SelectChangeEvent<string>) => void
   search?: string
   enabled?: boolean
   sx?: SxProps<Theme>
+  showAllOption?: boolean
 }
 
-const GallerySelect = ({ value, onChange, search = '', enabled = true, sx }: GallerySelectProps) => {
+const GallerySelect = ({ value, onChange, search = '', enabled = true, sx, showAllOption = false }: GallerySelectProps) => {
   const {
     data: galleriesData,
     isLoading: isLoadingGalleries,
@@ -38,18 +39,18 @@ const GallerySelect = ({ value, onChange, search = '', enabled = true, sx }: Gal
       slotProps={{
         select: {
           displayEmpty: true,
-          onChange,
+          onChange: (event: SelectChangeEvent<unknown>, child: ReactNode) => {
+            onChange(event as SelectChangeEvent<string>)
+          },
           renderValue: selected => {
-            if (!selected) {
-              return <em>انتخاب گالری</em>
-            }
+            if (!selected) return 'انتخاب گالری'
 
-            return selected === 'all' ? 'همه گالری‌ها' : galleries.find(g => g.id === selected)?.title || ''
+            return selected === 'all' && showAllOption ? 'همه گالری‌ها' : galleries.find(g => g.id === selected)?.title || 'انتخاب گالری'
           }
         }
       }}
     >
-      <MenuItem value='all'>همه گالری‌ها</MenuItem>
+      {showAllOption && <MenuItem value='all'>همه گالری‌ها</MenuItem>}
       {isLoadingGalleries || isFetchingGalleries ? (
         <MenuItem disabled>
           <CircularProgress size={20} />
