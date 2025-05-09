@@ -9,7 +9,7 @@ import { CacheKeys } from '../../../common/enums/cache.enum';
 import { CacheService } from '../../../modules/cache/cache.service';
 import { pagination } from '../../../common/utils/pagination.utils';
 import { GalleryMessages } from '../enums/gallery.messages';
-import { AwsService } from '../../../modules/s3AWS/s3AWS.service';
+import { GalleryItemService } from './gallery-item.service';
 
 @Injectable()
 export class GalleryService {
@@ -18,7 +18,7 @@ export class GalleryService {
   constructor(
     private readonly cacheService: CacheService,
     private readonly galleryRepository: GalleryRepository,
-    private readonly awsService: AwsService,
+    private readonly galleryItemService: GalleryItemService,
   ) { }
 
   async create(userId: number, createGalleryDto: CreateGalleryDto): Promise<{ message: string, gallery: Gallery }> {
@@ -91,9 +91,9 @@ export class GalleryService {
   }
 
   async remove(galleryId: number, userId: number): Promise<{ message: string, gallery: Gallery }> {
-    await this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId } })
+    const gallery = await this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId }, include: { items: true } })
 
-    await this.awsService.removeFolder(`gallery-${galleryId}-${userId}`)
+    await this.galleryItemService.remove(userId, { isForce: true, galleryItemIds: gallery['items'].map(i => i.id) })
 
     const removedGallery = await this.galleryRepository.delete({ where: { id: galleryId, userId } })
 
