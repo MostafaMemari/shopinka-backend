@@ -9,10 +9,10 @@ import { showToast } from '@/utils/showToast'
 import { formatFileSize } from '@/utils/formatters'
 import { styled } from '@mui/material/styles'
 import type { BoxProps } from '@mui/material/Box'
-
-// Styled Component Imports
 import AppReactDropzone from '@/libs/styles/AppReactDropzone'
 import { createGalleryItem } from '@/libs/api/galleyItem'
+import GallerySelect from '@/components/Gallery/GallerySelect'
+import { type SelectChangeEvent } from '@mui/material'
 
 // Styled Dropzone Component
 const Dropzone = styled(AppReactDropzone)<BoxProps>(({ theme }) => ({
@@ -35,19 +35,41 @@ type FileProp = {
 }
 
 const CreateMediaModal = () => {
-  const [open, setOpen] = useState(false)
+  const [openUpload, setOpenUpload] = useState(false)
+  const [openGallerySelect, setOpenGallerySelect] = useState(false)
   const [files, setFiles] = useState<File[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [selectedGalleryId, setSelectedGalleryId] = useState<string>('')
   const maxFiles = 5
   const router = useRouter()
 
   const { id: galleryId } = useParams<{ id: string }>()
 
-  const handleOpen = () => setOpen(true)
+  const handleOpen = () => {
+    if (galleryId) {
+      setOpenUpload(true)
+    } else {
+      setOpenGallerySelect(true)
+    }
+  }
 
-  const handleClose = () => {
-    setOpen(false)
+  const handleCloseUpload = () => {
+    setOpenUpload(false)
     setFiles([])
+    setSelectedGalleryId('')
+  }
+
+  const handleCloseGallerySelect = () => {
+    setOpenGallerySelect(false)
+    setSelectedGalleryId('')
+  }
+
+  const handleGalleryChange = (event: SelectChangeEvent<string>) => {
+    const newGalleryId = event.target.value as string
+
+    setSelectedGalleryId(newGalleryId)
+    setOpenGallerySelect(false)
+    setOpenUpload(true)
   }
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -90,6 +112,14 @@ const CreateMediaModal = () => {
       return
     }
 
+    const effectiveGalleryId = galleryId || selectedGalleryId
+
+    if (!effectiveGalleryId) {
+      showToast({ type: 'error', message: 'لطفاً یک گالری انتخاب کنید!' })
+
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
@@ -98,15 +128,15 @@ const CreateMediaModal = () => {
       files.forEach(file => {
         formData.append('image', file)
       })
-      formData.append('galleryId', galleryId)
+
+      formData.append('galleryId', effectiveGalleryId)
 
       const res = await createGalleryItem(formData)
 
       if (res?.status === 200 || res?.status === 201) {
         showToast({ type: 'success', message: 'آپلود فایل با موفقیت انجام شد' })
-
         router.refresh()
-        handleClose()
+        handleCloseUpload()
       } else {
         showToast({ type: 'error', message: 'خطایی در آپلود رخ داد!' })
       }
@@ -157,19 +187,35 @@ const CreateMediaModal = () => {
 
   return (
     <>
-      <Dropzone>
-        <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />}>
-          آپلود فایل جدید
-        </Button>
+      <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />} sx={{ flex: { xs: '1 1 100%', sm: '0 0 auto' } }}>
+        آپلود فایل جدید
+      </Button>
 
+      <CustomDialog
+        open={openGallerySelect}
+        onClose={handleCloseGallerySelect}
+        title='انتخاب گالری'
+        defaultMaxWidth='sm'
+        actions={
+          <Button onClick={handleCloseGallerySelect} color='secondary'>
+            انصراف
+          </Button>
+        }
+      >
+        <DialogContent>
+          <GallerySelect value={selectedGalleryId} onChange={handleGalleryChange} enabled={openGallerySelect} />
+        </DialogContent>
+      </CustomDialog>
+
+      <Dropzone>
         <CustomDialog
-          open={open}
-          onClose={handleClose}
+          open={openUpload}
+          onClose={handleCloseUpload}
           title='آپلود فایل جدید'
           defaultMaxWidth='md'
           actions={
             <>
-              <Button onClick={handleClose} color='secondary'>
+              <Button onClick={handleCloseUpload} color='secondary'>
                 انصراف
               </Button>
               <Button

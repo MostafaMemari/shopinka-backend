@@ -6,11 +6,15 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Image from 'next/image'
 import { showToast } from '@/utils/showToast'
-import { GalleryItem } from '@/types/gallery'
+import { Gallery, GalleryItem } from '@/types/gallery'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
-import { useGallery } from '@/hooks/gallery/useGallery'
 import CircularProgress from '@mui/material/CircularProgress'
 import GalleryItemDetails from './GalleryItemDetails'
+import CreateMediaModal from '@/components/Gallery/CreateMediaModal'
+import CustomTextField from '@/@core/components/mui/TextField'
+import GallerySelect from './GallerySelect'
+import { type SelectChangeEvent } from '@mui/material'
+import { useGalleryItems } from '@/hooks/gallery/useGallery'
 
 interface Props {
   btnLabel: string
@@ -25,13 +29,23 @@ const ModalGallery = ({ btnLabel, multi = false, onSelect, initialSelected }: Pr
   const [activeItem, setActiveItem] = useState<GalleryItem | null>(null)
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [visibleItems, setVisibleItems] = useState<number>(12)
+  const [gallerySelected, setGallerySelected] = useState<string>('all')
   const contentRef = useRef<HTMLDivElement>(null)
 
-  const { data, isLoading, isFetching, error, refetch } = useGallery({
+  const {
+    data: galleryItemsData,
+    isLoading: isLoadingItems,
+    isFetching: isFetchingItems,
+    error: errorItems,
+    refetch: refetchItems
+  } = useGalleryItems({
     enabled: open,
     search: searchTerm,
+    galleryId: gallerySelected === 'all' ? undefined : gallerySelected,
     staleTime: 5 * 60 * 1000
   })
+
+  const galleryItems: GalleryItem[] = galleryItemsData?.data?.items || []
 
   useEffect(() => {
     if (open) {
@@ -49,7 +63,6 @@ const ModalGallery = ({ btnLabel, multi = false, onSelect, initialSelected }: Pr
 
   const handleOpen = () => {
     setOpen(true)
-    refetch()
   }
 
   const handleClose = () => {
@@ -57,10 +70,20 @@ const ModalGallery = ({ btnLabel, multi = false, onSelect, initialSelected }: Pr
     setActiveItem(null)
     setSelectedItems([])
     setSearchTerm('')
+    setGallerySelected('all')
   }
 
   const handleShowMore = () => {
     setVisibleItems(prev => prev + 12)
+  }
+
+  const handleGalleryChange = (event: SelectChangeEvent<string>) => {
+    const newGalleryId = event.target.value as string
+
+    setGallerySelected(newGalleryId)
+    setSelectedItems([])
+    setActiveItem(null)
+    refetchItems()
   }
 
   const handleItemClick = (item: GalleryItem) => {
@@ -84,24 +107,16 @@ const ModalGallery = ({ btnLabel, multi = false, onSelect, initialSelected }: Pr
 
   const handleSelect = () => {
     if (selectedItems.length > 0) {
-      onSelect?.(selectedItems)
+      onSelect?.(multi ? selectedItems : selectedItems[0])
       handleClose()
     } else {
       showToast({ type: 'warning', message: 'لطفاً حداقل یک تصویر انتخاب کنید' })
     }
   }
 
-  const galleryItems: GalleryItem[] = data?.data?.items || []
-
-  useEffect(() => {
-    if (open && contentRef.current) {
-      contentRef.current.focus()
-    }
-  }, [open])
-
   return (
     <>
-      <Button variant='contained' className='max-sm:w-full' onClick={handleOpen}>
+      <Button variant='contained' className='max-sm:w-full' sx={{ width: 200, maxWidth: '100%' }} onClick={handleOpen}>
         {btnLabel}
       </Button>
 
@@ -122,6 +137,45 @@ const ModalGallery = ({ btnLabel, multi = false, onSelect, initialSelected }: Pr
         }
       >
         <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 2,
+            mb: 4,
+            flexWrap: 'wrap'
+          }}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 2,
+              flexDirection: { xs: 'column', sm: 'row' },
+              alignItems: 'center',
+              width: { xs: '100%', sm: 'auto' }
+            }}
+          >
+            <Box sx={{ width: { xs: '100%', sm: 'auto' } }}>
+              <CreateMediaModal />
+            </Box>
+            <Box sx={{ width: { xs: '100%', sm: 'auto' } }}>
+              <GallerySelect value={gallerySelected} onChange={handleGalleryChange} search={searchTerm} enabled={open} />
+            </Box>
+          </Box>
+
+          <CustomTextField
+            placeholder='جستجو....'
+            sx={{
+              flex: { xs: '1 1 100%', sm: '1 1 auto' },
+              maxWidth: { sm: 200 },
+              width: { xs: '100%', sm: 'auto' }
+            }}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
+        </Box>
+
+        <Box
           ref={contentRef}
           tabIndex={-1}
           sx={{
@@ -138,31 +192,22 @@ const ModalGallery = ({ btnLabel, multi = false, onSelect, initialSelected }: Pr
               p: { xs: 2, sm: 4 }
             }}
           >
-            {(isLoading || isFetching) && (
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '100%'
-                }}
-              >
+            {(isLoadingItems || isFetchingItems) && (
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                 <CircularProgress />
               </Box>
             )}
-
-            {error && !isLoading && !isFetching && (
+            {errorItems && !isLoadingItems && !isFetchingItems && (
               <Box sx={{ textAlign: 'center', mt: 4 }}>
                 <Typography color='error' variant='h6'>
                   خطا در بارگذاری تصاویر
                 </Typography>
-                <Button variant='outlined' onClick={() => refetch()} sx={{ mt: 2 }}>
+                <Button variant='outlined' onClick={() => refetchItems()} sx={{ mt: 2 }}>
                   تلاش دوباره
                 </Button>
               </Box>
             )}
-
-            {!isLoading && !isFetching && galleryItems.length === 0 && (
+            {!isLoadingItems && !isFetchingItems && galleryItems.length === 0 && (
               <Box sx={{ textAlign: 'center', mt: 4 }}>
                 <Typography variant='h6'>هیچ تصویری یافت نشد</Typography>
                 <Typography variant='body2' color='text.secondary'>
@@ -170,8 +215,7 @@ const ModalGallery = ({ btnLabel, multi = false, onSelect, initialSelected }: Pr
                 </Typography>
               </Box>
             )}
-
-            {!isLoading && !isFetching && galleryItems.length > 0 && (
+            {!isLoadingItems && !isFetchingItems && galleryItems.length > 0 && (
               <Box
                 sx={{
                   display: 'grid',
@@ -198,7 +242,6 @@ const ModalGallery = ({ btnLabel, multi = false, onSelect, initialSelected }: Pr
                 ))}
               </Box>
             )}
-
             {galleryItems.length > visibleItems && (
               <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                 <Button variant='outlined' onClick={handleShowMore}>
@@ -207,7 +250,6 @@ const ModalGallery = ({ btnLabel, multi = false, onSelect, initialSelected }: Pr
               </Box>
             )}
           </Box>
-
           <GalleryItemDetails activeItem={activeItem} setActiveItem={setActiveItem} multi={multi} selectedItems={selectedItems} />
         </Box>
       </CustomDialog>
