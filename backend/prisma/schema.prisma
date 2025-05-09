@@ -286,12 +286,14 @@ model Comment {
 }
 
 model Cart {
-  id     Int @id() @default(autoincrement())
-  userId Int @unique()
+  id         Int @id() @default(autoincrement())
+  userId     Int @unique()
+  shippingId Int @unique()
 
   user User @relation("UserCart", fields: [userId], references: [id], onDelete: Cascade)
 
-  items CartItem[]
+  items    CartItem[]
+  shopping Shipping   @relation("CartShipping", fields: [shippingId], references: [id], onDelete: SetDefault)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
@@ -393,4 +395,16 @@ model Tag {
   products Product[]
   blogs    Blog[]
   seoMeta  SeoMeta?  @relation("SeoMetaTag")
+}
+
+model Shipping {
+  id            Int      @id() @default(autoincrement())
+  name          String
+  price         Int
+  estimatedDays Int?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  cart Cart? @relation("CartShipping")
 }
