@@ -58,48 +58,46 @@ const ProductCategories = () => {
       <CardContent>
         <CustomTextField fullWidth label='جستجوی دسته‌بندی' placeholder='جستجو کنید...' sx={{ marginBottom: 4 }} />
 
-        <form onSubmit={e => e.preventDefault()} className='flex flex-col gap-6'>
-          <Box
-            sx={{
-              maxHeight: '300px',
-              overflowY: 'auto',
-              padding: 2,
-              border: '1px solid #e0e0e0',
-              borderRadius: 1,
-              '&::-webkit-scrollbar': {
-                width: '8px'
-              },
-              '&::-webkit-scrollbar-thumb': {
-                backgroundColor: '#888',
-                borderRadius: '4px'
-              },
-              '&::-webkit-scrollbar-thumb:hover': {
-                backgroundColor: '#555'
-              }
-            }}
-          >
-            {categories.map(category => (
-              <Box key={category.id} sx={{ paddingLeft: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <FormControlLabel
-                  control={<Checkbox checked={selectedCategories.includes(category.id)} onChange={() => handleCategoryChange(category.id)} />}
-                  label={<Typography className='font-medium'>{category.name}</Typography>}
-                />
-                {category.subcategories.length > 0 && (
-                  <Box sx={{ paddingLeft: 4, display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    {category.subcategories.map(subcategory => (
-                      <FormControlLabel
-                        key={subcategory.id}
-                        control={<Checkbox checked={selectedCategories.includes(subcategory.id)} onChange={() => handleCategoryChange(subcategory.id)} />}
-                        label={subcategory.name}
-                        sx={{ margin: 0 }}
-                      />
-                    ))}
-                  </Box>
-                )}
-              </Box>
-            ))}
-          </Box>
-        </form>
+        <Box
+          sx={{
+            maxHeight: '300px',
+            overflowY: 'auto',
+            padding: 2,
+            border: '1px solid #e0e0e0',
+            borderRadius: 1,
+            '&::-webkit-scrollbar': {
+              width: '8px'
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: '#888',
+              borderRadius: '4px'
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              backgroundColor: '#555'
+            }
+          }}
+        >
+          {categories.map(category => (
+            <Box key={category.id} sx={{ paddingLeft: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <FormControlLabel
+                control={<Checkbox checked={selectedCategories.includes(category.id)} onChange={() => handleCategoryChange(category.id)} />}
+                label={<Typography className='font-medium'>{category.name}</Typography>}
+              />
+              {category.subcategories.length > 0 && (
+                <Box sx={{ paddingLeft: 4, display: 'flex', flexDirection: 'column', gap: 1 }}>
+                  {category.subcategories.map(subcategory => (
+                    <FormControlLabel
+                      key={subcategory.id}
+                      control={<Checkbox checked={selectedCategories.includes(subcategory.id)} onChange={() => handleCategoryChange(subcategory.id)} />}
+                      label={subcategory.name}
+                      sx={{ margin: 0 }}
+                    />
+                  ))}
+                </Box>
+              )}
+            </Box>
+          ))}
+        </Box>
       </CardContent>
     </Card>
   )

@@ -1,3 +1,5 @@
+'use client'
+
 // Component Imports
 import ProductAddHeader from '@/views/pages/products/add/ProductAddHeader'
 import ProductCategories from '@/views/pages/products/add/ProductCategories'
@@ -6,42 +8,59 @@ import ProductInformation from '@/views/pages/products/add/ProductInformation'
 import ProductMainImage from '@/views/pages/products/add/ProductMainImage'
 import ProductPricing from '@/views/pages/products/add/ProductPricing'
 import ProductTab from '@/views/pages/products/add/tabs/ProductForm'
+import { yupResolver } from '@hookform/resolvers/yup'
 import Grid from '@mui/material/Grid2'
+import { FormProvider, useForm } from 'react-hook-form'
 
-const eCommerceProductsAdd = () => {
+import { productSchema } from '@/libs/validators/product.schema'
+
+const AppProduct = () => {
+  const methods = useForm({
+    resolver: yupResolver(productSchema),
+    mode: 'onChange'
+  })
+
+  const onSubmit = methods.handleSubmit(data => {
+    console.log('📦 اطلاعات محصول:', data)
+  })
+
   return (
-    <Grid container spacing={6}>
-      <Grid size={{ xs: 12 }}>
-        <ProductAddHeader />
-      </Grid>
-      <Grid size={{ xs: 12, md: 8 }}>
+    <FormProvider {...methods}>
+      <form onSubmit={onSubmit}>
         <Grid container spacing={6}>
           <Grid size={{ xs: 12 }}>
-            <ProductInformation />
+            <ProductAddHeader />
           </Grid>
-          <Grid size={{ xs: 12 }}>
-            <ProductTab />
+          <Grid size={{ xs: 12, md: 8 }}>
+            <Grid container spacing={6}>
+              <Grid size={{ xs: 12 }}>
+                <ProductInformation />
+              </Grid>
+              <Grid size={{ xs: 12 }}>
+                <ProductTab />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Grid container spacing={6}>
+              <Grid size={{ xs: 12 }}>
+                <ProductPricing />
+              </Grid>
+              <Grid size={{ xs: 12 }}>
+                <ProductMainImage />
+              </Grid>
+              <Grid size={{ xs: 12 }}>
+                <ProductGallery />
+              </Grid>
+              <Grid size={{ xs: 12 }}>
+                <ProductCategories />
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
-      <Grid size={{ xs: 12, md: 4 }}>
-        <Grid container spacing={6}>
-          <Grid size={{ xs: 12 }}>
-            <ProductPricing />
-          </Grid>
-          <Grid size={{ xs: 12 }}>
-            <ProductMainImage />
-          </Grid>
-          <Grid size={{ xs: 12 }}>
-            <ProductGallery />
-          </Grid>
-          <Grid size={{ xs: 12 }}>
-            <ProductCategories />
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
+      </form>
+    </FormProvider>
   )
 }
 
-export default eCommerceProductsAdd
+export default AppProduct

@@ -16,7 +16,9 @@ const ProductAddHeader = () => {
           لغو
         </Button>
         <Button variant='tonal'>ذخیره پیش‌نویس</Button>
-        <Button variant='contained'>انتشار محصول</Button>
+        <Button variant='contained' type='submit'>
+          انتشار محصول
+        </Button>
       </div>
     </div>
   )
