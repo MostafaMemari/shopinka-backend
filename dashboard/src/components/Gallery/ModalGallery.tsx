@@ -16,9 +16,10 @@ interface Props {
   btnLabel: string
   multi?: boolean
   onSelect?: (items: GalleryItem[] | GalleryItem) => void
+  initialSelected?: GalleryItem | GalleryItem[] | undefined
 }
 
-const ModalGallery = ({ btnLabel, multi = false, onSelect }: Props) => {
+const ModalGallery = ({ btnLabel, multi = false, onSelect, initialSelected }: Props) => {
   const [open, setOpen] = useState<boolean>(false)
   const [selectedItems, setSelectedItems] = useState<GalleryItem[]>([])
   const [activeItem, setActiveItem] = useState<GalleryItem | null>(null)
@@ -31,6 +32,20 @@ const ModalGallery = ({ btnLabel, multi = false, onSelect }: Props) => {
     search: searchTerm,
     staleTime: 5 * 60 * 1000
   })
+
+  useEffect(() => {
+    if (open) {
+      if (initialSelected) {
+        if (Array.isArray(initialSelected)) {
+          setSelectedItems(multi ? initialSelected : initialSelected.slice(0, 1))
+        } else {
+          setSelectedItems([initialSelected])
+        }
+      } else {
+        setSelectedItems([])
+      }
+    }
+  }, [open, initialSelected, multi])
 
   const handleOpen = () => {
     setOpen(true)
