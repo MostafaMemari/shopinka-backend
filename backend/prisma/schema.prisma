@@ -344,9 +344,9 @@ model OrderItem {
 
 model SeoMeta {
   id            Int      @id @default(autoincrement())
-  productId     Int      @unique
-  blogId        Int      @unique
-  tagId         Int      @unique
+  productId     Int?     @unique
+  blogId        Int?     @unique
+  tagId         Int?     @unique
   title         String?
   description   String?
   keywords      String[] @default([])
@@ -358,9 +358,9 @@ model SeoMeta {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  product Product @relation("SeoMetaProduct", fields: [productId], references: [id], onDelete: Cascade)
-  blog    Blog    @relation("SeoMetaBlog", fields: [blogId], references: [id], onDelete: Cascade)
-  tag     Tag     @relation("SeoMetaTag", fields: [tagId], references: [id], onDelete: Cascade)
+  product Product? @relation("SeoMetaProduct", fields: [productId], references: [id], onDelete: Cascade)
+  blog    Blog?    @relation("SeoMetaBlog", fields: [blogId], references: [id], onDelete: Cascade)
+  tag     Tag?     @relation("SeoMetaTag", fields: [tagId], references: [id], onDelete: Cascade)
 }
 
 model Blog {
