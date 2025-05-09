@@ -11,5 +11,4 @@ export interface ISendRequest {
 export interface IVerifyRequest {
     authority: string;
     amount: number;
-    merchant_id: string;
 }

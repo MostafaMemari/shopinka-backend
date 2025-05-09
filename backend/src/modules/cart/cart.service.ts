@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { CartRepository } from './repositories/cart.repository';
-import { Cart, CartItem } from 'generated/prisma';
+import { Cart, CartItem, Prisma, ProductStatus } from 'generated/prisma';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { CartItemRepository } from './repositories/cardItem.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
@@ -9,6 +9,7 @@ import { CartItemMessages } from './enums/cart-item-messages.enum';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { pagination } from '../../common/utils/pagination.utils';
+import { IGetCart } from './interfaces/cart.interface';
 
 @Injectable()
 export class CartService {
@@ -19,12 +20,26 @@ export class CartService {
     private readonly productVariantRepository: ProductVariantRepository
   ) { }
 
-  async me(userId: number): Promise<Cart> {
-    const cart = await this.cartRepository.findOne({ where: { userId }, include: { items: true } })
+  async me(userId: number): Promise<IGetCart> {
+    const { items: cartItems }: Cart & { items: CartItem[] } =
+      await this.cartRepository.findOneOrThrow({ where: { userId }, include: { items: { include: { product: true, productVariant: true } } } }) as any
 
-    if (cart) return cart
+    let finalPrice = 0
+    let totalSaved = 0
 
-    return this.cartRepository.create({ data: { userId }, include: { items: true } })
+    cartItems.forEach(item => {
+      const base = item['product'] ?? item['productVariant']
+      const discountPerItem = (base.salePrice * item.quantity)
+
+      totalSaved += discountPerItem
+      finalPrice += (base.basePrice * item.quantity) - discountPerItem
+    })
+
+    return {
+      finalPrice,
+      totalSaved,
+      cartItems
+    }
   }
 
   async clear(userId: number): Promise<Cart> {
@@ -55,7 +70,7 @@ export class CartService {
 
     const cart = await this.cartRepository.findOneOrThrow({ where: { userId }, include: { items: true } })
 
-    const product = productId && await this.productRepository.findOneOrThrow({ where: { id: productId } })
+    const product = productId && await this.productRepository.findOneOrThrow({ where: { id: productId, status: ProductStatus.PUBLISHED } })
     const productVariant = productVariantId && await this.productVariantRepository.findOneOrThrow({ where: { id: productVariantId } })
 
     if (product && product.quantity < quantity) throw new BadRequestException(CartItemMessages.ProductNotAvailable)

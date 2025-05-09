@@ -34,4 +34,7 @@ export class CreateGalleryItemDto {
         required: false
     })
     description?: string
+
+    @ApiProperty({ type: 'string', format: 'binary', required: true, isArray: true })
+    image: Express.Multer.File[]
 }

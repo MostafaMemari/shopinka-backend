@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { Transform, Type } from "class-transformer"
+import { Transform } from "class-transformer"
 import { ArrayUnique, IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Matches, Max, MaxLength, Min, ValidateNested } from "class-validator"
 import { ProductStatus, ProductType } from "generated/prisma"
 import { transformNumberArray } from "../../../common/utils/functions.utils"

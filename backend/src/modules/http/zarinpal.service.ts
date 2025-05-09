@@ -30,6 +30,7 @@ export class ZarinpalService {
                 .pipe(map((res) => res.data))
                 .pipe(
                     catchError((err) => {
+                        console.log(err.response)
                         throw new InternalServerErrorException('Zarinpal error');
                     }),
                 ),
@@ -70,12 +71,12 @@ export class ZarinpalService {
     }
 
     async verifyRequest(data: IVerifyRequest) {
-        const { authority, merchant_id, amount } = data;
+        const { authority, amount } = data;
 
         const options = {
             authority,
             amount,
-            merchant_id,
+            merchant_id: process.env.ZARINPAL_MERCHANT_ID,
         };
 
         const verifyURL = process.env.ZARINPAL_VERIFY_URL;

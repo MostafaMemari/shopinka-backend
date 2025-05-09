@@ -20,6 +20,7 @@ import { CategoryModule } from "../category/category.module";
 import { CommentModule } from "../comment/comment.module";
 import { CartModule } from "../cart/cart.module";
 import { OrderModule } from "../order/order.module";
+import { BlogModule } from "../blog/blog.module";
 
 @Module({
   imports: [
@@ -39,7 +40,8 @@ import { OrderModule } from "../order/order.module";
     CategoryModule,
     CommentModule,
     CartModule,
-    OrderModule
+    OrderModule,
+    BlogModule
   ],
   controllers: [],
   providers: [

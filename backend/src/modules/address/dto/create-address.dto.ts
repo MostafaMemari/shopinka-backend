@@ -44,6 +44,7 @@ export class CreateAddressDto {
     })
     postalCode: string
 
+    @IsOptional()
     @IsString()
     @IsNotEmpty()
     @Transform(({ value }) => value?.trim())

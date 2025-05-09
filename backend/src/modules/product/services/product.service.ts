@@ -2,7 +2,7 @@ import { BadRequestException, ConflictException, Injectable } from '@nestjs/comm
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductRepository } from '../repositories/product.repository';
-import { Prisma, Product, ProductStatus, ProductType } from 'generated/prisma';
+import { Prisma, Product, ProductStatus, ProductType, SeoMeta } from 'generated/prisma';
 import { CacheService } from '../../cache/cache.service';
 import { GalleryItemRepository } from '../../gallery/repositories/gallery-item.repository';
 import slugify from 'slugify';
@@ -16,6 +16,8 @@ import { ProductMessages } from '../enums/product-messages.enum';
 import { FavoriteRepository } from '../repositories/favorite.repository';
 import { FavoriteMessages } from '../enums/favorite-messages.enum';
 import { CategoryRepository } from '../../category/category.repository';
+import { SeoMetaDto } from '../dto/seo-meta.dto';
+import { SeoMetaRepository } from '../repositories/seo-meta.repository';
 
 @Injectable()
 export class ProductService {
@@ -27,7 +29,8 @@ export class ProductService {
     private readonly cacheService: CacheService,
     private readonly galleryItemRepository: GalleryItemRepository,
     private readonly attributeRepository: AttributeRepository,
-    private readonly categoryRepository: CategoryRepository
+    private readonly categoryRepository: CategoryRepository,
+    private readonly seoMetaRepository: SeoMetaRepository
   ) { }
 
   async create(userId: number, createProductDto: CreateProductDto): Promise<{ message: string, product: Product }> {
@@ -223,6 +226,21 @@ export class ProductService {
     const newFavorite = await this.favoriteRepository.create({ data: { productId, userId } })
 
     return { message: FavoriteMessages.CreatedFavoriteSuccess, favorite: newFavorite }
+  }
+
+  async upsertSeoMeta(userId: number, productId: number, seoMetaDto: SeoMetaDto): Promise<{ message: string, seoMeta: SeoMeta }> {
+    await this.productRepository.findOneOrThrow({ where: { id: productId, userId } })
+
+    const existingSeo = await this.seoMetaRepository.findOne({ where: { productId } })
+
+    if (existingSeo) {
+      const updatedSeo = await this.seoMetaRepository.update({ where: { id: existingSeo.id }, data: seoMetaDto })
+      return { message: ProductMessages.UpdatedSeoMetaSuccess, seoMeta: updatedSeo }
+    }
+
+    const seoMeta = await this.seoMetaRepository.create({ data: { ...seoMetaDto, productId } })
+
+    return { message: ProductMessages.CreatedProductSuccess, seoMeta }
   }
 
   private async generateUniqueSlug(name: string): Promise<string> {

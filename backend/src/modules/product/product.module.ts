@@ -12,6 +12,7 @@ import { ProductVariantService } from './services/product-variant.service';
 import { ProductVariantController } from './controllers/product-variant.controller';
 import { FavoriteRepository } from './repositories/favorite.repository';
 import { CategoryRepository } from '../category/category.repository';
+import { SeoMetaRepository } from './repositories/seo-meta.repository';
 
 @Module({
   controllers: [ProductController , ProductVariantController],
@@ -26,7 +27,8 @@ import { CategoryRepository } from '../category/category.repository';
     ProductVariantRepository,
     ProductVariantService,
     FavoriteRepository,
-    CategoryRepository
+    CategoryRepository,
+    SeoMetaRepository
   ],
 })
 export class ProductModule { }

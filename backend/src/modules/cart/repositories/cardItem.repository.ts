@@ -27,6 +27,10 @@ export class CartItemRepository {
         return this.prismaService.cartItem.delete(args)
     }
 
+    deleteMany(args: Prisma.CartItemDeleteManyArgs): Promise<{ count: number }> {
+        return this.prismaService.cartItem.deleteMany(args)
+    }
+
     async findOneOrThrow(args: Prisma.CartItemFindFirstArgs): Promise<CartItem | never> {
         const cartItem = await this.findOne(args)
 

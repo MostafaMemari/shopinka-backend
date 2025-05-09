@@ -73,15 +73,20 @@ model User {
 }
 
 model Transaction {
-  id        Int               @id @default(autoincrement())
-  user      User?             @relation(references: [id], fields: [userId], onDelete: NoAction)
-  userId    Int?
-  amount    Int
-  status    TransactionStatus @default(PENDING)
-  authority String
-  sessionId String?
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @default(now())
+  id            Int               @id @default(autoincrement())
+  user          User?             @relation(references: [id], fields: [userId], onDelete: NoAction)
+  userId        Int?
+  orderId       Int               @unique()
+  amount        Int
+  invoiceNumber String            @unique() @map("invoice_number")
+  status        TransactionStatus @default(PENDING)
+  authority     String
+  sessionId     String?
+
+  transaction Order @relation("TransactionOrder", fields: [orderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Gallery {
@@ -127,6 +132,7 @@ model Address {
   postalCode     String   @unique() @map("postal_code")
   receiverMobile String?  @map("receiver_mobile")
   description    String?
+  orders         Order[]
   createdAt      DateTime @default(now())
   updatedAt      DateTime @default(now())
 }
@@ -183,6 +189,7 @@ model Product {
   comments         Comment[]
   cartItems        CartItem[]
   orderItems       OrderItem[]
+  seoMeta          SeoMeta?         @relation("SeoMetaProduct")
   width            Int?
   height           Int?
   length           Int?
@@ -293,24 +300,26 @@ model CartItem {
 }
 
 model Order {
-  id          Int         @id() @default(autoincrement())
+  id          Int          @id() @default(autoincrement())
   userId      Int
   addressId   Int
-  orderNumber Int         @unique()
+  orderNumber String       @unique()
   quantity    Int
   totalPrice  Int
-  status      OrderStatus @default(PENDING)
+  status      OrderStatus  @default(PENDING)
   items       OrderItem[]
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt()
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address     Address      @relation(fields: [addressId], references: [id], onDelete: SetDefault)
+  transaction Transaction? @relation("TransactionOrder")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt()
 }
 
 model OrderItem {
   id               Int  @id() @default(autoincrement())
   orderId          Int
-  productId        Int? @unique()
-  productVariantId Int? @unique()
+  productId        Int?
+  productVariantId Int?
   price            Int
   quantity         Int
 
@@ -319,4 +328,21 @@ model OrderItem {
   order          Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
+}
+
+model SeoMeta {
+  id            Int      @id @default(autoincrement())
+  productId     Int      @unique
+  title         String?
+  description   String?
+  keywords      String[] @default([])
+  canonicalUrl  String?  @map("canonical_url")
+  ogTitle       String?  @map("og_title")
+  ogDescription String?  @map("og_description")
+  ogImage       String?  @map("og_image")
+  robotsTag     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  product Product @relation("SeoMetaProduct", fields: [productId], references: [id], onDelete: Cascade)
 }
