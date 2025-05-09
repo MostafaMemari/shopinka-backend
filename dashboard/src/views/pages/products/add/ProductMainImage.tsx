@@ -12,7 +12,7 @@ import Tooltip from '@mui/material/Tooltip'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 
 // Component Imports
-import ModalGallery from '@/components/Gallery/ModalGallery'
+import ModalGallery from '@/components/Gallery/ModalGallery/ModalGallery'
 import { GalleryItem } from '@/types/gallery'
 import { useState } from 'react'
 import Image from 'next/image'

@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton'
 import Box from '@mui/material/Box'
 import Tooltip from '@mui/material/Tooltip'
 import Image from 'next/image'
-import ModalGallery from '@/components/Gallery/ModalGallery'
+import ModalGallery from '@/components/Gallery/ModalGallery/ModalGallery'
 import { type GalleryItem } from '@/types/gallery'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 
@@ -26,7 +26,7 @@ const ProductGallery = () => {
   }
 
   return (
-    <Card sx={{ boxShadow: 3 }}>
+    <Card>
       <CardHeader title='گالری تصاویر محصول' />
       <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
