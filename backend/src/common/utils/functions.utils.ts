@@ -1,3 +1,5 @@
+import * as sharp from 'sharp'
+
 type SortedObject<T = object> = (object: T) => T;
 
 export const sortObject: SortedObject = (object) => {
@@ -28,3 +30,51 @@ export const transformNumberArray = (value: any) => {
         return value;
     }
 };
+
+interface ResizeOption {
+    width: number
+    height: number
+    name: string
+    format?: 'jpeg' | 'png' | 'webp'
+    quality?: number
+}
+
+interface ResizedImageResult {
+    name: string
+    buffer: Buffer
+    info: sharp.OutputInfo
+}
+
+export async function resizeImageWithSharp(
+    input: Buffer | string,
+    size: ResizeOption
+): Promise<ResizedImageResult> {
+    const { width, height, name, format = 'webp', quality = 80 } = size
+
+    const image = sharp(input).resize(width, height, {
+        fit: 'cover',
+        position: 'center',
+    })
+
+    let formattedImage = image
+    switch (format) {
+        case 'jpeg':
+            formattedImage = image.jpeg({ quality })
+            break
+        case 'png':
+            formattedImage = image.png()
+            break
+        case 'webp':
+        default:
+            formattedImage = image.webp({ quality })
+            break
+    }
+
+    const { data, info } = await formattedImage.toBuffer({ resolveWithObject: true })
+
+    return {
+        name,
+        buffer: data,
+        info,
+    }
+}

@@ -69,6 +69,7 @@ model User {
   categories       Category[]
   comments         Comment[]
   orders           Order[]
+  blogs            Blog[]
   cart             Cart?            @relation("UserCart")
 }
 
@@ -108,6 +109,8 @@ model GalleryItem {
   description         String?
   fileUrl             String
   fileKey             String
+  thumbnailUrl        String?
+  thumbnailKey        String?
   mimetype            String
   size                Int
   isDeleted           Boolean          @default(false)
@@ -189,6 +192,7 @@ model Product {
   comments         Comment[]
   cartItems        CartItem[]
   orderItems       OrderItem[]
+  tgs              Tag[]
   seoMeta          SeoMeta?         @relation("SeoMetaProduct")
   width            Int?
   height           Int?
@@ -249,6 +253,7 @@ model Category {
   children Category[] @relation("CategoryToCategory")
   user     User       @relation(fields: [userId], references: [id], onDelete: NoAction)
   products Product[]
+  blog     Blog[]
 
   thumbnailImage GalleryItem? @relation(fields: [thumbnailImageId], references: [id], onDelete: NoAction)
 }
@@ -261,12 +266,14 @@ model Comment {
   isRecommended Boolean   @default(true)
   rate          Int       @default(5)
   userId        Int
-  productId     Int
+  productId     Int?
+  blogId        Int?
   parentId      Int?
   parent        Comment?  @relation("CommentToComment", fields: [parentId], references: [id], onDelete: Cascade)
   replies       Comment[] @relation("CommentToComment")
 
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  blog    Blog   ? @relation(fields: [blogId], references: [id], onDelete: Cascade)
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
@@ -333,6 +340,8 @@ model OrderItem {
 model SeoMeta {
   id            Int      @id @default(autoincrement())
   productId     Int      @unique
+  blogId        Int      @unique
+  tagId         Int      @unique
   title         String?
   description   String?
   keywords      String[] @default([])
@@ -345,4 +354,37 @@ model SeoMeta {
   updatedAt     DateTime @updatedAt
 
   product Product @relation("SeoMetaProduct", fields: [productId], references: [id], onDelete: Cascade)
+  blog    Blog    @relation("SeoMetaBlog", fields: [blogId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation("SeoMetaTag", fields: [tagId], references: [id], onDelete: Cascade)
+}
+
+model Blog {
+  id          Int      @id() @default(autoincrement())
+  userId      Int
+  slug        String   @unique()
+  title       String
+  content     String?
+  readingTime Int?     @map("reading_time")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: NoAction)
+  comments   Comment[]
+  categories Category[]
+  tgs        Tag[]
+  seoMeta    SeoMeta?   @relation("SeoMetaBlog")
+}
+
+model Tag {
+  id             Int      @id() @default(autoincrement())
+  name           String
+  slug           String @unique()
+  description    String?
+  thumbnailImage String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  products Product[]
+  blogs    Blog[]
+  seoMeta  SeoMeta?  @relation("SeoMetaTag")
 }

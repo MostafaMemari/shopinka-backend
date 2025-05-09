@@ -57,7 +57,7 @@ export class AwsService {
         if (`file` in fileMetadata) {
             bufferFile = Buffer.from(fileMetadata.file);
             fileName = fileMetadata.fileName;
-            key = `${folderName}/${fileName}`;
+            key = `${folderName}/${Date.now()}-${fileName}`;
         } else {
             ext = path.extname(fileMetadata.originalname);
             bufferFile = Buffer.from(fileMetadata.buffer);
