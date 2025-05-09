@@ -18,7 +18,7 @@ import '@/app/globals.css'
 
 // Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
-import Providers from './providers'
+import QueryProvider from './providers'
 
 export const metadata = {
   title: 'ووکسی - قالب داشبورد مدیریتی Next.js و MUI',
@@ -36,7 +36,6 @@ const RootLayout = async (props: ChildrenType) => {
     <html id='__next' lang='fa' dir={direction} suppressHydrationWarning>
       <body className='flex is-full min-bs-full flex-auto flex-col'>
         <NextTopLoader color='var(--primary-color)' showSpinner={false} />
-
         <ToastContainer
           position='top-left'
           theme={systemMode}
@@ -50,7 +49,7 @@ const RootLayout = async (props: ChildrenType) => {
           pauseOnHover
         />
         <InitColorSchemeScript attribute='data' defaultMode={systemMode} />
-        <Providers>{children}</Providers>
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   )

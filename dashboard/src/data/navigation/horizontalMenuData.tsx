@@ -12,6 +12,16 @@ const horizontalMenuData = (): HorizontalMenuDataType[] => [
     icon: 'tabler-shopping-cart',
     children: [
       {
+        label: 'افزودن',
+        href: '/products/add',
+        icon: 'tabler-plus'
+      },
+      {
+        label: 'لیست',
+        href: '/products/list',
+        icon: 'tabler-list'
+      },
+      {
         label: 'ویژگی‌ها',
         href: '/products/attributes',
         icon: 'tabler-layers-difference'

@@ -1,32 +1,32 @@
 'use client'
 
 import React from 'react'
-import { Button, DialogActions, DialogContent, DialogTitle, Typography, Box } from '@mui/material'
-import { Info } from '@mui/icons-material'
-import Image from 'next/image'
-import Link from 'next/link'
+import { Button, DialogContent, Typography, Box, IconButton } from '@mui/material'
+import { Info, Title, Description, Image as ImageIcon, Storage, CalendarToday } from '@mui/icons-material'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
+import { GalleryItem } from '@/types/gallery'
+import { formatDate, formatFileSize } from '@/utils/formatters'
 
-interface Media {
-  id: number
-  name: string
-  type: 'image' | 'video' | 'document'
-  size: string
-  uploadedAt: string
-  url?: string
+const getFileType = (mimetype: string): 'image' | 'video' | 'document' => {
+  if (mimetype.startsWith('image/')) return 'image'
+  if (mimetype.startsWith('video/')) return 'video'
+
+  return 'document'
 }
 
-const DetailMediaModal = ({ file }: { file: Media }) => {
+const DetailMediaModal = ({ file }: { file: GalleryItem }) => {
   const [open, setOpen] = React.useState(false)
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
+  const fileType = getFileType(file.mimetype)
+
   return (
-    <>
-      <Button variant='outlined' color='info' onClick={handleOpen} startIcon={<Info />}>
-        جزئیات
-      </Button>
+    <div>
+      <IconButton onClick={handleOpen} size='small'>
+        <Info fontSize='small' />
+      </IconButton>
 
       <CustomDialog
         open={open}
@@ -34,53 +34,48 @@ const DetailMediaModal = ({ file }: { file: Media }) => {
         title='جزئیات فایل'
         defaultMaxWidth='sm'
         actions={
-          <Button onClick={handleClose} color='secondary'>
-            انصراف
+          <Button onClick={handleClose} color='secondary' variant='outlined'>
+            بستن
           </Button>
         }
       >
-        <DialogContent>
-          {file.type === 'image' && file.url && (
-            <Box
-              mb={3}
-              sx={{
-                position: 'relative',
-                width: '100%',
-                height: '200px',
-                borderRadius: '10px',
-                overflow: 'hidden',
-                transition: 'transform 0.3s ease',
-                '&:hover': { transform: 'scale(1.02)' }
-              }}
-            >
-              <Image src={file.url} alt={file.name} fill style={{ objectFit: 'cover' }} className='rounded-md' />
-            </Box>
-          )}
+        <DialogContent sx={{ pb: 4 }}>
           <Box
             sx={{
               display: 'grid',
               gap: 2,
-              backgroundColor: '#f9f9f9',
               borderRadius: 2,
-              padding: 2,
-              mt: 2
+              padding: 3,
+              border: '1px solid #e0e4e8'
             }}
           >
-            <DetailRow label='نام فایل:' value={file.name} />
-            <DetailRow label='نوع:' value={file.type === 'image' ? 'تصویر' : file.type === 'video' ? 'ویدیو' : 'سند'} />
-            <DetailRow label='حجم:' value={file.size} />
-            <DetailRow label='تاریخ آپلود:' value={file.uploadedAt} />
+            <DetailRow label='عنوان' value={file.title} icon={<Title color='primary' fontSize='small' />} />
+            <DetailRow label='توضیحات' value={file?.description ? file.description : '-'} icon={<Description color='primary' fontSize='small' />} />
+            <DetailRow label='نوع فایل' value={fileType === 'image' ? 'تصویر' : fileType === 'video' ? 'ویدیو' : 'سند'} icon={<ImageIcon color='primary' fontSize='small' />} />
+            <DetailRow label='حجم' value={formatFileSize(file.size)} icon={<Storage color='primary' fontSize='small' />} />
+            <DetailRow label='تاریخ آپلود' value={formatDate(file.createdAt)} icon={<CalendarToday color='primary' fontSize='small' />} />
           </Box>
         </DialogContent>
       </CustomDialog>
-    </>
+    </div>
   )
 }
 
-const DetailRow = ({ label, value }: { label: string; value: string }) => (
-  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
-    <Typography sx={{ fontWeight: 600, color: 'text.secondary' }}>{label}</Typography>
-    <Typography sx={{ wordBreak: 'break-word' }}>{value}</Typography>
+const DetailRow = ({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) => (
+  <Box
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 2,
+      flexWrap: 'wrap',
+      padding: '8px 0',
+      borderBottom: '1px solid #e8ecef',
+      '&:last-child': { borderBottom: 'none' }
+    }}
+  >
+    {icon}
+    <Typography sx={{ fontWeight: 600, color: 'text.secondary', minWidth: '100px' }}>{label}:</Typography>
+    <Typography sx={{ wordBreak: 'break-word', color: 'text.primary' }}>{value}</Typography>
   </Box>
 )
 

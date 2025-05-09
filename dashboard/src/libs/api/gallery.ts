@@ -1,6 +1,6 @@
 import { Gallery, GalleryForm } from '@/types/gallery'
 import { Response } from '@/types/response'
-import { serverApiFetch } from '@/utils/api'
+import { serverApiFetch } from '@/utils/api/serverApiFetch'
 
 export const getGalleries = async (): Promise<Response<Gallery[]>> => {
   try {

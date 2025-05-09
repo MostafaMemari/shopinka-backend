@@ -13,7 +13,7 @@ interface RemoveGalleryItemModalProps {
 const RemoveGalleryItemModal = ({ selectedImages, onClearSelection }: RemoveGalleryItemModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
   const [galleryItemIds, setGalleryItemIds] = useState<string[] | null>(null)
-  const [isDeleting, setIsDeleting] = useState<boolean>(false) // برای مدیریت حالت حذف
+  const [isDeleting, setIsDeleting] = useState<boolean>(false)
   const router = useRouter()
 
   const handleOpen = (selected: string[]) => {
@@ -22,14 +22,11 @@ const RemoveGalleryItemModal = ({ selectedImages, onClearSelection }: RemoveGall
   }
 
   const handleConfirm = async () => {
-    if (!galleryItemIds || isDeleting) return // جلوگیری از اجرای دوباره در حین حذف
-
+    if (!galleryItemIds || isDeleting) return
     setIsDeleting(true)
 
     try {
       const res = await removeGalleryItem(galleryItemIds)
-
-      console.log(res)
 
       if (res.status === 200) {
         showToast({ type: 'success', message: 'حذف فایل با موفقیت انجام شد' })
@@ -56,38 +53,40 @@ const RemoveGalleryItemModal = ({ selectedImages, onClearSelection }: RemoveGall
   }
 
   return (
-    <div>
-      <Button variant='contained' color='error' onClick={() => handleOpen(selectedImages)}>
-        حذف {selectedImages.length} مورد
-      </Button>
+    <>
+      <div>
+        <Button variant='contained' color='error' onClick={() => handleOpen(selectedImages)}>
+          حذف {selectedImages.length} مورد
+        </Button>
 
-      <CustomDialog
-        open={open}
-        onClose={handleCancel}
-        title='آیا از حذف فایل اطمینان دارید؟'
-        defaultMaxWidth='sm'
-        actions={
-          <>
-            <Button onClick={handleCancel} color='secondary'>
-              لغو
-            </Button>
-            <Button
-              onClick={handleConfirm}
-              variant='contained'
-              color='error'
-              disabled={!galleryItemIds?.length || isDeleting}
-              startIcon={isDeleting ? <CircularProgress size={20} color='inherit' /> : null}
-            >
-              {isDeleting ? 'در حال حذف...' : 'حذف'}
-            </Button>
-          </>
-        }
-      >
-        <DialogContent>
-          <DialogContentText>این عملیات قابل بازگشت نیست</DialogContentText>
-        </DialogContent>
-      </CustomDialog>
-    </div>
+        <CustomDialog
+          open={open}
+          onClose={handleCancel}
+          title='آیا از حذف فایل اطمینان دارید؟'
+          defaultMaxWidth='sm'
+          actions={
+            <>
+              <Button onClick={handleCancel} color='secondary'>
+                لغو
+              </Button>
+              <Button
+                onClick={handleConfirm}
+                variant='contained'
+                color='error'
+                disabled={!galleryItemIds?.length || isDeleting}
+                startIcon={isDeleting ? <CircularProgress size={20} color='inherit' /> : null}
+              >
+                {isDeleting ? 'در حال حذف...' : 'حذف'}
+              </Button>
+            </>
+          }
+        >
+          <DialogContent>
+            <DialogContentText>این عملیات قابل بازگشت نیست</DialogContentText>
+          </DialogContent>
+        </CustomDialog>
+      </div>
+    </>
   )
 }
 

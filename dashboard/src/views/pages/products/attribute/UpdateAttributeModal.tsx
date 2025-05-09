@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react' // اضافه کردن useEffect
+import { useState, useEffect, useMemo } from 'react' // اضافه کردن useEffect
 import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
 import { IconButton, MenuItem } from '@mui/material'
-import { AttributeForm, AttributeType } from '@/types/productAttributes'
+import { AttributeFormType, AttributeType } from '@/types/productAttributes'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { updateAttribute } from '@/libs/api/productAttributes'
 import { showToast } from '@/utils/showToast'
@@ -14,12 +14,26 @@ import { useRouter } from 'next/navigation'
 import getChangedFields from '@/utils/getChangedFields'
 import { attributeSchema } from '@/libs/validators/attribute.schemas'
 
-const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeForm> }) => {
+const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeFormType> & { id: number } }) => {
   const [open, setOpen] = useState<boolean>(false)
   const router = useRouter()
 
-  const handleOpen = () => setOpen(true)
+  const handleOpen = () => {
+    setOpen(true)
+    reset()
+  }
+
   const handleClose = () => setOpen(false)
+
+  const attributeForm: AttributeFormType = useMemo(
+    () => ({
+      name: initialData?.name ?? '',
+      slug: initialData?.slug ?? '',
+      type: initialData?.type ?? AttributeType.COLOR,
+      description: initialData?.description ?? null
+    }),
+    [initialData]
+  )
 
   const {
     control,
@@ -30,12 +44,21 @@ const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeF
   } = useForm({
     resolver: yupResolver(attributeSchema),
     defaultValues: {
-      name: initialData?.name,
-      slug: initialData?.slug,
-      type: initialData?.type,
-      description: initialData?.description || null
+      name: attributeForm?.name,
+      slug: attributeForm?.slug,
+      type: attributeForm?.type,
+      description: attributeForm?.description || null
     }
   })
+
+  useEffect(() => {
+    reset({
+      name: attributeForm?.name,
+      slug: attributeForm?.slug,
+      type: attributeForm?.type,
+      description: attributeForm?.description || null
+    })
+  }, [attributeForm, reset])
 
   useEffect(() => {
     reset({
@@ -46,7 +69,7 @@ const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeF
     })
   }, [initialData, reset])
 
-  const onSubmit = async (formData: AttributeForm) => {
+  const onSubmit = async (formData: AttributeFormType) => {
     try {
       if (initialData?.id !== undefined) {
         const changedData = getChangedFields(initialData, {
@@ -81,7 +104,7 @@ const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeF
             type: formData.type || AttributeType.COLOR,
             description: formData.description || null
           })
-          handleClose() // بسته شدن دیالوگ
+          handleClose()
         }
       }
     } catch (error: any) {

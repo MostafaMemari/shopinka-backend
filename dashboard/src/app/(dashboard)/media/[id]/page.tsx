@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation'
 const MediaItems = async ({ params }: { params: { id: string } }) => {
   const { id } = await params
 
-  const res = await getItemGalleries({ galleryId: id })
+  const res = await getItemGalleries({ galleryId: id, sortBy: 'updatedAt' })
 
   const items = res?.data?.items?.flat()
 

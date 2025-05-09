@@ -26,7 +26,7 @@ export type AttributeValues = {
   updatedAt: string
 }
 
-export type AttributeForm = {
+export type AttributeFormType = {
   name: string
   slug: string
   type: AttributeType

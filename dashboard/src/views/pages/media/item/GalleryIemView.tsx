@@ -2,17 +2,15 @@
 
 import React, { useState, useEffect } from 'react'
 import Card from '@mui/material/Card'
-import { Box, useMediaQuery, useTheme, Button, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import CustomTextField from '@/@core/components/mui/TextField'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
 import CreateMediaModal from './CreateMediaModal'
-import UpdateGalleryItemModal from './UpdateGalleryItemModal'
 import { GalleryItem } from '@/types/gallery'
 import DesktopMediaGallery from './DesktopMediaGallery'
-import { removeGalleryItem } from '@/libs/api/galleyItem'
-import { showToast } from '@/utils/showToast'
-import { useRouter } from 'next/navigation'
 import RemoveGalleryItemModal from './RemoveMediaModal'
+import NoMediaMessage from '../NoMediaMessage'
+import { PermMedia } from '@mui/icons-material'
 
 const DebouncedInput = ({
   value: initialValue,
@@ -43,8 +41,6 @@ const GalleryItemView = ({ data: initialData }: { data?: GalleryItem[] }) => {
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [selected, setSelected] = useState<string[]>([])
 
-  const router = useRouter()
-
   useEffect(() => {
     setLocalData(initialData || [])
   }, [initialData])
@@ -62,30 +58,40 @@ const GalleryItemView = ({ data: initialData }: { data?: GalleryItem[] }) => {
   }
 
   return (
-    <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'space-between',
-          gap: 4,
-          p: 6
-        }}
-      >
-        <Box sx={{ display: 'flex', gap: 2 }}>
+    <>
+      {paginatedData.length === 0 ? (
+        <NoMediaMessage
+          title='هیچ رسانه‌ای یافت نشد'
+          subtitle='به نظر می‌رسه هیچ فایل رسانه‌ای در این بخش وجود نداره. می‌تونید رسانه‌های جدید آپلود کنید!'
+          icon={<PermMedia color='action' sx={{ fontSize: 60, mb: 2, opacity: 0.7 }} />}
+        >
           <CreateMediaModal />
-          {selected.length > 0 && <RemoveGalleryItemModal selectedImages={selected} onClearSelection={handleClearSelection} />}
-        </Box>
-        <Box sx={{ display: 'flex', maxWidth: { xs: '100%', sm: 'auto' }, width: { xs: '100%', sm: 'auto' } }}>
-          <DebouncedInput value={searchTerm} onChange={value => setSearchTerm(String(value))} placeholder='جستجو' sx={{ width: '100%' }} />
-        </Box>
-      </Box>
+        </NoMediaMessage>
+      ) : (
+        <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+              gap: 4,
+              p: 6
+            }}
+          >
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <CreateMediaModal />
+              {selected.length > 0 && <RemoveGalleryItemModal selectedImages={selected} onClearSelection={handleClearSelection} />}
+            </Box>
+            <Box sx={{ display: 'flex', maxWidth: { xs: '100%', sm: 'auto' }, width: { xs: '100%', sm: 'auto' } }}>
+              <DebouncedInput value={searchTerm} onChange={value => setSearchTerm(String(value))} placeholder='جستجو' sx={{ width: '100%' }} />
+            </Box>
+          </Box>
 
-      <DesktopMediaGallery paginatedData={paginatedData} selected={selected} handleCheckboxChange={handleCheckboxChange} />
+          <DesktopMediaGallery paginatedData={paginatedData} selected={selected} handleCheckboxChange={handleCheckboxChange} />
 
-      <TablePaginationComponent filteredData={filteredData} page={page} rowsPerPage={rowsPerPage} onPageChange={setPage} onRowsPerPageChange={setRowsPerPage} />
+          <TablePaginationComponent filteredData={filteredData} page={page} rowsPerPage={rowsPerPage} onPageChange={setPage} onRowsPerPageChange={setRowsPerPage} />
 
-      {/* {selectedItem && (
+          {/* {selectedItem && (
         <UpdateGalleryItemModal
           open={updateModalOpen}
           onClose={() => setUpdateModalOpen(false)}
@@ -93,7 +99,9 @@ const GalleryItemView = ({ data: initialData }: { data?: GalleryItem[] }) => {
           initialData={{ title: selectedItem.title, description: selectedItem.description }}
         />
       )} */}
-    </Card>
+        </Card>
+      )}
+    </>
   )
 }
 

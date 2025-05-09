@@ -17,31 +17,7 @@ import { Attribute } from '@/types/productAttributes'
 import CustomTextField from '@/@core/components/mui/TextField'
 import MobileAttributeCard from './MobileAttributeCard'
 import DesktopAttributeTable from './DesktopAttributeTable'
-
-const DebouncedInput = ({
-  value: initialValue,
-  onChange,
-  debounce = 500,
-  ...props
-}: {
-  value: string | number
-  onChange: (value: string | number) => void
-  debounce?: number
-} & Omit<TextFieldProps, 'onChange'>) => {
-  const [value, setValue] = useState(initialValue)
-
-  useEffect(() => {
-    setValue(initialValue)
-  }, [initialValue])
-
-  useEffect(() => {
-    const timeout = setTimeout(() => onChange(value), debounce)
-
-    return () => clearTimeout(timeout)
-  }, [value, onChange, debounce])
-
-  return <CustomTextField {...props} value={value} onChange={e => setValue(e.target.value)} />
-}
+import DebouncedInput from '@/components/DebouncedInput'
 
 // Main Component
 const ProductAttributeView = ({ data: initialData }: { data: Attribute[] }) => {
@@ -67,9 +43,6 @@ const ProductAttributeView = ({ data: initialData }: { data: Attribute[] }) => {
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
         <CreateUpdateAttributeModal />
-        <Box sx={{ display: 'flex', maxWidth: { xs: '100%', sm: 'auto' }, width: { xs: '100%', sm: 'auto' } }}>
-          <DebouncedInput value={searchTerm} onChange={value => setSearchTerm(String(value))} placeholder='جستجو' sx={{ width: '100%' }} />
-        </Box>
       </Box>
       {isMobile ? <MobileAttributeCard data={data} paginatedData={paginatedData} /> : <DesktopAttributeTable data={data} paginatedData={paginatedData} />}
       <TablePaginationComponent filteredData={data} page={page} rowsPerPage={rowsPerPage} onPageChange={setPage} onRowsPerPageChange={rows => setRowsPerPage(rows)} />

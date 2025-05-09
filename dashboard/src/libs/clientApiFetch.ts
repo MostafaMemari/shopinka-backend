@@ -13,6 +13,8 @@ export const clientApiFetch = async (
 ) => {
   const token = Cookies.get(COOKIE_NAMES.ACCESS_TOKEN) || ''
 
+  console.log(token)
+
   const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData
 
   try {

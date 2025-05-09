@@ -15,19 +15,21 @@ export type Gallery = {
 export type GalleryItemForm = {
   galleryId: string
   title: string
-  description: string
+  description: string | null
   image: FormData
 }
 
-export type GalleryItem = {
+export interface GalleryItem {
   id: number
   galleryId: number
   title: string
-  description: null
+  description: string | null
   fileUrl: string
   fileKey: string
   mimetype: string
   size: number
   createdAt: string
   updatedAt: string
+  deletedAt: string | null
+  isDeleted: boolean
 }
