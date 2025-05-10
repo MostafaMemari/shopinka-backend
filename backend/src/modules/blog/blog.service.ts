@@ -2,11 +2,15 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { BlogRepository } from './blog.repository';
-import { Blog, BlogStatus } from 'generated/prisma';
+import { Blog, BlogStatus, Prisma } from 'generated/prisma';
 import { BlogMessages } from './enums/blog-messages.enum';
 import { CategoryRepository } from '../category/category.repository';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { pagination } from '../../common/utils/pagination.utils';
+import { QueryBlogDto } from './dto/query-blog.dto';
+import { CacheService } from '../cache/cache.service';
+import { sortObject } from '../../common/utils/functions.utils';
+import { CacheKeys } from '../../common/enums/cache.enum';
 
 @Injectable()
 export class BlogService {
@@ -14,7 +18,8 @@ export class BlogService {
 
   constructor(
     private readonly blogRepository: BlogRepository,
-    private readonly categoryRepository: CategoryRepository
+    private readonly categoryRepository: CategoryRepository,
+    private readonly cacheService: CacheService,
   ) { }
 
   async create(userId: number, createBlogDto: CreateBlogDto): Promise<{ message: string, blog: Blog }> {
@@ -47,8 +52,36 @@ export class BlogService {
     return { message: BlogMessages.CreatedBlogSuccess, blog: newBlog }
   }
 
-  findAll() {
-    return `This action returns all blog`;
+  async findAll({ take, page, ...queryBlogDto }: QueryBlogDto): Promise<unknown> {
+    const paginationDto = { page, take };
+    const { endDate, sortBy, sortDirection, startDate, includeCategories, includeComments, includeSeoMeta, includeTags, includeUser, title, } = queryBlogDto;
+
+    const sortedDto = sortObject(queryBlogDto);
+
+    const cacheKey = `${CacheKeys.Blogs}_${JSON.stringify(sortedDto)}`;
+
+    const cachedBlogs = await this.cacheService.get<null | Blog[]>(cacheKey);
+
+    if (cachedBlogs) return { ...pagination(paginationDto, cachedBlogs) }
+
+    const filters: Prisma.BlogWhereInput = {};
+
+    if (title) filters.title = { contains: title, mode: "insensitive" };
+    if (startDate || endDate) {
+      filters.createdAt = {};
+      if (startDate) filters.createdAt.gte = new Date(startDate);
+      if (endDate) filters.createdAt.lte = new Date(endDate);
+    }
+
+    const galleries = await this.blogRepository.findAll({
+      where: filters,
+      orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
+      include: { categories: includeCategories, comments: includeComments, seoMeta: includeSeoMeta, tags: includeTags, user: includeUser }
+    });
+
+    await this.cacheService.set(cacheKey, galleries, this.CACHE_EXPIRE_TIME);
+
+    return { ...pagination(paginationDto, galleries) }
   }
 
   async findAllDrafts(userId: number, paginationDto: PaginationDto): Promise<unknown> {

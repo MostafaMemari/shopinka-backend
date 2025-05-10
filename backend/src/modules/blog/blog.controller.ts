@@ -9,7 +9,8 @@ import { AuthDecorator } from '../../common/decorators/auth.decorator';
 import { GetUser } from '../../common/decorators/get-user.decorator';
 import { Roles } from '../../common/decorators/role.decorator';
 import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { PaginationDto } from '../../common/dtos/pagination.dto';
+import { QueryBlogDto } from './dto/query-blog.dto';
 
 @Controller('blog')
 @ApiTags("blog")
@@ -25,8 +26,9 @@ export class BlogController {
   }
 
   @Get()
-  findAll() {
-    return this.blogService.findAll();
+  @SkipAuth()
+  findAll(@Query() queryBlogDto: QueryBlogDto) {
+    return this.blogService.findAll(queryBlogDto);
   }
 
   @Get('draft')
