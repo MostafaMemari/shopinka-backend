@@ -30,7 +30,7 @@ export class CategoryService {
 
     if (existingCategory) throw new ConflictException(CategoryMessages.AlreadyExistsCategory)
 
-    await this.galleryItemRepository.findOneOrThrow({ where: { id: thumbnailImageId } })
+    if (thumbnailImageId) await this.galleryItemRepository.findOneOrThrow({ where: { id: thumbnailImageId } })
 
     const uniqueSlug = slug ?? await this.generateUniqueSlug(name)
 
