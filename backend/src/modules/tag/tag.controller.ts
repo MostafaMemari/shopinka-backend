@@ -42,7 +42,8 @@ export class TagController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tagService.remove(+id);
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.tagService.remove(user.id, id);
   }
 }

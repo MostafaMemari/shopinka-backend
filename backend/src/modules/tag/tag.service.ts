@@ -58,8 +58,12 @@ export class TagService {
     return { message: TagMessages.UpdatedTagSuccess, tag: updatedTag }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} tag`;
+  async remove(userId: number, tagId: number): Promise<{ message: string, tag: Tag }> {
+    await this.tagRepository.findOneOrThrow({ where: { id: tagId, userId } })
+
+    const removedTag = await this.tagRepository.delete({ where: { id: tagId } })
+
+    return { message: TagMessages.RemovedTagSuccess, tag: removedTag }
   }
 
   private async generateUniqueSlug(name: string): Promise<string> {
