@@ -3,7 +3,7 @@ export enum AttributeType {
   BUTTON = 'BUTTON'
 }
 
-export type ProductType = 'simple' | 'variable'
+export type ProductType = 'SIMPLE' | 'VARIABLE'
 
 export type Attribute = {
   id: number

@@ -17,6 +17,9 @@ import { productSchema } from '@/libs/validators/product.schema'
 const AppProduct = () => {
   const methods = useForm({
     resolver: yupResolver(productSchema),
+    defaultValues: {
+      type: 'SIMPLE'
+    },
     mode: 'onChange'
   })
 

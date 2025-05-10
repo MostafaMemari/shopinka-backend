@@ -55,9 +55,6 @@ const CombinationsList = ({ combinations, selectedCombinations, attributes, onCo
 
   const attributeNames = Array.from(new Set(combinations.flatMap(combination => Object.keys(combination))))
 
-  // لاگ کردن selectedValueIds
-  console.log('IDهای مقادیر انتخاب‌شده:', selectedValueIds)
-
   return (
     <TableContainer component={Paper} sx={{ boxShadow: 2, borderRadius: 1 }}>
       <Table sx={{ minWidth: 300 }}>

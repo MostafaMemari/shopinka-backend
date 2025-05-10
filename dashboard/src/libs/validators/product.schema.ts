@@ -52,7 +52,7 @@ export const productSchema = yup.object().shape({
 
   status: yup.mixed().oneOf(['DRAFT', 'PUBLISHED'], 'وضعیت نامعتبر است').optional(),
 
-  type: yup.mixed().oneOf(['SIMPLE', 'VARIABLE'], 'نوع محصول نامعتبر است').optional(),
+  type: yup.mixed<'SIMPLE' | 'VARIABLE'>().oneOf(['SIMPLE', 'VARIABLE'], 'نوع محصول نامعتبر است').required('نوع محصول الزامی است'),
 
   mainImageId: yup.number().optional().positive('عدد باید مثبت باشد'),
 
@@ -83,6 +83,11 @@ export const productSchema = yup.object().shape({
 
       return new Set(value).size === value.length
     }),
+
+  attributeValuesIds: yup
+    .array()
+    .of(yup.array().of(yup.number().positive('شناسه ویژگی باید عددی مثبت باشد')).min(1, 'هر ترکیب باید حداقل یک مقدار داشته باشد'))
+    .optional(),
 
   width: yup
     .number()

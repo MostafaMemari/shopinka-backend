@@ -7,7 +7,6 @@ export const generateCombinations = (variants: Variant[], attributes: Attribute[
 
   const result: VariantCombination[] = []
 
-  // تابع کمکی برای تولید ترکیب‌ها
   const combine = (current: VariantCombination, variantIndex: number) => {
     if (variantIndex >= variants.length) {
       if (Object.keys(current).length > 0) {
