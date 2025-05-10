@@ -127,6 +127,7 @@ model GalleryItem {
   mainImageOfVariants ProductVariant[] @relation("VariantMainImage")
   sharedIn            Product[]        @relation("ProductToGalleryItem")
   categories          Category[]
+  tags                Tag[]
 
   @@index([deletedAt])
 }
@@ -385,19 +386,20 @@ model Blog {
 }
 
 model Tag {
-  id             Int      @id() @default(autoincrement())
-  userId         Int
-  name           String
-  slug           String   @unique()
-  description    String?
-  thumbnailImage String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id               Int      @id() @default(autoincrement())
+  userId           Int
+  thumbnailImageId Int?
+  name             String
+  slug             String   @unique()
+  description      String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  products Product[]
-  blogs    Blog[]
-  user     User      @relation(fields: [userId], references: [id], onDelete: NoAction)
-  seoMeta  SeoMeta?  @relation("SeoMetaTag")
+  products       Product[]
+  blogs          Blog[]
+  user           User         @relation(fields: [userId], references: [id], onDelete: NoAction)
+  thumbnailImage GalleryItem? @relation(fields: [thumbnailImageId], references: [id], onDelete: NoAction)
+  seoMeta        SeoMeta?     @relation("SeoMetaTag")
 }
 
 model Shipping {

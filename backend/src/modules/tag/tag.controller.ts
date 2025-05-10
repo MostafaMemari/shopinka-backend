@@ -2,14 +2,24 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { TagService } from './tag.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { AuthDecorator } from '../../common/decorators/auth.decorator';
+import { Roles } from '../../common/decorators/role.decorator';
+import { Role, User } from 'generated/prisma';
+import { GetUser } from '../../common/decorators/get-user.decorator';
+import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 
 @Controller('tag')
+@ApiTags('tag')
+@AuthDecorator()
 export class TagController {
-  constructor(private readonly tagService: TagService) {}
+  constructor(private readonly tagService: TagService) { }
 
   @Post()
-  create(@Body() createTagDto: CreateTagDto) {
-    return this.tagService.create(createTagDto);
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  create(@Body() createTagDto: CreateTagDto, @GetUser() user: User) {
+    return this.tagService.create(user.id, createTagDto);
   }
 
   @Get()
