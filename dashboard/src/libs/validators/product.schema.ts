@@ -54,7 +54,11 @@ export const productSchema = yup.object().shape({
 
   type: yup.mixed<'SIMPLE' | 'VARIABLE'>().oneOf(['SIMPLE', 'VARIABLE'], 'نوع محصول نامعتبر است').required('نوع محصول الزامی است'),
 
-  mainImageId: yup.number().optional().positive('عدد باید مثبت باشد'),
+  mainImageId: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .optional()
+    .positive('عدد باید مثبت باشد'),
 
   galleryImageIds: yup
     .array()

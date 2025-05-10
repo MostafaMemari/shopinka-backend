@@ -16,18 +16,30 @@ import ModalGallery from '@/components/Gallery/ModalGallery/ModalGallery'
 import { GalleryItem } from '@/types/gallery'
 import { useState } from 'react'
 import Image from 'next/image'
+import { useFormContext } from 'react-hook-form'
 
 const ProductMainImage = () => {
   const [selectedImage, setSelectedImage] = useState<GalleryItem | null>(null)
+
+  const {
+    register,
+    formState: { errors },
+    setValue
+  } = useFormContext()
 
   const handleSelect = (item: GalleryItem | GalleryItem[]) => {
     const image = Array.isArray(item) ? item[0] : item
 
     setSelectedImage(image)
+
+    const mainImageId = typeof image.id === 'number' && image.id > 0 ? image.id : undefined
+
+    setValue('mainImageId', mainImageId)
   }
 
   const handleRemove = () => {
     setSelectedImage(null)
+    setValue('mainImageId', undefined)
   }
 
   return (
