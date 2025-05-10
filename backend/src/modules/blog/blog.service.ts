@@ -5,6 +5,8 @@ import { BlogRepository } from './blog.repository';
 import { Blog, BlogStatus } from 'generated/prisma';
 import { BlogMessages } from './enums/blog-messages.enum';
 import { CategoryRepository } from '../category/category.repository';
+import { PaginationDto } from '../../common/dtos/pagination.dto';
+import { pagination } from '../../common/utils/pagination.utils';
 
 @Injectable()
 export class BlogService {
@@ -49,6 +51,15 @@ export class BlogService {
     return `This action returns all blog`;
   }
 
+  async findAllDrafts(userId: number, paginationDto: PaginationDto): Promise<unknown> {
+    const blogs = await this.blogRepository.findAll({
+      where: { userId, status: BlogStatus.DRAFT },
+      include: { categories: true, seoMeta: true, tags: true }
+    })
+
+    return pagination(paginationDto, blogs)
+  }
+
   findOne(id: number): Promise<Blog> {
     return this.blogRepository.findOneOrThrow({
       where: { id, status: BlogStatus.PUBLISHED },
@@ -90,7 +101,7 @@ export class BlogService {
 
     const removedBlog = await this.blogRepository.delete({ where: { id: blogId } })
 
-    return {message: BlogMessages.RemovedBlogSuccess , blog: removedBlog}
+    return { message: BlogMessages.RemovedBlogSuccess, blog: removedBlog }
   }
 
   private async generateUniqueSlug(name: string): Promise<string> {

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
@@ -9,6 +9,7 @@ import { AuthDecorator } from '../../common/decorators/auth.decorator';
 import { GetUser } from '../../common/decorators/get-user.decorator';
 import { Roles } from '../../common/decorators/role.decorator';
 import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Controller('blog')
 @ApiTags("blog")
@@ -26,6 +27,12 @@ export class BlogController {
   @Get()
   findAll() {
     return this.blogService.findAll();
+  }
+
+  @Get('draft')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  findAllDrafts(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
+    return this.blogService.findAllDrafts(user.id, paginationDto);
   }
 
   @Get(':id')
