@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { TagService } from './tag.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
@@ -8,6 +8,7 @@ import { Roles } from '../../common/decorators/role.decorator';
 import { Role, User } from 'generated/prisma';
 import { GetUser } from '../../common/decorators/get-user.decorator';
 import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
+import { SkipAuth } from 'src/common/decorators/skip-auth.decorator';
 
 @Controller('tag')
 @ApiTags('tag')
@@ -28,8 +29,9 @@ export class TagController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tagService.findOne(+id);
+  @SkipAuth()
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.tagService.findOne(id);
   }
 
   @Patch(':id')

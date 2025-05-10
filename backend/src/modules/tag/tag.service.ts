@@ -34,8 +34,11 @@ export class TagService {
     return `This action returns all tag`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} tag`;
+  findOne(id: number): Promise<Tag> {
+    return this.tagRepository.findOneOrThrow({
+      where: { id },
+      include: { blogs: true, products: true, seoMeta: true, thumbnailImage: true, user: { select: { id: true, fullName: true } } }
+    })
   }
 
   update(id: number, updateTagDto: UpdateTagDto) {
