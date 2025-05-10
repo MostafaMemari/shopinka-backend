@@ -10,6 +10,7 @@ import { CacheKeys } from '../../common/enums/cache.enum';
 import { CacheService } from '../cache/cache.service';
 import { pagination } from '../../common/utils/pagination.utils';
 import { CategoryMessages } from './enums/category-messages.enum';
+import slugify from 'slugify';
 
 @Injectable()
 export class CategoryService {
@@ -22,7 +23,7 @@ export class CategoryService {
   ) { }
 
   async create(userId: number, createCategoryDto: CreateCategoryDto): Promise<{ message: string, category: Category }> {
-    const { slug, parentId, thumbnailImageId } = createCategoryDto
+    const { slug, parentId, thumbnailImageId, name } = createCategoryDto
     if (createCategoryDto.parentId) await this.categoryRepository.findOneOrThrow({ where: { id: parentId } })
 
     const existingCategory = await this.categoryRepository.findOne({ where: { slug } })
@@ -31,8 +32,10 @@ export class CategoryService {
 
     await this.galleryItemRepository.findOneOrThrow({ where: { id: thumbnailImageId } })
 
+    const uniqueSlug = slug ?? await this.generateUniqueSlug(name)
+
     const newCategory = await this.categoryRepository.create({
-      data: { ...createCategoryDto, userId },
+      data: { ...createCategoryDto, userId, slug: uniqueSlug },
       include: { thumbnailImage: true, parent: true }
     })
 
@@ -144,5 +147,18 @@ export class CategoryService {
     )
 
     return category
+  }
+
+  private async generateUniqueSlug(name: string): Promise<string> {
+    let slug = slugify(name, { locale: 'fa', lower: true, strict: true, trim: true })
+    let suffix = 0
+    let uniqueSlug = slug
+
+    while (await this.categoryRepository.findOne({ where: { slug: uniqueSlug } })) {
+      suffix++
+      uniqueSlug = `${slug}-${suffix}`
+    }
+
+    return uniqueSlug
   }
 }

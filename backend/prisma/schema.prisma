@@ -75,6 +75,7 @@ model User {
   comments         Comment[]
   orders           Order[]
   blogs            Blog[]
+  tags             Tag[]
   cart             Cart?            @relation("UserCart")
 }
 
@@ -126,6 +127,7 @@ model GalleryItem {
   mainImageOfVariants ProductVariant[] @relation("VariantMainImage")
   sharedIn            Product[]        @relation("ProductToGalleryItem")
   categories          Category[]
+  tags                Tag[]
 
   @@index([deletedAt])
 }
@@ -137,7 +139,7 @@ model Address {
   province       String
   city           String
   address        String
-  postalCode     String   @unique() @map("postal_code")
+  postalCode     String?  @unique() @map("postal_code")
   receiverMobile String?  @map("receiver_mobile")
   description    String?
   orders         Order[]
@@ -246,6 +248,7 @@ model Favorite {
 
 model Category {
   id               Int      @id @default(autoincrement())
+  name             String
   slug             String   @unique()
   description      String?
   parentId         Int?
@@ -379,22 +382,25 @@ model Blog {
   user       User       @relation(fields: [userId], references: [id], onDelete: NoAction)
   comments   Comment[]
   categories Category[]
-  tgs        Tag[]
+  tags       Tag[]
   seoMeta    SeoMeta?   @relation("SeoMetaBlog")
 }
 
 model Tag {
-  id             Int      @id() @default(autoincrement())
-  name           String
-  slug           String   @unique()
-  description    String?
-  thumbnailImage String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id               Int      @id() @default(autoincrement())
+  userId           Int
+  thumbnailImageId Int?
+  name             String
+  slug             String   @unique()
+  description      String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  products Product[]
-  blogs    Blog[]
-  seoMeta  SeoMeta?  @relation("SeoMetaTag")
+  products       Product[]
+  blogs          Blog[]
+  user           User         @relation(fields: [userId], references: [id], onDelete: NoAction)
+  thumbnailImage GalleryItem? @relation(fields: [thumbnailImageId], references: [id], onDelete: NoAction)
+  seoMeta        SeoMeta?     @relation("SeoMetaTag")
 }
 
 model Shipping {

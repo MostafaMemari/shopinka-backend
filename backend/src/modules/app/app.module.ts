@@ -21,6 +21,9 @@ import { CommentModule } from "../comment/comment.module";
 import { CartModule } from "../cart/cart.module";
 import { OrderModule } from "../order/order.module";
 import { BlogModule } from "../blog/blog.module";
+import { SeoModule } from "../seo/seo.module";
+import { TagModule } from "../tag/tag.module";
+import { ShippingModule } from "../shipping/shipping.module";
 
 @Module({
   imports: [
@@ -41,7 +44,10 @@ import { BlogModule } from "../blog/blog.module";
     CommentModule,
     CartModule,
     OrderModule,
-    BlogModule
+    BlogModule,
+    SeoModule,
+    TagModule,
+    ShippingModule
   ],
   controllers: [],
   providers: [

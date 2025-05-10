@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { Type } from "class-transformer"
-import { ArrayUnique, IsArray, IsNotEmpty, IsOptional, IsString } from "class-validator"
+import { Transform, Type } from "class-transformer"
+import { ArrayUnique, IsArray, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from "class-validator"
 
 export class SeoMetaDto {
     @IsOptional()
@@ -52,4 +52,37 @@ export class SeoMetaDto {
     @IsNotEmpty()
     @ApiProperty({ type: 'string', required: false, nullable: true })
     robotsTag?: string
+
+    @IsOptional()
+    @IsNumber()
+    @IsPositive()
+    @Transform(({ value }) => +value)
+    @ApiProperty({
+        type: 'number',
+        nullable: true,
+        required: false,
+    })
+    productId?: number
+
+    @IsOptional()
+    @IsNumber()
+    @IsPositive()
+    @Transform(({ value }) => +value)
+    @ApiProperty({
+        type: 'number',
+        nullable: true,
+        required: false,
+    })
+    blogId?: number
+
+    @IsOptional()
+    @IsNumber()
+    @IsPositive()
+    @Transform(({ value }) => +value)
+    @ApiProperty({
+        type: 'number',
+        nullable: true,
+        required: false,
+    })
+    tagId?: number
 }
