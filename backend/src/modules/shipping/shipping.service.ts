@@ -1,11 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { CreateShippingDto } from './dto/create-shipping.dto';
 import { UpdateShippingDto } from './dto/update-shipping.dto';
+import { ShippingRepository } from './shipping.repository';
+import { Shipping } from 'generated/prisma';
+import { ShippingMessages } from './enums/shipping-messages.enum';
 
 @Injectable()
 export class ShippingService {
-  create(createShippingDto: CreateShippingDto) {
-    return 'This action adds a new shipping';
+  constructor(
+    private readonly shippingRepository: ShippingRepository
+  ) { }
+
+  async create(userId: number, createShippingDto: CreateShippingDto): Promise<{ message: string, shipping: Shipping }> {
+    const newShipping = await this.shippingRepository.create({ data: { ...createShippingDto, userId } })
+
+    return { message: ShippingMessages.CreatedShippingSuccess, shipping: newShipping }
   }
 
   findAll() {
