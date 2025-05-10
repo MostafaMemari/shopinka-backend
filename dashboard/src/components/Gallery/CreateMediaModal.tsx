@@ -13,6 +13,8 @@ import AppReactDropzone from '@/libs/styles/AppReactDropzone'
 import { createGalleryItem } from '@/libs/api/galleyItem'
 import GallerySelect from '@/components/Gallery/GallerySelect'
 import { type SelectChangeEvent } from '@mui/material'
+import CreateGalleryModal from '@/views/pages/media/CreateGalleryModal'
+import { useQueryClient } from '@tanstack/react-query'
 
 // Styled Dropzone Component
 const Dropzone = styled(AppReactDropzone)<BoxProps>(({ theme }) => ({
@@ -42,6 +44,7 @@ const CreateMediaModal = () => {
   const [selectedGalleryId, setSelectedGalleryId] = useState<string>('')
   const maxFiles = 5
   const router = useRouter()
+  const queryClient = useQueryClient()
 
   const { id: galleryId } = useParams<{ id: string }>()
 
@@ -136,6 +139,7 @@ const CreateMediaModal = () => {
       if (res?.status === 200 || res?.status === 201) {
         showToast({ type: 'success', message: 'آپلود فایل با موفقیت انجام شد' })
         router.refresh()
+        await queryClient.invalidateQueries({ queryKey: ['gallery-items'] })
         handleCloseUpload()
       } else {
         showToast({ type: 'error', message: 'خطایی در آپلود رخ داد!' })
@@ -202,9 +206,10 @@ const CreateMediaModal = () => {
           </Button>
         }
       >
-        <DialogContent>
+        <Box display='flex' gap={2}>
+          <CreateGalleryModal />
           <GallerySelect value={selectedGalleryId} onChange={handleGalleryChange} enabled={openGallerySelect} />
-        </DialogContent>
+        </Box>
       </CustomDialog>
 
       <Dropzone>

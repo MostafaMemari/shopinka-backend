@@ -11,10 +11,12 @@ import { useRouter } from 'next/navigation'
 import { errorGalleryMessage } from '@/messages/auth/galleryMessages'
 import { gallerySchema } from '@/libs/validators/gallery.schemas'
 import { createGallery } from '@/libs/api/gallery'
+import { useQueryClient } from '@tanstack/react-query'
 
 const CreateGalleryModal = () => {
   const [open, setOpen] = useState<boolean>(false)
   const router = useRouter()
+  const queryClient = useQueryClient()
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -57,6 +59,7 @@ const CreateGalleryModal = () => {
 
       if (res.status === 201 || res.status === 200) {
         showToast({ type: 'success', message: 'گالری با موفقیت ثبت شد' })
+        await queryClient.invalidateQueries({ queryKey: ['galleries'] })
         router.refresh()
 
         reset({
