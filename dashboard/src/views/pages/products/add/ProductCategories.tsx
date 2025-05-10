@@ -63,17 +63,17 @@ const ProductCategories = () => {
             maxHeight: '300px',
             overflowY: 'auto',
             padding: 2,
-            border: '1px solid #e0e0e0',
+            border: theme => `1px solid ${theme.palette.divider}`,
             borderRadius: 1,
             '&::-webkit-scrollbar': {
               width: '8px'
             },
             '&::-webkit-scrollbar-thumb': {
-              backgroundColor: '#888',
+              backgroundColor: theme => theme.palette.grey[600],
               borderRadius: '4px'
             },
             '&::-webkit-scrollbar-thumb:hover': {
-              backgroundColor: '#555'
+              backgroundColor: theme => theme.palette.grey[800]
             }
           }}
         >
