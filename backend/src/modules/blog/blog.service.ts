@@ -9,8 +9,9 @@ import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { pagination } from '../../common/utils/pagination.utils';
 import { QueryBlogDto } from './dto/query-blog.dto';
 import { CacheService } from '../cache/cache.service';
-import { sortObject } from '../../common/utils/functions.utils';
+import { estimateReadingTime, sortObject } from '../../common/utils/functions.utils';
 import { CacheKeys } from '../../common/enums/cache.enum';
+import { TagRepository } from '../tag/tag.repository';
 
 @Injectable()
 export class BlogService {
@@ -19,11 +20,12 @@ export class BlogService {
   constructor(
     private readonly blogRepository: BlogRepository,
     private readonly categoryRepository: CategoryRepository,
+    private readonly tagRepository: TagRepository,
     private readonly cacheService: CacheService,
   ) { }
 
   async create(userId: number, createBlogDto: CreateBlogDto): Promise<{ message: string, blog: Blog }> {
-    const { title, categoryIds, slug, tagIds } = createBlogDto
+    const { title, categoryIds, slug, tagIds, content, readingTime } = createBlogDto
 
     if (slug) {
       const existingBlog = await this.blogRepository.findOne({ where: { slug } })
@@ -31,8 +33,8 @@ export class BlogService {
     }
 
     const categories = categoryIds ? await this.categoryRepository.findAll({ where: { id: { in: categoryIds } } }) : []
-    //TODO: Add find all tags
-    const tags = []
+    const tags = tagIds ? await this.tagRepository.findAll({ where: { id: { in: tagIds } } }) : []
+
     const uniqueSlug = slug ?? await this.generateUniqueSlug(title)
 
     categoryIds && delete createBlogDto.categoryIds
@@ -45,7 +47,7 @@ export class BlogService {
         slug: uniqueSlug,
         categories: { connect: categories.map(c => ({ id: c.id })) },
         tags: { connect: tags.map(t => ({ id: t.id })) },
-        //TODO: Calculate reading time
+        readingTime: readingTime ?? estimateReadingTime(content)
       }
     })
 
@@ -101,7 +103,7 @@ export class BlogService {
   }
 
   async update(userId: number, blogId: number, updateBlogDto: UpdateBlogDto): Promise<{ message: string, blog: Blog }> {
-    const { categoryIds, tagIds, slug } = updateBlogDto
+    const { categoryIds, tagIds, slug, content, readingTime } = updateBlogDto
     await this.blogRepository.findOneOrThrow({ where: { id: blogId, userId } })
 
     if (slug) {
@@ -110,9 +112,8 @@ export class BlogService {
     }
 
     const categories = categoryIds ? await this.categoryRepository.findAll({ where: { id: { in: categoryIds } } }) : undefined
-    //TODO: Add find all tags
-    const tags = []
-
+    const tags = tagIds ? await this.tagRepository.findAll({ where: { id: { in: tagIds } } }) : undefined
+    
     categoryIds && delete updateBlogDto.categoryIds
     tagIds && delete updateBlogDto.tagIds
 
@@ -123,6 +124,7 @@ export class BlogService {
         userId,
         categories: categories ? { connect: categories.map(c => ({ id: c.id })) } : undefined,
         tags: tagIds ? { connect: tags.map(t => ({ id: t.id })) } : undefined,
+        readingTime: content && !readingTime ? estimateReadingTime(content) : readingTime
       }
     })
 

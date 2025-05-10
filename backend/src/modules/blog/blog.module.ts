@@ -6,6 +6,7 @@ import { AuthService } from '../auth/auth.service';
 import { UserRepository } from '../user/user.repository';
 import { CategoryRepository } from '../category/category.repository';
 import { CacheService } from '../cache/cache.service';
+import { TagRepository } from '../tag/tag.repository';
 
 @Module({
   controllers: [BlogController],
@@ -15,7 +16,8 @@ import { CacheService } from '../cache/cache.service';
     AuthService,
     UserRepository,
     CategoryRepository,
-    CacheService
+    CacheService,
+    TagRepository
   ],
 })
-export class BlogModule {}
+export class BlogModule { }
