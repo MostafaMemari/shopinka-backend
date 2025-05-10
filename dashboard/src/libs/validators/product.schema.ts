@@ -19,7 +19,11 @@ export const productSchema = yup.object().shape({
     .optional()
     .max(300, 'حداکثر 300 کاراکتر'),
 
-  quantity: yup.number().optional().positive('باید عددی مثبت باشد'),
+  quantity: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .optional()
+    .positive('باید عددی مثبت باشد'),
 
   basePrice: yup
     .number()
@@ -80,8 +84,24 @@ export const productSchema = yup.object().shape({
       return new Set(value).size === value.length
     }),
 
-  width: yup.number().positive().optional(),
-  height: yup.number().positive().optional(),
-  length: yup.number().positive().optional(),
-  weight: yup.number().positive().optional()
+  width: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .optional()
+    .positive('باید عددی مثبت باشد'),
+  height: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .optional()
+    .positive('باید عددی مثبت باشد'),
+  length: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .optional()
+    .positive('باید عددی مثبت باشد'),
+  weight: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .optional()
+    .positive('باید عددی مثبت باشد')
 })

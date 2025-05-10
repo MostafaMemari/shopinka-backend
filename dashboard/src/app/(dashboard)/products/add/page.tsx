@@ -7,7 +7,7 @@ import ProductGallery from '@/views/pages/products/add/ProductGallery'
 import ProductInformation from '@/views/pages/products/add/ProductInformation'
 import ProductMainImage from '@/views/pages/products/add/ProductMainImage'
 import ProductPricing from '@/views/pages/products/add/ProductPricing'
-import ProductTab from '@/views/pages/products/add/tabs/ProductForm'
+import ProductTabs from '@/views/pages/products/add/tabs/ProductTabs'
 import { yupResolver } from '@hookform/resolvers/yup'
 import Grid from '@mui/material/Grid2'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -47,7 +47,7 @@ const AppProduct = () => {
                 <ProductInformation />
               </Grid>
               <Grid size={{ xs: 12 }}>
-                <ProductTab />
+                <ProductTabs />
               </Grid>
             </Grid>
           </Grid>

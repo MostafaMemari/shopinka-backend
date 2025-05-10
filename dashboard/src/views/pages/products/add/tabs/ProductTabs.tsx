@@ -21,7 +21,7 @@ import RestockTab from './RestockTab'
 // Types
 type TabValue = 'restock' | 'shipping' | 'variants' | 'seo'
 
-const ProductTab: React.FC = () => {
+const ProductTabs: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabValue>('restock')
   const [isBelowMdScreen, setIsBelowMdScreen] = useState<boolean>(false)
 
@@ -38,7 +38,7 @@ const ProductTab: React.FC = () => {
             <div className='md:is-4/12'>
               <CustomTabList orientation='vertical' onChange={handleChange} pill='true'>
                 <Tab value='restock' label='موجودی' icon={<i className='tabler-box' />} iconPosition='start' className='flex-row justify-start min-is-full text-start' />
-                <Tab value='shipping' label='حمل‌ونقل' icon={<i className='tabler-car' />} iconPosition='start' className='flex-row justify-start min-is-full text-start' />
+                {/* <Tab value='shipping' label='حمل‌ونقل' icon={<i className='tabler-car' />} iconPosition='start' className='flex-row justify-start min-is-full text-start' /> */}
                 <Tab value='variants' label='متغیر' icon={<i className='tabler-link' />} iconPosition='start' className='flex-row justify-start min-is-full text-start' />
                 <Tab value='seo' label='سئو' icon={<i className='tabler-search' />} iconPosition='start' className='flex-row justify-start min-is-full text-start' />
               </CustomTabList>
@@ -57,4 +57,4 @@ const ProductTab: React.FC = () => {
   )
 }
 
-export default ProductTab
+export default ProductTabs
