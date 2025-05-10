@@ -3,6 +3,8 @@ export enum AttributeType {
   BUTTON = 'BUTTON'
 }
 
+export type ProductType = 'simple' | 'variable'
+
 export type Attribute = {
   id: number
   name: string
@@ -39,4 +41,24 @@ export type AttributeValueForm = {
   colorCode: string | null
   buttonLabel: string | null
   attributeId: string
+}
+
+export type VariantCombination = {
+  [key: string]: string
+}
+
+export interface Variant {
+  attributeId: number
+  values: string[]
+}
+
+export interface AttributeResponse {
+  pager: {
+    totalCount: number
+    totalPages: number
+    currentPage: number
+    hasNextPage: boolean
+    hasPreviousPage: boolean
+  }
+  items: Attribute[]
 }

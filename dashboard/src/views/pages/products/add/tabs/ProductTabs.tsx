@@ -14,7 +14,7 @@ import Divider from '@mui/material/Divider'
 // Component Imports
 import CustomTabList from '@core/components/mui/TabList'
 import ShippingTab from './ShippingTab'
-import VariantsTab from './VariantsTab'
+import VariantsTab from './variants/VariantsTab'
 import SeoTab from './SeoTab'
 import RestockTab from './RestockTab'
 
