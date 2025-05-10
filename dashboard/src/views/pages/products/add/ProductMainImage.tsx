@@ -35,7 +35,7 @@ const ProductMainImage = () => {
       <CardHeader title='تصویر اصلی محصول' />
       <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
         {selectedImage && (
-          <Box sx={{ position: 'relative', width: 200, height: 200, borderRadius: 2, overflow: 'hidden' }}>
+          <Box sx={{ position: 'relative', width: 200, height: 200, borderRadius: 2, overflow: 'hidden', boxShadow: 1 }}>
             <Image src={selectedImage.fileUrl} alt={selectedImage.title} fill style={{ objectFit: 'cover' }} />
             <Tooltip title='حذف تصویر'>
               <IconButton

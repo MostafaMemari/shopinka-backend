@@ -69,9 +69,9 @@ const ProductInformation = () => {
   } = useFormContext()
 
   const editor = useEditor({
-    extensions: [StarterKit, Placeholder.configure({ placeholder: 'Write something here...' }), TextAlign.configure({ types: ['heading', 'paragraph'] }), Underline],
+    extensions: [StarterKit, Placeholder.configure({ placeholder: 'توضیحات محصول' }), TextAlign.configure({ types: ['heading', 'paragraph'] }), Underline],
     immediatelyRender: false,
-    content: `<p>Keep your account secure with authentication step.</p>`
+    content: ``
   })
 
   return (
@@ -92,16 +92,6 @@ const ProductInformation = () => {
 
         <Grid container spacing={6}>
           <Grid size={{ xs: 12 }}>
-            <Typography className='mbe-2'>توضیحات (اختیاری)</Typography>
-            <Card className='p-0 border shadow-none'>
-              <CardContent className='p-0'>
-                <EditorToolbar editor={editor} />
-                <Divider className='mli-6' />
-                <EditorContent editor={editor} className='bs-[135px] overflow-y-auto flex' />
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid size={{ xs: 12 }}>
             <Typography className='mbe-2'>توضیحات کوتاه (اختیاری)</Typography>
             <CustomTextField
               fullWidth
@@ -112,6 +102,16 @@ const ProductInformation = () => {
               error={!!errors.shortDescription}
               helperText={errors.shortDescription?.message?.toString()}
             />
+          </Grid>
+          <Grid size={{ xs: 12 }}>
+            <Typography className='mbe-2'>توضیحات (اختیاری)</Typography>
+            <Card className='p-0 border shadow-none'>
+              <CardContent className='p-0'>
+                <EditorToolbar editor={editor} />
+                <Divider className='mli-6' />
+                <EditorContent editor={editor} className='bs-[135px] overflow-y-auto flex' />
+              </CardContent>
+            </Card>
           </Grid>
         </Grid>
       </CardContent>

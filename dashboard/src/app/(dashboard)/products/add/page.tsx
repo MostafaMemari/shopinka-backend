@@ -20,16 +20,26 @@ const AppProduct = () => {
     mode: 'onChange'
   })
 
-  const onSubmit = methods.handleSubmit(data => {
-    console.log('📦 اطلاعات محصول:', data)
-  })
+  const onButtonClick = (buttonType: 'cancel' | 'draft' | 'publish') => {
+    console.log(`دکمه ${buttonType} کلیک شد`)
+  }
+
+  const onSubmit = methods.handleSubmit(
+    data => {
+      console.log('📦 اطلاعات محصول:', data)
+    },
+
+    errors => {
+      console.error('🚨 Error:', errors)
+    }
+  )
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={onSubmit}>
         <Grid container spacing={6}>
           <Grid size={{ xs: 12 }}>
-            <ProductAddHeader />
+            <ProductAddHeader onButtonClick={onButtonClick} />
           </Grid>
           <Grid size={{ xs: 12, md: 8 }}>
             <Grid container spacing={6}>

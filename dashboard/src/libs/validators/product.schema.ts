@@ -13,7 +13,11 @@ export const productSchema = yup.object().shape({
 
   description: yup.string().optional(),
 
-  shortDescription: yup.string().optional().max(300, 'حداکثر 300 کاراکتر'),
+  shortDescription: yup
+    .string()
+    .transform(value => (value === '' ? undefined : value))
+    .optional()
+    .max(300, 'حداکثر 300 کاراکتر'),
 
   quantity: yup.number().optional().positive('باید عددی مثبت باشد'),
 
@@ -31,29 +35,33 @@ export const productSchema = yup.object().shape({
     .optional()
     .positive('باید عددی مثبت باشد')
     .min(1000, 'حداقل قیمت 1000')
-    .max(200000000, 'حداکثر قیمت ۲۰۰ میلیون'),
+    .max(200000000, 'حداکثر قیمت ۲۰۰ میلیون')
+    .test('is-less-than-base', 'قیمت فروش باید کمتر از قیمت پایه باشد', function (value) {
+      const { basePrice } = this.parent
 
-  status: yup
-    .mixed()
-    .oneOf(['DRAFT', 'PUBLISHED', 'ARCHIVED'], 'وضعیت نامعتبر است') // مقدارهای enum را اینجا مشخص کن
-    .required('وضعیت الزامی است'),
+      if (value !== undefined && basePrice !== undefined) {
+        return value < basePrice
+      }
 
-  type: yup
-    .mixed()
-    .oneOf(['PHYSICAL', 'DIGITAL'], 'نوع محصول نامعتبر است') // مقدارهای enum را اینجا هم مشخص کن
-    .required('نوع محصول الزامی است'),
+      return true
+    }),
 
-  mainImageId: yup.number().required('تصویر اصلی الزامی است').positive('عدد باید مثبت باشد'),
+  status: yup.mixed().oneOf(['DRAFT', 'PUBLISHED'], 'وضعیت نامعتبر است').optional(),
+
+  type: yup.mixed().oneOf(['SIMPLE', 'VARIABLE'], 'نوع محصول نامعتبر است').optional(),
+
+  mainImageId: yup.number().optional().positive('عدد باید مثبت باشد'),
 
   galleryImageIds: yup
     .array()
+    .optional()
     .of(yup.number().positive('شناسه تصویر باید عددی مثبت باشد'))
-    .required('گالری تصاویر الزامی است')
     .min(1, 'حداقل یک تصویر لازم است')
     .test('unique', 'تصاویر تکراری هستند', value => {
-      return Array.isArray(value) && new Set(value).size === value.length
-    }),
+      if (!value) return true
 
+      return new Set(value).size === value.length
+    }),
   categoryIds: yup
     .array()
     .of(yup.number().positive('شناسه دسته‌بندی باید عددی مثبت باشد'))
@@ -64,10 +72,12 @@ export const productSchema = yup.object().shape({
 
   attributeIds: yup
     .array()
+    .optional()
     .of(yup.number().positive('شناسه ویژگی باید عددی مثبت باشد'))
-    .required('ویژگی‌ها الزامی هستند')
     .test('unique', 'ویژگی‌ها تکراری هستند', value => {
-      return Array.isArray(value) && new Set(value).size === value.length
+      if (!value) return true
+
+      return new Set(value).size === value.length
     }),
 
   width: yup.number().positive().optional(),
