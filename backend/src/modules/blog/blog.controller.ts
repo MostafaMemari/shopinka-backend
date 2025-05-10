@@ -36,12 +36,14 @@ export class BlogController {
 
   @Patch(':id')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateBlogDto: UpdateBlogDto, @GetUser() user: User) {
     return this.blogService.update(user.id, id, updateBlogDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.blogService.remove(+id);
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.blogService.remove(user.id, id);
   }
 }

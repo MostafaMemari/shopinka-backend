@@ -85,8 +85,12 @@ export class BlogService {
     return { message: BlogMessages.UpdatedBlogSuccess, blog: updatedBlog }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} blog`;
+  async remove(userId: number, blogId: number): Promise<{ message: string, blog: Blog }> {
+    await this.blogRepository.findOneOrThrow({ where: { id: blogId, userId } })
+
+    const removedBlog = await this.blogRepository.delete({ where: { id: blogId } })
+
+    return {message: BlogMessages.RemovedBlogSuccess , blog: removedBlog}
   }
 
   private async generateUniqueSlug(name: string): Promise<string> {
