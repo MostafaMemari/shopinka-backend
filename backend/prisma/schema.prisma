@@ -137,7 +137,7 @@ model Address {
   province       String
   city           String
   address        String
-  postalCode     String   @unique() @map("postal_code")
+  postalCode     String?   @unique() @map("postal_code")
   receiverMobile String?  @map("receiver_mobile")
   description    String?
   orders         Order[]
@@ -379,7 +379,7 @@ model Blog {
   user       User       @relation(fields: [userId], references: [id], onDelete: NoAction)
   comments   Comment[]
   categories Category[]
-  tgs        Tag[]
+  tags        Tag[]
   seoMeta    SeoMeta?   @relation("SeoMetaBlog")
 }
 

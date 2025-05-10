@@ -63,23 +63,29 @@ export class CreateProductDto {
     @ApiProperty({ type: "number", required: false, nullable: true })
     salePrice?: number
 
+    @IsOptional()
     @IsEnum(ProductStatus)
     @IsNotEmpty()
-    @ApiProperty({ type: 'string', enum: ProductStatus, required: true, nullable: false })
-    status: ProductStatus
+    @ApiProperty({ type: 'string', enum: ProductStatus, required: false, nullable: true })
+    status?: ProductStatus
 
+    @IsOptional()
     @IsEnum(ProductType)
     @IsNotEmpty()
-    @ApiProperty({ type: 'string', enum: ProductType, required: true, nullable: false })
-    type: ProductType
+    @ApiProperty({ type: 'string', enum: ProductType, required: false, nullable: true })
+    type?: ProductType
 
+    @IsOptional()
     @IsNumber()
     @Transform(({ value }) => +value)
     @IsPositive()
-    @ApiProperty({ type: "number", required: true, nullable: false })
-    mainImageId: number
+    @ApiProperty({ type: "number", required: false, nullable: true })
+    mainImageId?: number
 
+    @IsOptional()
     @ApiProperty({
+        required: false,
+        nullable: true,
         isArray: true,
         type: 'array',
         uniqueItems: true,
@@ -89,7 +95,7 @@ export class CreateProductDto {
     @IsArray()
     @ArrayUnique()
     @IsNotEmpty()
-    galleryImageIds: number[]
+    galleryImageIds?: number[]
 
     @IsOptional()
     @ApiProperty({
@@ -106,7 +112,10 @@ export class CreateProductDto {
     @IsNotEmpty()
     categoryIds?: number[]
 
+    @IsOptional()
     @ApiProperty({
+        required: false,
+        nullable: true,
         isArray: true,
         type: 'array',
         uniqueItems: true,

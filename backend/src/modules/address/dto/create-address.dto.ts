@@ -33,16 +33,17 @@ export class CreateAddressDto {
     })
     address: string
 
+    @IsOptional()
     @IsString()
     @IsNotEmpty()
     @IsPostalCode('IR')
     @Transform(({ value }) => value?.trim())
     @ApiProperty({
         type: 'string',
-        required: true,
-        nullable: false
+        required: false,
+        nullable: true
     })
-    postalCode: string
+    postalCode?: string
 
     @IsOptional()
     @IsString()
