@@ -5,10 +5,16 @@ import { IsOptional, IsString, IsNotEmpty, MaxLength, Matches, IsNumber, IsPosit
 export class CreateCategoryDto {
     @IsString()
     @IsNotEmpty()
+    @ApiProperty({ type: "string", required: true, nullable: false })
+    name: string
+
+    @IsOptional()
+    @IsString()
+    @IsNotEmpty()
     @MaxLength(120)
     @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
-    @ApiProperty({ type: "string", required: true, nullable: false, maxLength: 120 })
-    slug: string
+    @ApiProperty({ type: "string", required: false, nullable: true, maxLength: 120 })
+    slug?: string
 
     @IsOptional()
     @IsString()
