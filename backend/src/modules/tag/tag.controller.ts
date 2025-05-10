@@ -35,8 +35,10 @@ export class TagController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTagDto: UpdateTagDto) {
-    return this.tagService.update(+id, updateTagDto);
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateTagDto: UpdateTagDto, @GetUser() user: User) {
+    return this.tagService.update(user.id, id, updateTagDto);
   }
 
   @Delete(':id')

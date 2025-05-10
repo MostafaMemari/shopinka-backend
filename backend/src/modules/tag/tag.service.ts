@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { TagRepository } from './tag.repository';
@@ -41,8 +41,21 @@ export class TagService {
     })
   }
 
-  update(id: number, updateTagDto: UpdateTagDto) {
-    return `This action updates a #${id} tag`;
+  async update(userId: number, tagId: number, updateTagDto: UpdateTagDto): Promise<{ message: string, tag: Tag }> {
+    const { slug, thumbnailImageId } = updateTagDto
+
+    await this.tagRepository.findOneOrThrow({ where: { id: tagId, userId } })
+
+    if (slug) {
+      const existingTag = await this.tagRepository.findOne({ where: { slug } })
+      if (existingTag) throw new ConflictException(TagMessages.AlreadyExistsTag)
+    }
+
+    if (thumbnailImageId) await this.galleryItemRepository.findOneOrThrow({ where: { id: thumbnailImageId } })
+
+    const updatedTag = await this.tagRepository.update({ where: { id: tagId }, data: updateTagDto })
+
+    return { message: TagMessages.UpdatedTagSuccess, tag: updatedTag }
   }
 
   remove(id: number) {
