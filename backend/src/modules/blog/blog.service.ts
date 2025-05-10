@@ -73,15 +73,15 @@ export class BlogService {
       if (endDate) filters.createdAt.lte = new Date(endDate);
     }
 
-    const galleries = await this.blogRepository.findAll({
+    const blogs = await this.blogRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
       include: { categories: includeCategories, comments: includeComments, seoMeta: includeSeoMeta, tags: includeTags, user: includeUser }
     });
 
-    await this.cacheService.set(cacheKey, galleries, this.CACHE_EXPIRE_TIME);
+    await this.cacheService.set(cacheKey, blogs, this.CACHE_EXPIRE_TIME);
 
-    return { ...pagination(paginationDto, galleries) }
+    return { ...pagination(paginationDto, blogs) }
   }
 
   async findAllDrafts(userId: number, paginationDto: PaginationDto): Promise<unknown> {

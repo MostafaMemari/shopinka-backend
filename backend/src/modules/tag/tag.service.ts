@@ -1,11 +1,15 @@
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { TagRepository } from './tag.repository';
 import { CacheService } from '../cache/cache.service';
 import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
-import { Tag } from 'generated/prisma';
+import { Prisma, Tag } from 'generated/prisma';
 import { TagMessages } from './enums/tag-messages.enum';
+import { QueryTagDto } from './dto/query-tag.dto';
+import { sortObject } from '../../common/utils/functions.utils';
+import { CacheKeys } from '../../common/enums/cache.enum';
+import { pagination } from '../../common/utils/pagination.utils';
 
 @Injectable()
 export class TagService {
@@ -30,8 +34,36 @@ export class TagService {
     return { message: TagMessages.CreatedTagSuccess, tag: newTag }
   }
 
-  findAll() {
-    return `This action returns all tag`;
+  async findAll({ take, page, ...queryTagDto }: QueryTagDto): Promise<unknown> {
+    const paginationDto = { take, page }
+    const { endDate, sortBy, sortDirection, startDate, includeSeoMeta, includeUser, includeBlogs, includeProducts, includeThumbnailImage, name } = queryTagDto;
+
+    const sortedDto = sortObject(queryTagDto);
+
+    const cacheKey = `${CacheKeys.Tags}_${JSON.stringify(sortedDto)}`;
+
+    const cachedTags = await this.cacheService.get<null | Tag[]>(cacheKey);
+
+    if (cachedTags) return { ...pagination(paginationDto, cachedTags) }
+
+    const filters: Prisma.TagWhereInput = {};
+
+    if (name) filters.name = { contains: name, mode: "insensitive" };
+    if (startDate || endDate) {
+      filters.createdAt = {};
+      if (startDate) filters.createdAt.gte = new Date(startDate);
+      if (endDate) filters.createdAt.lte = new Date(endDate);
+    }
+
+    const tags = await this.tagRepository.findAll({
+      where: filters,
+      orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
+      include: { blogs: includeBlogs, products: includeProducts, seoMeta: includeSeoMeta, thumbnailImage: includeThumbnailImage, user: includeUser }
+    });
+
+    await this.cacheService.set(cacheKey, tags, this.CACHE_EXPIRE_TIME);
+
+    return { ...pagination(paginationDto, tags) }
   }
 
   findOne(id: number): Promise<Tag> {

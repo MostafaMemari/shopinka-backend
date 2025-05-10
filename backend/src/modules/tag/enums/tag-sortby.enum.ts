@@ -1,4 +1,4 @@
-export enum BlogSortBy {
+export enum TagSortBy {
     CreatedAt = "createdAt",
     UpdatedAt = "updatedAt",
 }
