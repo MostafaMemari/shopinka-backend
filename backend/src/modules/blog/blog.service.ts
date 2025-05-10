@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { BlogRepository } from './blog.repository';
-import { Blog } from 'generated/prisma';
+import { Blog, BlogStatus } from 'generated/prisma';
 import { BlogMessages } from './enums/blog-messages.enum';
 import { CategoryRepository } from '../category/category.repository';
 
@@ -49,8 +49,11 @@ export class BlogService {
     return `This action returns all blog`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} blog`;
+  findOne(id: number): Promise<Blog> {
+    return this.blogRepository.findOneOrThrow({
+      where: { id, status: BlogStatus.PUBLISHED },
+      include: { categories: true, comments: true, seoMeta: true, tags: true, user: { select: { id: true, fullName: true } } }
+    })
   }
 
   update(id: number, updateBlogDto: UpdateBlogDto) {

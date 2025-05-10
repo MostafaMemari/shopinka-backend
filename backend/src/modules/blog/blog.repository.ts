@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { Blog, Prisma } from "generated/prisma";
+import { BlogMessages } from "./enums/blog-messages.enum";
 
 @Injectable()
 export class BlogRepository {
@@ -29,7 +30,7 @@ export class BlogRepository {
     async findOneOrThrow(args: Prisma.BlogFindFirstArgs): Promise<Blog | never> {
         const blog = await this.findOne(args)
 
-        if (!blog) throw new NotFoundException("Not found blog.")
+        if (!blog) throw new NotFoundException(BlogMessages.NotFoundBlog)
 
         return blog
     }

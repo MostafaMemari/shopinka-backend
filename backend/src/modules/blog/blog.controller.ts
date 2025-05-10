@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
@@ -29,8 +29,9 @@ export class BlogController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.blogService.findOne(+id);
+  @SkipAuth()
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.blogService.findOne(id);
   }
 
   @Patch(':id')
