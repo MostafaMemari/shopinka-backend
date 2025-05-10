@@ -35,8 +35,9 @@ export class BlogController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
-    return this.blogService.update(+id, updateBlogDto);
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateBlogDto: UpdateBlogDto, @GetUser() user: User) {
+    return this.blogService.update(user.id, id, updateBlogDto);
   }
 
   @Delete(':id')

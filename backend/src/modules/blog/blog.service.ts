@@ -56,8 +56,33 @@ export class BlogService {
     })
   }
 
-  update(id: number, updateBlogDto: UpdateBlogDto) {
-    return `This action updates a #${id} blog`;
+  async update(userId: number, blogId: number, updateBlogDto: UpdateBlogDto): Promise<{ message: string, blog: Blog }> {
+    const { categoryIds, tagIds, slug } = updateBlogDto
+    await this.blogRepository.findOneOrThrow({ where: { id: blogId, userId } })
+
+    if (slug) {
+      const existingBlog = await this.blogRepository.findOne({ where: { slug } })
+      if (existingBlog) throw new ConflictException(BlogMessages.AlreadyExistsBlog)
+    }
+
+    const categories = categoryIds ? await this.categoryRepository.findAll({ where: { id: { in: categoryIds } } }) : undefined
+    //TODO: Add find all tags
+    const tags = []
+
+    categoryIds && delete updateBlogDto.categoryIds
+    tagIds && delete updateBlogDto.tagIds
+
+    const updatedBlog = await this.blogRepository.update({
+      where: { id: blogId },
+      data: {
+        ...updateBlogDto,
+        userId,
+        categories: categories ? { connect: categories.map(c => ({ id: c.id })) } : undefined,
+        tags: tagIds ? { connect: tags.map(t => ({ id: t.id })) } : undefined,
+      }
+    })
+
+    return { message: BlogMessages.UpdatedBlogSuccess, blog: updatedBlog }
   }
 
   remove(id: number) {
