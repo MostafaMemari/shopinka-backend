@@ -248,6 +248,7 @@ model Favorite {
 
 model Category {
   id               Int      @id @default(autoincrement())
+  name             String
   slug             String   @unique()
   description      String?
   parentId         Int?
