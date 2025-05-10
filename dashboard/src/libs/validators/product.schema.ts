@@ -112,5 +112,65 @@ export const productSchema = yup.object().shape({
     .number()
     .transform((value, originalValue) => (originalValue === '' ? undefined : value))
     .optional()
-    .positive('باید عددی مثبت باشد')
+    .positive('باید عددی مثبت باشد'),
+
+  seo_title: yup
+    .string()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .notRequired()
+    .nullable(),
+
+  seo_description: yup
+    .string()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .notRequired()
+    .nullable(),
+
+  seo_keywords: yup
+    .array()
+    .of(
+      yup
+        .string()
+        .required('کلمه کلیدی سئو نمی‌تواند خالی باشد')
+        .test('non-empty', 'کلمه کلیدی سئو نمی‌تواند خالی باشد', value => value.trim().length > 0)
+    )
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .notRequired()
+    .nullable()
+    .test('unique', 'کلمات کلیدی سئو باید یکتا باشند', value => {
+      if (!value) return true
+
+      return new Set(value).size === value.length
+    }),
+
+  seo_canonicalUrl: yup
+    .string()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .notRequired()
+    .nullable(),
+
+  seo_ogTitle: yup
+    .string()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .notRequired()
+    .nullable(),
+
+  seo_ogDescription: yup
+    .string()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .notRequired()
+    .nullable(),
+
+  seo_ogImage: yup
+    .string()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .notRequired()
+    .nullable(),
+
+  seo_robotsTag: yup
+    .string()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .notRequired()
+    .nullable()
+    .oneOf(['index,follow', 'noindex,nofollow', 'index,nofollow', 'noindex,follow'], 'دستور ربات‌های سئو باید یکی از مقادیر مجاز باشد')
 })
