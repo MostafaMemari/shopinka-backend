@@ -4,7 +4,7 @@ import { CircularProgress, MenuItem, type SelectChangeEvent, type SxProps, type 
 import CustomTextField from '@/@core/components/mui/TextField'
 import { Gallery } from '@/types/gallery'
 import { ReactNode } from 'react'
-import { useGallery } from '@/hooks/gallery/useGallery'
+import { useGallery } from '@/hooks/reactQuery/useGallery'
 
 interface GallerySelectProps {
   value: string
