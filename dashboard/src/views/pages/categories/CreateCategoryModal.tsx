@@ -21,6 +21,9 @@ import { categorySchema } from '@/libs/validators/category.schemas'
 import { createCategory } from '@/libs/api/category'
 import { CategoryForm } from '@/types/category'
 import { cleanObject } from '@/utils/formatters'
+import { handleApiError } from '@/utils/handleApiError'
+import { errorCategoryMessage } from '@/messages/auth/categoryMessages.'
+import ParentCategorySelect from './ParentCategorySelect'
 
 // Types
 interface CreateCategoryModalProps {
@@ -36,7 +39,7 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
     control,
     handleSubmit,
     reset,
-    formState: { errors, isDirty }
+    formState: { errors }
   } = useForm<CategoryForm>({
     defaultValues: {
       name: '',
@@ -51,13 +54,9 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
   const handleOpen = useCallback(() => setOpen(true), [])
 
   const handleClose = useCallback(() => {
-    if (isDirty && !confirm('آیا مطمئن هستید که می‌خواهید بدون ذخیره خارج شوید؟')) {
-      return
-    }
-
     setOpen(false)
     reset()
-  }, [isDirty, reset])
+  }, [reset])
 
   const onSubmit = useCallback(
     async (formData: CategoryForm) => {
@@ -66,9 +65,19 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
       try {
         const cleanedData = cleanObject(formData)
 
+        console.log(cleanedData)
+
         const { status, data } = await createCategory(cleanedData)
 
-        if (status === 201 && data) {
+        const errorMessage = handleApiError(status, errorCategoryMessage)
+
+        if (errorMessage) {
+          showToast({ type: 'error', message: errorMessage })
+
+          return
+        }
+
+        if (status === 201 || (status === 200 && data)) {
           showToast({ type: 'success', message: 'دسته‌بندی با موفقیت ایجاد شد' })
           queryClient.invalidateQueries({ queryKey: ['categories'] })
           handleClose()
@@ -145,25 +154,7 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
                   )}
                 />
 
-                <Controller
-                  name='parentId'
-                  control={control}
-                  render={({ field }) => (
-                    <CustomTextField
-                      {...field}
-                      value={field.value ?? ''}
-                      fullWidth
-                      type='number'
-                      label='شناسه والد (اختیاری)'
-                      placeholder='شناسه دسته‌بندی والد'
-                      error={!!errors.parentId}
-                      helperText={errors.parentId?.message}
-                      disabled={isLoading}
-                      onChange={e => field.onChange(e.target.value ? Number(e.target.value) : null)}
-                      aria-describedby='parentId-error'
-                    />
-                  )}
-                />
+                <ParentCategorySelect control={control} errors={errors} isLoading={isLoading} />
 
                 <Controller
                   name='thumbnailImageId'

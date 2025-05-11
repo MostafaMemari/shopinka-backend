@@ -39,6 +39,7 @@ const UpdateCategoryModal = ({ children, category }: UpdateCategoryModalProps) =
     formState: { errors, isDirty }
   } = useForm<CategoryForm>({
     defaultValues: {
+      name: category.name || '',
       slug: category.slug || '',
       description: category.description || null,
       parentId: category.parentId || null,
@@ -108,6 +109,23 @@ const UpdateCategoryModal = ({ children, category }: UpdateCategoryModalProps) =
           <Grid container spacing={6}>
             <Grid size={{ xs: 12, md: 6 }}>
               <Grid container spacing={6}>
+                <Controller
+                  name='name'
+                  control={control}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      fullWidth
+                      label='نام'
+                      placeholder='نام دسته‌بندی را وارد کنید'
+                      error={!!errors.name}
+                      helperText={errors.name?.message}
+                      disabled={isLoading}
+                      aria-describedby='name-error'
+                    />
+                  )}
+                />
+
                 <Controller
                   name='slug'
                   control={control}
