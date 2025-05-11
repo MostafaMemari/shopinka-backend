@@ -25,6 +25,7 @@ import { handleApiError } from '@/utils/handleApiError'
 import { errorCategoryMessage } from '@/messages/auth/categoryMessages.'
 import ParentCategorySelect from './ParentCategorySelect'
 import CategoryThumbnailImage from './CategoryThumbnailImage'
+import RichTextEditor from '@/components/RichTextEditor'
 
 // Types
 interface CreateCategoryModalProps {
@@ -104,7 +105,7 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
         open={open}
         onClose={handleClose}
         title='افزودن دسته‌بندی جدید'
-        defaultMaxWidth='md'
+        defaultMaxWidth='lg'
         actions={
           <>
             <Button onClick={handleClose} color='secondary' disabled={isLoading}>
@@ -162,22 +163,7 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
               <Controller
                 name='description'
                 control={control}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    value={field.value ?? ''}
-                    fullWidth
-                    multiline
-                    rows={8}
-                    label='توضیحات'
-                    placeholder='توضیحات دسته‌بندی را وارد کنید'
-                    error={!!errors.description}
-                    helperText={errors.description?.message}
-                    disabled={isLoading}
-                    onChange={e => field.onChange(e.target.value || null)}
-                    aria-describedby='description-error'
-                  />
-                )}
+                render={({ field }) => <RichTextEditor label='توضیحات (اختیاری)' placeholder='توضیحات محصول' value={field.value || ''} onChange={field.onChange} />}
               />
             </Grid>
           </Grid>

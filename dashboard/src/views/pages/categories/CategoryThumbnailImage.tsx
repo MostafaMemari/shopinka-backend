@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Controller, type Control, type FieldErrors } from 'react-hook-form'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 import Image from 'next/image'
-import { CategoryForm } from '@/types/category'
+import { CategoryForm, Category } from '@/types/category'
 import ModalGallery from '@/components/Gallery/ModalGallery/ModalGallery'
 import { Typography } from '@mui/material'
 import { GalleryItem } from '@/types/gallery'
@@ -17,10 +17,33 @@ interface CategoryThumbnailImageProps {
   errors: FieldErrors<CategoryForm>
   isLoading: boolean
   setValue: (name: keyof CategoryForm, value: number | null, options?: { shouldValidate?: boolean }) => void
+  category?: Category // Optional category prop for UpdateCategoryModal
 }
 
-const CategoryThumbnailImage = ({ control, errors, isLoading, setValue }: CategoryThumbnailImageProps) => {
+const CategoryThumbnailImage = ({ control, errors, isLoading, setValue, category }: CategoryThumbnailImageProps) => {
   const [selectedImage, setSelectedImage] = useState<GalleryItem | null>(null)
+
+  // Initialize selectedImage with category's thumbnail image (for UpdateCategoryModal)
+  useEffect(() => {
+    if (category?.thumbnailImageId && category?.thumbnailImage) {
+      setSelectedImage({
+        id: category.thumbnailImageId,
+        galleryId: 0, // Required but not used in this context
+        title: 'Thumbnail',
+        description: null,
+        fileUrl: category.thumbnailImage.fileUrl,
+        fileKey: '',
+        mimetype: 'image/jpeg',
+        size: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        deletedAt: null,
+        isDeleted: false
+      })
+
+      setValue('thumbnailImageId', category.thumbnailImageId, { shouldValidate: true })
+    }
+  }, [category, setValue])
 
   const handleSelect = (item: GalleryItem | GalleryItem[]) => {
     const image = Array.isArray(item) ? item[0] : item

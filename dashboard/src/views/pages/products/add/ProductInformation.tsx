@@ -1,78 +1,25 @@
 'use client'
 
 // MUI Imports
-import Divider from '@mui/material/Divider'
-import Grid from '@mui/material/Grid2'
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
+import Grid from '@mui/material/Grid2'
 import Typography from '@mui/material/Typography'
 
-// Third-party Imports
-import classnames from 'classnames'
-import { useEditor, EditorContent } from '@tiptap/react'
-import { StarterKit } from '@tiptap/starter-kit'
-import { Underline } from '@tiptap/extension-underline'
-import { Placeholder } from '@tiptap/extension-placeholder'
-import { TextAlign } from '@tiptap/extension-text-align'
-import type { Editor } from '@tiptap/core'
-import { useFormContext } from 'react-hook-form'
-
 // Components Imports
-import CustomIconButton from '@core/components/mui/IconButton'
 import CustomTextField from '@core/components/mui/TextField'
 
-// Style Imports
-import '@/libs/styles/tiptapEditor.css'
-
-const EditorToolbar = ({ editor }: { editor: Editor | null }) => {
-  if (!editor) return null
-
-  return (
-    <div className='flex flex-wrap gap-x-3 gap-y-1 pbs-6 pbe-4 pli-6'>
-      {[
-        ['bold', 'tabler-bold'],
-        ['underline', 'tabler-underline'],
-        ['italic', 'tabler-italic'],
-        ['strike', 'tabler-strikethrough']
-      ].map(([type, icon]) => (
-        <CustomIconButton
-          key={type}
-          {...(editor.isActive(type) && { color: 'primary' })}
-          variant='tonal'
-          size='small'
-          onClick={() => (editor.chain().focus() as any)[`toggle${type.charAt(0).toUpperCase() + type.slice(1)}`]().run()}
-        >
-          <i className={classnames(icon, { 'text-textSecondary': !editor.isActive(type) })} />
-        </CustomIconButton>
-      ))}
-
-      {['left', 'center', 'right', 'justify'].map(align => (
-        <CustomIconButton
-          key={align}
-          {...(editor.isActive({ textAlign: align }) && { color: 'primary' })}
-          variant='tonal'
-          size='small'
-          onClick={() => editor.chain().focus().setTextAlign(align).run()}
-        >
-          <i className={classnames(`tabler-align-${align}`, { 'text-textSecondary': !editor.isActive({ textAlign: align }) })} />
-        </CustomIconButton>
-      ))}
-    </div>
-  )
-}
+// Hooks
+import { useFormContext, Controller } from 'react-hook-form'
+import RichTextEditor from '@/components/RichTextEditor'
 
 const ProductInformation = () => {
   const {
+    control,
     register,
     formState: { errors }
   } = useFormContext()
-
-  const editor = useEditor({
-    extensions: [StarterKit, Placeholder.configure({ placeholder: 'توضیحات محصول' }), TextAlign.configure({ types: ['heading', 'paragraph'] }), Underline],
-    immediatelyRender: false,
-    content: ``
-  })
 
   return (
     <Card>
@@ -104,14 +51,11 @@ const ProductInformation = () => {
             />
           </Grid>
           <Grid size={{ xs: 12 }}>
-            <Typography className='mbe-2'>توضیحات (اختیاری)</Typography>
-            <Card className='p-0 border shadow-none'>
-              <CardContent className='p-0'>
-                <EditorToolbar editor={editor} />
-                <Divider className='mli-6' />
-                <EditorContent editor={editor} className='bs-[135px] overflow-y-auto flex' />
-              </CardContent>
-            </Card>
+            <Controller
+              name='description'
+              control={control}
+              render={({ field }) => <RichTextEditor label='توضیحات (اختیاری)' placeholder='توضیحات محصول' value={field.value || ''} onChange={field.onChange} />}
+            />
           </Grid>
         </Grid>
       </CardContent>
