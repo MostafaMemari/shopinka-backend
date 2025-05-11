@@ -15,6 +15,7 @@ import { ProductVariantRepository } from '../product/repositories/product-varian
 import { AddressRepository } from '../address/address.repository';
 import { OrderRepository } from '../order/repositories/order.repository';
 import { OrderItemRepository } from '../order/repositories/order-item.repository';
+import { ShippingRepository } from '../shipping/shipping.repository';
 
 @Module({
   imports: [ScheduleModule.forRoot()],
@@ -33,7 +34,8 @@ import { OrderItemRepository } from '../order/repositories/order-item.repository
     ProductVariantRepository,
     AddressRepository,
     OrderRepository,
-    OrderItemRepository
+    OrderItemRepository,
+    ShippingRepository
   ],
 })
 export class PaymentModule { }

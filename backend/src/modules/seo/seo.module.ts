@@ -6,9 +6,20 @@ import { UserRepository } from '../user/user.repository';
 import { SeoMetaRepository } from './seo-meta.repository';
 import { ProductRepository } from '../product/repositories/product.repository';
 import { BlogRepository } from '../blog/blog.repository';
+import { TagRepository } from '../tag/tag.repository';
+import { CategoryRepository } from '../category/category.repository';
 
 @Module({
   controllers: [SeoController],
-  providers: [SeoService, AuthService, UserRepository, SeoMetaRepository, ProductRepository, BlogRepository],
+  providers: [
+    SeoService,
+    AuthService,
+    UserRepository,
+    SeoMetaRepository,
+    ProductRepository,
+    BlogRepository,
+    TagRepository,
+    CategoryRepository
+  ],
 })
 export class SeoModule { }
