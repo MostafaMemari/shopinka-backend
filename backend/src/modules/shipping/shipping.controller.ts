@@ -35,8 +35,10 @@ export class ShippingController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateShippingDto: UpdateShippingDto) {
-    return this.shippingService.update(+id, updateShippingDto);
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  update(@Param('id') id: number, @Body() updateShippingDto: UpdateShippingDto, @GetUser() user: User) {
+    return this.shippingService.update(user.id, id, updateShippingDto);
   }
 
   @Delete(':id')

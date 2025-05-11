@@ -25,8 +25,12 @@ export class ShippingService {
     return this.shippingRepository.findOneOrThrow({ where: { id }, include: { user: { select: { id: true, fullName: true } } } })
   }
 
-  update(id: number, updateShippingDto: UpdateShippingDto) {
-    return `This action updates a #${id} shipping`;
+  async update(userId: number, shippingId: number, updateShippingDto: UpdateShippingDto): Promise<{ message: string, shipping: Shipping }> {
+    await this.shippingRepository.findOneOrThrow({ where: { id: shippingId, userId } })
+
+    const updatedShipping = await this.shippingRepository.update({ where: { id: shippingId }, data: updateShippingDto })
+
+    return { message: ShippingMessages.UpdatedShippingSuccess, shipping: updatedShipping }
   }
 
   remove(id: number) {
