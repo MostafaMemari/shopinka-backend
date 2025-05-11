@@ -64,7 +64,7 @@ const GalleryView = () => {
             onPageChange={setPage}
             onRowsPerPageChange={setRowsPerPage}
             currentPageItemCount={galleries.length}
-          />{' '}
+          />
         </Card>
       )}
     </>

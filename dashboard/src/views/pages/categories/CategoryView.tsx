@@ -28,7 +28,9 @@ const CategoryView = () => {
   const { data, isLoading, isFetching, error, refetch } = useCategories({
     enabled: true,
     params: {
-      includeThumbnailImage: true
+      includeThumbnailImage: true,
+      includeChildren: true,
+      childrenDepth: 6
     },
     staleTime: 5 * 60 * 1000
   })
@@ -39,6 +41,7 @@ const CategoryView = () => {
 
   // Extract items from response
   const categories = data?.data?.items || []
+  const paginationData = data?.data?.pager || []
 
   // Loader component
   if (isLoading) return <LoadingSpinner />
@@ -68,7 +71,16 @@ const CategoryView = () => {
             </Box> */}
           </Box>
           {!isMobile && <DesktopCategoryTable categories={categories} />}
-          <TablePaginationComponent filteredData={categories} page={page} rowsPerPage={rowsPerPage} onPageChange={setPage} onRowsPerPageChange={setRowsPerPage} />
+
+          <TablePaginationComponent
+            currentPage={paginationData?.currentPage || 1}
+            totalPages={paginationData?.totalPages || 1}
+            totalCount={paginationData?.totalCount || 0}
+            rowsPerPage={rowsPerPage}
+            onPageChange={setPage}
+            onRowsPerPageChange={setRowsPerPage}
+            currentPageItemCount={categories.length}
+          />
         </Card>
       )}
     </>

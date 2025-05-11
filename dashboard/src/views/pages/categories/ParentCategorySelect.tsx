@@ -15,58 +15,57 @@ interface ParentCategorySelectProps {
   isLoading: boolean
 }
 
-interface CategoryNode extends Category {
-  children: CategoryNode[]
-}
-
-const buildCategoryTree = (categories: Category[]): CategoryNode[] => {
-  const map = new Map<number, CategoryNode>()
-  const roots: CategoryNode[] = []
-
-  categories.forEach(cat => {
-    map.set(cat.id, { ...cat, children: [] })
-  })
-
-  map.forEach(cat => {
-    if (cat.parentId && map.has(cat.parentId)) {
-      map.get(cat.parentId)!.children.push(cat)
-    } else {
-      roots.push(cat)
-    }
-  })
-
-  return roots
-}
-
-const renderCategoryOptions = (nodes: CategoryNode[], level = 0): JSX.Element[] => {
-  return nodes.flatMap(node => {
-    const indent = level === 0 ? '' : 'ࡋ '.padStart(level * 3 + 2, ' ')
-
-    const marginRight = level >= 1 ? level * 10 : 0
-
-    const current = (
-      <MenuItem key={node.id} value={node.id} style={{ marginRight: `${marginRight}px` }}>
-        {indent + node.name}
-      </MenuItem>
-    )
-
-    const children = renderCategoryOptions(node.children, level + 1)
-
-    return [current, ...children]
-  })
-}
-
 const ParentCategorySelect = ({ control, errors, isLoading }: ParentCategorySelectProps) => {
   const { data, isLoading: isCategoriesLoading } = useCategories({
     enabled: true,
     params: {
-      take: 200
+      take: 200,
+      includeChildren: true,
+      childrenDepth: 6
     },
     staleTime: 5 * 60 * 1000
   })
 
   const categories: Category[] = data?.data?.items || []
-  const categoryTree = buildCategoryTree(categories)
+
+  // تابع برای پیدا کردن دسته‌بندی به صورت بازگشتی
+  const findCategoryById = (categories: Category[], id: number): Category | undefined => {
+    for (const category of categories) {
+      if (category.id === id) return category
+
+      if (category.children && category.children.length > 0) {
+        const found = findCategoryById(category.children, id)
+
+        if (found) return found
+      }
+    }
+
+    return undefined
+  }
+
+  // تابع رندر هر دسته‌بندی
+  const renderCategoryRow = (category: Category, level: number = 0): JSX.Element => (
+    <MenuItem key={category.id} value={category.id}>
+      <Typography className='font-medium' color='text.primary' style={{ marginRight: `${level * 12}px` }}>
+        {`${'-'.repeat(level)} ${category.name}`}
+      </Typography>
+    </MenuItem>
+  )
+
+  // تابع رندر دسته‌بندی‌ها به صورت درختی
+  const renderCategories = (categories: Category[], level: number = 0): JSX.Element[] => {
+    const rows: JSX.Element[] = []
+
+    categories.forEach(category => {
+      rows.push(renderCategoryRow(category, level))
+
+      if (category.children && category.children.length > 0) {
+        rows.push(...renderCategories(category.children, level + 1))
+      }
+    })
+
+    return rows
+  }
 
   return (
     <Controller
@@ -84,13 +83,13 @@ const ParentCategorySelect = ({ control, errors, isLoading }: ParentCategorySele
             aria-describedby='parentId-error'
             renderValue={selected => {
               if (!selected) return 'هیچکدام'
-              const selectedCategory = categories.find(cat => cat.id === selected)
+              const selectedCategory = findCategoryById(categories, selected)
 
-              return selectedCategory?.name || ''
+              return selectedCategory?.name || 'هیچکدام'
             }}
           >
             <MenuItem value=''>هیچکدام</MenuItem>
-            {renderCategoryOptions(categoryTree)}
+            {renderCategories(categories)}
           </Select>
           {errors.parentId && (
             <Typography variant='caption' color='error' id='parentId-error'>
