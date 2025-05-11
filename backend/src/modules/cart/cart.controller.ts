@@ -26,8 +26,8 @@ export class CartController {
   }
 
   @Get('item')
-  findAllItems(@Query() paginationDto: PaginationDto , @GetUser() user: User){
-    return this.cartService.findAllItems(user.id , paginationDto)
+  findAllItems(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
+    return this.cartService.findAllItems(user.id, paginationDto)
   }
 
   @Post('item')
@@ -36,10 +36,15 @@ export class CartController {
     return this.cartService.addItem(user.id, createCatItemDto)
   }
 
+  @Patch(":shippingId")
+  addShipping(@Param('shippingId', ParseIntPipe) shippingId: number, @GetUser() user: User) {
+    return this.cartService.addShipping(user.id, shippingId)
+  }
+
   @Patch('item/:id')
-  @ApiConsumes(SwaggerConsumes.Json , SwaggerConsumes.UrlEncoded)
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   updateItem(@Param('id', ParseIntPipe) id: number, @Body() updateCartItemDto: UpdateCartItemDto, @GetUser() user: User) {
-    return this.cartService.updateItem(user.id , id , updateCartItemDto)
+    return this.cartService.updateItem(user.id, id, updateCartItemDto)
   }
 
   @Delete('item/:id')

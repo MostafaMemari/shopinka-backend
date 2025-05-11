@@ -15,11 +15,11 @@ import { PaginationDto } from '../../../common/dtos/pagination.dto';
 @Controller('product')
 @ApiTags('product')
 @AuthDecorator()
-@Roles(Role.ADMIN, Role.SUPER_ADMIN)
 export class ProductController {
   constructor(private readonly productService: ProductService) { }
 
   @Post()
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   create(@Body() createProductDto: CreateProductDto, @GetUser() user: User) {
     return this.productService.create(user.id, createProductDto);
@@ -43,6 +43,7 @@ export class ProductController {
   }
 
   @Get('draft/:id')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   findOneDraft(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
     return this.productService.findOneDraft(user.id, id);
   }
@@ -53,12 +54,14 @@ export class ProductController {
   }
 
   @Patch(':id')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateProductDto: UpdateProductDto, @GetUser() user: User) {
     return this.productService.update(user.id, id, updateProductDto);
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
     return this.productService.remove(user.id, id);
   }

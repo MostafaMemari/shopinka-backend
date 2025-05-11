@@ -13,11 +13,11 @@ import { QueryGalleriesDto } from '../dto/gallery-query.dto';
 @Controller('gallery')
 @ApiTags('gallery')
 @AuthDecorator()
-@Roles(Role.ADMIN, Role.SUPER_ADMIN)
 export class GalleryController {
   constructor(private readonly galleryService: GalleryService) { }
 
   @Post()
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @HttpCode(HttpStatus.CREATED)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   create(@Body() createGalleryDto: CreateGalleryDto, @GetUser() user: User) {
@@ -25,22 +25,26 @@ export class GalleryController {
   }
 
   @Get()
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   findAll(@Query() galleryQueryFiltersDto: QueryGalleriesDto, @GetUser() user: User) {
     return this.galleryService.findAll(user.id, galleryQueryFiltersDto);
   }
 
   @Get(':id')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   findOne(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
     return this.galleryService.findOne(id, user.id);
   }
 
   @Patch(':id')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateGalleryDto: UpdateGalleryDto, @GetUser() user: User) {
     return this.galleryService.update(id, user.id, updateGalleryDto);
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
     return this.galleryService.remove(id, user.id);
   }

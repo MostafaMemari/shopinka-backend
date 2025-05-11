@@ -85,4 +85,15 @@ export class SeoMetaDto {
         required: false,
     })
     tagId?: number
+
+    @IsOptional()
+    @IsNumber()
+    @IsPositive()
+    @Transform(({ value }) => +value)
+    @ApiProperty({
+        type: 'number',
+        nullable: true,
+        required: false,
+    })
+    categoryId?: number
 }

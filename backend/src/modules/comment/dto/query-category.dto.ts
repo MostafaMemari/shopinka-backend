@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from "@nestjs/swagger"
 import { Transform } from "class-transformer"
-import { IsOptional, IsString, IsDate, IsEnum, IsBoolean } from "class-validator"
+import { IsOptional, IsString, IsDate, IsEnum, IsBoolean, IsNumber, Min } from "class-validator"
 import { SortOrder } from "../../../common/enums/shared.enum"
 import { CommentSortBy } from "../enums/comment-sortby.enum"
 import { PaginationDto } from "../../../common/dtos/pagination.dto"
@@ -14,6 +14,13 @@ export class QueryCommentDto extends PaginationDto {
     })
     @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
     isRecommended?: boolean
+
+    @IsOptional()
+    @IsNumber()
+    @Min(0)
+    @Transform(({ value }) => +value)
+    @ApiPropertyOptional({ type: "number", nullable: true, required: false })
+    repliesDepth?: number
 
     @IsOptional()
     @IsBoolean()
@@ -41,6 +48,15 @@ export class QueryCommentDto extends PaginationDto {
     })
     @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
     includeParent?: boolean
+
+    @IsOptional()
+    @IsBoolean()
+    @Transform(({ value }) => {
+        if (typeof value == 'string') return value == 'true'
+        return value
+    })
+    @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
+    includeBlog?: boolean
 
     @IsOptional()
     @IsBoolean()

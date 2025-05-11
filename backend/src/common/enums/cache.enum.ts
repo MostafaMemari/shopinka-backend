@@ -12,5 +12,6 @@ export enum CacheKeys {
     Comments = "comments",
     Orders = "orders",
     Blogs = 'blogs',
-    Tags = "tags"
+    Tags = "tags",
+    Shippings =  'shippings'
 }

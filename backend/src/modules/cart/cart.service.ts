@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { CartRepository } from './repositories/cart.repository';
-import { Cart, CartItem, Prisma, ProductStatus } from 'generated/prisma';
+import { Cart, CartItem, ProductStatus } from 'generated/prisma';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { CartItemRepository } from './repositories/cardItem.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
@@ -10,6 +10,8 @@ import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { pagination } from '../../common/utils/pagination.utils';
 import { IGetCart } from './interfaces/cart.interface';
+import { ShippingRepository } from '../shipping/shipping.repository';
+import { CartMessages } from './enums/cart-messages.enum';
 
 @Injectable()
 export class CartService {
@@ -17,12 +19,13 @@ export class CartService {
     private readonly cartRepository: CartRepository,
     private readonly cartItemRepository: CartItemRepository,
     private readonly productRepository: ProductRepository,
-    private readonly productVariantRepository: ProductVariantRepository
+    private readonly productVariantRepository: ProductVariantRepository,
+    private readonly shippingRepository: ShippingRepository
   ) { }
 
   async me(userId: number): Promise<IGetCart> {
-    const { items: cartItems }: Cart & { items: CartItem[] } =
-      await this.cartRepository.findOneOrThrow({ where: { userId }, include: { items: { include: { product: true, productVariant: true } } } }) as any
+    const { items: cartItems, ...cart }: Cart & { items: CartItem[] } =
+      await this.cartRepository.findOneOrThrow({ where: { userId }, include: { shopping: true, items: { include: { product: true, productVariant: true } } } }) as any
 
     let finalPrice = 0
     let totalSaved = 0
@@ -35,11 +38,21 @@ export class CartService {
       finalPrice += (base.basePrice * item.quantity) - discountPerItem
     })
 
+    if (cart['shipping']) finalPrice += cart['shipping'].price
+
     return {
       finalPrice,
       totalSaved,
       cartItems
     }
+  }
+
+  async addShipping(userId: number, shippingId: number): Promise<{ message: string, cart: Cart }> {
+    await this.shippingRepository.findOneOrThrow({ where: { id: shippingId } })
+
+    const updatedCart = await this.cartRepository.update({ where: { userId }, data: { shippingId } })
+
+    return { message: CartMessages.AddedShippingSuccess, cart: updatedCart }
   }
 
   async clear(userId: number): Promise<Cart> {

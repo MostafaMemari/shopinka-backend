@@ -12,6 +12,7 @@ import { CacheService } from '../cache/cache.service';
 import { estimateReadingTime, sortObject } from '../../common/utils/functions.utils';
 import { CacheKeys } from '../../common/enums/cache.enum';
 import { TagRepository } from '../tag/tag.repository';
+import slugify from 'slugify';
 
 @Injectable()
 export class BlogService {
@@ -113,7 +114,7 @@ export class BlogService {
 
     const categories = categoryIds ? await this.categoryRepository.findAll({ where: { id: { in: categoryIds } } }) : undefined
     const tags = tagIds ? await this.tagRepository.findAll({ where: { id: { in: tagIds } } }) : undefined
-    
+
     categoryIds && delete updateBlogDto.categoryIds
     tagIds && delete updateBlogDto.tagIds
 
@@ -140,15 +141,15 @@ export class BlogService {
   }
 
   private async generateUniqueSlug(name: string): Promise<string> {
+    let slug = slugify(name, { locale: 'fa', lower: true, strict: true, trim: true })
     let suffix = 0
-    let slug = name
+    let uniqueSlug = slug
 
-    while (await this.blogRepository.findOne({ where: { slug } })) {
+    while (await this.blogRepository.findOne({ where: { slug: uniqueSlug } })) {
       suffix++
-      slug = `${name}-${suffix}`
+      uniqueSlug = `${slug}-${suffix}`
     }
 
-    return slug
+    return uniqueSlug
   }
-
 }

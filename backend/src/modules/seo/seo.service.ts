@@ -5,6 +5,8 @@ import { SeoMeta } from 'generated/prisma';
 import { SeoMetaMessages } from './enums/seo-meta-messages.enum';
 import { BlogRepository } from '../blog/blog.repository';
 import { ProductRepository } from '../product/repositories/product.repository';
+import { TagRepository } from '../tag/tag.repository';
+import { CategoryRepository } from '../category/category.repository';
 
 @Injectable()
 export class SeoService {
@@ -12,12 +14,14 @@ export class SeoService {
         private readonly seoMetaRepository: SeoMetaRepository,
         private readonly productRepository: ProductRepository,
         private readonly blogRepository: BlogRepository,
+        private readonly tagRepository: TagRepository,
+        private readonly categoryRepository: CategoryRepository,
     ) { }
 
     async upsertSeoMeta(userId: number, seoMetaDto: SeoMetaDto): Promise<{ message: string, seoMeta: SeoMeta }> {
-        const { blogId, productId, tagId } = seoMetaDto
+        const { blogId, productId, tagId, categoryId } = seoMetaDto
 
-        const values = [blogId, productId, tagId]
+        const values = [blogId, productId, tagId, categoryId]
 
         const definedCount = values.filter(v => v !== undefined && v !== null).length
 
@@ -25,10 +29,18 @@ export class SeoService {
 
         if (productId) await this.productRepository.findOneOrThrow({ where: { id: productId } })
         if (blogId) await this.blogRepository.findOneOrThrow({ where: { id: blogId } })
-        //TODO: Add check tag id
+        if (tagId) await this.tagRepository.findOneOrThrow({ where: { id: tagId } })
+        if (categoryId) await this.categoryRepository.findOneOrThrow({ where: { id: categoryId } })
 
         const existingSeo = await this.seoMetaRepository.findOne({
-            where: { OR: [{ productId, product: { userId } }, { blogId, blog: { userId } }, { tagId, tag: { userId } }] }
+            where: {
+                OR: [
+                    { productId, product: { userId } },
+                    { blogId, blog: { userId } },
+                    { tagId, tag: { userId } },
+                    { categoryId, category: { userId } }
+                ]
+            }
         })
 
         if (existingSeo) {
