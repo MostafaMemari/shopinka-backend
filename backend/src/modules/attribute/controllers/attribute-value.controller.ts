@@ -13,33 +13,37 @@ import { CreateAttributeValueDto } from '../dto/create-attribute-value.dto';
 @Controller('attribute-value')
 @ApiTags('attribute-value')
 @AuthDecorator()
-@Roles(Role.ADMIN, Role.SUPER_ADMIN)
 export class AttributeValueController {
   constructor(private readonly attributeValueService: AttributeValueService) { }
 
   @Post()
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   create(@Body() createAttributeValueDto: CreateAttributeValueDto) {
     return this.attributeValueService.create(createAttributeValueDto);
   }
 
   @Get()
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   findAll(@Query() queryAttributeValueDto: QueryAttributeValueDto) {
     return this.attributeValueService.findAll(queryAttributeValueDto);
   }
 
   @Get(':id')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.attributeValueService.findOne(id);
   }
 
   @Patch(':id')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateAttributeValueDto: UpdateAttributeValueDto, @GetUser() user: User) {
     return this.attributeValueService.update(user.id, id, updateAttributeValueDto);
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
     return this.attributeValueService.remove(user.id, id);
   }

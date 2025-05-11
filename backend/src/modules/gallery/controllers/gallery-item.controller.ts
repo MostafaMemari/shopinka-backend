@@ -20,11 +20,11 @@ import { RestoreGalleryItemDto } from '../dto/restore-gallery-item.dto';
 @Controller('gallery-item')
 @ApiTags('gallery-item')
 @AuthDecorator()
-@Roles(Role.ADMIN, Role.SUPER_ADMIN)
 export class GalleryItemController {
   constructor(private readonly galleryItemService: GalleryItemService) { }
 
   @Post()
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FilesInterceptor('image', 5, { storage: memoryStorage(), limits: { files: 5 } }))
   @ApiConsumes(SwaggerConsumes.MultipartData)
@@ -33,40 +33,47 @@ export class GalleryItemController {
   }
 
   @Get()
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   findAll(@Query() galleryItemsQueryDto: GalleryItemQueryDto, @GetUser() user: User) {
     return this.galleryItemService.findAll(user.id, galleryItemsQueryDto);
   }
 
   @Get(':id')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   findOne(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
     return this.galleryItemService.findOne(id, user.id);
   }
 
   @Patch('move')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   move(@Body() moveGalleryItemDto: MoveGalleryItemDto, @GetUser() user: User) {
     return this.galleryItemService.move(user.id, moveGalleryItemDto)
   }
 
   @Patch('duplicate')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   duplicate(@Body() duplicateGalleryItemDto: DuplicateGalleryItemDto, @GetUser() user: User) {
     return this.galleryItemService.duplicate(user.id, duplicateGalleryItemDto)
   }
 
   @Patch('restore')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   restore(@Body() restoreGalleryItemDto: RestoreGalleryItemDto, @GetUser() user: User) {
     return this.galleryItemService.restore(user.id, restoreGalleryItemDto)
   }
 
   @Patch(':id')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateGalleryItemDto: UpdateGalleryItemDto, @GetUser() user: User) {
     return this.galleryItemService.update(id, user.id, updateGalleryItemDto);
   }
 
   @Delete()
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   remove(@Body() removeGalleryItemDto: RemoveGalleryItemDto, @GetUser() user: User) {
     return this.galleryItemService.remove(user.id, removeGalleryItemDto);
