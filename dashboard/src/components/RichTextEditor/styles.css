@@ -1,0 +1,9 @@
+@import '@/libs/styles/tiptapEditor.css';
+@import url('https://unpkg.com/@tabler/icons@latest/iconfont/tabler-icons.min.css');
+
+i[class*='ti-'],
+i[class*='tabler-'] {
+  font-family: 'tabler-icons' !important;
+  font-size: 20px;
+  display: inline-block;
+}

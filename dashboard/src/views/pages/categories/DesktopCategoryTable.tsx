@@ -12,6 +12,8 @@ import tableStyles from '@core/styles/table.module.css'
 // API Import
 import { Category } from '@/types/category'
 import UpdateCategoryModal from './UpdateCategoryModal'
+import RemoveCategoryModal from './RemoveAttributeModal'
+import { stripHtml, truncateText } from '@/utils/formatters'
 
 const DesktopCategoryTable = ({ categories }: { categories: Category[] }) => (
   <div className='overflow-x-auto'>
@@ -19,8 +21,8 @@ const DesktopCategoryTable = ({ categories }: { categories: Category[] }) => (
       <thead>
         <tr>
           <th>تصویر</th>
-          <th>نام گالری</th>
-          <th>نامک گالری</th>
+          <th>نام دسته‌بندی</th>
+          <th>نامک دسته‌بندی</th>
           <th>توضیحات</th>
           <th>عملیات</th>
         </tr>
@@ -37,7 +39,7 @@ const DesktopCategoryTable = ({ categories }: { categories: Category[] }) => (
             <tr key={row.id}>
               <td>
                 {row.thumbnailImageId ? (
-                  <img src={String(row.thumbnailImageId)} alt={row.name || 'تصویر گالری'} style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
+                  <img src={row?.thumbnailImage?.thumbnailUrl} alt={row.name || 'تصویر دسته‌بندی'} style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
                 ) : (
                   <Typography color='text.secondary'>-</Typography>
                 )}
@@ -53,18 +55,18 @@ const DesktopCategoryTable = ({ categories }: { categories: Category[] }) => (
                 </Typography>
               </td>
               <td>
-                <Typography className='font-medium' color='text.primary'>
-                  {row.description || '-'}
+                <Typography className='font-medium line-clamp-2 max-w-[300px] text-ellipsis overflow-hidden' color='text.primary'>
+                  {truncateText(stripHtml(row.description || '-'))}
                 </Typography>
               </td>
               <td>
                 <Box display='flex' alignItems='center' gap={2}>
-                  {/* <RemoveCategoryModal id={String(row.id)} /> */}
-                  <Link href={`/media/${row.id}`}>
+                  <RemoveCategoryModal id={row.id}>
                     <IconButton size='small'>
-                      <i className='tabler-eye text-gray-500 text-lg' />
+                      <i className='tabler-trash text-gray-500 text-lg' />
                     </IconButton>
-                  </Link>
+                  </RemoveCategoryModal>
+
                   <UpdateCategoryModal category={row}>
                     <IconButton size='small'>
                       <i className='tabler-edit text-gray-500 text-lg' />

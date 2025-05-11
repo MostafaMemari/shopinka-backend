@@ -2,9 +2,14 @@ import { Category, CategoryForm } from '@/types/category'
 import { Response } from '@/types/response'
 import { serverApiFetch } from '@/utils/api/serverApiFetch'
 
-export const getCategories = async (): Promise<Response<Category[]>> => {
+export const getCategories = async (params?: Record<string, string>): Promise<Response<Category[]>> => {
   try {
-    const res = await serverApiFetch('/category', { method: 'GET' })
+    const res = await serverApiFetch('/category', {
+      method: 'GET',
+      query: { ...params }
+    })
+
+    console.log(res)
 
     return {
       ...res
@@ -12,7 +17,16 @@ export const getCategories = async (): Promise<Response<Category[]>> => {
   } catch (error: any) {
     return {
       status: error.message.includes('401') ? 401 : 500,
-      data: { items: [], pager: { totalCount: 0, totalPages: 0, currentPage: 0, hasNextPage: false, hasPreviousPage: false } }
+      data: {
+        items: [],
+        pager: {
+          totalCount: 0,
+          totalPages: 0,
+          currentPage: 0,
+          hasNextPage: false,
+          hasPreviousPage: false
+        }
+      }
     }
   }
 }
@@ -49,6 +63,21 @@ export const createCategory = async (data: CategoryForm): Promise<{ status: numb
     return {
       status: error.message.includes('401') ? 401 : 500,
       data: null
+    }
+  }
+}
+
+export const removeCategory = async (id: string): Promise<{ status: number; data: { message: string; category: CategoryForm } | null }> => {
+  try {
+    const res = await serverApiFetch(`/category/${id}`, { method: 'DELETE' })
+
+    return {
+      ...res
+    }
+  } catch (error: any) {
+    return {
+      status: error.message.includes('401') ? 401 : 500,
+      data: error.message
     }
   }
 }

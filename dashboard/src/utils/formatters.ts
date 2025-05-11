@@ -20,3 +20,17 @@ export const formatDate = (dateString: string): string => {
 export const cleanObject = <T extends Record<string, any>>(obj: T): T => {
   return Object.fromEntries(Object.entries(obj).filter(([_, value]) => value !== null && value !== '' && value !== undefined)) as T
 }
+
+export const stripHtml = (html: string): string => {
+  const doc = new DOMParser().parseFromString(html, 'text/html')
+
+  return doc.body.textContent || ''
+}
+
+export const truncateText = (text: string, wordLimit = 20): string => {
+  const words = text.trim().split(/\s+/)
+
+  if (words.length <= wordLimit) return text
+
+  return words.slice(0, wordLimit).join(' ') + '...'
+}

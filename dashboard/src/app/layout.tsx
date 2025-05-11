@@ -18,6 +18,7 @@ import '@/app/globals.css'
 
 // Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
+
 import QueryProvider from './providers'
 
 export const metadata = {

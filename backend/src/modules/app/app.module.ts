@@ -47,15 +47,15 @@ import { ShippingModule } from "../shipping/shipping.module";
     BlogModule,
     SeoModule,
     TagModule,
-    // ShippingModule
+    // ShippingModule,
   ],
   controllers: [],
   providers: [
     PrismaService,
     {
       provide: APP_PIPE,
-      useValue: new ValidationPipe({ whitelist: true })
-    }
+      useValue: new ValidationPipe({ whitelist: true }),
+    },
   ],
 })
-export class AppModule { }
+export class AppModule {}

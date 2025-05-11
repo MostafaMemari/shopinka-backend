@@ -20,6 +20,12 @@ import { useQueryClient } from '@tanstack/react-query'
 import { categorySchema } from '@/libs/validators/category.schemas'
 import { updateCategory } from '@/libs/api/category'
 import { CategoryForm, Category } from '@/types/category'
+import { cleanObject } from '@/utils/formatters'
+import { handleApiError } from '@/utils/handleApiError'
+import ParentCategorySelect from './ParentCategorySelect'
+import CategoryThumbnailImage from './CategoryThumbnailImage'
+import RichTextEditor from '@/components/RichTextEditor/RichTextEditor'
+import { errorCategoryMessage } from '@/messages/auth/categoryMessages.'
 
 // Types
 interface UpdateCategoryModalProps {
@@ -36,6 +42,7 @@ const UpdateCategoryModal = ({ children, category }: UpdateCategoryModalProps) =
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isDirty }
   } = useForm<CategoryForm>({
     defaultValues: {
@@ -51,20 +58,25 @@ const UpdateCategoryModal = ({ children, category }: UpdateCategoryModalProps) =
   const handleOpen = useCallback(() => setOpen(true), [])
 
   const handleClose = useCallback(() => {
-    if (isDirty && !confirm('آیا مطمئن هستید که می‌خواهید بدون ذخیره خارج شوید؟')) {
-      return
-    }
-
     setOpen(false)
     reset()
-  }, [isDirty, reset])
+  }, [reset])
 
   const onSubmit = useCallback(
     async (formData: CategoryForm) => {
       setIsLoading(true)
 
       try {
-        const { status, data } = await updateCategory(String(category.id), formData)
+        const cleanedData = cleanObject(formData)
+        const { status, data } = await updateCategory(String(category.id), cleanedData)
+
+        const errorMessage = handleApiError(status, errorCategoryMessage)
+
+        if (errorMessage) {
+          showToast({ type: 'error', message: errorMessage })
+
+          return
+        }
 
         if (status === 200 && data) {
           showToast({ type: 'success', message: 'دسته‌بندی با موفقیت به‌روزرسانی شد' })
@@ -93,14 +105,19 @@ const UpdateCategoryModal = ({ children, category }: UpdateCategoryModalProps) =
         open={open}
         onClose={handleClose}
         title='ویرایش دسته‌بندی'
-        defaultMaxWidth='md'
+        defaultMaxWidth='lg'
         actions={
           <>
             <Button onClick={handleClose} color='secondary' disabled={isLoading}>
               انصراف
             </Button>
-            <Button onClick={handleSubmit(onSubmit)} variant='contained' disabled={isLoading} startIcon={isLoading ? <CircularProgress size={20} /> : null}>
-              ثبت تغییرات
+            <Button
+              onClick={handleSubmit(onSubmit)}
+              variant='contained'
+              disabled={isLoading || !isDirty}
+              startIcon={isLoading ? <CircularProgress size={20} color='inherit' /> : null}
+            >
+              {isLoading ? 'در حال به‌روزرسانی...' : 'به‌روزرسانی'}
             </Button>
           </>
         }
@@ -125,7 +142,6 @@ const UpdateCategoryModal = ({ children, category }: UpdateCategoryModalProps) =
                     />
                   )}
                 />
-
                 <Controller
                   name='slug'
                   control={control}
@@ -142,46 +158,9 @@ const UpdateCategoryModal = ({ children, category }: UpdateCategoryModalProps) =
                     />
                   )}
                 />
+                <ParentCategorySelect control={control} errors={errors} isLoading={isLoading} />
 
-                <Controller
-                  name='parentId'
-                  control={control}
-                  render={({ field }) => (
-                    <CustomTextField
-                      {...field}
-                      value={field.value ?? ''}
-                      fullWidth
-                      type='number'
-                      label='شناسه والد (اختیاری)'
-                      placeholder='شناسه دسته‌بندی والد'
-                      error={!!errors.parentId}
-                      helperText={errors.parentId?.message}
-                      disabled={isLoading}
-                      onChange={e => field.onChange(e.target.value ? Number(e.target.value) : null)}
-                      aria-describedby='parentId-error'
-                    />
-                  )}
-                />
-
-                <Controller
-                  name='thumbnailImageId'
-                  control={control}
-                  render={({ field }) => (
-                    <CustomTextField
-                      {...field}
-                      value={field.value ?? ''}
-                      fullWidth
-                      type='number'
-                      label='شناسه تصویر بندانگشتی (اختیاری)'
-                      placeholder='شناسه تصویر بندانگشتی'
-                      error={!!errors.thumbnailImageId}
-                      helperText={errors.thumbnailImageId?.message}
-                      disabled={isLoading}
-                      onChange={e => field.onChange(e.target.value ? Number(e.target.value) : null)}
-                      aria-describedby='thumbnailImageId-error'
-                    />
-                  )}
-                />
+                <CategoryThumbnailImage control={control} errors={errors} setValue={setValue} isLoading={isLoading} />
               </Grid>
             </Grid>
 
@@ -189,22 +168,7 @@ const UpdateCategoryModal = ({ children, category }: UpdateCategoryModalProps) =
               <Controller
                 name='description'
                 control={control}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    value={field.value ?? ''}
-                    fullWidth
-                    multiline
-                    rows={8}
-                    label='توضیحات'
-                    placeholder='توضیحات دسته‌بندی را وارد کنید'
-                    error={!!errors.description}
-                    helperText={errors.description?.message}
-                    disabled={isLoading}
-                    onChange={e => field.onChange(e.target.value || null)}
-                    aria-describedby='description-error'
-                  />
-                )}
+                render={({ field }) => <RichTextEditor label='توضیحات (اختیاری)' placeholder='توضیحات دسته‌بندی' value={field.value || ''} onChange={field.onChange} />}
               />
             </Grid>
           </Grid>

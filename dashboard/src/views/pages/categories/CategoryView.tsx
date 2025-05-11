@@ -27,6 +27,9 @@ const CategoryView = () => {
   // Query Hook
   const { data, isLoading, isFetching, error, refetch } = useCategories({
     enabled: true,
+    params: {
+      includeThumbnailImage: true
+    },
     search: searchTerm,
     staleTime: 5 * 60 * 1000
   })

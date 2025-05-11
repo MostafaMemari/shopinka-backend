@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import { debounce, type SelectChangeEvent } from '@mui/material'
@@ -17,9 +17,10 @@ interface Props {
   multi?: boolean
   onSelect?: (items: GalleryItem[] | GalleryItem) => void
   initialSelected?: GalleryItem | GalleryItem[] | undefined
+  children?: React.ReactNode
 }
 
-const ModalGallery = ({ btnLabel, multi = false, onSelect, initialSelected }: Props) => {
+const ModalGallery = ({ btnLabel, multi = false, onSelect, initialSelected, children }: Props) => {
   const [open, setOpen] = useState<boolean>(false)
   const [selectedItems, setSelectedItems] = useState<GalleryItem[]>([])
   const [activeItem, setActiveItem] = useState<GalleryItem | null>(null)
@@ -94,9 +95,13 @@ const ModalGallery = ({ btnLabel, multi = false, onSelect, initialSelected }: Pr
 
   return (
     <>
-      <Button variant='contained' className='max-sm:w-full' sx={{ width: 200, maxWidth: '100%' }} onClick={handleOpen}>
-        {btnLabel}
-      </Button>
+      {children ? (
+        <div onClick={handleOpen}>{children}</div>
+      ) : (
+        <Button variant='contained' className='max-sm:w-full' sx={{ width: 200, maxWidth: '100%' }} onClick={handleOpen}>
+          {btnLabel}
+        </Button>
+      )}
 
       <CustomDialog
         open={open}

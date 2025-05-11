@@ -59,6 +59,9 @@ const renderCategoryOptions = (nodes: CategoryNode[], level = 0): JSX.Element[] 
 const ParentCategorySelect = ({ control, errors, isLoading }: ParentCategorySelectProps) => {
   const { data, isLoading: isCategoriesLoading } = useCategories({
     enabled: true,
+    params: {
+      take: 200
+    },
     staleTime: 5 * 60 * 1000
   })
 
