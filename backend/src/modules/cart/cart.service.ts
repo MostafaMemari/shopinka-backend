@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { CartRepository } from './repositories/cart.repository';
-import { Cart, CartItem, Prisma, ProductStatus } from 'generated/prisma';
+import { Cart, CartItem, ProductStatus } from 'generated/prisma';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { CartItemRepository } from './repositories/cardItem.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
@@ -24,8 +24,8 @@ export class CartService {
   ) { }
 
   async me(userId: number): Promise<IGetCart> {
-    const { items: cartItems }: Cart & { items: CartItem[] } =
-      await this.cartRepository.findOneOrThrow({ where: { userId }, include: { items: { include: { product: true, productVariant: true } } } }) as any
+    const { items: cartItems, ...cart }: Cart & { items: CartItem[] } =
+      await this.cartRepository.findOneOrThrow({ where: { userId }, include: { shopping: true, items: { include: { product: true, productVariant: true } } } }) as any
 
     let finalPrice = 0
     let totalSaved = 0
@@ -37,6 +37,8 @@ export class CartService {
       totalSaved += discountPerItem
       finalPrice += (base.basePrice * item.quantity) - discountPerItem
     })
+
+    if (cart['shipping']) finalPrice += cart['shipping'].price
 
     return {
       finalPrice,
