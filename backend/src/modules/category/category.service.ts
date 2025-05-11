@@ -58,7 +58,8 @@ export class CategoryService {
       includeThumbnailImage,
       childrenDepth,
       includeBlogs,
-      includeProducts
+      includeProducts,
+      includeSeoMeta
     } = queryCategoryDto
 
     const sortedDto = sortObject(queryCategoryDto);
@@ -85,7 +86,8 @@ export class CategoryService {
       thumbnailImage: includeThumbnailImage,
       blogs: includeBlogs,
       children: includeChildren,
-      products: includeProducts
+      products: includeProducts,
+      seoMeta: includeSeoMeta
     };
 
     const categories = await this.categoryRepository.findAll({
@@ -109,7 +111,7 @@ export class CategoryService {
   }
 
   findOne(id: number): Promise<Category | never> {
-    return this.loadChildren(id, { children: true, user: true, blogs: true, parent: true, thumbnailImage: true, products: true }, Infinity)
+    return this.loadChildren(id, { seoMeta: true, children: true, user: true, blogs: true, parent: true, thumbnailImage: true, products: true }, Infinity)
   }
 
   async update(userId: number, categoryId: number, updateCategoryDto: UpdateCategoryDto): Promise<{ message: string, category: Category }> {

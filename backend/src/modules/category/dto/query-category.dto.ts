@@ -77,6 +77,15 @@ export class QueryCategoryDto extends PaginationDto {
         return value
     })
     @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
+    includeSeoMeta?: boolean
+
+    @IsOptional()
+    @IsBoolean()
+    @Transform(({ value }) => {
+        if (typeof value == 'string') return value == 'true'
+        return value
+    })
+    @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
     includeChildren?: boolean
 
     @IsOptional()
