@@ -123,7 +123,7 @@ model GalleryItem {
   isDeleted           Boolean          @default(false)
   deletedAt           DateTime?
   createdAt           DateTime         @default(now())
-  updatedAt           DateTime        @updatedAt()
+  updatedAt           DateTime         @updatedAt()
   mainImageOf         Product[]        @relation("MainImage")
   mainImageOfVariants ProductVariant[] @relation("VariantMainImage")
   sharedIn            Product[]        @relation("ProductToGalleryItem")
@@ -160,7 +160,7 @@ model Attribute {
   productVariants ProductVariant[]
   products        Product[]
   createdAt       DateTime         @default(now())
-  updatedAt       DateTime       @updatedAt()
+  updatedAt       DateTime         @updatedAt()
 }
 
 model AttributeValue {
