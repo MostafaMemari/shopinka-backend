@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from "@nestjs/swagger"
 import { Transform } from "class-transformer"
-import { IsOptional, IsString, IsNotEmpty, IsDate, IsEnum, IsBoolean } from "class-validator"
+import { IsOptional, IsString, IsNotEmpty, IsDate, IsEnum, IsBoolean, IsNumber, Min } from "class-validator"
 import { SortOrder } from "../../../common/enums/shared.enum"
 import { CategorySortBy } from "../enums/category-sortby.enum"
 import { PaginationDto } from "../../../common/dtos/pagination.dto"
@@ -19,6 +19,13 @@ export class QueryCategoryDto extends PaginationDto {
     description?: string
 
     @IsOptional()
+    @IsNumber()
+    @Min(0)
+    @Transform(({ value }) => +value)
+    @ApiPropertyOptional({ type: "number", nullable: true, required: false })
+    childrenDepth?: number
+
+    @IsOptional()
     @IsBoolean()
     @Transform(({ value }) => {
         if (typeof value == 'string') return value == 'true'
@@ -26,6 +33,24 @@ export class QueryCategoryDto extends PaginationDto {
     })
     @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
     includeUser?: boolean
+
+    @IsOptional()
+    @IsBoolean()
+    @Transform(({ value }) => {
+        if (typeof value == 'string') return value == 'true'
+        return value
+    })
+    @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
+    includeBlogs?: boolean
+
+    @IsOptional()
+    @IsBoolean()
+    @Transform(({ value }) => {
+        if (typeof value == 'string') return value == 'true'
+        return value
+    })
+    @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
+    includeProducts?: boolean
 
     @IsOptional()
     @IsBoolean()
@@ -45,7 +70,7 @@ export class QueryCategoryDto extends PaginationDto {
     @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
     includeParent?: boolean
 
-    @IsOptional()    
+    @IsOptional()
     @IsBoolean()
     @Transform(({ value }) => {
         if (typeof value == 'string') return value == 'true'

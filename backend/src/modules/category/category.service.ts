@@ -26,9 +26,10 @@ export class CategoryService {
     const { slug, parentId, thumbnailImageId, name } = createCategoryDto
     if (createCategoryDto.parentId) await this.categoryRepository.findOneOrThrow({ where: { id: parentId } })
 
-    const existingCategory = await this.categoryRepository.findOne({ where: { slug } })
-
-    if (existingCategory) throw new ConflictException(CategoryMessages.AlreadyExistsCategory)
+    if (slug) {
+      const existingCategory = await this.categoryRepository.findOne({ where: { slug } })
+      if (existingCategory) throw new ConflictException(CategoryMessages.AlreadyExistsCategory)
+    }
 
     if (thumbnailImageId) await this.galleryItemRepository.findOneOrThrow({ where: { id: thumbnailImageId } })
 
@@ -44,7 +45,21 @@ export class CategoryService {
 
   async findAll({ page, take, ...queryCategoryDto }: QueryCategoryDto): Promise<unknown> {
     const paginationDto = { page, take };
-    const { description, endDate, includeUser, slug, sortBy, sortDirection, startDate, includeChildren, includeParent, includeThumbnailImage } = queryCategoryDto
+    const {
+      description,
+      endDate,
+      includeUser,
+      slug,
+      sortBy,
+      sortDirection,
+      startDate,
+      includeChildren,
+      includeParent,
+      includeThumbnailImage,
+      childrenDepth,
+      includeBlogs,
+      includeProducts
+    } = queryCategoryDto
 
     const sortedDto = sortObject(queryCategoryDto);
 
@@ -64,19 +79,37 @@ export class CategoryService {
       if (endDate) filters.createdAt.lte = new Date(endDate);
     }
 
+    const include: Prisma.CategoryInclude = {
+      user: includeUser,
+      parent: includeParent,
+      thumbnailImage: includeThumbnailImage,
+      blogs: includeBlogs,
+      children: includeChildren,
+      products: includeProducts
+    };
+
     const categories = await this.categoryRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { user: includeUser, children: includeChildren, parent: includeParent, thumbnailImage: includeThumbnailImage }
+      include,
     });
 
-    await this.cacheService.set(cacheKey, categories, this.CACHE_EXPIRE_TIME);
+    let resultCategories = categories;
+    if (includeChildren && childrenDepth > 0) {
+      resultCategories = await Promise.all(
+        categories.map(async (category) =>
+          await this.loadChildren(category.id, include, childrenDepth),
+        ),
+      );
+    }
 
-    return { ...pagination(paginationDto, categories) }
+    await this.cacheService.set(cacheKey, resultCategories, this.CACHE_EXPIRE_TIME);
+
+    return { ...pagination(paginationDto, resultCategories) };
   }
 
   findOne(id: number): Promise<Category | never> {
-    return this.getCategoryWithAllChildren(id)
+    return this.loadChildren(id, { children: true, user: true, blogs: true, parent: true, thumbnailImage: true, products: true }, Infinity)
   }
 
   async update(userId: number, categoryId: number, updateCategoryDto: UpdateCategoryDto): Promise<{ message: string, category: Category }> {
@@ -131,22 +164,24 @@ export class CategoryService {
     return false
   }
 
-  private async getCategoryWithAllChildren(categoryId: number): Promise<Category> {
+  private async loadChildren(categoryId: number, include: Prisma.CategoryInclude, depth: number): Promise<Category> {
+    if (depth <= 0) this.categoryRepository.findOneOrThrow({ where: { id: categoryId }, include });
+
     const category = await this.categoryRepository.findOneOrThrow({
       where: { id: categoryId },
       include: {
-        parent: { select: { id: true, slug: true, description: true } },
-        thumbnailImage: { select: { id: true, size: true, fileUrl: true } },
+        ...include,
         children: true,
-        user: { select: { id: true, fullName: true } }
-      }
-    })
+      },
+    });
 
-    category['children'] = await Promise.all(
-      category['children'].map(async child => this.getCategoryWithAllChildren(child.id))
-    )
+    if (category['children'] && category['children'].length > 0) {
+      category['children'] = await Promise.all(
+        category['children'].map((child) => this.loadChildren(child.id, include, depth - 1)),
+      );
+    }
 
-    return category
+    return category;
   }
 
   private async generateUniqueSlug(name: string): Promise<string> {

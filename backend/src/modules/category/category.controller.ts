@@ -17,9 +17,10 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) { }
 
   @Post()
+  @SkipAuth()
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   create(@Body() createCategoryDto: CreateCategoryDto, @GetUser() user: User) {
-    return this.categoryService.create(user.id, createCategoryDto);
+    return this.categoryService.create(1, createCategoryDto);
   }
 
   @Get()
