@@ -69,7 +69,7 @@ export class CategoryService {
 
     if (cachedCategories) return { ...pagination(paginationDto, cachedCategories) }
 
-    const filters: Prisma.CategoryWhereInput = {};
+    const filters: Prisma.CategoryWhereInput = { parent: null };
 
     if (description) filters.description = { contains: description, mode: "insensitive" };
     if (slug) filters.slug = { contains: slug, mode: "insensitive" };

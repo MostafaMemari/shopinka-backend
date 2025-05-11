@@ -5,10 +5,11 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthDecorator } from '../../common/decorators/auth.decorator';
 import { GetUser } from '../../common/decorators/get-user.decorator';
-import { User } from 'generated/prisma';
+import { Role, User } from 'generated/prisma';
 import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 import { SkipAuth } from '../../common/decorators/skip-auth.decorator';
 import { QueryCategoryDto } from './dto/query-category.dto';
+import { Roles } from '../../common/decorators/role.decorator';
 
 @Controller('category')
 @ApiTags('category')
@@ -17,10 +18,10 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) { }
 
   @Post()
-  @SkipAuth()
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   create(@Body() createCategoryDto: CreateCategoryDto, @GetUser() user: User) {
-    return this.categoryService.create(1, createCategoryDto);
+    return this.categoryService.create(user.id, createCategoryDto);
   }
 
   @Get()
@@ -36,12 +37,14 @@ export class CategoryController {
   }
 
   @Patch(':id')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateCategoryDto: UpdateCategoryDto, @GetUser() user: User) {
     return this.categoryService.update(user.id, id, updateCategoryDto);
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
     return this.categoryService.remove(user.id, id);
   }
