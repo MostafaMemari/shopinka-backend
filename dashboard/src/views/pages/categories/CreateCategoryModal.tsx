@@ -24,7 +24,6 @@ import { cleanObject } from '@/utils/formatters'
 import { handleApiError } from '@/utils/handleApiError'
 import { errorCategoryMessage } from '@/messages/auth/categoryMessages.'
 import ParentCategorySelect from './ParentCategorySelect'
-import CategoryThumbnailSelector from './CategoryThumbnailImage'
 import CategoryThumbnailImage from './CategoryThumbnailImage'
 
 // Types
@@ -67,8 +66,6 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
 
       try {
         const cleanedData = cleanObject(formData)
-
-        console.log(cleanedData)
 
         const { status, data } = await createCategory(cleanedData)
 

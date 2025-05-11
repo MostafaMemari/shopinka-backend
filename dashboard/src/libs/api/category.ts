@@ -66,3 +66,18 @@ export const createCategory = async (data: CategoryForm): Promise<{ status: numb
     }
   }
 }
+
+export const removeCategory = async (id: string): Promise<{ status: number; data: { message: string; category: CategoryForm } | null }> => {
+  try {
+    const res = await serverApiFetch(`/category/${id}`, { method: 'DELETE' })
+
+    return {
+      ...res
+    }
+  } catch (error: any) {
+    return {
+      status: error.message.includes('401') ? 401 : 500,
+      data: error.message
+    }
+  }
+}

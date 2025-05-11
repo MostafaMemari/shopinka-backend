@@ -12,6 +12,7 @@ import tableStyles from '@core/styles/table.module.css'
 // API Import
 import { Category } from '@/types/category'
 import UpdateCategoryModal from './UpdateCategoryModal'
+import RemoveCategoryModal from './RemoveAttributeModal'
 
 const DesktopCategoryTable = ({ categories }: { categories: Category[] }) => (
   <div className='overflow-x-auto'>
@@ -59,12 +60,12 @@ const DesktopCategoryTable = ({ categories }: { categories: Category[] }) => (
               </td>
               <td>
                 <Box display='flex' alignItems='center' gap={2}>
-                  {/* <RemoveCategoryModal id={String(row.id)} /> */}
-                  <Link href={`/media/${row.id}`}>
+                  <RemoveCategoryModal id={row.id}>
                     <IconButton size='small'>
-                      <i className='tabler-eye text-gray-500 text-lg' />
+                      <i className='tabler-trash text-gray-500 text-lg' />
                     </IconButton>
-                  </Link>
+                  </RemoveCategoryModal>
+
                   <UpdateCategoryModal category={row}>
                     <IconButton size='small'>
                       <i className='tabler-edit text-gray-500 text-lg' />
