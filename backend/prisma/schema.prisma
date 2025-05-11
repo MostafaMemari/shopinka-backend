@@ -262,7 +262,7 @@ model Category {
   children Category[] @relation("CategoryToCategory")
   user     User       @relation(fields: [userId], references: [id], onDelete: NoAction)
   products Product[]
-  blog     Blog[]
+  blogs     Blog[]
 
   thumbnailImage GalleryItem? @relation(fields: [thumbnailImageId], references: [id], onDelete: NoAction)
 }
@@ -292,12 +292,12 @@ model Comment {
 model Cart {
   id         Int @id() @default(autoincrement())
   userId     Int @unique()
-  shippingId Int @unique()
+  shippingId Int?
 
   user User @relation("UserCart", fields: [userId], references: [id], onDelete: Cascade)
 
   items    CartItem[]
-  shopping Shipping   @relation("CartShipping", fields: [shippingId], references: [id], onDelete: SetDefault)
+  shopping Shipping?   @relation(fields: [shippingId], references: [id], onDelete: NoAction)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
@@ -415,6 +415,5 @@ model Shipping {
   updatedAt     DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: NoAction)
-
-  cart Cart? @relation("CartShipping")
+  carts Cart[]
 }

@@ -1,0 +1,176 @@
+import * as yup from 'yup'
+
+export const productSchema = yup.object().shape({
+  sku: yup.string().required('کد محصول الزامی است').max(30, 'حداکثر 30 کاراکتر'),
+
+  name: yup.string().required('نام محصول الزامی است').max(100, 'حداکثر 100 کاراکتر'),
+
+  slug: yup
+    .string()
+    .optional()
+    .max(120, 'حداکثر 120 کاراکتر')
+    .matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'فرمت slug معتبر نیست'),
+
+  description: yup.string().optional(),
+
+  shortDescription: yup
+    .string()
+    .transform(value => (value === '' ? undefined : value))
+    .optional()
+    .max(300, 'حداکثر 300 کاراکتر'),
+
+  quantity: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .optional()
+    .positive('باید عددی مثبت باشد'),
+
+  basePrice: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .optional()
+    .positive('باید عددی مثبت باشد')
+    .min(1000, 'حداقل قیمت 1000')
+    .max(200000000, 'حداکثر قیمت ۲۰۰ میلیون'),
+
+  salePrice: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .optional()
+    .positive('باید عددی مثبت باشد')
+    .min(1000, 'حداقل قیمت 1000')
+    .max(200000000, 'حداکثر قیمت ۲۰۰ میلیون')
+    .test('is-less-than-base', 'قیمت فروش باید کمتر از قیمت پایه باشد', function (value) {
+      const { basePrice } = this.parent
+
+      if (value !== undefined && basePrice !== undefined) {
+        return value < basePrice
+      }
+
+      return true
+    }),
+
+  status: yup.mixed().oneOf(['DRAFT', 'PUBLISHED'], 'وضعیت نامعتبر است').optional(),
+
+  type: yup.mixed<'SIMPLE' | 'VARIABLE'>().oneOf(['SIMPLE', 'VARIABLE'], 'نوع محصول نامعتبر است').required('نوع محصول الزامی است'),
+
+  mainImageId: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .optional()
+    .positive('عدد باید مثبت باشد'),
+
+  galleryImageIds: yup
+    .array()
+    .optional()
+    .of(yup.number().positive('شناسه تصویر باید عددی مثبت باشد'))
+    .min(1, 'حداقل یک تصویر لازم است')
+    .test('unique', 'تصاویر تکراری هستند', value => {
+      if (!value) return true
+
+      return new Set(value).size === value.length
+    }),
+  categoryIds: yup
+    .array()
+    .of(yup.number().positive('شناسه دسته‌بندی باید عددی مثبت باشد'))
+    .optional()
+    .test('unique', 'دسته‌ها تکراری هستند', value => {
+      return value ? new Set(value).size === value.length : true
+    }),
+
+  attributeIds: yup
+    .array()
+    .optional()
+    .of(yup.number().positive('شناسه ویژگی باید عددی مثبت باشد'))
+    .test('unique', 'ویژگی‌ها تکراری هستند', value => {
+      if (!value) return true
+
+      return new Set(value).size === value.length
+    }),
+
+  attributeValuesIds: yup
+    .array()
+    .of(yup.array().of(yup.number().positive('شناسه ویژگی باید عددی مثبت باشد')).min(1, 'هر ترکیب باید حداقل یک مقدار داشته باشد'))
+    .optional(),
+
+  width: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .optional()
+    .positive('باید عددی مثبت باشد'),
+  height: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .optional()
+    .positive('باید عددی مثبت باشد'),
+  length: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .optional()
+    .positive('باید عددی مثبت باشد'),
+  weight: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .optional()
+    .positive('باید عددی مثبت باشد'),
+
+  seo_title: yup
+    .string()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .notRequired()
+    .nullable(),
+
+  seo_description: yup
+    .string()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .notRequired()
+    .nullable(),
+
+  seo_keywords: yup
+    .array()
+    .of(
+      yup
+        .string()
+        .required('کلمه کلیدی سئو نمی‌تواند خالی باشد')
+        .test('non-empty', 'کلمه کلیدی سئو نمی‌تواند خالی باشد', value => value.trim().length > 0)
+    )
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .notRequired()
+    .nullable()
+    .test('unique', 'کلمات کلیدی سئو باید یکتا باشند', value => {
+      if (!value) return true
+
+      return new Set(value).size === value.length
+    }),
+
+  seo_canonicalUrl: yup
+    .string()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .notRequired()
+    .nullable(),
+
+  seo_ogTitle: yup
+    .string()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .notRequired()
+    .nullable(),
+
+  seo_ogDescription: yup
+    .string()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .notRequired()
+    .nullable(),
+
+  seo_ogImage: yup
+    .string()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .notRequired()
+    .nullable(),
+
+  seo_robotsTag: yup
+    .string()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .notRequired()
+    .nullable()
+    .oneOf(['index,follow', 'noindex,nofollow', 'index,nofollow', 'noindex,follow'], 'دستور ربات‌های سئو باید یکی از مقادیر مجاز باشد')
+})

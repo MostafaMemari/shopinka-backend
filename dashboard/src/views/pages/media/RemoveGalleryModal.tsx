@@ -4,11 +4,13 @@ import { removeGallery } from '@/libs/api/gallery'
 import { showToast } from '@/utils/showToast'
 import { useRouter } from 'next/navigation'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
+import { useQueryClient } from '@tanstack/react-query'
 
 const RemoveGalleryModal = ({ id }: { id: string }) => {
   const [open, setOpen] = useState<boolean>(false)
   const [galleryId, setGalleryId] = useState<string | null>(null)
   const router = useRouter()
+  const queryClient = useQueryClient()
 
   const [isDeleting, setIsDeleting] = useState<boolean>(false)
 
@@ -27,6 +29,7 @@ const RemoveGalleryModal = ({ id }: { id: string }) => {
       if (res.status === 200) {
         showToast({ type: 'success', message: 'حذف گالری با موفقیت انجام شد' })
         router.refresh()
+        await queryClient.invalidateQueries({ queryKey: ['galleries'] })
       } else if (res.status === 400) showToast({ type: 'error', message: 'حذف گالری با خطا مواجه شد' })
       else if (res.status === 404) showToast({ type: 'error', message: 'شما دسترسی حذف این گالری را ندارید' })
 
