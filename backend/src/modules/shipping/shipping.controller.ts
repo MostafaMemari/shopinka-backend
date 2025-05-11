@@ -42,7 +42,8 @@ export class ShippingController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.shippingService.remove(+id);
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.shippingService.remove(user.id, id);
   }
 }

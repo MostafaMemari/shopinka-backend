@@ -33,7 +33,11 @@ export class ShippingService {
     return { message: ShippingMessages.UpdatedShippingSuccess, shipping: updatedShipping }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} shipping`;
+  async remove(userId: number, shippingId: number): Promise<{ message: string, shipping: Shipping }> {
+    await this.shippingRepository.findOneOrThrow({ where: { id: shippingId, userId } })
+
+    const removedShipping = await this.shippingRepository.delete({ where: { id: shippingId } })    
+
+    return { message: ShippingMessages.RemovedShippingSuccess, shipping: removedShipping }
   }
 }
