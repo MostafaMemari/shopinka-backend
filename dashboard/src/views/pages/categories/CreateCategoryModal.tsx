@@ -24,6 +24,8 @@ import { cleanObject } from '@/utils/formatters'
 import { handleApiError } from '@/utils/handleApiError'
 import { errorCategoryMessage } from '@/messages/auth/categoryMessages.'
 import ParentCategorySelect from './ParentCategorySelect'
+import CategoryThumbnailSelector from './CategoryThumbnailImage'
+import CategoryThumbnailImage from './CategoryThumbnailImage'
 
 // Types
 interface CreateCategoryModalProps {
@@ -39,6 +41,7 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors }
   } = useForm<CategoryForm>({
     defaultValues: {
@@ -136,7 +139,6 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
                     />
                   )}
                 />
-
                 <Controller
                   name='slug'
                   control={control}
@@ -153,9 +155,7 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
                     />
                   )}
                 />
-
                 <ParentCategorySelect control={control} errors={errors} isLoading={isLoading} />
-
                 <Controller
                   name='thumbnailImageId'
                   control={control}
@@ -175,6 +175,7 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
                     />
                   )}
                 />
+                <CategoryThumbnailImage control={control} errors={errors} setValue={setValue} isLoading={false} />
               </Grid>
             </Grid>
 

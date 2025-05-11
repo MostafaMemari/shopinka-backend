@@ -13,7 +13,7 @@ import tableStyles from '@core/styles/table.module.css'
 import { Category } from '@/types/category'
 import UpdateCategoryModal from './UpdateCategoryModal'
 
-const DesktopCategoryTable = ({ data, paginatedData }: { data: Category[]; paginatedData: Category[] }) => (
+const DesktopCategoryTable = ({ categories }: { categories: Category[] }) => (
   <div className='overflow-x-auto'>
     <table className={tableStyles.table}>
       <thead>
@@ -26,14 +26,14 @@ const DesktopCategoryTable = ({ data, paginatedData }: { data: Category[]; pagin
         </tr>
       </thead>
       <tbody>
-        {paginatedData.length === 0 ? (
+        {categories.length === 0 ? (
           <tr>
             <td colSpan={5} className='text-center'>
               داده‌ای موجود نیست
             </td>
           </tr>
         ) : (
-          paginatedData.map(row => (
+          categories.map(row => (
             <tr key={row.id}>
               <td>
                 {row.thumbnailImageId ? (

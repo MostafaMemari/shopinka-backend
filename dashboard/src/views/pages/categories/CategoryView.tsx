@@ -38,9 +38,6 @@ const CategoryView = () => {
   // Extract items from response
   const categories = data?.data?.items || []
 
-  // Paginate filtered data
-  const paginatedData = categories.slice(page * rowsPerPage, (page + 1) * rowsPerPage)
-
   // Loader component
   if (isLoading) {
     return (
@@ -95,7 +92,7 @@ const CategoryView = () => {
               <DebouncedInput value={searchTerm} onChange={value => setSearchTerm(String(value))} placeholder="جستجو" sx={{ width: '100%' }} />
             </Box> */}
           </Box>
-          {!isMobile && <DesktopCategoryTable data={categories} paginatedData={paginatedData} />}
+          {!isMobile && <DesktopCategoryTable categories={categories} />}
           <TablePaginationComponent filteredData={categories} page={page} rowsPerPage={rowsPerPage} onPageChange={setPage} onRowsPerPageChange={setRowsPerPage} />
         </Card>
       )}
