@@ -11,10 +11,7 @@ import ModalGallery from '@/components/Gallery/ModalGallery/ModalGallery'
 import { Typography } from '@mui/material'
 import { GalleryItem } from '@/types/gallery'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
-
-// URL تصویر پیش‌فرض
-const DEFAULT_IMAGE_URL = '/images/default-thumbnail.png' // مسیر تصویر پیش‌فرض در پروژه
-// یا مثلاً: 'https://via.placeholder.com/120' برای یک URL عمومی
+import ImagePlaceholder from '@/components/ImagePlaceholder'
 
 interface CategoryThumbnailImageProps {
   control: Control<CategoryForm>
@@ -27,7 +24,6 @@ interface CategoryThumbnailImageProps {
 const CategoryThumbnailImage = ({ control, errors, isLoading, setValue, category }: CategoryThumbnailImageProps) => {
   const [selectedImage, setSelectedImage] = useState<GalleryItem | null>(null)
 
-  // Initialize selectedImage with category's thumbnail image (for UpdateCategoryModal)
   useEffect(() => {
     if (category?.thumbnailImageId && category?.thumbnailImage) {
       setSelectedImage({
@@ -52,7 +48,6 @@ const CategoryThumbnailImage = ({ control, errors, isLoading, setValue, category
     const image = Array.isArray(item) ? item[0] : item
 
     setSelectedImage(image)
-
     const thumbnailImageId = typeof image.id === 'number' && image.id > 0 ? image.id : null
 
     setValue('thumbnailImageId', thumbnailImageId, { shouldValidate: true })
@@ -72,23 +67,18 @@ const CategoryThumbnailImage = ({ control, errors, isLoading, setValue, category
           <Typography variant='body2' sx={{ fontWeight: 'medium', color: 'text.primary' }}>
             تصویر بندانگشتی (اختیاری)
           </Typography>
-          <Box
-            sx={{
-              position: 'relative',
-              width: 120,
-              height: 120,
-              borderRadius: 1,
-              overflow: 'hidden',
-              boxShadow: 1
-            }}
-          >
-            <Image
-              src={selectedImage ? selectedImage.fileUrl : DEFAULT_IMAGE_URL}
-              alt={selectedImage ? selectedImage.title : 'تصویر پیش‌فرض'}
-              fill
-              style={{ objectFit: 'cover' }}
-            />
-            {selectedImage && (
+          {selectedImage ? (
+            <Box
+              sx={{
+                position: 'relative',
+                width: 120,
+                height: 120,
+                borderRadius: 1,
+                overflow: 'hidden',
+                boxShadow: 1
+              }}
+            >
+              <Image src={selectedImage.fileUrl} alt={selectedImage.title} fill style={{ objectFit: 'cover' }} />
               <Tooltip title='حذف تصویر'>
                 <IconButton
                   size='small'
@@ -106,8 +96,10 @@ const CategoryThumbnailImage = ({ control, errors, isLoading, setValue, category
                   <DeleteOutlineIcon fontSize='small' />
                 </IconButton>
               </Tooltip>
-            )}
-          </Box>
+            </Box>
+          ) : (
+            <ImagePlaceholder width={120} height={120} />
+          )}
           <Box>
             <ModalGallery initialSelected={selectedImage || undefined} btnLabel={selectedImage ? 'تغییر تصویر' : 'انتخاب تصویر'} multi={false} onSelect={handleSelect} />
           </Box>

@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box'
 import CustomTextField from '@/@core/components/mui/TextField'
-import CreateMediaModal from '@/components/Gallery/CreateMediaModal'
+import CreateMediaModal from '@/views/pages/media/item/CreateMediaModal'
 import GallerySelect from '../GallerySelect'
 import { type SelectChangeEvent } from '@mui/material'
 

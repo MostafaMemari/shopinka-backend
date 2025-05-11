@@ -29,7 +29,7 @@ import RichTextEditor from '@/components/RichTextEditor/RichTextEditor'
 
 // Types
 interface CreateCategoryModalProps {
-  children: ReactNode
+  children?: ReactNode
 }
 
 const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
@@ -97,9 +97,9 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
 
   return (
     <div>
-      <div onClick={handleOpen} role='button' tabIndex={0} onKeyDown={e => e.key === 'Enter' && handleOpen()} aria-label='باز کردن فرم ایجاد دسته‌بندی'>
-        {children}
-      </div>
+      <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />}>
+        ثبت دسته‌بندی جدید
+      </Button>
 
       <CustomDialog
         open={open}

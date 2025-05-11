@@ -17,6 +17,7 @@ import DesktopCategoryTable from './DesktopCategoryTable'
 import { Category, CategoryOutlined, PermMedia } from '@mui/icons-material'
 import { useCategories } from '@/hooks/reactQuery/useCategory'
 import CreateCategoryModal from './CreateCategoryModal'
+import EmptyState from '@/components/EmptyState'
 
 const CategoryView = () => {
   // States
@@ -71,17 +72,13 @@ const CategoryView = () => {
     <>
       {categories.length === 0 ? (
         <>
-          <NoCategoryMessage
+          <EmptyState
             title='هیچ دسته‌بندی یافت نشد'
             subtitle='به نظر می‌رسه هیچ دسته‌بندی در این بخش وجود نداره. می‌تونید رسانه‌های جدید آپلود کنید!'
             icon={<CategoryOutlined color='action' sx={{ fontSize: 60, mb: 2, opacity: 0.7 }} />}
           >
-            <CreateCategoryModal>
-              <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
-                ثبت دسته بندی جدید
-              </Button>
-            </CreateCategoryModal>
-          </NoCategoryMessage>
+            <CreateCategoryModal />
+          </EmptyState>
         </>
       ) : (
         <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
