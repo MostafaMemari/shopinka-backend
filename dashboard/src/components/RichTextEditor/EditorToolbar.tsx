@@ -13,21 +13,15 @@ import { EditorToolbarProps } from './types'
 import { GalleryItem } from '@/types/gallery'
 
 const EditorToolbar = ({ editor, openLinkDialog, toggleFullScreen, isFullScreen, onSelectImages }: EditorToolbarProps) => {
-  const [isGalleryOpen, setIsGalleryOpen] = useState(false)
   const [selectedImages, setSelectedImages] = useState<GalleryItem[]>([])
 
   if (!editor) return null
-
-  const handleOpenGallery = () => {
-    setIsGalleryOpen(true)
-  }
 
   const handleSelect = (items: GalleryItem | GalleryItem[]) => {
     const images = Array.isArray(items) ? items : [items]
 
     setSelectedImages(images)
     onSelectImages(images)
-    setIsGalleryOpen(false)
   }
 
   return (
@@ -68,7 +62,7 @@ const EditorToolbar = ({ editor, openLinkDialog, toggleFullScreen, isFullScreen,
       ))}
 
       <ModalGallery btnLabel='انتخاب تصاویر' multi initialSelected={selectedImages} onSelect={handleSelect}>
-        <CustomIconButton variant='tonal' size='small' onClick={handleOpenGallery}>
+        <CustomIconButton variant='tonal' size='small'>
           <i className={classnames('tabler-photo', 'text-textSecondary')} />
         </CustomIconButton>
       </ModalGallery>

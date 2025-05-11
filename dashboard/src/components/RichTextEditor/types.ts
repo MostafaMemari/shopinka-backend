@@ -6,7 +6,6 @@ export interface EditorToolbarProps {
   openLinkDialog: () => void
   toggleFullScreen: () => void
   isFullScreen: boolean
-  openGallery: () => void
   onSelectImages: (images: GalleryItem[]) => void
 }
 

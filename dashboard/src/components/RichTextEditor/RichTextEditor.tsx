@@ -150,14 +150,7 @@ const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کن
             'flex-1 flex flex-col': isFullScreen
           })}
         >
-          <EditorToolbar
-            editor={editor}
-            openLinkDialog={handleLinkDialog}
-            toggleFullScreen={toggleFullScreen}
-            isFullScreen={isFullScreen}
-            onSelectImages={handleSelect}
-            openGallery={() => setIsGalleryOpen(true)}
-          />
+          <EditorToolbar editor={editor} openLinkDialog={handleLinkDialog} toggleFullScreen={toggleFullScreen} isFullScreen={isFullScreen} onSelectImages={handleSelect} />
           <Divider className='mli-6' />
           <EditorContent
             editor={editor}
