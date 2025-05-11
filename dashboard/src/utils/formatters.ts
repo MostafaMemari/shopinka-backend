@@ -16,3 +16,7 @@ export const formatDate = (dateString: string): string => {
     minute: 'numeric'
   }).format(new Date(dateString))
 }
+
+export const cleanObject = <T extends Record<string, any>>(obj: T): T => {
+  return Object.fromEntries(Object.entries(obj).filter(([_, value]) => value !== null && value !== '' && value !== undefined)) as T
+}

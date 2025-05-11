@@ -4,7 +4,7 @@ import Checkbox from '@mui/material/Checkbox'
 import UpdateGalleryItemModal from './UpdateGalleryItemModal'
 import DetailMediaModal from './DetailMediaModal'
 import NoMediaMessage from '../NoMediaMessage'
-import CreateMediaModal from './CreateMediaModal'
+import CreateMediaModal from '../../../../components/Gallery/CreateMediaModal'
 import { PermMedia } from '@mui/icons-material'
 import { GalleryItem } from '@/types/gallery'
 

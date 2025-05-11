@@ -38,6 +38,11 @@ const horizontalMenuData = (): HorizontalMenuDataType[] => [
         icon: 'tabler-files'
       }
     ]
+  },
+  {
+    label: 'دسته بندی‌ها',
+    icon: 'tabler-category',
+    href: '/categories'
   }
 ]
 

@@ -12,22 +12,34 @@ import Tooltip from '@mui/material/Tooltip'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 
 // Component Imports
-import ModalGallery from '@/components/Gallery/ModalGallery'
+import ModalGallery from '@/components/Gallery/ModalGallery/ModalGallery'
 import { GalleryItem } from '@/types/gallery'
 import { useState } from 'react'
 import Image from 'next/image'
+import { useFormContext } from 'react-hook-form'
 
 const ProductMainImage = () => {
   const [selectedImage, setSelectedImage] = useState<GalleryItem | null>(null)
+
+  const {
+    register,
+    formState: { errors },
+    setValue
+  } = useFormContext()
 
   const handleSelect = (item: GalleryItem | GalleryItem[]) => {
     const image = Array.isArray(item) ? item[0] : item
 
     setSelectedImage(image)
+
+    const mainImageId = typeof image.id === 'number' && image.id > 0 ? image.id : undefined
+
+    setValue('mainImageId', mainImageId)
   }
 
   const handleRemove = () => {
     setSelectedImage(null)
+    setValue('mainImageId', undefined)
   }
 
   return (
@@ -35,7 +47,7 @@ const ProductMainImage = () => {
       <CardHeader title='تصویر اصلی محصول' />
       <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
         {selectedImage && (
-          <Box sx={{ position: 'relative', width: 200, height: 200, borderRadius: 2, overflow: 'hidden' }}>
+          <Box sx={{ position: 'relative', width: 200, height: 200, borderRadius: 2, overflow: 'hidden', boxShadow: 1 }}>
             <Image src={selectedImage.fileUrl} alt={selectedImage.title} fill style={{ objectFit: 'cover' }} />
             <Tooltip title='حذف تصویر'>
               <IconButton
