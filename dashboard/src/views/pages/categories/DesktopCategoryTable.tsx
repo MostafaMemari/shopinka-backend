@@ -37,7 +37,7 @@ const DesktopCategoryTable = ({ categories }: { categories: Category[] }) => (
             <tr key={row.id}>
               <td>
                 {row.thumbnailImageId ? (
-                  <img src={String(row.thumbnailImageId)} alt={row.name || 'تصویر گالری'} style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
+                  <img src={row?.thumbnailImage?.thumbnailUrl} alt={row.name || 'تصویر گالری'} style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
                 ) : (
                   <Typography color='text.secondary'>-</Typography>
                 )}

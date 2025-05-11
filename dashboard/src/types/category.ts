@@ -8,7 +8,10 @@ export type Category = {
   thumbnailImageId: number | null
   createdAt: string
   updatedAt: string
-  thumbnailImage: number | null
+  thumbnailImage: {
+    fileUrl: string
+    thumbnailUrl: string
+  }
   parent: Category | null
 }
 

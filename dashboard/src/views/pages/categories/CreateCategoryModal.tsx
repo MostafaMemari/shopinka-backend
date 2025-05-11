@@ -156,25 +156,7 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
                   )}
                 />
                 <ParentCategorySelect control={control} errors={errors} isLoading={isLoading} />
-                <Controller
-                  name='thumbnailImageId'
-                  control={control}
-                  render={({ field }) => (
-                    <CustomTextField
-                      {...field}
-                      value={field.value ?? ''}
-                      fullWidth
-                      type='number'
-                      label='شناسه تصویر بندانگشتی (اختیاری)'
-                      placeholder='شناسه تصویر بندانگشتی'
-                      error={!!errors.thumbnailImageId}
-                      helperText={errors.thumbnailImageId?.message}
-                      disabled={isLoading}
-                      onChange={e => field.onChange(e.target.value ? Number(e.target.value) : null)}
-                      aria-describedby='thumbnailImageId-error'
-                    />
-                  )}
-                />
+
                 <CategoryThumbnailImage control={control} errors={errors} setValue={setValue} isLoading={false} />
               </Grid>
             </Grid>
