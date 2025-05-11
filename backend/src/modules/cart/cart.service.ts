@@ -10,6 +10,8 @@ import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { pagination } from '../../common/utils/pagination.utils';
 import { IGetCart } from './interfaces/cart.interface';
+import { ShippingRepository } from '../shipping/shipping.repository';
+import { CartMessages } from './enums/cart-messages.enum';
 
 @Injectable()
 export class CartService {
@@ -17,7 +19,8 @@ export class CartService {
     private readonly cartRepository: CartRepository,
     private readonly cartItemRepository: CartItemRepository,
     private readonly productRepository: ProductRepository,
-    private readonly productVariantRepository: ProductVariantRepository
+    private readonly productVariantRepository: ProductVariantRepository,
+    private readonly shippingRepository: ShippingRepository
   ) { }
 
   async me(userId: number): Promise<IGetCart> {
@@ -40,6 +43,14 @@ export class CartService {
       totalSaved,
       cartItems
     }
+  }
+
+  async addShipping(userId: number, shippingId: number): Promise<{ message: string, cart: Cart }> {
+    await this.shippingRepository.findOneOrThrow({ where: { id: shippingId } })
+
+    const updatedCart = await this.cartRepository.update({ where: { userId }, data: { shippingId } })
+
+    return { message: CartMessages.AddedShippingSuccess, cart: updatedCart }
   }
 
   async clear(userId: number): Promise<Cart> {
