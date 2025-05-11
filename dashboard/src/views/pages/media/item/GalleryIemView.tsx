@@ -1,53 +1,33 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Card from '@mui/material/Card'
 import { Box } from '@mui/material'
-import CustomTextField from '@/@core/components/mui/TextField'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
 import CreateMediaModal from './CreateMediaModal'
-import { GalleryItem } from '@/types/gallery'
 import DesktopMediaGallery from './DesktopMediaGallery'
 import RemoveGalleryItemModal from './RemoveMediaModal'
-import NoMediaMessage from '../NoMediaMessage'
 import { PermMedia } from '@mui/icons-material'
+import EmptyState from '@/components/EmptyState'
+import { useGalleryItems } from '@/hooks/reactQuery/useGallery'
+import LoadingSpinner from '@/components/LoadingSpinner'
 
-const DebouncedInput = ({
-  value: initialValue,
-  onChange,
-  debounce = 500,
-  ...props
-}: { value: string | number; onChange: (value: string | number) => void; debounce?: number } & Omit<React.ComponentProps<typeof CustomTextField>, 'onChange'>) => {
-  const [value, setValue] = useState(initialValue)
-
-  useEffect(() => {
-    setValue(initialValue)
-  }, [initialValue])
-
-  useEffect(() => {
-    const timeout = setTimeout(() => onChange(value), debounce)
-
-    return () => clearTimeout(timeout)
-  }, [value, onChange, debounce])
-
-  return <CustomTextField {...props} value={value} onChange={e => setValue(e.target.value)} />
-}
-
-const GalleryItemView = ({ data: initialData }: { data?: GalleryItem[] }) => {
+const GalleryItemView = ({ galleryId }: { galleryId: string }) => {
   // States
-  const [data, setLocalData] = useState<GalleryItem[]>(initialData || [])
-  const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [selected, setSelected] = useState<string[]>([])
 
-  useEffect(() => {
-    setLocalData(initialData || [])
-  }, [initialData])
-
-  const filteredData = data.filter(file => file.title.toLowerCase().includes(searchTerm.toLowerCase()))
-
-  const paginatedData = filteredData.slice(page * rowsPerPage, (page + 1) * rowsPerPage)
+  // Query Hook
+  const { data, isLoading, isFetching, error, refetch } = useGalleryItems({
+    params: {
+      galleryId,
+      page: page + 1,
+      take: rowsPerPage
+    },
+    enabled: true,
+    staleTime: 5 * 60 * 1000
+  })
 
   const handleCheckboxChange = (id: string) => {
     setSelected(prev => (prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]))
@@ -57,16 +37,21 @@ const GalleryItemView = ({ data: initialData }: { data?: GalleryItem[] }) => {
     setSelected([])
   }
 
+  const galleryItems = data?.data?.items || []
+  const paginationData = data?.data?.pager || []
+
+  if (isLoading) return <LoadingSpinner />
+
   return (
     <>
-      {paginatedData.length === 0 ? (
-        <NoMediaMessage
-          title='هیچ رسانه‌ای یافت نشد'
-          subtitle='به نظر می‌رسه هیچ فایل رسانه‌ای در این بخش وجود نداره. می‌تونید رسانه‌های جدید آپلود کنید!'
+      {galleryItems.length === 0 ? (
+        <EmptyState
+          title='هیچ رسانه ای یافت نشد'
+          subtitle='به نظر می‌رسه هیچ رسانه ای در این بخش وجود نداره. می‌تونید رسانه‌های جدید آپلود کنید!'
           icon={<PermMedia color='action' sx={{ fontSize: 60, mb: 2, opacity: 0.7 }} />}
         >
           <CreateMediaModal />
-        </NoMediaMessage>
+        </EmptyState>
       ) : (
         <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
           <Box
@@ -82,23 +67,17 @@ const GalleryItemView = ({ data: initialData }: { data?: GalleryItem[] }) => {
               <CreateMediaModal />
               {selected.length > 0 && <RemoveGalleryItemModal selectedImages={selected} onClearSelection={handleClearSelection} />}
             </Box>
-            <Box sx={{ display: 'flex', maxWidth: { xs: '100%', sm: 'auto' }, width: { xs: '100%', sm: 'auto' } }}>
-              <DebouncedInput value={searchTerm} onChange={value => setSearchTerm(String(value))} placeholder='جستجو' sx={{ width: '100%' }} />
-            </Box>
           </Box>
-
-          <DesktopMediaGallery paginatedData={paginatedData} selected={selected} handleCheckboxChange={handleCheckboxChange} />
-
-          <TablePaginationComponent filteredData={filteredData} page={page} rowsPerPage={rowsPerPage} onPageChange={setPage} onRowsPerPageChange={setRowsPerPage} />
-
-          {/* {selectedItem && (
-        <UpdateGalleryItemModal
-          open={updateModalOpen}
-          onClose={() => setUpdateModalOpen(false)}
-          codified_id={selectedItem.id}
-          initialData={{ title: selectedItem.title, description: selectedItem.description }}
-        />
-      )} */}
+          <DesktopMediaGallery data={galleryItems} selected={selected} handleCheckboxChange={handleCheckboxChange} />
+          <TablePaginationComponent
+            currentPage={paginationData?.currentPage || 1}
+            totalPages={paginationData?.totalPages || 1}
+            totalCount={paginationData?.totalCount || 0}
+            rowsPerPage={rowsPerPage}
+            onPageChange={setPage}
+            onRowsPerPageChange={setRowsPerPage}
+            currentPageItemCount={galleryItems.length}
+          />
         </Card>
       )}
     </>

@@ -6,25 +6,18 @@ import { useQuery } from '@tanstack/react-query'
 
 interface UseGalleryItemsParams {
   enabled?: boolean
-  search?: string
-  galleryId?: string
+  params?: Record<string, any>
   staleTime?: number
 }
 
-export function useGalleryItems({ enabled = true, search = '', galleryId }: UseGalleryItemsParams) {
-  const fetchGallery = () => {
-    const params: Record<string, string> = {}
-
-    if (galleryId) params.galleryId = galleryId
-    if (search) params.title = search
-
-    return getGalleryItems(params).then(res => res)
-  }
+export function useGalleryItems({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: UseGalleryItemsParams) {
+  const fetchGalleryItems = () => getGalleryItems(params).then(res => res)
 
   return useQuery<any, Error>({
-    queryKey: ['gallery-items', galleryId, search],
-    queryFn: fetchGallery,
+    queryKey: ['gallery-items', params],
+    queryFn: fetchGalleryItems,
     enabled,
+    staleTime,
     refetchOnWindowFocus: false
   })
 }

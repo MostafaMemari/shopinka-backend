@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -10,18 +10,17 @@ import { Box, Button, useMediaQuery, useTheme } from '@mui/material'
 
 // Component Imports
 import TablePaginationComponent from '@/components/TablePaginationComponent'
-import NoCategoryMessage from './NoCategoryMessage'
 import DesktopCategoryTable from './DesktopCategoryTable'
 
 // API Import
-import { Category, CategoryOutlined, PermMedia } from '@mui/icons-material'
+import { CategoryOutlined } from '@mui/icons-material'
 import { useCategories } from '@/hooks/reactQuery/useCategory'
 import CreateCategoryModal from './CreateCategoryModal'
 import EmptyState from '@/components/EmptyState'
+import LoadingSpinner from '@/components/LoadingSpinner'
 
 const CategoryView = () => {
   // States
-  const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
 
@@ -31,7 +30,6 @@ const CategoryView = () => {
     params: {
       includeThumbnailImage: true
     },
-    search: searchTerm,
     staleTime: 5 * 60 * 1000
   })
 
@@ -43,30 +41,7 @@ const CategoryView = () => {
   const categories = data?.data?.items || []
 
   // Loader component
-  if (isLoading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          bgcolor: 'background.paper'
-        }}
-      >
-        <CircularProgress
-          size={60}
-          thickness={4}
-          sx={{
-            color: 'primary.main',
-            '& .MuiCircularProgress-circle': {
-              strokeLinecap: 'round'
-            }
-          }}
-        />
-      </Box>
-    )
-  }
+  if (isLoading) return <LoadingSpinner />
 
   return (
     <>
