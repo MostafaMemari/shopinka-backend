@@ -65,7 +65,7 @@ model User {
   isVerifiedMobile Boolean          @default(false)
   role             Role             @default(CUSTOMER)
   createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt()
   galleries        Gallery[]
   addresses        Address[]
   products         Product[]
@@ -94,7 +94,7 @@ model Transaction {
   transaction Order @relation("TransactionOrder", fields: [orderId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
 }
 
 model Gallery {
@@ -105,7 +105,7 @@ model Gallery {
   user        User          @relation(fields: [userId], references: [id])
   items       GalleryItem[]
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt()
 }
 
 model GalleryItem {
@@ -123,7 +123,7 @@ model GalleryItem {
   isDeleted           Boolean          @default(false)
   deletedAt           DateTime?
   createdAt           DateTime         @default(now())
-  updatedAt           DateTime         @default(now())
+  updatedAt           DateTime        @updatedAt()
   mainImageOf         Product[]        @relation("MainImage")
   mainImageOfVariants ProductVariant[] @relation("VariantMainImage")
   sharedIn            Product[]        @relation("ProductToGalleryItem")
@@ -145,7 +145,7 @@ model Address {
   description    String?
   orders         Order[]
   createdAt      DateTime @default(now())
-  updatedAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt()
 }
 
 model Attribute {
@@ -160,7 +160,7 @@ model Attribute {
   productVariants ProductVariant[]
   products        Product[]
   createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @default(now())
+  updatedAt       DateTime       @updatedAt()
 }
 
 model AttributeValue {
@@ -171,7 +171,7 @@ model AttributeValue {
   buttonLabel String?  @map("button_label")
   attributeId Int
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt()
 
   attribute Attribute @relation(fields: [attributeId], references: [id], onDelete: NoAction)
 }
@@ -364,7 +364,7 @@ model SeoMeta {
   ogImage       String?  @map("og_image")
   robotsTag     String?
   createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  updatedAt     DateTime @updatedAt()
 
   product  Product?  @relation("SeoMetaProduct", fields: [productId], references: [id], onDelete: Cascade)
   blog     Blog?     @relation("SeoMetaBlog", fields: [blogId], references: [id], onDelete: Cascade)
@@ -381,7 +381,7 @@ model Blog {
   status      BlogStatus @default(PUBLISHED)
   readingTime Int?       @map("reading_time")
   createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  updatedAt   DateTime   @updatedAt()
 
   user       User       @relation(fields: [userId], references: [id], onDelete: NoAction)
   comments   Comment[]
@@ -398,7 +398,7 @@ model Tag {
   slug             String   @unique()
   description      String?
   createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  updatedAt        DateTime @updatedAt()
 
   products       Product[]
   blogs          Blog[]
@@ -415,7 +415,7 @@ model Shipping {
   estimatedDays Int?
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  updatedAt     DateTime @updatedAt()
 
   user  User   @relation(fields: [userId], references: [id], onDelete: NoAction)
   carts Cart[]
