@@ -10,6 +10,12 @@ export class QueryCategoryDto extends PaginationDto {
     @IsString()
     @IsNotEmpty()
     @ApiPropertyOptional({ type: "string", nullable: true, required: false })
+    name?: string
+
+    @IsOptional()
+    @IsString()
+    @IsNotEmpty()
+    @ApiPropertyOptional({ type: "string", nullable: true, required: false })
     slug?: string
 
     @IsOptional()

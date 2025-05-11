@@ -50,6 +50,7 @@ export class CategoryService {
       endDate,
       includeUser,
       slug,
+      name,
       sortBy,
       sortDirection,
       startDate,
@@ -74,6 +75,7 @@ export class CategoryService {
 
     if (description) filters.description = { contains: description, mode: "insensitive" };
     if (slug) filters.slug = { contains: slug, mode: "insensitive" };
+    if (name) filters.name = { contains: name, mode: "insensitive" };
     if (startDate || endDate) {
       filters.createdAt = {};
       if (startDate) filters.createdAt.gte = new Date(startDate);
