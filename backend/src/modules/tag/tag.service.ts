@@ -10,6 +10,7 @@ import { QueryTagDto } from './dto/query-tag.dto';
 import { sortObject } from '../../common/utils/functions.utils';
 import { CacheKeys } from '../../common/enums/cache.enum';
 import { pagination } from '../../common/utils/pagination.utils';
+import slugify from 'slugify';
 
 @Injectable()
 export class TagService {
@@ -99,14 +100,15 @@ export class TagService {
   }
 
   private async generateUniqueSlug(name: string): Promise<string> {
+    let slug = slugify(name, { locale: 'fa', lower: true, strict: true, trim: true })
     let suffix = 0
-    let slug = name
+    let uniqueSlug = slug
 
-    while (await this.tagRepository.findOne({ where: { slug } })) {
+    while (await this.tagRepository.findOne({ where: { slug: uniqueSlug } })) {
       suffix++
-      slug = `${name}-${suffix}`
+      uniqueSlug = `${slug}-${suffix}`
     }
 
-    return slug
+    return uniqueSlug
   }
 }
