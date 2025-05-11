@@ -35,7 +35,7 @@ export class CommentService {
 
   async findAll({ take, page, ...queryCommentDto }: QueryCommentDto): Promise<unknown> {
     const paginationDto = { page, take };
-    const { endDate, includeUser, sortBy, sortDirection, startDate, includeParent, includeProduct, includeReplies, isRecommended } = queryCommentDto
+    const { endDate, includeUser, sortBy, sortDirection, startDate, includeParent, includeProduct, includeReplies, isRecommended, includeBlog, repliesDepth } = queryCommentDto
 
     const sortedDto = sortObject(queryCommentDto);
 
@@ -45,7 +45,7 @@ export class CommentService {
 
     if (cachedComments) return { ...pagination(paginationDto, cachedComments) }
 
-    const filters: Prisma.CommentWhereInput = { isActive: true };
+    const filters: Prisma.CommentWhereInput = { isActive: true, parent: null };
 
     if (isRecommended !== undefined) filters.isRecommended = isRecommended
     if (startDate || endDate) {
@@ -54,19 +54,36 @@ export class CommentService {
       if (endDate) filters.createdAt.lte = new Date(endDate);
     }
 
-    const categories = await this.commentRepository.findAll({
+    const include: Prisma.CommentInclude = {
+      user: includeUser,
+      parent: includeParent,
+      blog: includeBlog,
+      product: includeProduct,
+      replies: includeReplies
+    };
+
+    const comments = await this.commentRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { user: includeUser, product: includeProduct, parent: includeParent, replies: includeReplies }
+      include
     });
 
-    await this.cacheService.set(cacheKey, categories, this.CACHE_EXPIRE_TIME);
+    let resultComments = comments;
+    if (includeReplies && repliesDepth > 0) {
+      resultComments = await Promise.all(
+        comments.map(async (comment) =>
+          await this.loadReplies(comment.id, include, repliesDepth),
+        ),
+      );
+    }
 
-    return { ...pagination(paginationDto, categories) }
+    await this.cacheService.set(cacheKey, resultComments, this.CACHE_EXPIRE_TIME);
+
+    return { ...pagination(paginationDto, resultComments) }
   }
 
   findOne(id: number): Promise<Comment> {
-    return this.getCommentWithAllReplies(id)
+    return this.loadReplies(id, { blog: true, parent: true, product: true, replies: true, user: { select: { id: true, fullName: true } } }, Infinity)
   }
 
   async update(userId: number, commentId: number, updateCommentDto: UpdateCommentDto): Promise<{ message: string, comment: Comment }> {
@@ -137,21 +154,23 @@ export class CommentService {
     return false
   }
 
-  private async getCommentWithAllReplies(commentId: number): Promise<Comment> {
+  private async loadReplies(commentId: number, include: Prisma.CommentInclude, depth: number): Promise<Comment> {
+    if (depth <= 0) this.commentRepository.findOneOrThrow({ where: { id: commentId }, include });
+
     const comment = await this.commentRepository.findOneOrThrow({
-      where: { id: commentId, isActive: true },
+      where: { id: commentId },
       include: {
-        parent: true,
+        ...include,
         replies: true,
-        product: true,
-        user: { select: { id: true, fullName: true } }
-      }
-    })
+      },
+    });
 
-    comment['replies'] = await Promise.all(
-      comment['replies'].map(async rep => this.getCommentWithAllReplies(rep.id))
-    )
+    if (comment['replies'] && comment['replies'].length > 0) {
+      comment['replies'] = await Promise.all(
+        comment['replies'].map((child) => this.loadReplies(child.id, include, depth - 1)),
+      );
+    }
 
-    return comment
+    return comment;
   }
 }
