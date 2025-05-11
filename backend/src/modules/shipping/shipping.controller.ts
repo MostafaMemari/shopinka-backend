@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
 import { ShippingService } from './shipping.service';
 import { CreateShippingDto } from './dto/create-shipping.dto';
 import { UpdateShippingDto } from './dto/update-shipping.dto';
@@ -9,6 +9,7 @@ import { Roles } from '../../common/decorators/role.decorator';
 import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 import { AuthDecorator } from '../../common/decorators/auth.decorator';
 import { SkipAuth } from '../../common/decorators/skip-auth.decorator';
+import { QueryShippingDto } from './dto/query-shipping.dto';
 
 @Controller('shipping')
 @ApiTags('shipping')
@@ -24,8 +25,9 @@ export class ShippingController {
   }
 
   @Get()
-  findAll() {
-    return this.shippingService.findAll();
+  @SkipAuth()
+  findAll(@Query() queryShippingDto: QueryShippingDto) {
+    return this.shippingService.findAll(queryShippingDto);
   }
 
   @Get(':id')
