@@ -24,7 +24,7 @@ import { cleanObject } from '@/utils/formatters'
 import { handleApiError } from '@/utils/handleApiError'
 import ParentCategorySelect from './ParentCategorySelect'
 import CategoryThumbnailImage from './CategoryThumbnailImage'
-import RichTextEditor from '@/components/RichTextEditor'
+import RichTextEditor from '@/components/RichTextEditor/RichTextEditor'
 import { errorCategoryMessage } from '@/messages/auth/categoryMessages.'
 
 // Types

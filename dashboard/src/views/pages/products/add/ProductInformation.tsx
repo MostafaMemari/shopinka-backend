@@ -12,7 +12,7 @@ import CustomTextField from '@core/components/mui/TextField'
 
 // Hooks
 import { useFormContext, Controller } from 'react-hook-form'
-import RichTextEditor from '@/components/RichTextEditor'
+import RichTextEditor from '@/components/RichTextEditor/RichTextEditor'
 
 const ProductInformation = () => {
   const {

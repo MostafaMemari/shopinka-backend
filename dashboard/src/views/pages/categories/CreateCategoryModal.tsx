@@ -25,7 +25,7 @@ import { handleApiError } from '@/utils/handleApiError'
 import { errorCategoryMessage } from '@/messages/auth/categoryMessages.'
 import ParentCategorySelect from './ParentCategorySelect'
 import CategoryThumbnailImage from './CategoryThumbnailImage'
-import RichTextEditor from '@/components/RichTextEditor'
+import RichTextEditor from '@/components/RichTextEditor/RichTextEditor'
 
 // Types
 interface CreateCategoryModalProps {

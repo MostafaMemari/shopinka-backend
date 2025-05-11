@@ -20,71 +20,22 @@ import { Underline } from '@tiptap/extension-underline'
 import { Placeholder } from '@tiptap/extension-placeholder'
 import { TextAlign } from '@tiptap/extension-text-align'
 import { Link } from '@tiptap/extension-link'
-import type { Editor } from '@tiptap/core'
+import { Image } from '@tiptap/extension-image'
 import { useEffect, useState } from 'react'
 
 // Components Imports
-import CustomIconButton from '@core/components/mui/IconButton'
+import EditorToolbar from './EditorToolbar'
 
 // Style Imports
-import '@/libs/styles/tiptapEditor.css'
+import './styles.css'
+import { RichTextEditorProps } from './types'
+import { GalleryItem } from '@/types/gallery'
 
-interface EditorToolbarProps {
-  editor: Editor | null
-  openLinkDialog: () => void
-}
-
-interface RichTextEditorProps {
-  label?: string
-  placeholder?: string
-  content?: string
-  onChange?: (content: string) => void
-  value?: string
-  height?: string // New prop for custom height
-}
-
-const EditorToolbar = ({ editor, openLinkDialog }: EditorToolbarProps) => {
-  if (!editor) return null
-
-  return (
-    <div className='flex flex-wrap gap-x-3 gap-y-1 pbs-6 pbe-4 pli-6'>
-      {[
-        ['bold', 'tabler-bold'],
-        ['underline', 'tabler-underline'],
-        ['italic', 'tabler-italic'],
-        ['strike', 'tabler-strikethrough']
-      ].map(([type, icon]) => (
-        <CustomIconButton
-          key={type}
-          {...(editor.isActive(type) && { color: 'primary' })}
-          variant='tonal'
-          size='small'
-          onClick={() => (editor.chain().focus() as any)[`toggle${type.charAt(0).toUpperCase() + type.slice(1)}`]().run()}
-        >
-          <i className={classnames(icon, { 'text-textSecondary': !editor.isActive(type) })} />
-        </CustomIconButton>
-      ))}
-      <CustomIconButton {...(editor.isActive('link') && { color: 'primary' })} variant='tonal' size='small' onClick={openLinkDialog}>
-        <i className={classnames('tabler-link', { 'text-textSecondary': !editor.isActive('link') })} />
-      </CustomIconButton>
-      {['left', 'center', 'right', 'justify'].map(align => (
-        <CustomIconButton
-          key={align}
-          {...(editor.isActive({ textAlign: align }) && { color: 'primary' })}
-          variant='tonal'
-          size='small'
-          onClick={() => editor.chain().focus().setTextAlign(align).run()}
-        >
-          <i className={classnames(`tabler-align-${align}`, { 'text-textSecondary': !editor.isActive({ textAlign: align }) })} />
-        </CustomIconButton>
-      ))}
-    </div>
-  )
-}
-
-const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کنید', content = '', onChange, value }: RichTextEditorProps) => {
+const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کنید', content = '', onChange, value, height = '250px' }: RichTextEditorProps) => {
   const [open, setOpen] = useState(false)
   const [linkUrl, setLinkUrl] = useState('')
+  const [isFullScreen, setIsFullScreen] = useState(false)
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false)
 
   const editor = useEditor({
     extensions: [
@@ -98,9 +49,16 @@ const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کن
         HTMLAttributes: {
           class: 'text-primary cursor-pointer'
         }
+      }),
+      Image.configure({
+        inline: true,
+        allowBase64: true,
+        HTMLAttributes: {
+          class: 'max-w-full h-auto rounded',
+          style: 'max-width: 300px;'
+        }
       })
     ],
-
     immediatelyRender: false,
     content: content,
     onUpdate: ({ editor }) => {
@@ -113,7 +71,7 @@ const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کن
   // Sync editor content with value prop when it changes
   useEffect(() => {
     if (editor && value !== undefined && editor.getHTML() !== value) {
-      editor.commands.setContent(value, false) // false prevents emitting an update event
+      editor.commands.setContent(value, false)
     }
   }, [editor, value])
 
@@ -145,14 +103,70 @@ const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کن
     setLinkUrl('')
   }
 
+  // Toggle full screen mode
+  const toggleFullScreen = () => {
+    setIsFullScreen(!isFullScreen)
+  }
+
+  // Handle Esc key to exit full screen
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isFullScreen) {
+        setIsFullScreen(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isFullScreen])
+
+  // Handle gallery select
+  const handleSelect = (images: GalleryItem[]) => {
+    if (editor) {
+      images.forEach(image => {
+        if (image.fileUrl) {
+          editor.chain().focus().setImage({ src: image.fileUrl }).run()
+        }
+      })
+    }
+  }
+
   return (
-    <div>
-      {label && <Typography className='mbe-2'>{label}</Typography>}
-      <Card className='p-0 border shadow-none'>
-        <CardContent className='p-0'>
-          <EditorToolbar editor={editor} openLinkDialog={handleLinkDialog} />
+    <div
+      className={classnames({
+        'fixed inset-0 z-50 bg-white': isFullScreen,
+        'flex flex-col': true
+      })}
+    >
+      {label && !isFullScreen && <Typography className='mbe-2'>{label}</Typography>}
+      <Card
+        className={classnames('p-0 border shadow-none', {
+          'h-full flex flex-col': isFullScreen
+        })}
+      >
+        <CardContent
+          className={classnames('p-0', {
+            'flex-1 flex flex-col': isFullScreen
+          })}
+        >
+          <EditorToolbar
+            editor={editor}
+            openLinkDialog={handleLinkDialog}
+            toggleFullScreen={toggleFullScreen}
+            isFullScreen={isFullScreen}
+            onSelectImages={handleSelect}
+            openGallery={() => setIsGalleryOpen(true)}
+          />
           <Divider className='mli-6' />
-          <EditorContent editor={editor} className={`overflow-y-auto flex min-h-[250px]`} />
+          <EditorContent
+            editor={editor}
+            className={classnames('overflow-y-auto flex', {
+              'flex-1': isFullScreen,
+              'min-h-[250px]': !isFullScreen
+            })}
+            style={{ height: isFullScreen ? 'auto' : height }}
+          />
         </CardContent>
       </Card>
       <Dialog open={open} onClose={handleClose}>
