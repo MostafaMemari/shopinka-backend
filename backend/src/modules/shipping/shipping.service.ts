@@ -21,8 +21,8 @@ export class ShippingService {
     return `This action returns all shipping`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} shipping`;
+  async findOne(id: number): Promise<Shipping> {
+    return this.shippingRepository.findOneOrThrow({ where: { id }, include: { user: { select: { id: true, fullName: true } } } })
   }
 
   update(id: number, updateShippingDto: UpdateShippingDto) {

@@ -1,13 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { ShippingService } from './shipping.service';
 import { CreateShippingDto } from './dto/create-shipping.dto';
 import { UpdateShippingDto } from './dto/update-shipping.dto';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { GetUser } from 'src/common/decorators/get-user.decorator';
+import { GetUser } from '../../common/decorators/get-user.decorator';
 import { Role, User } from 'generated/prisma';
-import { Roles } from 'src/common/decorators/role.decorator';
-import { SwaggerConsumes } from 'src/common/enums/swagger-consumes.enum';
-import { AuthDecorator } from 'src/common/decorators/auth.decorator';
+import { Roles } from '../../common/decorators/role.decorator';
+import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
+import { AuthDecorator } from '../../common/decorators/auth.decorator';
+import { SkipAuth } from '../../common/decorators/skip-auth.decorator';
 
 @Controller('shipping')
 @ApiTags('shipping')
@@ -28,8 +29,9 @@ export class ShippingController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.shippingService.findOne(+id);
+  @SkipAuth()
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.shippingService.findOne(id);
   }
 
   @Patch(':id')
