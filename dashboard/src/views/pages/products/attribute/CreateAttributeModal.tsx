@@ -92,9 +92,7 @@ const CreateAttributeModal = ({ children }: CreateAttributeModalProps) => {
         defaultMaxWidth='xs'
         actions={
           <>
-            <>
-              <FormActions onCancel={handleClose} onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
-            </>
+            <FormActions submitText='ثبت' onCancel={handleClose} onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
           </>
         }
       >

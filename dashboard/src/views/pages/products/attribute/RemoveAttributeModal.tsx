@@ -2,9 +2,11 @@ import { removeAttribute } from '@/libs/api/productAttributes'
 import { useRouter } from 'next/navigation'
 import ConfirmDeleteModal from '@/components/ConfirmDeleteModal'
 import { IconButton } from '@mui/material'
+import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
+import { QueryKeys } from '@/types/query-keys'
 
 const RemoveAttributeModal = ({ id }: { id: number }) => {
-  const router = useRouter()
+  const { invalidate } = useInvalidateQuery()
 
   return (
     <ConfirmDeleteModal
@@ -12,7 +14,7 @@ const RemoveAttributeModal = ({ id }: { id: number }) => {
       onDelete={async id => {
         const res = await removeAttribute(id as string)
 
-        router.refresh()
+        if (res.status === 200) invalidate(QueryKeys.Attributes)
 
         return res
       }}
