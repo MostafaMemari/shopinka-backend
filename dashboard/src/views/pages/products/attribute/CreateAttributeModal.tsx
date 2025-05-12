@@ -1,4 +1,4 @@
-import { useState, useEffect, ReactNode } from 'react' // اضافه کردن useEffect
+import { useState, useEffect, ReactNode, useCallback } from 'react' // اضافه کردن useEffect
 import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
@@ -10,9 +10,11 @@ import { createAttribute } from '@/libs/api/productAttributes'
 import { showToast } from '@/utils/showToast'
 import { handleApiError } from '@/utils/handleApiError'
 import { errorAttributeMessage } from '@/messages/auth/attributeMessages'
-import { useRouter } from 'next/navigation'
 import { attributeSchema } from '@/libs/validators/attribute.schemas'
-import { useQueryClient } from '@tanstack/react-query'
+import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
+import FormActions from '@/components/FormActions'
+import { cleanObject } from '@/utils/formatters'
+import { QueryKeys } from '@/types/query-keys'
 
 interface CreateAttributeModalProps {
   children?: ReactNode
@@ -20,12 +22,8 @@ interface CreateAttributeModalProps {
 
 const CreateAttributeModal = ({ children }: CreateAttributeModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
-  const queryClient = useQueryClient()
-
-  const [isCreating, setIsCreating] = useState<boolean>(false)
-
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { invalidate } = useInvalidateQuery()
 
   const {
     control,
@@ -42,52 +40,43 @@ const CreateAttributeModal = ({ children }: CreateAttributeModalProps) => {
     }
   })
 
-  useEffect(() => {
-    reset({
-      name: '',
-      slug: '',
-      type: AttributeType.COLOR,
-      description: null
-    })
+  const handleOpen = useCallback(() => setOpen(true), [])
+
+  const handleClose = useCallback(() => {
+    setOpen(false)
+    reset()
   }, [reset])
 
-  const onSubmit = async (formData: AttributeFormType) => {
-    setIsCreating(true)
+  const onSubmit = useCallback(
+    async (formData: AttributeFormType) => {
+      setIsLoading(true)
 
-    try {
-      const res = await createAttribute({
-        name: formData.name,
-        slug: formData.slug ?? undefined,
-        type: formData.type,
-        description: formData.description || null
-      })
+      try {
+        const cleanedData = cleanObject(formData)
 
-      const errorMessage = handleApiError(res.status, errorAttributeMessage)
+        const { status } = await createAttribute(cleanedData)
 
-      if (errorMessage) {
-        showToast({ type: 'error', message: errorMessage })
+        const errorMessage = handleApiError(status, errorAttributeMessage)
 
-        return
+        if (errorMessage) {
+          showToast({ type: 'error', message: errorMessage })
+
+          return
+        }
+
+        if (status === 201 || status === 200) {
+          showToast({ type: 'success', message: 'ویژگی با موفقیت ثبت شد' })
+          invalidate(QueryKeys.Attributes)
+          handleClose()
+        }
+      } catch (error: any) {
+        showToast({ type: 'error', message: 'خطای سیستمی' })
+      } finally {
+        setIsLoading(false)
       }
-
-      if (res.status === 201 || res.status === 200) {
-        showToast({ type: 'success', message: 'ویژگی با موفقیت ثبت شد' })
-        queryClient.invalidateQueries({ queryKey: ['attributes'] })
-
-        reset({
-          name: '',
-          slug: undefined,
-          type: AttributeType.COLOR,
-          description: null
-        })
-        handleClose()
-      }
-    } catch (error: any) {
-      showToast({ type: 'error', message: 'خطای سیستمی' })
-    } finally {
-      setIsCreating(false)
-    }
-  }
+    },
+    [handleClose, invalidate]
+  )
 
   return (
     <div>
@@ -103,18 +92,9 @@ const CreateAttributeModal = ({ children }: CreateAttributeModalProps) => {
         defaultMaxWidth='xs'
         actions={
           <>
-            <Button onClick={handleClose} color='secondary'>
-              انصراف
-            </Button>
-            <Button
-              onClick={handleSubmit(onSubmit)}
-              disabled={isCreating}
-              color='primary'
-              variant='contained'
-              startIcon={isCreating ? <CircularProgress size={20} color='inherit' /> : null}
-            >
-              {isCreating ? 'در حال ثبت...' : 'ثبت'}
-            </Button>
+            <>
+              <FormActions onCancel={handleClose} onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
+            </>
           </>
         }
       >
