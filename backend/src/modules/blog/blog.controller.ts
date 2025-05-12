@@ -31,7 +31,7 @@ export class BlogController {
     return this.blogService.findAll(queryBlogDto);
   }
 
-  @Get('draft')
+  @Get('drafts')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   findAllDrafts(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
     return this.blogService.findAllDrafts(user.id, paginationDto);
