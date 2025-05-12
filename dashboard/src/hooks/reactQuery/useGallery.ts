@@ -2,19 +2,15 @@
 
 import { getGalleries } from '@/libs/api/gallery'
 import { getGalleryItems } from '@/libs/api/galleyItem'
+import { QueryKeys } from '@/types/query-keys'
+import { QueryOptions } from '@/types/queryOptions'
 import { useQuery } from '@tanstack/react-query'
 
-interface UseGalleryItemsParams {
-  enabled?: boolean
-  params?: Record<string, any>
-  staleTime?: number
-}
-
-export function useGalleryItems({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: UseGalleryItemsParams) {
+export function useGalleryItems({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchGalleryItems = () => getGalleryItems(params).then(res => res)
 
   return useQuery<any, Error>({
-    queryKey: ['gallery-items', params],
+    queryKey: [QueryKeys.GalleryItems, params],
     queryFn: fetchGalleryItems,
     enabled,
     staleTime,
@@ -22,17 +18,11 @@ export function useGalleryItems({ enabled = true, params = {}, staleTime = 1 * 6
   })
 }
 
-interface UseGalleryParams {
-  enabled?: boolean
-  staleTime?: number
-  params?: Record<string, any>
-}
-
-export function useGallery({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: UseGalleryParams) {
+export function useGallery({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchGallery = () => getGalleries(params).then(res => res)
 
   return useQuery<any, Error>({
-    queryKey: ['galleries', params],
+    queryKey: [QueryKeys.Galleries, params],
     queryFn: fetchGallery,
     enabled,
     staleTime,

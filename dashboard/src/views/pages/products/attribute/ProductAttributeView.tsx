@@ -20,7 +20,6 @@ import LoadingSpinner from '@/components/LoadingSpinner'
 import ErrorState from '@/components/states/ErrorState'
 import EmptyAttributeState from './EmptyAttributeState'
 
-// Main Component
 const ProductAttributeView = () => {
   const { page, size, setPage, setSize } = usePaginationParams()
 
@@ -36,7 +35,6 @@ const ProductAttributeView = () => {
     staleTime: 5 * 60 * 1000
   })
 
-  // Hooks
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -61,7 +59,7 @@ const ProductAttributeView = () => {
         onPageChange={setPage}
         onRowsPerPageChange={setSize}
         currentPageItemCount={attributes.length}
-      />{' '}
+      />
     </Card>
   )
 }

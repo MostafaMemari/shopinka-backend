@@ -36,7 +36,7 @@ type FileProp = {
   size: number
 }
 
-const CreateMediaModal = ({ children }: { children: ReactNode }) => {
+const CreateMediaModal = ({ children }: { children?: ReactNode }) => {
   const [openUpload, setOpenUpload] = useState(false)
   const [openGallerySelect, setOpenGallerySelect] = useState(false)
   const [files, setFiles] = useState<File[]>([])
@@ -191,7 +191,7 @@ const CreateMediaModal = ({ children }: { children: ReactNode }) => {
 
   return (
     <>
-      {children && (
+      {children || (
         <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />} sx={{ flex: { xs: '1 1 100%', sm: '0 0 auto' } }}>
           آپلود فایل جدید
         </Button>

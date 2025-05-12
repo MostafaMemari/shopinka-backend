@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, CircularProgress, useTheme } from '@mui/material'
+import { Box, Card, CircularProgress, useTheme } from '@mui/material'
 
 interface LoadingSpinnerProps {
   size?: number | string
@@ -16,7 +16,7 @@ const LoadingSpinner = ({ size = 60, thickness = 4, color = 'primary.main', heig
   const theme = useTheme()
 
   return (
-    <Box
+    <Card
       sx={{
         display: 'flex',
         justifyContent: 'center',
@@ -37,7 +37,7 @@ const LoadingSpinner = ({ size = 60, thickness = 4, color = 'primary.main', heig
           }
         }}
       />
-    </Box>
+    </Card>
   )
 }
 

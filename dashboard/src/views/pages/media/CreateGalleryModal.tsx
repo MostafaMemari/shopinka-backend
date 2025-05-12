@@ -7,11 +7,11 @@ import { type GalleryForm } from '@/types/gallery'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { showToast } from '@/utils/showToast'
 import { handleApiError } from '@/utils/handleApiError'
-import { useRouter } from 'next/navigation'
 import { errorGalleryMessage } from '@/messages/auth/galleryMessages'
 import { gallerySchema } from '@/libs/validators/gallery.schemas'
 import { createGallery } from '@/libs/api/gallery'
-import { useQueryClient } from '@tanstack/react-query'
+import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
+import { QueryKeys } from '@/types/query-keys'
 
 interface CreateGalleryModalProps {
   children?: ReactNode
@@ -19,8 +19,7 @@ interface CreateGalleryModalProps {
 
 const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
-  const router = useRouter()
-  const queryClient = useQueryClient()
+  const { invalidate } = useInvalidateQuery()
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -63,8 +62,7 @@ const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
 
       if (res.status === 201 || res.status === 200) {
         showToast({ type: 'success', message: 'گالری با موفقیت ثبت شد' })
-        await queryClient.invalidateQueries({ queryKey: ['galleries'] })
-        router.refresh()
+        invalidate(QueryKeys.Attributes)
 
         reset({
           title: '',
@@ -79,7 +77,7 @@ const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
 
   return (
     <div>
-      {children && (
+      {children || (
         <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />}>
           ثبت گالری جدید
         </Button>

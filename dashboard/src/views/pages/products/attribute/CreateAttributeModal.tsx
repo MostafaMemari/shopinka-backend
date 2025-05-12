@@ -12,6 +12,7 @@ import { handleApiError } from '@/utils/handleApiError'
 import { errorAttributeMessage } from '@/messages/auth/attributeMessages'
 import { useRouter } from 'next/navigation'
 import { attributeSchema } from '@/libs/validators/attribute.schemas'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface CreateAttributeModalProps {
   children?: ReactNode
@@ -19,7 +20,7 @@ interface CreateAttributeModalProps {
 
 const CreateAttributeModal = ({ children }: CreateAttributeModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
-  const router = useRouter()
+  const queryClient = useQueryClient()
 
   const [isCreating, setIsCreating] = useState<boolean>(false)
 
@@ -69,9 +70,9 @@ const CreateAttributeModal = ({ children }: CreateAttributeModalProps) => {
         return
       }
 
-      if (res.status === 201) {
+      if (res.status === 201 || res.status === 200) {
         showToast({ type: 'success', message: 'ویژگی با موفقیت ثبت شد' })
-        router.refresh()
+        queryClient.invalidateQueries({ queryKey: ['attributes'] })
 
         reset({
           name: '',
