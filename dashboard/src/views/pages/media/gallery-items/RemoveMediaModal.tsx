@@ -2,8 +2,10 @@ import { useState } from 'react'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { removeGalleryItem } from '@/libs/api/galleyItem'
 import { showToast } from '@/utils/showToast'
-import { useRouter } from 'next/navigation'
 import { Button, CircularProgress, DialogContent, DialogContentText } from '@mui/material'
+import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
+import { QueryKeys } from '@/types/query-keys'
+import FormActions from '@/components/FormActions'
 
 interface RemoveGalleryItemModalProps {
   selectedImages: string[]
@@ -14,7 +16,7 @@ const RemoveGalleryItemModal = ({ selectedImages, onClearSelection }: RemoveGall
   const [open, setOpen] = useState<boolean>(false)
   const [galleryItemIds, setGalleryItemIds] = useState<string[] | null>(null)
   const [isDeleting, setIsDeleting] = useState<boolean>(false)
-  const router = useRouter()
+  const { invalidate } = useInvalidateQuery()
 
   const handleOpen = (selected: string[]) => {
     setGalleryItemIds(selected)
@@ -31,7 +33,7 @@ const RemoveGalleryItemModal = ({ selectedImages, onClearSelection }: RemoveGall
       if (res.status === 200) {
         showToast({ type: 'success', message: 'حذف فایل با موفقیت انجام شد' })
         onClearSelection()
-        router.refresh()
+        invalidate(QueryKeys.GalleryItems)
       } else if (res.status === 400) {
         showToast({ type: 'error', message: 'حذف فایل با خطا مواجه شد' })
       } else if (res.status === 404) {
@@ -66,24 +68,11 @@ const RemoveGalleryItemModal = ({ selectedImages, onClearSelection }: RemoveGall
           defaultMaxWidth='sm'
           actions={
             <>
-              <Button onClick={handleCancel} color='secondary'>
-                لغو
-              </Button>
-              <Button
-                onClick={handleConfirm}
-                variant='contained'
-                color='error'
-                disabled={!galleryItemIds?.length || isDeleting}
-                startIcon={isDeleting ? <CircularProgress size={20} color='inherit' /> : null}
-              >
-                {isDeleting ? 'در حال حذف...' : 'حذف'}
-              </Button>
+              <FormActions submitText='حذف' submitColor='error' onCancel={handleCancel} onSubmit={handleConfirm} isLoading={isDeleting} />
             </>
           }
         >
-          <DialogContent>
-            <DialogContentText>این عملیات قابل بازگشت نیست</DialogContentText>
-          </DialogContent>
+          <></>
         </CustomDialog>
       </div>
     </>

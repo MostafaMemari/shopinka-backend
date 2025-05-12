@@ -66,11 +66,7 @@ const GalleryItemView = ({ galleryId }: { galleryId: string }) => {
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
         <Box sx={{ display: 'flex', gap: 2 }}>
-          <CreateMediaModal>
-            <Button variant='contained' startIcon={<i className='tabler-plus' />}>
-              آپلود رسانه جدید
-            </Button>
-          </CreateMediaModal>
+          <CreateMediaModal />
           {selected.length > 0 && <RemoveGalleryItemModal selectedImages={selected} onClearSelection={handleClearSelection} />}
         </Box>
       </Box>

@@ -93,11 +93,13 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
 
   return (
     <div>
-      {children || (
-        <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />}>
-          ثبت دسته‌بندی جدید
-        </Button>
-      )}
+      <div onClick={handleOpen}>
+        {children || (
+          <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
+            ثبت دسته‌بندی جدید
+          </Button>
+        )}
+      </div>
 
       <CustomDialog
         open={open}

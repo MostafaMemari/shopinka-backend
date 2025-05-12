@@ -1,45 +1,32 @@
-import { useState, useEffect, useMemo } from 'react'
-import Button from '@mui/material/Button'
+import { useState, useCallback, ReactNode } from 'react'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
-import { IconButton, CircularProgress, DialogContent } from '@mui/material'
+import { IconButton, DialogContent } from '@mui/material'
 import { type GalleryItemForm, type GalleryForm } from '@/types/gallery'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { updateGallery } from '@/libs/api/gallery'
 import { showToast } from '@/utils/showToast'
 import { handleApiError } from '@/utils/handleApiError'
 import { errorGalleryMessage } from '@/messages/auth/galleryMessages'
-import { useRouter } from 'next/navigation'
 import getChangedFields from '@/utils/getChangedFields'
 import { gallerySchema } from '@/libs/validators/gallery.schemas'
 import EditIcon from '@mui/icons-material/Edit'
 import { updateGalleryItem } from '@/libs/api/galleyItem'
+import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
+import { QueryKeys } from '@/types/query-keys'
+import { cleanObject } from '@/utils/formatters'
+import FormActions from '@/components/FormActions'
 
 interface UpdateGalleryItemModalProps {
   initialData: Partial<GalleryItemForm>
   galleryItemId: string
+  children?: ReactNode
 }
 
-const UpdateGalleryItemModal = ({ initialData, galleryItemId }: UpdateGalleryItemModalProps) => {
+const UpdateGalleryItemModal = ({ initialData, galleryItemId, children }: UpdateGalleryItemModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
-  const router = useRouter()
-
-  const galleryForm: GalleryForm = useMemo(
-    () => ({
-      title: initialData?.title ?? '',
-      description: initialData?.description ?? null
-    }),
-    [initialData]
-  )
-
-  const handleOpen = () => setOpen(true)
-
-  const handleClose = () => {
-    setOpen(false)
-    reset()
-  }
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { invalidate } = useInvalidateQuery()
 
   const {
     control,
@@ -49,66 +36,71 @@ const UpdateGalleryItemModal = ({ initialData, galleryItemId }: UpdateGalleryIte
   } = useForm({
     resolver: yupResolver(gallerySchema),
     defaultValues: {
-      title: galleryForm.title,
-      description: galleryForm.description
+      title: initialData.title ?? '',
+      description: initialData.description ?? ''
     }
   })
 
-  useEffect(() => {
-    reset({
-      title: galleryForm.title,
-      description: galleryForm.description
-    })
-  }, [galleryForm, reset])
+  const handleOpen = useCallback(() => setOpen(true), [])
 
-  const onSubmit = async (formData: GalleryForm) => {
-    if (isSubmitting) return
+  const handleClose = useCallback(() => {
+    setOpen(false)
+    reset()
+  }, [reset])
 
-    setIsSubmitting(true)
+  const onSubmit = useCallback(
+    async (formData: GalleryForm) => {
+      setIsLoading(true)
 
-    try {
-      if (galleryItemId) {
-        const changedData = getChangedFields(initialData, {
-          ...formData,
-          description: formData.description ?? undefined // استفاده از undefined
-        })
+      try {
+        if (galleryItemId) {
+          const cleanedData = cleanObject(formData)
+          const changedData = getChangedFields(initialData, cleanedData)
 
-        if (Object.keys(changedData).length === 0) {
-          showToast({ type: 'info', message: 'هیچ تغییری اعمال نشده است' })
-          setIsSubmitting(false)
+          if (formData.description === null && !('description' in cleanedData)) changedData.description = ''
 
-          return
+          if (Object.keys(changedData).length === 0) {
+            showToast({ type: 'info', message: 'هیچ تغییری اعمال نشده است' })
+            setIsLoading(false)
+
+            return
+          }
+
+          const { status } = await updateGalleryItem(galleryItemId, changedData)
+
+          const errorMessage = handleApiError(status, errorGalleryMessage)
+
+          if (errorMessage) {
+            showToast({ type: 'error', message: errorMessage })
+            setIsLoading(false)
+
+            return
+          }
+
+          if (status === 200) {
+            showToast({ type: 'success', message: 'فایل با موفقیت ویرایش شد' })
+            invalidate(QueryKeys.GalleryItems)
+            handleClose()
+          }
         }
-
-        const res = await updateGalleryItem(galleryItemId, changedData)
-
-        const errorMessage = handleApiError(res.status, errorGalleryMessage)
-
-        if (errorMessage) {
-          showToast({ type: 'error', message: errorMessage })
-          setIsSubmitting(false)
-
-          return
-        }
-
-        if (res.status === 200) {
-          showToast({ type: 'success', message: 'فایل با موفقیت ویرایش شد' })
-          handleClose()
-          router.refresh()
-        }
+      } catch (error: any) {
+        showToast({ type: 'error', message: 'خطای سیستمی رخ داد' })
+      } finally {
+        setIsLoading(false)
       }
-    } catch (error: any) {
-      showToast({ type: 'error', message: 'خطای سیستمی' })
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
+    },
+    [handleClose, initialData, invalidate, galleryItemId]
+  )
 
   return (
     <div>
-      <IconButton onClick={handleOpen} size='small'>
-        <EditIcon fontSize='small' />
-      </IconButton>
+      <div onClick={handleOpen}>
+        {children || (
+          <IconButton size='small'>
+            <EditIcon fontSize='small' />
+          </IconButton>
+        )}
+      </div>
 
       <CustomDialog
         open={open}
@@ -117,44 +109,37 @@ const UpdateGalleryItemModal = ({ initialData, galleryItemId }: UpdateGalleryIte
         defaultMaxWidth='xs'
         actions={
           <>
-            <Button onClick={handleClose} color='secondary' disabled={isSubmitting}>
-              انصراف
-            </Button>
-            <Button onClick={handleSubmit(onSubmit)} variant='contained' disabled={isSubmitting} startIcon={isSubmitting ? <CircularProgress size={20} color='inherit' /> : null}>
-              {isSubmitting ? 'در حال ثبت...' : 'ثبت'}
-            </Button>
+            <FormActions onCancel={handleClose} submitText='بروزرسانی' onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
           </>
         }
       >
-        <DialogContent>
-          <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
-            <Controller
-              name='title'
-              control={control}
-              render={({ field }) => (
-                <CustomTextField {...field} fullWidth label='نام فایل' placeholder='لطفا نام فایل را وارد کنید' error={!!errors.title} helperText={errors.title?.message} />
-              )}
-            />
-            <Controller
-              name='description'
-              control={control}
-              render={({ field }) => (
-                <CustomTextField
-                  {...field}
-                  value={field.value ?? ''}
-                  fullWidth
-                  multiline
-                  rows={4}
-                  label='توضیحات'
-                  placeholder='لطفا توضیحات فایل را وارد کنید'
-                  error={!!errors.description}
-                  helperText={errors.description?.message}
-                  onChange={e => field.onChange(e.target.value || null)}
-                />
-              )}
-            />
-          </form>
-        </DialogContent>
+        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
+          <Controller
+            name='title'
+            control={control}
+            render={({ field }) => (
+              <CustomTextField {...field} fullWidth label='نام فایل' placeholder='لطفا نام فایل را وارد کنید' error={!!errors.title} helperText={errors.title?.message} />
+            )}
+          />
+          <Controller
+            name='description'
+            control={control}
+            render={({ field }) => (
+              <CustomTextField
+                {...field}
+                value={field.value ?? ''}
+                fullWidth
+                multiline
+                rows={4}
+                label='توضیحات'
+                placeholder='لطفا توضیحات فایل را وارد کنید'
+                error={!!errors.description}
+                helperText={errors.description?.message}
+                onChange={e => field.onChange(e.target.value || null)}
+              />
+            )}
+          />
+        </form>
       </CustomDialog>
     </div>
   )

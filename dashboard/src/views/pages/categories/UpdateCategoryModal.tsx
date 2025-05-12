@@ -47,9 +47,9 @@ const UpdateCategoryModal = ({ children, initialData }: UpdateCategoryModalProps
     formState: { errors }
   } = useForm<CategoryForm>({
     defaultValues: {
-      name: initialData.name,
-      slug: initialData.slug,
-      description: initialData.description,
+      name: initialData.name ?? '',
+      slug: initialData.slug ?? '',
+      description: initialData.description ?? '',
       parentId: initialData.parentId,
       thumbnailImageId: initialData.thumbnailImageId
     },

@@ -51,8 +51,10 @@ const UpdateAttributeModal = ({ children, initialData }: UpdateAttributeModalPro
 
   const onSubmit = useCallback(
     async (formData: AttributeFormType) => {
+      setIsLoading(true)
+
       try {
-        if (initialData?.id !== undefined) {
+        if (initialData?.id) {
           const cleanedData = cleanObject(formData)
           const changedData = getChangedFields(initialData, cleanedData)
 
@@ -81,7 +83,7 @@ const UpdateAttributeModal = ({ children, initialData }: UpdateAttributeModalPro
           }
         }
       } catch (error: any) {
-        showToast({ type: 'error', message: 'خطایی در به‌روزرسانی متغییر رخ داد' })
+        showToast({ type: 'error', message: 'خطای سیستمی رخ داد' })
       } finally {
         setIsLoading(false)
       }

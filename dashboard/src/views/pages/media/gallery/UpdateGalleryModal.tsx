@@ -1,5 +1,4 @@
-import { useState, useEffect, ReactNode, useCallback } from 'react' // اضافه کردن useEffect
-import Button from '@mui/material/Button'
+import { useState, ReactNode, useCallback } from 'react' // اضافه کردن useEffect
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
@@ -15,7 +14,7 @@ import { gallerySchema } from '@/libs/validators/gallery.schemas'
 import { QueryKeys } from '@/types/query-keys'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
 import { cleanObject } from '@/utils/formatters'
-import { checkBadTags } from '@iconify/tools/lib/index.js'
+import FormActions from '@/components/FormActions'
 
 interface UpdateGalleryModalProps {
   initialData: Gallery
@@ -36,7 +35,7 @@ const UpdateGalleryModal = ({ children, initialData }: UpdateGalleryModalProps) 
     resolver: yupResolver(gallerySchema),
     defaultValues: {
       title: initialData?.title ?? '',
-      description: initialData?.description || ''
+      description: initialData?.description ?? ''
     }
   })
 
@@ -49,6 +48,8 @@ const UpdateGalleryModal = ({ children, initialData }: UpdateGalleryModalProps) 
 
   const onSubmit = useCallback(
     async (formData: GalleryForm) => {
+      setIsLoading(true)
+
       try {
         if (initialData?.id !== undefined) {
           const cleanedData = cleanObject(formData)
@@ -62,9 +63,9 @@ const UpdateGalleryModal = ({ children, initialData }: UpdateGalleryModalProps) 
             return
           }
 
-          const res = await updateGallery(String(initialData.id), changedData)
+          const { status } = await updateGallery(String(initialData.id), changedData)
 
-          const errorMessage = handleApiError(res.status, errorGalleryMessage)
+          const errorMessage = handleApiError(status, errorGalleryMessage)
 
           if (errorMessage) {
             showToast({ type: 'error', message: errorMessage })
@@ -72,20 +73,16 @@ const UpdateGalleryModal = ({ children, initialData }: UpdateGalleryModalProps) 
             return
           }
 
-          if (res.status === 200) {
+          if (status === 200) {
             showToast({ type: 'success', message: 'گالری با موفقیت ویرایش شد' })
             invalidate(QueryKeys.Galleries)
-
-            reset({
-              title: formData.title || '',
-              description: formData.description || null
-            })
             handleClose()
           }
         }
       } catch (error: any) {
-        console.log(error)
-        showToast({ type: 'error', message: 'خطای سیستمی' })
+        showToast({ type: 'error', message: 'خطای سیستمی رخ داد' })
+      } finally {
+        setIsLoading(false)
       }
     },
     [handleClose, initialData, invalidate]
@@ -93,9 +90,13 @@ const UpdateGalleryModal = ({ children, initialData }: UpdateGalleryModalProps) 
 
   return (
     <div>
-      <IconButton size='small' onClick={handleOpen}>
-        <i className='tabler-edit text-gray-500 text-lg' />
-      </IconButton>
+      <div onClick={handleOpen} role='button' tabIndex={0} onKeyDown={e => e.key === 'Enter' && handleOpen()} aria-label='باز کردن فرم ویرایش دسته‌بندی'>
+        {children || (
+          <IconButton size='small'>
+            <i className='tabler-edit text-gray-500 text-lg' />
+          </IconButton>
+        )}
+      </div>
 
       <CustomDialog
         open={open}
@@ -104,12 +105,7 @@ const UpdateGalleryModal = ({ children, initialData }: UpdateGalleryModalProps) 
         defaultMaxWidth='xs'
         actions={
           <>
-            <Button onClick={handleClose} color='secondary'>
-              انصراف
-            </Button>
-            <Button onClick={handleSubmit(onSubmit)} variant='contained'>
-              ثبت
-            </Button>
+            <FormActions onCancel={handleClose} submitText='بروزرسانی' onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
           </>
         }
       >
