@@ -69,7 +69,6 @@ const DeliveredOrdersTab: React.FC = () => {
         setTotalItems(total);
       } catch (err) {
         setError("خطا در بارگذاری سفارش‌ها");
-        console.error(err);
       } finally {
         setLoading(false);
       }

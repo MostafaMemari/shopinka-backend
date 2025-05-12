@@ -37,9 +37,9 @@ export const serverApiFetch = async (
     const statusCode = error?.response?.status || error?.status || 500
     const message = error?.data?.message || 'خطای ناشناخته'
 
-    if (process.env.NODE_ENV === 'development') {
-      console.error('API Error:', { statusCode, message, error })
-    }
+    // if (process.env.NODE_ENV === 'development') {
+    //   console.error('API Error:', { statusCode, message, error })
+    // }
 
     return {
       status: statusCode,

@@ -7,6 +7,7 @@ import { forwardRef } from 'react'
 import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import type { TextFieldProps } from '@mui/material/TextField'
+import type { InputLabelProps } from '@mui/material/InputLabel'
 
 const TextFieldStyled = styled(TextField)<TextFieldProps>(({ theme }) => ({
   '& .MuiInputLabel-root': {
@@ -249,7 +250,13 @@ const TextFieldStyled = styled(TextField)<TextFieldProps>(({ theme }) => ({
   }
 }))
 
-const CustomTextField = forwardRef((props: TextFieldProps, ref) => {
+interface CustomTextFieldProps extends Omit<TextFieldProps, 'slotProps'> {
+  slotProps?: TextFieldProps['slotProps'] & {
+    inputLabel?: Partial<InputLabelProps>
+  }
+}
+
+const CustomTextField = forwardRef<HTMLInputElement, CustomTextFieldProps>((props, ref) => {
   const { size = 'small', slotProps, ...rest } = props
 
   return (

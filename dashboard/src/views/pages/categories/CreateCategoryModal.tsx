@@ -8,7 +8,6 @@ import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import Grid from '@mui/material/Grid2'
-import CircularProgress from '@mui/material/CircularProgress'
 
 // Form Imports
 import { Controller, useForm } from 'react-hook-form'
@@ -16,7 +15,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 // API and Utility Imports
 import { showToast } from '@/utils/showToast'
-import { useQueryClient } from '@tanstack/react-query'
 import { categorySchema } from '@/libs/validators/category.schemas'
 import { createCategory } from '@/libs/api/category'
 import { CategoryForm } from '@/types/category'

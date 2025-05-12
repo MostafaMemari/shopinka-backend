@@ -28,7 +28,6 @@ const useOrders = (tabId: TabContentProps["tabId"], currentPage: number, itemsPe
       setTotalItems(total);
     } catch (err) {
       setError("خطا در بارگذاری سفارش‌ها");
-      console.error(err);
     } finally {
       setLoading(false);
     }

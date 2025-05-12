@@ -25,7 +25,7 @@ export const usePaginationParams = (defaultPage = 1, defaultSize = 10) => {
 
       router.push(`${pathname}${query ? `?${query}` : ''}`, { scroll: false })
     }
-  }, [page, size, pathname, router, searchParams])
+  }, [page, size, pathname, router, searchParams, defaultPage, defaultSize])
 
   return { page, size, setPage, setSize }
 }

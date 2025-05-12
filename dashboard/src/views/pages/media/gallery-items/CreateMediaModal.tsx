@@ -145,7 +145,6 @@ const CreateMediaModal = ({ children }: { children?: ReactNode }) => {
         showToast({ type: 'error', message: 'خطایی در آپلود رخ داد!' })
       }
     } catch (error) {
-      console.error('Error uploading files:', error)
       showToast({ type: 'error', message: 'خطایی در ارتباط با سرور رخ داد!' })
     } finally {
       setIsSubmitting(false)

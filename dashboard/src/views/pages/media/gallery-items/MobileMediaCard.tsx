@@ -10,9 +10,21 @@ interface Media {
   id: number
   name: string
   type: 'image' | 'video' | 'document'
-  size: string
+  size: number
   uploadedAt: string
   url?: string
+  galleryId: number
+  title: string
+  description: string | null
+  fileUrl: string
+  fileType: string
+  fileSize: number
+  createdAt: string
+  updatedAt: string
+  fileKey: string
+  mimetype: string
+  deletedAt: string | null
+  isDeleted: boolean
 }
 
 const MobileMediaCard = ({ data, paginatedData }: { data: Media[]; paginatedData: Media[] }) => {
@@ -61,7 +73,7 @@ const MobileMediaCard = ({ data, paginatedData }: { data: Media[]; paginatedData
               <Typography className='text-gray-700 dark:text-gray-300'>حجم: {file.size}</Typography>
               <Typography className='text-gray-700 dark:text-gray-300'>تاریخ آپلود: {file.uploadedAt}</Typography>
               <Box display='flex' gap={2} mt={2}>
-                <RemoveMediaModal id={file.id} name={file.name} />
+                <RemoveMediaModal selectedImages={[file.id.toString()]} onClearSelection={() => {}} />
                 <DetailMediaModal file={file} />
                 {file.url && <Chip label='دانلود' color='primary' variant='outlined' component='a' href={file.url} download sx={{ direction: 'rtl' }} />}
               </Box>

@@ -16,7 +16,6 @@ export default (): ConfigModuleOptions => {
       const { error, value } = schema.validate(config);
 
       if (error) {
-        console.error("Env validation error:", error);
         process.exit(1);
       }
 

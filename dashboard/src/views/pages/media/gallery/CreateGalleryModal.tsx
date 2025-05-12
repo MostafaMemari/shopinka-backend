@@ -21,8 +21,8 @@ interface CreateGalleryModalProps {
 
 const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
-  const { invalidate } = useInvalidateQuery()
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { invalidate } = useInvalidateQuery()
 
   const {
     control,
