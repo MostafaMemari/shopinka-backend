@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback, ReactNode } from 'react'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
@@ -18,7 +18,14 @@ import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
 import { cleanObject } from '@/utils/formatters'
 import { QueryKeys } from '@/types/query-keys'
 
-const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType }: { attributeName: string; attributeId: number; attributeType: AttributeType }) => {
+interface CreateAttributeValueModalProps {
+  children?: ReactNode
+  attributeName: string
+  attributeId: number
+  attributeType: AttributeType
+}
+
+const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType, children }: CreateAttributeValueModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { invalidate } = useInvalidateQuery()
@@ -36,18 +43,19 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType }
     control,
     reset,
     handleSubmit,
-    formState: { errors },
-    setValue
+    formState: { errors }
   } = useForm<AttributeValueForm>({
     resolver: yupResolver(AttributeValueSchema(attributeType)),
     defaultValues: {
       name: '',
       slug: '',
-      colorCode: null,
-      buttonLabel: null,
-      attributeId: String(attributeId)
+      buttonLabel: '',
+      attributeId: String(attributeId),
+      colorCode: ''
     },
-    context: { type: attributeType }
+    context: {
+      type: attributeType
+    }
   })
 
   const handleOpen = useCallback(() => setOpen(true), [])
@@ -74,7 +82,7 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType }
         }
 
         if (status === 201 || status === 200) {
-          showToast({ type: 'success', message: 'متغییر با موفقیت ثبت شد' })
+          showToast({ type: 'success', message: 'متغیر با موفقیت ثبت شد' })
           invalidate(QueryKeys.Attributes)
           handleClose()
         }
@@ -89,30 +97,31 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType }
 
   return (
     <div>
-      <IconButton
-        onClick={handleOpen}
-        sx={{
-          direction: 'rtl',
-          margin: '4px',
-          cursor: 'pointer',
-          padding: 0
-        }}
-      >
-        <i className='tabler-plus' style={{ fontSize: '24px' }} />
-      </IconButton>
+      <div onClick={handleOpen}>
+        {children || (
+          <IconButton sx={{ direction: 'rtl', margin: '4px', cursor: 'pointer', padding: 0 }}>
+            <i className='tabler-plus' style={{ fontSize: '24px' }} />
+          </IconButton>
+        )}
+      </div>
 
       <CustomDialog
         open={open}
         onClose={handleClose}
-        title={`ثبت مقدار ویژگی برای ${attributeName}`}
+        title={`ثبت متغیر ویژگی برای ${attributeName}`}
         defaultMaxWidth='xs'
-        actions={
-          <>
-            <FormActions onCancel={handleClose} onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
-          </>
-        }
+        actions={<FormActions onCancel={handleClose} onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />}
       >
-        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
+        <form
+          onKeyDown={e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault()
+              handleSubmit(onSubmit)()
+            }
+          }}
+          onSubmit={handleSubmit(onSubmit)}
+          className='flex flex-col gap-5'
+        >
           <Controller
             name='name'
             control={control}
@@ -170,9 +179,7 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType }
                     onChange={e => {
                       let value = e.target.value
 
-                      if (value.length > 7) {
-                        value = value.slice(0, 7)
-                      }
+                      if (value.length > 7) value = value.slice(0, 7)
 
                       if (!value) {
                         field.onChange(null)
@@ -180,9 +187,7 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType }
                         return
                       }
 
-                      if (!value.startsWith('#')) {
-                        value = '#' + value
-                      }
+                      if (!value.startsWith('#')) value = '#' + value
 
                       value = value.replace(/[^#0-9A-Fa-f]/g, '').slice(0, 7)
                       field.onChange(value)

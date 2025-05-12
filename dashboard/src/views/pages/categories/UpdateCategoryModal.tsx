@@ -4,11 +4,9 @@
 import { useState, useCallback, ReactNode } from 'react'
 
 // MUI Imports
-import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import Grid from '@mui/material/Grid2'
-import CircularProgress from '@mui/material/CircularProgress'
 
 // Form Imports
 import { Controller, useForm } from 'react-hook-form'
@@ -28,8 +26,9 @@ import { errorCategoryMessage } from '@/messages/auth/categoryMessages.'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
 import { QueryKeys } from '@/types/query-keys'
 import getChangedFields from '@/utils/getChangedFields'
+import FormActions from '@/components/FormActions'
+import { Button } from '@mui/material'
 
-// Types
 interface UpdateCategoryModalProps {
   children: ReactNode
   initialData: Category
@@ -45,14 +44,14 @@ const UpdateCategoryModal = ({ children, initialData }: UpdateCategoryModalProps
     handleSubmit,
     reset,
     setValue,
-    formState: { errors, isDirty }
+    formState: { errors }
   } = useForm<CategoryForm>({
     defaultValues: {
-      name: initialData.name || '',
-      slug: initialData.slug || '',
-      description: initialData.description || null,
-      parentId: initialData.parentId || null,
-      thumbnailImageId: initialData.thumbnailImageId || null
+      name: initialData.name,
+      slug: initialData.slug,
+      description: initialData.description,
+      parentId: initialData.parentId,
+      thumbnailImageId: initialData.thumbnailImageId
     },
     resolver: yupResolver(categorySchema)
   })
@@ -106,8 +105,12 @@ const UpdateCategoryModal = ({ children, initialData }: UpdateCategoryModalProps
 
   return (
     <div>
-      <div onClick={handleOpen} role='button' tabIndex={0} onKeyDown={e => e.key === 'Enter' && handleOpen()} aria-label='باز کردن فرم ویرایش دسته‌بندی'>
-        {children}
+      <div onClick={handleOpen} role='button' tabIndex={0} onKeyDown={e => e.key === 'Enter' && handleOpen()}>
+        {children || (
+          <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-edit' />}>
+            بروزرسانی دسته‌بندی
+          </Button>
+        )}
       </div>
 
       <CustomDialog
@@ -117,17 +120,7 @@ const UpdateCategoryModal = ({ children, initialData }: UpdateCategoryModalProps
         defaultMaxWidth='lg'
         actions={
           <>
-            <Button onClick={handleClose} color='secondary' disabled={isLoading}>
-              انصراف
-            </Button>
-            <Button
-              onClick={handleSubmit(onSubmit)}
-              variant='contained'
-              disabled={isLoading || !isDirty}
-              startIcon={isLoading ? <CircularProgress size={20} color='inherit' /> : null}
-            >
-              {isLoading ? 'در حال به‌روزرسانی...' : 'به‌روزرسانی'}
-            </Button>
+            <FormActions onCancel={handleClose} submitText='بروزرسانی' onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
           </>
         }
       >

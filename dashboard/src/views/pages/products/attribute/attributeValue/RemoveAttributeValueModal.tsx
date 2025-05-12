@@ -2,8 +2,14 @@ import ConfirmDeleteModal from '@/components/ConfirmDeleteModal'
 import { removeAttributeValue } from '@/libs/api/productAttributeValues'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
 import { QueryKeys } from '@/types/query-keys'
+import { ReactNode } from 'react'
 
-const RemoveAttributeValueModal = ({ id }: { id: number }) => {
+interface RemoveAttributeValueModalProps {
+  id: number
+  children?: ReactNode
+}
+
+const RemoveAttributeValueModal = ({ id, children }: RemoveAttributeValueModalProps) => {
   const { invalidate } = useInvalidateQuery()
 
   return (
@@ -12,7 +18,7 @@ const RemoveAttributeValueModal = ({ id }: { id: number }) => {
       onDelete={async id => {
         const res = await removeAttributeValue(id as string)
 
-        invalidate(QueryKeys.Attributes)
+        if (res.status === 200) invalidate(QueryKeys.Attributes)
 
         return res
       }}
@@ -26,7 +32,7 @@ const RemoveAttributeValueModal = ({ id }: { id: number }) => {
       }}
       buttonText='حذف'
     >
-      <i className='tabler-trash text-gray-500 text-lg' />
+      {children || <i className='tabler-trash text-gray-500 text-lg' />}
     </ConfirmDeleteModal>
   )
 }

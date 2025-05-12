@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, ReactNode } from 'react'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
@@ -19,7 +19,13 @@ import { QueryKeys } from '@/types/query-keys'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
 import { cleanObject } from '@/utils/formatters'
 
-const UpdateAttributeValuesModal = ({ attributeType, initialData }: { attributeType: AttributeType; initialData: Partial<AttributeValueForm & { id: string }> }) => {
+interface UpdateAttributeValuesModalProps {
+  attributeType: AttributeType
+  initialData: Partial<AttributeValueForm & { id: string }>
+  children?: ReactNode
+}
+
+const UpdateAttributeValuesModal = ({ attributeType, initialData, children }: UpdateAttributeValuesModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { invalidate } = useInvalidateQuery()
@@ -39,15 +45,14 @@ const UpdateAttributeValuesModal = ({ attributeType, initialData }: { attributeT
     control,
     reset,
     handleSubmit,
-    formState: { errors },
-    setValue
+    formState: { errors }
   } = useForm<AttributeValueForm>({
     defaultValues: {
-      name: initialData?.name || '',
-      slug: initialData?.slug || '',
-      colorCode: initialData?.colorCode || null,
-      buttonLabel: initialData?.buttonLabel || null,
-      attributeId: initialData?.attributeId
+      name: initialData?.name ?? '',
+      slug: initialData?.slug ?? '',
+      colorCode: initialData?.colorCode ?? '',
+      buttonLabel: initialData?.buttonLabel ?? '',
+      attributeId: initialData?.attributeId ?? ''
     },
 
     resolver: yupResolver(AttributeValueSchema(attributeType))
@@ -102,20 +107,14 @@ const UpdateAttributeValuesModal = ({ attributeType, initialData }: { attributeT
 
   return (
     <div>
-      <Typography className='cursor-pointer' onClick={handleOpen}>
-        {initialData.name}
-      </Typography>
+      <div onClick={handleOpen}>{children || <Typography className='cursor-pointer'>{initialData.name}</Typography>}</div>
 
       <CustomDialog
         open={open}
         onClose={handleClose}
         title={`بروزرسانی ${initialData.name}`}
         defaultMaxWidth='xs'
-        actions={
-          <>
-            <FormActions onCancel={handleClose} submitText='بروزرسانی' onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
-          </>
-        }
+        actions={<FormActions onCancel={handleClose} submitText='بروزرسانی' onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />}
       >
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
           <Controller

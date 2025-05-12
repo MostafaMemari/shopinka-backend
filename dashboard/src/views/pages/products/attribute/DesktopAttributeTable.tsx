@@ -100,7 +100,6 @@ const DesktopAttributeTable = ({ data }: { data: Attribute[] }) => {
                                       attributeId: String(item.attributeId)
                                     }}
                                   />
-
                                   <div className='mt-1'>
                                     <RemoveAttributeValueModal id={row.id} />
                                   </div>

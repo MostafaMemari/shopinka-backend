@@ -1,5 +1,4 @@
 import { removeAttribute } from '@/libs/api/productAttributes'
-import { useRouter } from 'next/navigation'
 import ConfirmDeleteModal from '@/components/ConfirmDeleteModal'
 import { IconButton } from '@mui/material'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
@@ -19,6 +18,7 @@ const RemoveAttributeModal = ({ id }: { id: number }) => {
         return res
       }}
       dialogTitle='آیا از حذف ویژگی اطمینان دارید؟'
+      dialogMessage=''
       messages={{
         success: 'ویژگی با موفقیت حذف شد',
         unauthorized: 'شما اجازه حذف این ویژگی را ندارید',

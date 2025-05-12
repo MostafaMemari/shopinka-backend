@@ -1,9 +1,9 @@
-import { useState, useEffect, ReactNode, useCallback } from 'react' // اضافه کردن useEffect
+import { useState, ReactNode, useCallback } from 'react' // اضافه کردن useEffect
 import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
-import { CircularProgress, MenuItem } from '@mui/material'
+import { MenuItem } from '@mui/material'
 import { AttributeType, type AttributeFormType } from '@/types/productAttributes'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { createAttribute } from '@/libs/api/productAttributes'
@@ -80,15 +80,18 @@ const CreateAttributeModal = ({ children }: CreateAttributeModalProps) => {
 
   return (
     <div>
-      {children || (
-        <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />}>
-          افزودن ویژگی جدید
-        </Button>
-      )}
+      <div onClick={handleOpen}>
+        {children || (
+          <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
+            ثبت ویژگی جدید
+          </Button>
+        )}
+      </div>
+
       <CustomDialog
         open={open}
         onClose={handleClose}
-        title='افزودن ویژگی جدید'
+        title='ثبت ویژگی جدید'
         defaultMaxWidth='xs'
         actions={
           <>
