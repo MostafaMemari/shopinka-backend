@@ -97,9 +97,11 @@ const ConfirmDeleteModal = ({
           </>
         }
       >
-        <DialogContent>
-          <DialogContentText>{dialogMessage}</DialogContentText>
-        </DialogContent>
+        {dialogMessage && (
+          <DialogContent>
+            <DialogContentText>{dialogMessage}</DialogContentText>
+          </DialogContent>
+        )}
       </CustomDialog>
     </>
   )

@@ -72,7 +72,7 @@ const DesktopAttributeTable = ({ data }: { data: Attribute[] }) => {
                                   />
 
                                   <div className='mt-1'>
-                                    <RemoveAttributeValueModal id={row.id} />
+                                    <RemoveAttributeValueModal id={item.id} />
                                   </div>
                                 </Box>
                               }

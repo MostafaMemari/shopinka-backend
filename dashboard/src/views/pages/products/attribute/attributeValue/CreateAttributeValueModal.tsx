@@ -1,40 +1,36 @@
-import { useState, useEffect } from 'react'
-import Button from '@mui/material/Button'
+import { useState, useEffect, useCallback } from 'react'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
-import { CircularProgress, IconButton } from '@mui/material'
+import { IconButton } from '@mui/material'
 import { AttributeType, AttributeValueForm } from '@/types/productAttributes'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { createAttributeValues } from '@/libs/api/productAttributeValues'
 import { showToast } from '@/utils/showToast'
 import { handleApiError } from '@/utils/handleApiError'
 import { errorAttributeMessage } from '@/messages/auth/attributeMessages'
-import { useRouter } from 'next/navigation'
 import { AttributeValueSchema } from '@/libs/validators/attributeValues.schemas'
 import { HexColorPicker } from 'react-colorful'
 import ClickAwayListener from '@mui/material/ClickAwayListener'
 import Popper from '@mui/material/Popper'
+import FormActions from '@/components/FormActions'
+import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
+import { cleanObject } from '@/utils/formatters'
+import { QueryKeys } from '@/types/query-keys'
 
 const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType }: { attributeName: string; attributeId: number; attributeType: AttributeType }) => {
   const [open, setOpen] = useState<boolean>(false)
-  const router = useRouter()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { invalidate } = useInvalidateQuery()
   const [colorAnchorEl, setColorAnchorEl] = useState<HTMLElement | null>(null)
-
-  const [isCreating, setIsCreating] = useState<boolean>(false)
 
   const handleOpenColorPicker = (event: React.MouseEvent<HTMLElement>) => {
     setColorAnchorEl(event.currentTarget)
   }
 
-  const handleCloseColorPicker = () => {
-    setColorAnchorEl(null)
-  }
+  const handleCloseColorPicker = () => setColorAnchorEl(null)
 
   const isColorPickerOpen = Boolean(colorAnchorEl)
-
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
 
   const {
     control,
@@ -54,55 +50,42 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType }
     context: { type: attributeType }
   })
 
-  useEffect(() => {
-    reset({
-      name: '',
-      slug: '',
-      colorCode: attributeType === AttributeType.COLOR ? '' : undefined,
-      buttonLabel: attributeType === AttributeType.BUTTON ? '' : undefined,
-      attributeId: String(attributeId)
-    })
-  }, [attributeType, attributeId, reset])
+  const handleOpen = useCallback(() => setOpen(true), [])
 
-  const onSubmit = async (formData: AttributeValueForm) => {
-    setIsCreating(true)
+  const handleClose = useCallback(() => {
+    setOpen(false)
+    reset()
+  }, [reset])
 
-    try {
-      const res = await createAttributeValues({
-        name: formData.name,
-        slug: formData.slug,
-        colorCode: formData.colorCode || null,
-        buttonLabel: formData.buttonLabel || null,
-        attributeId: formData.attributeId
-      })
+  const onSubmit = useCallback(
+    async (formData: AttributeValueForm) => {
+      setIsLoading(true)
 
-      const errorMessage = handleApiError(res.status, errorAttributeMessage)
+      try {
+        const cleanedData = cleanObject(formData)
+        const { status } = await createAttributeValues(cleanedData)
 
-      if (errorMessage) {
-        showToast({ type: 'error', message: errorMessage })
+        const errorMessage = handleApiError(status, errorAttributeMessage)
 
-        return
+        if (errorMessage) {
+          showToast({ type: 'error', message: errorMessage })
+
+          return
+        }
+
+        if (status === 201 || status === 200) {
+          showToast({ type: 'success', message: 'متغییر با موفقیت ثبت شد' })
+          invalidate(QueryKeys.Attributes)
+          handleClose()
+        }
+      } catch (error: any) {
+        showToast({ type: 'error', message: 'خطای سیستمی' })
+      } finally {
+        setIsLoading(false)
       }
-
-      if (res.status === 201 || res.status === 200) {
-        showToast({ type: 'success', message: 'ویژگی با موفقیت ثبت شد' })
-        router.refresh()
-
-        reset({
-          name: '',
-          slug: undefined,
-          colorCode: attributeType === AttributeType.COLOR ? '' : undefined,
-          buttonLabel: attributeType === AttributeType.BUTTON ? '' : undefined,
-          attributeId: String(attributeId)
-        })
-        handleClose()
-      }
-    } catch (error: any) {
-      showToast({ type: 'error', message: 'خطای سیستمی' })
-    } finally {
-      setIsCreating(false)
-    }
-  }
+    },
+    [handleClose, invalidate]
+  )
 
   return (
     <div>
@@ -125,18 +108,7 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType }
         defaultMaxWidth='xs'
         actions={
           <>
-            <Button onClick={handleClose} color='secondary'>
-              انصراف
-            </Button>
-            <Button
-              onClick={handleSubmit(onSubmit)}
-              disabled={isCreating}
-              color='primary'
-              variant='contained'
-              startIcon={isCreating ? <CircularProgress size={20} color='inherit' /> : null}
-            >
-              {isCreating ? 'در حال ثبت...' : 'ثبت'}
-            </Button>
+            <FormActions onCancel={handleClose} onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
           </>
         }
       >

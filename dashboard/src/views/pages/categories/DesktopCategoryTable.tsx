@@ -48,7 +48,7 @@ const DesktopCategoryTable = ({ categories }: { categories: Category[] }) => {
               </IconButton>
             </RemoveCategoryModal>
 
-            <UpdateCategoryModal category={category}>
+            <UpdateCategoryModal initialData={category}>
               <IconButton size='small'>
                 <i className='tabler-edit text-gray-500 text-lg' />
               </IconButton>

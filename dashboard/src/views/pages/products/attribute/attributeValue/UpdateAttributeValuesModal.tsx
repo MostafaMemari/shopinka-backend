@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react'
-import Button from '@mui/material/Button'
+import { useState, useCallback } from 'react'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
@@ -10,16 +9,20 @@ import { updateAttributeValues } from '@/libs/api/productAttributeValues'
 import { showToast } from '@/utils/showToast'
 import { handleApiError } from '@/utils/handleApiError'
 import { errorAttributeMessage } from '@/messages/auth/attributeMessages'
-import { useRouter } from 'next/navigation'
 import getChangedFields from '@/utils/getChangedFields'
 import { AttributeValueSchema } from '@/libs/validators/attributeValues.schemas'
 import { HexColorPicker } from 'react-colorful'
 import ClickAwayListener from '@mui/material/ClickAwayListener'
 import Popper from '@mui/material/Popper'
+import FormActions from '@/components/FormActions'
+import { QueryKeys } from '@/types/query-keys'
+import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
+import { cleanObject } from '@/utils/formatters'
 
 const UpdateAttributeValuesModal = ({ attributeType, initialData }: { attributeType: AttributeType; initialData: Partial<AttributeValueForm & { id: string }> }) => {
   const [open, setOpen] = useState<boolean>(false)
-  const router = useRouter()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { invalidate } = useInvalidateQuery()
   const [colorAnchorEl, setColorAnchorEl] = useState<HTMLElement | null>(null)
 
   const handleOpenColorPicker = (event: React.MouseEvent<HTMLElement>) => {
@@ -32,9 +35,6 @@ const UpdateAttributeValuesModal = ({ attributeType, initialData }: { attributeT
 
   const isColorPickerOpen = Boolean(colorAnchorEl)
 
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
-
   const {
     control,
     reset,
@@ -44,73 +44,61 @@ const UpdateAttributeValuesModal = ({ attributeType, initialData }: { attributeT
   } = useForm<AttributeValueForm>({
     defaultValues: {
       name: initialData?.name || '',
-      slug: initialData?.slug ?? '',
-      colorCode: initialData?.colorCode ?? undefined,
-      buttonLabel: initialData?.buttonLabel ?? undefined,
-      attributeId: initialData?.attributeId || ''
+      slug: initialData?.slug || '',
+      colorCode: initialData?.colorCode || null,
+      buttonLabel: initialData?.buttonLabel || null,
+      attributeId: initialData?.attributeId
     },
 
     resolver: yupResolver(AttributeValueSchema(attributeType))
   })
 
-  useEffect(() => {
-    reset({
-      name: initialData?.name || '',
-      slug: initialData?.slug ?? '',
-      colorCode: initialData?.colorCode ?? undefined,
-      buttonLabel: initialData?.buttonLabel ?? undefined,
-      attributeId: initialData?.attributeId || ''
-    })
-  }, [initialData, reset])
+  const handleOpen = useCallback(() => setOpen(true), [])
 
-  const onError = (errors: any) => {
-    console.log('Form Errors:', errors)
-  }
+  const handleClose = useCallback(() => {
+    setOpen(false)
+    reset()
+  }, [reset])
 
-  const onSubmit = async (formData: AttributeValueForm) => {
-    try {
-      if (initialData?.id !== undefined) {
-        const changedData = getChangedFields(initialData, {
-          ...formData,
-          slug: formData.slug,
-          attributeId: formData.attributeId || initialData.attributeId
-        })
+  const onSubmit = useCallback(
+    async (formData: AttributeValueForm) => {
+      setIsLoading(true)
 
-        if (Object.keys(changedData).length === 0) {
-          showToast({ type: 'info', message: 'هیچ تغییری اعمال نشده است' })
+      try {
+        if (initialData?.id !== undefined) {
+          const cleanedData = cleanObject(formData)
+          const changedData = getChangedFields(initialData, cleanedData)
 
-          return
+          if (Object.keys(changedData).length === 0) {
+            showToast({ type: 'info', message: 'هیچ تغییری اعمال نشده است' })
+
+            return
+          }
+
+          const { status } = await updateAttributeValues(String(initialData.id), changedData)
+
+          const errorMessage = handleApiError(status, errorAttributeMessage)
+
+          if (errorMessage) {
+            showToast({ type: 'error', message: errorMessage })
+
+            return
+          }
+
+          if (status === 200) {
+            showToast({ type: 'success', message: 'ویژگی با موفقیت بروزرسانی شد' })
+            invalidate(QueryKeys.Attributes)
+            handleClose()
+          }
         }
-
-        const res = await updateAttributeValues(String(initialData.id), changedData)
-
-        const errorMessage = handleApiError(res.status, errorAttributeMessage)
-
-        if (errorMessage) {
-          showToast({ type: 'error', message: errorMessage })
-
-          return
-        }
-
-        if (res.status === 200) {
-          showToast({ type: 'success', message: 'ویژگی با موفقیت ویرایش شد' })
-          router.refresh()
-
-          reset({
-            name: formData.name || '',
-            slug: formData.slug ?? '',
-            colorCode: formData.colorCode ?? undefined,
-            buttonLabel: formData.buttonLabel ?? undefined,
-            attributeId: formData.attributeId || initialData.attributeId || ''
-          })
-
-          handleClose()
-        }
+      } catch (error: any) {
+        showToast({ type: 'error', message: 'خطایی در به‌روزرسانی متغییر رخ داد' })
+      } finally {
+        setIsLoading(false)
       }
-    } catch (error: any) {
-      showToast({ type: 'error', message: 'خطای سیستمی' })
-    }
-  }
+    },
+    [handleClose, initialData, invalidate]
+  )
 
   return (
     <div>
@@ -125,16 +113,11 @@ const UpdateAttributeValuesModal = ({ attributeType, initialData }: { attributeT
         defaultMaxWidth='xs'
         actions={
           <>
-            <Button onClick={handleClose} color='secondary'>
-              انصراف
-            </Button>
-            <Button onClick={handleSubmit(onSubmit, onError)} variant='contained'>
-              ثبت
-            </Button>
+            <FormActions onCancel={handleClose} submitText='بروزرسانی' onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
           </>
         }
       >
-        <form onSubmit={handleSubmit(onSubmit, onError)} className='flex flex-col gap-5'>
+        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
           <Controller
             name='name'
             control={control}
