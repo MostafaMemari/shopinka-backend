@@ -200,6 +200,16 @@ export class OrderService {
     return { ...pagination(paginationDto, orders) }
   }
 
+  async findAllMyOrders(userId: number, paginationDto: PaginationDto): Promise<unknown> {
+    const orders = await this.orderRepository.findAll({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      include: { address: true, items: true, shippingInfo: true, shipping: true }
+    })
+
+    return pagination(paginationDto, orders)
+  }
+
   async findAllItems(userId: number, paginationDto: PaginationDto): Promise<unknown> {
     const orderItems = await this.orderItemRepository.findAll(
       {

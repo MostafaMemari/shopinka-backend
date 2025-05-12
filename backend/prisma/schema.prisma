@@ -329,7 +329,7 @@ model Order {
   address      Address?       @relation(fields: [addressId], references: [id], onDelete: SetNull)
   transaction  Transaction?  @relation("TransactionOrder")
   shippingInfo ShippingInfo? @relation("ShippingInfoOrder")
-  shopping     Shipping?     @relation(fields: [shippingId], references: [id], onDelete: SetNull)
+  shipping     Shipping?     @relation(fields: [shippingId], references: [id], onDelete: SetNull)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt()
 }

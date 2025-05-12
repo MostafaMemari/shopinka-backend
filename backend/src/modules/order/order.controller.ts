@@ -3,9 +3,10 @@ import { ApiTags } from "@nestjs/swagger";
 import { OrderService } from "./order.service";
 import { AuthDecorator } from "../../common/decorators/auth.decorator";
 import { GetUser } from "../../common/decorators/get-user.decorator";
-import { User } from "generated/prisma";
+import { Role, User } from "generated/prisma";
 import { QueryOrderDto } from "./dto/query-order.dto";
 import { PaginationDto } from "../../common/dtos/pagination.dto";
+import { Roles } from "../../common/decorators/role.decorator";
 
 @Controller('order')
 @ApiTags('order')
@@ -14,8 +15,14 @@ export class OrderController {
     constructor(private readonly orderService: OrderService) { }
 
     @Get()
+    @Roles(Role.ADMIN, Role.SUPER_ADMIN)
     findAll(@Query() queryOrderDto: QueryOrderDto, @GetUser() user: User) {
         return this.orderService.findAll(user.id, queryOrderDto)
+    }
+
+    @Get('my')
+    findAllMyOrders(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
+        return this.orderService.findAllMyOrders(user.id, paginationDto)
     }
 
     @Get('item')
