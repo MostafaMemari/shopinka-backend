@@ -4,13 +4,14 @@ import { useQuery } from '@tanstack/react-query'
 interface UseAttributeParams {
   enabled?: boolean
   staleTime?: number
+  params?: Record<string, any>
 }
 
-export function useAttribute({ enabled = true, staleTime = 1 * 60 * 1000 }: UseAttributeParams) {
-  const fetchAttribute = () => getAttributes().then(res => res)
+export function useAttribute({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: UseAttributeParams) {
+  const fetchAttribute = () => getAttributes(params).then(res => res)
 
   return useQuery<any, Error>({
-    queryKey: ['attributes'],
+    queryKey: ['attributes', params],
     queryFn: fetchAttribute,
     enabled,
     staleTime,

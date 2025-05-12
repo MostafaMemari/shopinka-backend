@@ -15,7 +15,7 @@ import TablePaginationComponent from '@/components/TablePaginationComponent'
 import MobileGalleryCard from './MobileGalleryCard'
 import DesktopGalleryTable from './DesktopGalleryTable'
 import CreateGalleryModal from './CreateGalleryModal'
-import EmptyState from '@/components/EmptyState'
+import EmptyState from '@/components/states/EmptyState'
 import LoadingSpinner from '@/components/LoadingSpinner'
 
 // API Import

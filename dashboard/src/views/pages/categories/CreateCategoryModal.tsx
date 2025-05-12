@@ -27,7 +27,6 @@ import ParentCategorySelect from './ParentCategorySelect'
 import CategoryThumbnailImage from './CategoryThumbnailImage'
 import RichTextEditor from '@/components/RichTextEditor/RichTextEditor'
 
-// Types
 interface CreateCategoryModalProps {
   children?: ReactNode
 }
@@ -97,7 +96,7 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
 
   return (
     <div>
-      {children && (
+      {children || (
         <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />}>
           ثبت دسته‌بندی جدید
         </Button>

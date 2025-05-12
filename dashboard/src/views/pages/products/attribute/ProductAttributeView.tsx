@@ -1,51 +1,67 @@
 'use client'
 
 // React Imports
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 
 // MUI Imports
 import Card from '@mui/material/Card'
 import { Box, useMediaQuery, useTheme } from '@mui/material'
-import type { TextFieldProps } from '@mui/material/TextField'
 
 // Component Imports
 import TablePaginationComponent from '@/components/TablePaginationComponent'
-import CreateUpdateAttributeModal from './CreateAttributeModal'
+import CreateAttributeModal from './CreateAttributeModal'
 
 // API Import
 import { Attribute } from '@/types/productAttributes'
-import CustomTextField from '@/@core/components/mui/TextField'
-import MobileAttributeCard from './MobileAttributeCard'
 import DesktopAttributeTable from './DesktopAttributeTable'
-import DebouncedInput from '@/components/DebouncedInput'
+import { usePaginationParams } from '@/hooks/usePaginationParams'
+import { useAttribute } from '@/hooks/reactQuery/useAttribute'
+import LoadingSpinner from '@/components/LoadingSpinner'
+import ErrorState from '@/components/states/ErrorState'
+import EmptyAttributeState from './EmptyAttributeState'
 
 // Main Component
-const ProductAttributeView = ({ data: initialData }: { data: Attribute[] }) => {
-  // States
-  const [data, setLocalData] = useState<Attribute[]>(initialData || [])
-  const [searchTerm, setSearchTerm] = useState('')
-  const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(10)
+const ProductAttributeView = () => {
+  const { page, size, setPage, setSize } = usePaginationParams()
+
+  const { data, isLoading, isFetching, error, refetch } = useAttribute({
+    enabled: true,
+    params: {
+      page,
+      take: size,
+      includeThumbnailImage: true,
+      includeChildren: true,
+      childrenDepth: 6
+    },
+    staleTime: 5 * 60 * 1000
+  })
 
   // Hooks
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
-  // Sync local data with prop
-  useEffect(() => {
-    setLocalData(initialData)
-  }, [initialData])
+  const attributes: Attribute[] = useMemo(() => data?.data?.items || [], [data])
+  const paginationData = useMemo(() => data?.data?.pager || { currentPage: 1, totalPages: 1, totalCount: 0 }, [data])
 
-  // Paginate filtered data
-  const paginatedData = data.slice(page * rowsPerPage, (page + 1) * rowsPerPage)
+  if (isLoading || isFetching) return <LoadingSpinner />
+  if (error) return <ErrorState onRetry={() => refetch()} />
+  if (attributes.length === 0) return <EmptyAttributeState />
 
   return (
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
-        <CreateUpdateAttributeModal />
+        <CreateAttributeModal />
       </Box>
-      {isMobile ? <MobileAttributeCard data={data} paginatedData={paginatedData} /> : <DesktopAttributeTable data={data} paginatedData={paginatedData} />}
-      <TablePaginationComponent filteredData={data} page={page} rowsPerPage={rowsPerPage} onPageChange={setPage} onRowsPerPageChange={rows => setRowsPerPage(rows)} />
+      {!isMobile && <DesktopAttributeTable data={attributes} />}
+      <TablePaginationComponent
+        currentPage={page}
+        totalPages={paginationData.totalPages}
+        totalCount={paginationData.totalCount}
+        rowsPerPage={size}
+        onPageChange={setPage}
+        onRowsPerPageChange={setSize}
+        currentPageItemCount={attributes.length}
+      />{' '}
     </Card>
   )
 }

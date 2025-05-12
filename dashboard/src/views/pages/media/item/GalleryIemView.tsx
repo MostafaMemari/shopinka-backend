@@ -15,40 +15,33 @@ import TablePaginationComponent from '@/components/TablePaginationComponent'
 import DesktopMediaGallery from './DesktopMediaGallery'
 import CreateMediaModal from './CreateMediaModal'
 import RemoveGalleryItemModal from './RemoveMediaModal'
-import EmptyState from '@/components/EmptyState'
+import EmptyState from '@/components/states/EmptyState'
 import LoadingSpinner from '@/components/LoadingSpinner'
 
 // API Import
 import { PermMedia } from '@mui/icons-material'
 import { useGalleryItems } from '@/hooks/reactQuery/useGallery'
 import { GalleryItem } from '@/types/gallery'
-import { number } from 'yup'
 
 const GalleryItemView = ({ galleryId }: { galleryId: string }) => {
-  // Hooks for query string
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
 
-  // Memoize searchParams values to prevent unnecessary re-renders
   const pageParam = useMemo(() => searchParams.get('page') || '1', [searchParams])
   const sizeParam = useMemo(() => searchParams.get('size') || '10', [searchParams])
 
-  // Initialize page and rowsPerPage from query string
-  const initialPage = parseInt(pageParam, 10) - 1 // Start from 0 for internal state
+  const initialPage = parseInt(pageParam, 10) - 1
   const initialRowsPerPage = parseInt(sizeParam, 10)
 
-  // States
   const [page, setPage] = useState(initialPage)
   const [rowsPerPage, setRowsPerPage] = useState(initialRowsPerPage)
   const [selected, setSelected] = useState<string[]>([])
 
-  // Update query string when page or rowsPerPage changes
   useEffect(() => {
     const currentPage = (parseInt(pageParam, 10) - 1).toString()
     const currentSize = sizeParam
 
-    // Only update URL if page or size has actually changed
     if (page.toString() !== currentPage || rowsPerPage.toString() !== currentSize) {
       const params = new URLSearchParams()
 
@@ -60,22 +53,19 @@ const GalleryItemView = ({ galleryId }: { galleryId: string }) => {
     }
   }, [page, rowsPerPage, pathname, router, pageParam, sizeParam])
 
-  // Query Hook
   const { data, isLoading, isFetching, error, refetch } = useGalleryItems({
     params: {
       galleryId,
-      page: page + 1, // API expects 1-based page
+      page: page + 1,
       take: rowsPerPage
     },
-    enabled: !!galleryId, // Only fetch if galleryId is valid
-    staleTime: 5 * 60 * 1000 // Cache data for 5 minutes
+    enabled: !!galleryId,
+    staleTime: 5 * 60 * 1000
   })
 
-  // Extract items from response with safe fallback
   const galleryItems: GalleryItem[] = useMemo(() => data?.data?.items || [], [data])
   const paginationData = useMemo(() => data?.data?.pager || { currentPage: 1, totalPages: 1, totalCount: 0 }, [data])
 
-  // Clear invalid selections when page or items change
   useEffect(() => {
     const validIds = galleryItems.map(item => item.id)
 
@@ -86,32 +76,16 @@ const GalleryItemView = ({ galleryId }: { galleryId: string }) => {
     })
   }, [galleryItems])
 
-  // Debug logging to track issues
-  useEffect(() => {
-    console.log('Gallery Items:', galleryItems)
-    console.log('Pagination Data:', paginationData)
-    console.log('Error:', error)
-    console.log('isLoading:', isLoading, 'isFetching:', isFetching)
-    console.log('Selected:', selected)
-    console.log('Page:', page, 'RowsPerPage:', rowsPerPage)
-  }, [galleryItems, paginationData, error, isLoading, isFetching, selected, page, rowsPerPage])
-
-  // Handle checkbox change
   const handleCheckboxChange = (id: string) => {
     setSelected(prev => (prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]))
   }
 
-  // Handle clear selection
   const handleClearSelection = () => {
     setSelected([])
   }
 
-  // Handle loading state
-  if (isLoading || isFetching) {
-    return <LoadingSpinner />
-  }
+  if (isLoading || isFetching) return <LoadingSpinner />
 
-  // Handle error state
   if (error) {
     return (
       <EmptyState

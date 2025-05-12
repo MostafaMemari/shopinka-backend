@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react' // اضافه کردن useEffect
+import { useState, useEffect, ReactNode } from 'react' // اضافه کردن useEffect
 import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
@@ -13,7 +13,11 @@ import { errorAttributeMessage } from '@/messages/auth/attributeMessages'
 import { useRouter } from 'next/navigation'
 import { attributeSchema } from '@/libs/validators/attribute.schemas'
 
-const CreateAttributeModal = () => {
+interface CreateAttributeModalProps {
+  children?: ReactNode
+}
+
+const CreateAttributeModal = ({ children }: CreateAttributeModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
   const router = useRouter()
 
@@ -86,10 +90,11 @@ const CreateAttributeModal = () => {
 
   return (
     <div>
-      <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />}>
-        افزودن ویژگی
-      </Button>
-
+      {children || (
+        <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />}>
+          افزودن ویژگی جدید
+        </Button>
+      )}
       <CustomDialog
         open={open}
         onClose={handleClose}
