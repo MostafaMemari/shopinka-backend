@@ -24,15 +24,15 @@ export function useGalleryItems({ enabled = true, params = {}, staleTime = 1 * 6
 
 interface UseGalleryParams {
   enabled?: boolean
-  search?: string
   staleTime?: number
+  params?: Record<string, any>
 }
 
-export function useGallery({ enabled = true, search = '', staleTime = 1 * 60 * 1000 }: UseGalleryParams) {
-  const fetchGallery = () => getGalleries().then(res => res)
+export function useGallery({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: UseGalleryParams) {
+  const fetchGallery = () => getGalleries(params).then(res => res)
 
   return useQuery<any, Error>({
-    queryKey: ['galleries', search],
+    queryKey: ['galleries', params],
     queryFn: fetchGallery,
     enabled,
     staleTime,

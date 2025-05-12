@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react' // اضافه کردن useEffect
+import { useState, useEffect, ReactNode } from 'react' // اضافه کردن useEffect
 import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
@@ -13,7 +13,11 @@ import { gallerySchema } from '@/libs/validators/gallery.schemas'
 import { createGallery } from '@/libs/api/gallery'
 import { useQueryClient } from '@tanstack/react-query'
 
-const CreateGalleryModal = () => {
+interface CreateGalleryModalProps {
+  children?: ReactNode
+}
+
+const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -75,9 +79,11 @@ const CreateGalleryModal = () => {
 
   return (
     <div>
-      <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />}>
-        ثبت گالری جدید
-      </Button>
+      {children && (
+        <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />}>
+          ثبت گالری جدید
+        </Button>
+      )}
 
       <CustomDialog
         open={open}

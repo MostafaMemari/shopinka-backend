@@ -2,9 +2,9 @@ import { Gallery, GalleryForm } from '@/types/gallery'
 import { Response } from '@/types/response'
 import { serverApiFetch } from '@/utils/api/serverApiFetch'
 
-export const getGalleries = async (): Promise<Response<Gallery[]>> => {
+export const getGalleries = async (params?: Record<string, string>): Promise<Response<Gallery[]>> => {
   try {
-    const res = await serverApiFetch('/gallery', { method: 'GET' })
+    const res = await serverApiFetch('/gallery', { method: 'GET', query: { ...params } })
 
     return {
       ...res

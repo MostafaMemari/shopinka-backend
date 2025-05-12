@@ -28,7 +28,6 @@ const ParentCategorySelect = ({ control, errors, isLoading }: ParentCategorySele
 
   const categories: Category[] = data?.data?.items || []
 
-  // تابع برای پیدا کردن دسته‌بندی به صورت بازگشتی
   const findCategoryById = (categories: Category[], id: number): Category | undefined => {
     for (const category of categories) {
       if (category.id === id) return category

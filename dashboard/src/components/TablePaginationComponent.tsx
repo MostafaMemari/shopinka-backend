@@ -15,8 +15,7 @@ type TablePaginationProps = {
 }
 
 const TablePaginationComponent = ({ currentPage, totalPages, totalCount, rowsPerPage, onPageChange, onRowsPerPageChange, currentPageItemCount }: TablePaginationProps) => {
-  const pageIndex = currentPage - 1
-  const from = totalCount === 0 ? 0 : pageIndex * rowsPerPage + 1
+  const from = totalCount === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1
   const to = from + currentPageItemCount - 1
 
   return (
@@ -39,7 +38,7 @@ const TablePaginationComponent = ({ currentPage, totalPages, totalCount, rowsPer
           variant='tonal'
           count={totalPages}
           page={currentPage}
-          onChange={(_, newPage) => onPageChange(newPage - 1)}
+          onChange={(_, newPage) => onPageChange(newPage)}
           showFirstButton
           showLastButton
         />

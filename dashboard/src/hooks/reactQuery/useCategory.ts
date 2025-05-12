@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query'
 
 interface UseCategoryParams {
   enabled?: boolean
-  search?: string
   staleTime?: number
   params?: Record<string, any>
 }
