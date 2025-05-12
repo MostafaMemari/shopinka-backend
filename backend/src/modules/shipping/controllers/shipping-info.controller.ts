@@ -1,11 +1,13 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-import { AuthDecorator } from "src/common/decorators/auth.decorator";
+import { Body, Controller, Get, Post, Query } from "@nestjs/common";
+import { ApiConsumes, ApiTags } from "@nestjs/swagger";
+import { AuthDecorator } from "../../../common/decorators/auth.decorator";
 import { ShippingInfoService } from "../services/shipping-info.service";
-import { Roles } from "src/common/decorators/role.decorator";
+import { Roles } from "../../../common/decorators/role.decorator";
 import { Role, User } from "generated/prisma";
 import { CreateShippingInfoDto } from "../dto/create-shipping-info.dto";
-import { GetUser } from "src/common/decorators/get-user.decorator";
+import { GetUser } from "../../../common/decorators/get-user.decorator";
+import { SwaggerConsumes } from "../../../common/enums/swagger-consumes.enum";
+import { PaginationDto } from "src/common/dtos/pagination.dto";
 
 @Controller("shipping-info")
 @ApiTags('shipping-info')
@@ -15,7 +17,14 @@ export class ShippingInfoController {
 
     @Post()
     @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+    @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
     create(@Body() createShippingInfoDto: CreateShippingInfoDto, @GetUser() user: User) {
-        return this.shippingInfoService.create(user.id , createShippingInfoDto)
+        return this.shippingInfoService.create(user.id, createShippingInfoDto)
+    }
+
+    @Get()
+    @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+    findAll(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
+        return this.shippingInfoService.findAll(user.id, paginationDto)
     }
 }

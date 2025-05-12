@@ -1,16 +1,20 @@
 import { BadRequestException, ConflictException, Injectable } from "@nestjs/common";
 import { ShippingInfoRepository } from "../repositories/shipping-info.repository";
-import { UserRepository } from "../../user/user.repository";
 import { OrderRepository } from "../../order/order.repository";
 import { CreateShippingInfoDto } from "../dto/create-shipping-info.dto";
 import { ShippingInfo } from "generated/prisma";
+import { ProductRepository } from "../../product/repositories/product.repository";
+import { ProductVariantRepository } from "../../product/repositories/product-variant.repository";
+import { PaginationDto } from "../../../common/dtos/pagination.dto";
+import { pagination } from "../../../common/utils/pagination.utils";
 
 @Injectable()
 export class ShippingInfoService {
     constructor(
         private readonly shippingInfoRepository: ShippingInfoRepository,
-        private readonly userRepository: UserRepository,
-        private readonly orderRepository: OrderRepository
+        private readonly orderRepository: OrderRepository,
+        private readonly productVariantRepository: ProductVariantRepository,
+        private readonly productRepository: ProductRepository,
     ) { }
 
     async create(userId: number, createShippingInfoDto: CreateShippingInfoDto): Promise<{ message: string, shippingInfo: ShippingInfo }> {
@@ -20,19 +24,12 @@ export class ShippingInfoService {
 
         if (existingShippingInfo) throw new ConflictException()
 
-        const accessPermission = await this.userRepository.findOne({
-            where: {
-                OR: [
-                    { products: { some: { userId } } },
-                    { productVariants: { some: { userId } } }
-                ]
-            }
-        })
+        const product = await this.productRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } })
+        const productVariant = await this.productVariantRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } })
 
-        if (!accessPermission)
-            throw new BadRequestException()
+        if (!product && !productVariant) throw new BadRequestException()
 
-        const order = await this.orderRepository.findOneOrThrow({ where: { id: orderId } })
+        const order = await this.orderRepository.findOneOrThrow({ where: { id: orderId, } })
 
         const newShippingInfo = await this.shippingInfoRepository.create({
             data: { ...createShippingInfoDto, shippingId: order.shippingId }
@@ -40,4 +37,11 @@ export class ShippingInfoService {
 
         return { message: "Created shipping info successfully.", shippingInfo: newShippingInfo }
     }
+
+    async findAll(userId: number, paginationDto: PaginationDto): Promise<unknown> {
+        const shippingInfos = await this.shippingInfoRepository.findAll({ where: { userId } })
+
+        return pagination(paginationDto, shippingInfos)
+    }
+
 }
