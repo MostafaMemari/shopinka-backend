@@ -129,6 +129,7 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType, 
           <Controller
             name='name'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField {...field} fullWidth label='نام ویژگی' placeholder='لطفا نام ویژگی را وارد کنید' error={!!errors.name} helperText={errors.name?.message} />
             )}
@@ -136,6 +137,7 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType, 
           <Controller
             name='slug'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField
                 {...field}
@@ -153,6 +155,7 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType, 
             <Controller
               name='buttonLabel'
               control={control}
+              disabled={isLoading}
               render={({ field }) => (
                 <CustomTextField
                   {...field}
@@ -170,6 +173,7 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType, 
             <Controller
               name='colorCode'
               control={control}
+              disabled={isLoading}
               render={({ field }) => (
                 <div className='flex items-center gap-2 relative'>
                   <CustomTextField

@@ -117,6 +117,7 @@ const UpdateGalleryItemModal = ({ initialData, galleryItemId, children }: Update
           <Controller
             name='title'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField {...field} fullWidth label='نام فایل' placeholder='لطفا نام فایل را وارد کنید' error={!!errors.title} helperText={errors.title?.message} />
             )}
@@ -124,6 +125,7 @@ const UpdateGalleryItemModal = ({ initialData, galleryItemId, children }: Update
           <Controller
             name='description'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField
                 {...field}

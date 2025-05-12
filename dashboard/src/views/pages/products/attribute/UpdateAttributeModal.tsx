@@ -1,5 +1,4 @@
-import { useState, useEffect, useMemo, ReactNode, useCallback } from 'react'
-import Button from '@mui/material/Button'
+import { useState, ReactNode, useCallback } from 'react'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
@@ -123,6 +122,7 @@ const UpdateAttributeModal = ({ children, initialData }: UpdateAttributeModalPro
           <Controller
             name='slug'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField
                 {...field}
@@ -139,6 +139,7 @@ const UpdateAttributeModal = ({ children, initialData }: UpdateAttributeModalPro
           <Controller
             name='type'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField
                 {...field}
@@ -158,6 +159,7 @@ const UpdateAttributeModal = ({ children, initialData }: UpdateAttributeModalPro
           <Controller
             name='description'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField
                 {...field}

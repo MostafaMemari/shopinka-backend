@@ -124,6 +124,7 @@ const UpdateAttributeValuesModal = ({ attributeType, initialData, children }: Up
           <Controller
             name='name'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField {...field} fullWidth label='نام ویژگی' placeholder='لطفا نام ویژگی را وارد کنید' error={!!errors.name} helperText={errors.name?.message} />
             )}
@@ -131,6 +132,7 @@ const UpdateAttributeValuesModal = ({ attributeType, initialData, children }: Up
           <Controller
             name='slug'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField
                 {...field}
@@ -148,6 +150,7 @@ const UpdateAttributeValuesModal = ({ attributeType, initialData, children }: Up
             <Controller
               name='buttonLabel'
               control={control}
+              disabled={isLoading}
               render={({ field }) => (
                 <CustomTextField
                   {...field}
@@ -165,6 +168,7 @@ const UpdateAttributeValuesModal = ({ attributeType, initialData, children }: Up
             <Controller
               name='colorCode'
               control={control}
+              disabled={isLoading}
               render={({ field }) => (
                 <div className='flex items-center gap-2 relative'>
                   <CustomTextField

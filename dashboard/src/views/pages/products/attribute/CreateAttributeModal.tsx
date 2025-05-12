@@ -111,6 +111,7 @@ const CreateAttributeModal = ({ children }: CreateAttributeModalProps) => {
           <Controller
             name='name'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField {...field} fullWidth label='نام ویژگی' placeholder='لطفا نام ویژگی را وارد کنید' error={!!errors.name} helperText={errors.name?.message} />
             )}
@@ -118,6 +119,7 @@ const CreateAttributeModal = ({ children }: CreateAttributeModalProps) => {
           <Controller
             name='slug'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField
                 {...field}
@@ -134,6 +136,7 @@ const CreateAttributeModal = ({ children }: CreateAttributeModalProps) => {
           <Controller
             name='type'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField
                 {...field}
@@ -153,6 +156,7 @@ const CreateAttributeModal = ({ children }: CreateAttributeModalProps) => {
           <Controller
             name='description'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField
                 {...field}

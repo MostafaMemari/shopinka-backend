@@ -113,6 +113,7 @@ const UpdateGalleryModal = ({ children, initialData }: UpdateGalleryModalProps) 
           <Controller
             name='title'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField {...field} fullWidth label='نام گالری' placeholder='لطفا نام گالری را وارد کنید' error={!!errors.title} helperText={errors.title?.message} />
             )}
@@ -120,6 +121,7 @@ const UpdateGalleryModal = ({ children, initialData }: UpdateGalleryModalProps) 
           <Controller
             name='description'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField
                 {...field}
