@@ -1,7 +1,7 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { ZarinpalService } from '../http/zarinpal.service';
 import { PaymentRepository } from './payment.repository';
-import { OrderStatus, Prisma, Transaction, TransactionStatus } from 'generated/prisma';
+import { OrderItem, OrderStatus, Prisma, Transaction, TransactionStatus } from 'generated/prisma';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { IVerifyPayment } from '../../common/interfaces/payment.interface';
 import { PaymentMessages } from './enums/payment.messages';
@@ -19,6 +19,7 @@ import { OrderRepository } from '../order/repositories/order.repository';
 import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
 import { ProductRepository } from '../product/repositories/product.repository';
+import { CartRepository } from '../cart/repositories/cart.repository';
 
 @Injectable()
 export class PaymentService {
@@ -33,6 +34,7 @@ export class PaymentService {
         private readonly orderService: OrderService,
         private readonly orderRepository: OrderRepository,
         private readonly cartItemRepository: CartItemRepository,
+        private readonly cartRepository: CartRepository,
         private readonly productRepository: ProductRepository,
         private readonly productVariantRepository: ProductVariantRepository,
     ) { }
@@ -94,6 +96,7 @@ export class PaymentService {
 
         try {
             payment = await this.paymentRepository.findOneOrThrow({ where: { authority } });
+
             if (payment.status !== TransactionStatus.PENDING)
                 throw new BadRequestException(PaymentMessages.FailedOrVerified);
 
@@ -104,22 +107,12 @@ export class PaymentService {
 
             const isSuccess = status === 'OK' && code === 100;
 
-            const orderUpdate = {
-                status: isSuccess ? OrderStatus.PAID : OrderStatus.CANCELED,
-            };
+            const updatedOrder = await this.updateOrderStatus(payment.orderId, isSuccess);
+            await this.updatePaymentStatus(payment.id, isSuccess, sessionId);
+            payment = { ...payment, status: isSuccess ? TransactionStatus.SUCCESS : TransactionStatus.FAILED, sessionId };
 
-            const paymentUpdate = {
-                status: isSuccess ? TransactionStatus.SUCCESS : TransactionStatus.FAILED,
-                ...(sessionId && { sessionId }),
-            };
-
-            await this.orderRepository.update({ where: { id: payment.orderId }, data: orderUpdate });
-            payment = await this.paymentRepository.update({ where: { id: payment.id }, data: paymentUpdate });
-
-            if (isSuccess) {
-                const order = await this.orderRepository.findOneOrThrow({ where: { id: payment.orderId } });
-                await this.decreaseCartItemsStock(order.userId);
-                await this.cartItemRepository.deleteMany({ where: { cart: { userId: order.userId } } });
+            if (!isSuccess) {
+                await this.restoreCart(payment.userId, updatedOrder['items']);
             }
 
             return {
@@ -127,22 +120,17 @@ export class PaymentService {
                 payment,
                 message: PaymentMessages.VerifiedSuccess,
             };
+
         } catch (error) {
             if (payment?.id && payment.status === TransactionStatus.PENDING) {
-                await this.paymentRepository.update({
-                    where: { id: payment.id },
-                    data: { status: TransactionStatus.FAILED },
-                });
-
-                await this.orderRepository.update({
-                    where: { id: payment.orderId },
-                    data: { status: OrderStatus.CANCELED },
-                });
+                const updatedOrder = await this.updateOrderStatus(payment.orderId, false);
+                await this.updatePaymentStatus(payment.id, false);
+                await this.restoreCart(payment.userId, updatedOrder['items']);
             }
 
             throw new HttpException(error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
+    }      
 
     async refund(transactionId: number, refundPaymentDto: RefundPaymentDto) {
         const { description, reason } = refundPaymentDto;
@@ -210,7 +198,7 @@ export class PaymentService {
         return this.paymentRepository.findOneOrThrow({ where: { id: transactionId }, include: { user: true } });
     }
 
-    private async decreaseCartItemsStock(userId: number) {
+    private async increaseCartItemsStock(userId: number) {
         const cartItems = await this.cartItemRepository.findAll({
             where: { cart: { userId } },
             include: { product: true, productVariant: true },
@@ -220,15 +208,52 @@ export class PaymentService {
             if (item.productId) {
                 await this.productRepository.update({
                     where: { id: item.productId },
-                    data: { quantity: { decrement: item.quantity } },
+                    data: { quantity: { increment: item.quantity } },
                 });
             }
             if (item.productVariantId) {
                 await this.productVariantRepository.update({
                     where: { id: item.productVariantId },
-                    data: { quantity: { decrement: item.quantity } },
+                    data: { quantity: { increment: item.quantity } },
                 });
             }
         }
     }
+
+    private async updateOrderStatus(orderId: number, isSuccess: boolean) {
+        return this.orderRepository.update({
+            where: { id: orderId },
+            data: { status: isSuccess ? OrderStatus.PAID : OrderStatus.CANCELED },
+            include: { items: true },
+        });
+    }
+
+    private async updatePaymentStatus(paymentId: number, isSuccess: boolean, sessionId?: string) {
+        return this.paymentRepository.update({
+            where: { id: paymentId },
+            data: {
+                status: isSuccess ? TransactionStatus.SUCCESS : TransactionStatus.FAILED,
+                ...(sessionId && { sessionId }),
+            },
+        });
+    }
+
+    private async restoreCart(userId: number, orderItems: OrderItem[]) {
+        await this.increaseCartItemsStock(userId);
+
+        const cartItems = orderItems.map((item) => {
+            const { id, createdAt, ...rest } = item;
+            return rest;
+        });
+
+        await this.cartRepository.update({
+            where: { userId },
+            data: {
+                items: {
+                    connect: cartItems,
+                },
+            },
+        });
+    }
+      
 }
