@@ -25,7 +25,7 @@ export class CartService {
 
   async me(userId: number): Promise<IGetCart> {
     const { items: cartItems, ...cart }: Cart & { items: CartItem[] } =
-      await this.cartRepository.findOneOrThrow({ where: { userId }, include: { shopping: true, items: { include: { product: true, productVariant: true } } } }) as any
+      await this.cartRepository.findOneOrThrow({ where: { userId }, include: { items: { include: { product: true, productVariant: true } } } }) as any
 
     let finalPrice = 0
     let totalSaved = 0
@@ -45,14 +45,6 @@ export class CartService {
       totalSaved,
       cartItems
     }
-  }
-
-  async addShipping(userId: number, shippingId: number): Promise<{ message: string, cart: Cart }> {
-    await this.shippingRepository.findOneOrThrow({ where: { id: shippingId } })
-
-    const updatedCart = await this.cartRepository.update({ where: { userId }, data: { shippingId } })
-
-    return { message: CartMessages.AddedShippingSuccess, cart: updatedCart }
   }
 
   async clear(userId: number): Promise<Cart> {

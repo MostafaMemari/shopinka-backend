@@ -36,11 +36,6 @@ export class CartController {
     return this.cartService.addItem(user.id, createCatItemDto)
   }
 
-  @Patch(":shippingId")
-  addShipping(@Param('shippingId', ParseIntPipe) shippingId: number, @GetUser() user: User) {
-    return this.cartService.addShipping(user.id, shippingId)
-  }
-
   @Patch('item/:id')
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   updateItem(@Param('id', ParseIntPipe) id: number, @Body() updateCartItemDto: UpdateCartItemDto, @GetUser() user: User) {
