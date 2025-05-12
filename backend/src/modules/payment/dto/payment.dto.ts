@@ -12,6 +12,14 @@ export class PaymentDto {
 
     @IsOptional()
     @IsNotEmpty()
+    @IsNumber()
+    @IsPositive()
+    @ApiProperty({ type: 'number', required: false, nullable: true })
+    @Transform(({ value }) => +value)
+    shippingId?: number;
+
+    @IsOptional()
+    @IsNotEmpty()
     @IsString()
     @ApiProperty({
         type: 'string',

@@ -16,6 +16,7 @@ import { CartRepository } from '../cart/repositories/cart.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
 import { ProductRepository } from '../product/repositories/product.repository';
 import { CartItemRepository } from '../cart/repositories/cardItem.repository';
+import { ShippingRepository } from '../shipping/shipping.repository';
 
 @Injectable()
 export class OrderService {
@@ -30,6 +31,7 @@ export class OrderService {
     private readonly productRepository: ProductRepository,
     private readonly productVariantRepository: ProductVariantRepository,
     private readonly cartItemRepository: CartItemRepository,
+    private readonly shippingRepository: ShippingRepository,
     private readonly cacheService: CacheService
   ) { }
 
@@ -112,16 +114,19 @@ export class OrderService {
   }
 
   async create(userId: number, cart: IGetCart, paymentDto: PaymentDto): Promise<Order> {
-    const { addressId } = paymentDto;
-    const { cartItems, finalPrice } = cart;
+    const { addressId, shippingId } = paymentDto;
+    let { cartItems, finalPrice } = cart;
 
     if (!cartItems.length) {
       throw new BadRequestException("Your cart list is empty.");
     }
 
-    await this.addressRepository.findOneOrThrow({
-      where: { userId, id: addressId },
-    });
+    if (shippingId) {
+      const shipping = await this.shippingRepository.findOneOrThrow({ where: { id: shippingId } })
+      finalPrice += shipping.price
+    }
+
+    await this.addressRepository.findOneOrThrow({ where: { userId, id: addressId } });
 
     const orderNumber = this.generateOrderNumber();
     const orderItems = this.mapCartItemsToOrderItems(cartItems);
@@ -129,6 +134,7 @@ export class OrderService {
     const newOrder = await this.orderRepository.create({
       data: {
         addressId,
+        shippingId,
         orderNumber,
         totalPrice: finalPrice,
         status: OrderStatus.PENDING,
