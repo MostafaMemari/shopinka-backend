@@ -28,8 +28,7 @@ const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
     control,
     reset,
     handleSubmit,
-    formState: { errors },
-    setValue
+    formState: { errors }
   } = useForm<GalleryForm>({
     resolver: yupResolver(gallerySchema),
     defaultValues: {
@@ -63,7 +62,7 @@ const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
 
         if (status === 200 || status === 201) {
           showToast({ type: 'success', message: 'گالری با موفقیت ثبت شد' })
-          invalidate(QueryKeys.Attributes)
+          invalidate(QueryKeys.Galleries)
           handleClose()
         }
       } catch (error: any) {
@@ -77,16 +76,18 @@ const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
 
   return (
     <div>
-      {children || (
-        <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />}>
-          ثبت گالری جدید
-        </Button>
-      )}
+      <div onClick={handleOpen}>
+        {children || (
+          <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
+            ثبت گالری جدید
+          </Button>
+        )}
+      </div>
 
       <CustomDialog
         open={open}
         onClose={handleClose}
-        title='افزودن گالری جدید'
+        title='ثبت گالری جدید'
         defaultMaxWidth='xs'
         actions={
           <>
@@ -94,7 +95,16 @@ const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
           </>
         }
       >
-        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
+        <form
+          onKeyDown={e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault()
+              handleSubmit(onSubmit)()
+            }
+          }}
+          onSubmit={handleSubmit(onSubmit)}
+          className='flex flex-col gap-5'
+        >
           <Controller
             name='title'
             control={control}

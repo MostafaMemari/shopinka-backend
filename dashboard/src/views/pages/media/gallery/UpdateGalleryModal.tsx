@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react' // اضافه کردن useEffect
+import { useState, useEffect, ReactNode, useCallback } from 'react' // اضافه کردن useEffect
 import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
@@ -14,79 +14,82 @@ import getChangedFields from '@/utils/getChangedFields'
 import { gallerySchema } from '@/libs/validators/gallery.schemas'
 import { QueryKeys } from '@/types/query-keys'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
+import { cleanObject } from '@/utils/formatters'
+import { checkBadTags } from '@iconify/tools/lib/index.js'
 
-const UpdateGalleryModal = ({ initialData }: { initialData: Partial<Gallery> }) => {
+interface UpdateGalleryModalProps {
+  initialData: Gallery
+  children?: ReactNode
+}
+
+const UpdateGalleryModal = ({ children, initialData }: UpdateGalleryModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const { invalidate } = useInvalidateQuery()
-
-  const galleryForm: GalleryForm = {
-    title: initialData?.title ?? '',
-    description: initialData?.description ?? ''
-  }
-
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
 
   const {
     control,
     reset,
     handleSubmit,
-    formState: { errors },
-    setValue
+    formState: { errors }
   } = useForm({
     resolver: yupResolver(gallerySchema),
     defaultValues: {
-      title: galleryForm?.title,
-      description: galleryForm?.description || null
+      title: initialData?.title ?? '',
+      description: initialData?.description || ''
     }
   })
 
-  useEffect(() => {
-    reset({
-      title: initialData?.title,
-      description: initialData?.description || null
-    })
-  }, [initialData, reset])
+  const handleOpen = useCallback(() => setOpen(true), [])
 
-  const onSubmit = async (formData: GalleryForm) => {
-    try {
-      if (initialData?.id !== undefined) {
-        const changedData = getChangedFields(initialData, {
-          ...formData,
-          description: formData.description || null
-        })
+  const handleClose = useCallback(() => {
+    setOpen(false)
+    reset()
+  }, [reset])
 
-        if (Object.keys(changedData).length === 0) {
-          showToast({ type: 'info', message: 'هیچ تغییری اعمال نشده است' })
+  const onSubmit = useCallback(
+    async (formData: GalleryForm) => {
+      try {
+        if (initialData?.id !== undefined) {
+          const cleanedData = cleanObject(formData)
+          const changedData = getChangedFields(initialData, cleanedData)
 
-          return
+          if (formData.description === null && !('description' in cleanedData)) changedData.description = ''
+
+          if (Object.keys(changedData).length === 0) {
+            showToast({ type: 'info', message: 'هیچ تغییری اعمال نشده است' })
+
+            return
+          }
+
+          const res = await updateGallery(String(initialData.id), changedData)
+
+          const errorMessage = handleApiError(res.status, errorGalleryMessage)
+
+          if (errorMessage) {
+            showToast({ type: 'error', message: errorMessage })
+
+            return
+          }
+
+          if (res.status === 200) {
+            showToast({ type: 'success', message: 'گالری با موفقیت ویرایش شد' })
+            invalidate(QueryKeys.Galleries)
+
+            reset({
+              title: formData.title || '',
+              description: formData.description || null
+            })
+            handleClose()
+          }
         }
-
-        const res = await updateGallery(String(initialData.id), changedData)
-
-        const errorMessage = handleApiError(res.status, errorGalleryMessage)
-
-        if (errorMessage) {
-          showToast({ type: 'error', message: errorMessage })
-
-          return
-        }
-
-        if (res.status === 200) {
-          showToast({ type: 'success', message: 'گالری با موفقیت ویرایش شد' })
-          invalidate(QueryKeys.Galleries)
-
-          reset({
-            title: formData.title || '',
-            description: formData.description || null
-          })
-          handleClose()
-        }
+      } catch (error: any) {
+        console.log(error)
+        showToast({ type: 'error', message: 'خطای سیستمی' })
       }
-    } catch (error: any) {
-      showToast({ type: 'error', message: 'خطای سیستمی' })
-    }
-  }
+    },
+    [handleClose, initialData, invalidate]
+  )
 
   return (
     <div>

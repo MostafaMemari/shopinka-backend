@@ -20,7 +20,7 @@ export const formatDate = (dateString: string): string => {
 export const cleanObject = <T extends Record<string, any>>(obj: T): T => {
   return Object.fromEntries(
     Object.entries(obj)
-      .map(([key, value]) => [key, typeof value === 'string' ? value.trim() : value])
+      .map(([key, value]) => [key, typeof value === 'string' && value !== '' ? value.trim() : value])
       .filter(([_, value]) => value !== null && value !== '' && value !== undefined)
   ) as T
 }

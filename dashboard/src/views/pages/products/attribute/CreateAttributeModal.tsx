@@ -53,7 +53,6 @@ const CreateAttributeModal = ({ children }: CreateAttributeModalProps) => {
 
       try {
         const cleanedData = cleanObject(formData)
-
         const { status } = await createAttribute(cleanedData)
 
         const errorMessage = handleApiError(status, errorAttributeMessage)
@@ -70,7 +69,7 @@ const CreateAttributeModal = ({ children }: CreateAttributeModalProps) => {
           handleClose()
         }
       } catch (error: any) {
-        showToast({ type: 'error', message: 'خطای سیستمی' })
+        showToast({ type: 'error', message: 'خطای سیستمی رخ داد' })
       } finally {
         setIsLoading(false)
       }

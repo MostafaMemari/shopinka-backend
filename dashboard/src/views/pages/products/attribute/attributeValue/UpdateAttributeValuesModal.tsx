@@ -114,7 +114,11 @@ const UpdateAttributeValuesModal = ({ attributeType, initialData, children }: Up
         onClose={handleClose}
         title={`بروزرسانی ${initialData.name}`}
         defaultMaxWidth='xs'
-        actions={<FormActions onCancel={handleClose} submitText='بروزرسانی' onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />}
+        actions={
+          <>
+            <FormActions onCancel={handleClose} submitText='بروزرسانی' onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
+          </>
+        }
       >
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
           <Controller

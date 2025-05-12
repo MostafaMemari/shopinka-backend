@@ -50,7 +50,7 @@ const ProductAttributeView = () => {
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
         <CreateAttributeModal />
       </Box>
-      {!isMobile && <DesktopAttributeTable data={attributes} />}
+      <DesktopAttributeTable data={attributes} />
       <TablePaginationComponent
         currentPage={page}
         totalPages={paginationData.totalPages}

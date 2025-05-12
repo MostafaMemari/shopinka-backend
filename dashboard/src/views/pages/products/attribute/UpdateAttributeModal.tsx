@@ -56,6 +56,8 @@ const UpdateAttributeModal = ({ children, initialData }: UpdateAttributeModalPro
           const cleanedData = cleanObject(formData)
           const changedData = getChangedFields(initialData, cleanedData)
 
+          if (formData.description === null && !('description' in cleanedData)) changedData.description = ''
+
           if (Object.keys(changedData).length === 0) {
             showToast({ type: 'info', message: 'هیچ تغییری اعمال نشده است' })
 
@@ -102,7 +104,11 @@ const UpdateAttributeModal = ({ children, initialData }: UpdateAttributeModalPro
         onClose={handleClose}
         title='بروزرسانی ویژگی'
         defaultMaxWidth='xs'
-        actions={<FormActions onCancel={handleClose} submitText='بروزرسانی' onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />}
+        actions={
+          <>
+            <FormActions onCancel={handleClose} submitText='بروزرسانی' onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
+          </>
+        }
       >
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
           <Controller

@@ -110,7 +110,11 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType, 
         onClose={handleClose}
         title={`ثبت متغیر ویژگی برای ${attributeName}`}
         defaultMaxWidth='xs'
-        actions={<FormActions onCancel={handleClose} onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />}
+        actions={
+          <>
+            <FormActions onCancel={handleClose} onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
+          </>
+        }
       >
         <form
           onKeyDown={e => {
