@@ -7,6 +7,7 @@ import { ProductRepository } from "../../product/repositories/product.repository
 import { ProductVariantRepository } from "../../product/repositories/product-variant.repository";
 import { PaginationDto } from "../../../common/dtos/pagination.dto";
 import { pagination } from "../../../common/utils/pagination.utils";
+import { UpdateShippingInfoDto } from "../dto/update-shipping-info.dto";
 
 @Injectable()
 export class ShippingInfoService {
@@ -24,12 +25,12 @@ export class ShippingInfoService {
 
         if (existingShippingInfo) throw new ConflictException()
 
+        const order = await this.orderRepository.findOneOrThrow({ where: { id: orderId } })
+
         const product = await this.productRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } })
         const productVariant = await this.productVariantRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } })
 
         if (!product && !productVariant) throw new BadRequestException()
-
-        const order = await this.orderRepository.findOneOrThrow({ where: { id: orderId, } })
 
         const newShippingInfo = await this.shippingInfoRepository.create({
             data: { ...createShippingInfoDto, shippingId: order.shippingId }
@@ -39,9 +40,36 @@ export class ShippingInfoService {
     }
 
     async findAll(userId: number, paginationDto: PaginationDto): Promise<unknown> {
-        const shippingInfos = await this.shippingInfoRepository.findAll({ where: { userId } })
+        const shippingInfos = await this.shippingInfoRepository.findAll({
+            where: { userId },
+            orderBy: { createdAt: 'desc' },
+            include: { order: true, shipping: true }
+        })
 
         return pagination(paginationDto, shippingInfos)
+    }
+
+    async update(userId: number, shippingInfoId: number, updateShippingInfoDto: UpdateShippingInfoDto) {
+        const { orderId, trackingCode } = updateShippingInfoDto
+
+        if (trackingCode) {
+            const existingShippingInfo = await this.shippingInfoRepository.findOne({ where: { trackingCode } })
+
+            if (existingShippingInfo) throw new ConflictException()
+        }
+
+        if (orderId) {
+            await this.orderRepository.findOneOrThrow({ where: { id: orderId } })
+
+            const product = await this.productRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } })
+            const productVariant = await this.productVariantRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } })
+
+            if (!product && !productVariant) throw new BadRequestException()
+        }
+
+        const updatedShippingInfo = this.shippingInfoRepository.update({ where: { id: shippingInfoId }, data: updateShippingInfoDto })
+
+        return { message: "Updated shipping info successfully.", shippingInfo: updatedShippingInfo }
     }
 
 }
