@@ -82,7 +82,7 @@ model User {
 
 model Transaction {
   id            Int               @id @default(autoincrement())
-  user          User?             @relation(references: [id], fields: [userId], onDelete: NoAction)
+  user          User?             @relation(references: [id], fields: [userId], onDelete: SetNull)
   userId        Int?
   orderId       Int               @unique()
   amount        Int
@@ -152,8 +152,8 @@ model Attribute {
   id              Int              @id() @default(autoincrement())
   name            String
   slug            String           @unique()
-  userId          Int
-  user            User             @relation(fields: [userId], references: [id], onDelete: NoAction)
+  userId          Int?
+  user            User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
   type            AttributeType
   description     String?
   values          AttributeValue[]
@@ -169,19 +169,19 @@ model AttributeValue {
   slug        String   @unique()
   colorCode   String?  @map("color_code")
   buttonLabel String?  @map("button_label")
-  attributeId Int
+  attributeId Int?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt()
 
-  attribute Attribute @relation(fields: [attributeId], references: [id], onDelete: NoAction)
+  attribute Attribute? @relation(fields: [attributeId], references: [id], onDelete: SetNull)
 }
 
 model Product {
   id               Int              @id @default(autoincrement())
   sku              String           @unique()
   name             String
-  mainImageId      Int
-  userId           Int
+  mainImageId      Int?
+  userId           Int?
   slug             String           @unique()
   description      String?
   shortDescription String?          @map("short_description")
@@ -190,9 +190,9 @@ model Product {
   salePrice        Int?             @map("sale_price")
   status           ProductStatus    @default(PUBLISHED)
   type             ProductType      @default(SIMPLE)
-  mainImage        GalleryItem      @relation("MainImage", fields: [mainImageId], references: [id], onDelete: NoAction)
+  mainImage        GalleryItem?      @relation("MainImage", fields: [mainImageId], references: [id], onDelete: SetNull)
   galleryImages    GalleryItem[]    @relation("ProductToGalleryItem")
-  user             User             @relation(fields: [userId], references: [id], onDelete: NoAction)
+  user             User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
   attributes       Attribute[]
   variants         ProductVariant[]
   favorites        Favorite[]
@@ -216,14 +216,14 @@ model ProductVariant {
   mainImageId Int?
   productId   Int
   orderId     Int?
-  userId      Int
+  userId      Int?
   description String?
   quantity    Int?
   basePrice   Int?         @map("base_price")
   salePrice   Int?         @map("sale_price")
-  mainImage   GalleryItem? @relation("VariantMainImage", fields: [mainImageId], references: [id], onDelete: NoAction)
+  mainImage   GalleryItem? @relation("VariantMainImage", fields: [mainImageId], references: [id], onDelete: SetNull)
   product     Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
-  user        User         @relation(fields: [userId], references: [id], onDelete: NoAction)
+  user        User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
   attributes  Attribute[]
   cartItems   CartItem[]
   orderItems  OrderItem[]
@@ -253,7 +253,7 @@ model Category {
   slug             String   @unique()
   description      String?
   parentId         Int?
-  userId           Int
+  userId           Int?
   thumbnailImageId Int?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt()
@@ -261,11 +261,11 @@ model Category {
   parent   Category?  @relation("CategoryToCategory", fields: [parentId], references: [id], onDelete: Cascade)
   children Category[] @relation("CategoryToCategory")
   seoMeta  SeoMeta?   @relation("SeoMetaCategory")
-  user     User       @relation(fields: [userId], references: [id], onDelete: NoAction)
+  user     User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
   products Product[]
   blogs    Blog[]
 
-  thumbnailImage GalleryItem? @relation(fields: [thumbnailImageId], references: [id], onDelete: NoAction)
+  thumbnailImage GalleryItem? @relation(fields: [thumbnailImageId], references: [id], onDelete: SetNull)
 }
 
 model Comment {
@@ -291,14 +291,11 @@ model Comment {
 }
 
 model Cart {
-  id         Int  @id() @default(autoincrement())
-  userId     Int  @unique()
-  shippingId Int?
+  id     Int @id() @default(autoincrement())
+  userId Int @unique()
 
-  user User @relation("UserCart", fields: [userId], references: [id], onDelete: Cascade)
-
-  items    CartItem[]
-  shopping Shipping?  @relation(fields: [shippingId], references: [id], onDelete: NoAction)
+  user  User       @relation("UserCart", fields: [userId], references: [id], onDelete: Cascade)
+  items CartItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
@@ -319,19 +316,22 @@ model CartItem {
 }
 
 model Order {
-  id          Int          @id() @default(autoincrement())
-  userId      Int
-  addressId   Int
-  orderNumber String       @unique()
-  quantity    Int
-  totalPrice  Int
-  status      OrderStatus  @default(PENDING)
-  items       OrderItem[]
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  address     Address      @relation(fields: [addressId], references: [id], onDelete: SetDefault)
-  transaction Transaction? @relation("TransactionOrder")
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt()
+  id           Int           @id() @default(autoincrement())
+  userId       Int?
+  addressId    Int?
+  shippingId   Int?
+  orderNumber  String        @unique()
+  quantity     Int
+  totalPrice   Int
+  status       OrderStatus   @default(PENDING)
+  items        OrderItem[]
+  user         User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address      Address?       @relation(fields: [addressId], references: [id], onDelete: SetNull)
+  transaction  Transaction?  @relation("TransactionOrder")
+  shippingInfo ShippingInfo? @relation("ShippingInfoOrder")
+  shopping     Shipping?     @relation(fields: [shippingId], references: [id], onDelete: SetNull)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt()
 }
 
 model OrderItem {
@@ -374,7 +374,7 @@ model SeoMeta {
 
 model Blog {
   id          Int        @id() @default(autoincrement())
-  userId      Int
+  userId      Int?
   slug        String     @unique()
   title       String
   content     String?
@@ -383,7 +383,7 @@ model Blog {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt()
 
-  user       User       @relation(fields: [userId], references: [id], onDelete: NoAction)
+  user       User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
   comments   Comment[]
   categories Category[]
   tags       Tag[]
@@ -392,7 +392,7 @@ model Blog {
 
 model Tag {
   id               Int      @id() @default(autoincrement())
-  userId           Int
+  userId           Int?
   thumbnailImageId Int?
   name             String
   slug             String   @unique()
@@ -402,14 +402,14 @@ model Tag {
 
   products       Product[]
   blogs          Blog[]
-  user           User         @relation(fields: [userId], references: [id], onDelete: NoAction)
-  thumbnailImage GalleryItem? @relation(fields: [thumbnailImageId], references: [id], onDelete: NoAction)
+  user           User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  thumbnailImage GalleryItem? @relation(fields: [thumbnailImageId], references: [id], onDelete: SetNull)
   seoMeta        SeoMeta?     @relation("SeoMetaTag")
 }
 
 model Shipping {
   id            Int      @id() @default(autoincrement())
-  userId        Int
+  userId        Int?
   name          String
   price         Int
   estimatedDays Int?
@@ -417,6 +417,20 @@ model Shipping {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt()
 
-  user  User   @relation(fields: [userId], references: [id], onDelete: NoAction)
-  carts Cart[]
+  user          User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  orders        Order[]
+  shippingInfos ShippingInfo[]
+}
+
+model ShippingInfo {
+  id         Int @id() @default(autoincrement())
+  shippingId Int
+  orderId    Int @unique()
+  tackingCode String @unique()
+
+  sipping Shipping @relation(fields: [shippingId], references: [id], onDelete: Cascade)
+  order   Order    @relation("ShippingInfoOrder", fields: [orderId], references: [id], onDelete: Cascade)
+
+  sentAt    DateTime @default(now())
+  createdAt DateTime @default(now())
 }
