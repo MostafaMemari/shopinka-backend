@@ -1,6 +1,5 @@
 import { BadRequestException, ConflictException, Injectable } from "@nestjs/common";
 import { ShippingInfoRepository } from "../repositories/shipping-info.repository";
-import { OrderRepository } from "../../order/order.repository";
 import { CreateShippingInfoDto } from "../dto/create-shipping-info.dto";
 import { ShippingInfo } from "generated/prisma";
 import { ProductRepository } from "../../product/repositories/product.repository";
@@ -8,6 +7,8 @@ import { ProductVariantRepository } from "../../product/repositories/product-var
 import { PaginationDto } from "../../../common/dtos/pagination.dto";
 import { pagination } from "../../../common/utils/pagination.utils";
 import { UpdateShippingInfoDto } from "../dto/update-shipping-info.dto";
+import { ShippingInfoMessages } from "../enums/shipping-info-messages.enum";
+import { OrderRepository } from "../../order/repositories/order.repository";
 
 @Injectable()
 export class ShippingInfoService {
@@ -23,20 +24,20 @@ export class ShippingInfoService {
 
         const existingShippingInfo = await this.shippingInfoRepository.findOne({ where: { trackingCode } })
 
-        if (existingShippingInfo) throw new ConflictException()
+        if (existingShippingInfo) throw new ConflictException(ShippingInfoMessages.AlreadyExistsShippingInfo)
 
         const order = await this.orderRepository.findOneOrThrow({ where: { id: orderId } })
 
         const product = await this.productRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } })
         const productVariant = await this.productVariantRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } })
 
-        if (!product && !productVariant) throw new BadRequestException()
+        if (!product && !productVariant) throw new BadRequestException(ShippingInfoMessages.NoAccessToCreateShippingInfo)
 
         const newShippingInfo = await this.shippingInfoRepository.create({
             data: { ...createShippingInfoDto, shippingId: order.shippingId }
         })
 
-        return { message: "Created shipping info successfully.", shippingInfo: newShippingInfo }
+        return { message: ShippingInfoMessages.CreatedShippingInfoSuccess, shippingInfo: newShippingInfo }
     }
 
     async findAll(userId: number, paginationDto: PaginationDto): Promise<unknown> {
@@ -55,7 +56,7 @@ export class ShippingInfoService {
         if (trackingCode) {
             const existingShippingInfo = await this.shippingInfoRepository.findOne({ where: { trackingCode } })
 
-            if (existingShippingInfo) throw new ConflictException()
+            if (existingShippingInfo) throw new ConflictException(ShippingInfoMessages.AlreadyExistsShippingInfo)
         }
 
         if (orderId) {
@@ -64,12 +65,12 @@ export class ShippingInfoService {
             const product = await this.productRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } })
             const productVariant = await this.productVariantRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } })
 
-            if (!product && !productVariant) throw new BadRequestException()
+            if (!product && !productVariant) throw new BadRequestException(ShippingInfoMessages.NoAccessToCreateShippingInfo)
         }
 
         const updatedShippingInfo = this.shippingInfoRepository.update({ where: { id: shippingInfoId }, data: updateShippingInfoDto })
 
-        return { message: "Updated shipping info successfully.", shippingInfo: updatedShippingInfo }
+        return { message: ShippingInfoMessages.UpdatedShippingInfoSuccess, shippingInfo: updatedShippingInfo }
     }
 
 }

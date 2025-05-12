@@ -8,6 +8,9 @@ import { ShippingInfoRepository } from './repositories/shipping-info.repository'
 import { OrderRepository } from '../order/repositories/order.repository';
 import { ShippingInfoController } from './controllers/shipping-info.controller';
 import { ShippingInfoService } from './services/shipping-info.service';
+import { CacheService } from '../cache/cache.service';
+import { ProductRepository } from '../product/repositories/product.repository';
+import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
 
 @Module({
   controllers: [ShippingController, ShippingInfoController],
@@ -18,7 +21,10 @@ import { ShippingInfoService } from './services/shipping-info.service';
     ShippingRepository,
     ShippingInfoRepository,
     OrderRepository,
-    ShippingInfoService
+    ShippingInfoService,
+    CacheService,
+    ProductRepository,
+    ProductVariantRepository
   ],
 })
 export class ShippingModule { }
