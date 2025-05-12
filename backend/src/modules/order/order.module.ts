@@ -9,6 +9,9 @@ import { AuthService } from '../auth/auth.service';
 import { UserRepository } from '../user/user.repository';
 import { OrderItemRepository } from './repositories/order-item.repository';
 import { CartRepository } from '../cart/repositories/cart.repository';
+import { ProductRepository } from '../product/repositories/product.repository';
+import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
+import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 
 @Module({
   controllers: [OrderController],
@@ -21,7 +24,10 @@ import { CartRepository } from '../cart/repositories/cart.repository';
     AuthService,
     UserRepository,
     OrderItemRepository,
-    CartRepository
+    CartRepository,
+    ProductRepository,
+    ProductVariantRepository,
+    CartItemRepository
   ],
 })
 export class OrderModule { }

@@ -13,6 +13,9 @@ import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { OrderItemRepository } from './repositories/order-item.repository';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { CartRepository } from '../cart/repositories/cart.repository';
+import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
+import { ProductRepository } from '../product/repositories/product.repository';
+import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 
 @Injectable()
 export class OrderService {
@@ -24,6 +27,9 @@ export class OrderService {
     private readonly orderItemRepository: OrderItemRepository,
     private readonly addressRepository: AddressRepository,
     private readonly cartRepository: CartRepository,
+    private readonly productRepository: ProductRepository,
+    private readonly productVariantRepository: ProductVariantRepository,
+    private readonly cartItemRepository: CartItemRepository,
     private readonly cacheService: CacheService
   ) { }
 
@@ -64,7 +70,6 @@ export class OrderService {
     }
   }
 
-
   private generateOrderNumber(): string {
     const number = Math.floor(Math.random() * 1_000_000_000).toString().padStart(9, '0');
     return number.match(/.{1,3}/g)?.join('-') || '';
@@ -84,6 +89,28 @@ export class OrderService {
     });
   }
 
+  private async decreaseCartItemsStock(userId: number) {
+    const cartItems = await this.cartItemRepository.findAll({
+      where: { cart: { userId } },
+      include: { product: true, productVariant: true },
+    });
+
+    for (const item of cartItems) {
+      if (item.productId) {
+        await this.productRepository.update({
+          where: { id: item.productId },
+          data: { quantity: { decrement: item.quantity } },
+        });
+      }
+      if (item.productVariantId) {
+        await this.productVariantRepository.update({
+          where: { id: item.productVariantId },
+          data: { quantity: { decrement: item.quantity } },
+        });
+      }
+    }
+  }
+
   async create(userId: number, cart: IGetCart, paymentDto: PaymentDto): Promise<Order> {
     const { addressId } = paymentDto;
     const { cartItems, finalPrice } = cart;
@@ -99,7 +126,7 @@ export class OrderService {
     const orderNumber = this.generateOrderNumber();
     const orderItems = this.mapCartItemsToOrderItems(cartItems);
 
-    return await this.orderRepository.create({
+    const newOrder = await this.orderRepository.create({
       data: {
         addressId,
         orderNumber,
@@ -111,6 +138,12 @@ export class OrderService {
       },
       include: { items: true, user: true },
     });
+
+    await this.cartItemRepository.deleteMany({ where: { cart: { userId } } });
+
+    await this.decreaseCartItemsStock(userId)
+
+    return newOrder
   }
 
   async findAll(userId: number, { page, take, ...queryOrderDto }: QueryOrderDto): Promise<unknown> {
