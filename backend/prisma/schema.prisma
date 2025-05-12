@@ -426,9 +426,9 @@ model ShippingInfo {
   id         Int @id() @default(autoincrement())
   shippingId Int
   orderId    Int @unique()
-  tackingCode String @unique()
+  trackingCode String @unique()
 
-  sipping Shipping @relation(fields: [shippingId], references: [id], onDelete: Cascade)
+  shipping Shipping @relation(fields: [shippingId], references: [id], onDelete: Cascade)
   order   Order    @relation("ShippingInfoOrder", fields: [orderId], references: [id], onDelete: Cascade)
 
   sentAt    DateTime @default(now())

@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { CreateShippingDto } from './dto/create-shipping.dto';
-import { UpdateShippingDto } from './dto/update-shipping.dto';
-import { ShippingRepository } from './shipping.repository';
+import { CreateShippingDto } from '../dto/create-shipping.dto';
+import { UpdateShippingDto } from '../dto/update-shipping.dto';
+import { ShippingRepository } from '../repositories/shipping.repository';
 import { Prisma, Shipping } from 'generated/prisma';
-import { ShippingMessages } from './enums/shipping-messages.enum';
-import { QueryShippingDto } from './dto/query-shipping.dto';
-import { sortObject } from '../../common/utils/functions.utils';
-import { CacheKeys } from '../../common/enums/cache.enum';
-import { CacheService } from '../cache/cache.service';
-import { pagination } from '../../common/utils/pagination.utils';
+import { ShippingMessages } from '../enums/shipping-messages.enum';
+import { QueryShippingDto } from '../dto/query-shipping.dto';
+import { sortObject } from '../../../common/utils/functions.utils';
+import { CacheKeys } from '../../../common/enums/cache.enum';
+import { CacheService } from '../../cache/cache.service';
+import { pagination } from '../../../common/utils/pagination.utils';
 
 @Injectable()
 export class ShippingService {

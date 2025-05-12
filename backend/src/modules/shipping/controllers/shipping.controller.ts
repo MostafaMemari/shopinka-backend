@@ -1,15 +1,15 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
-import { ShippingService } from './shipping.service';
-import { CreateShippingDto } from './dto/create-shipping.dto';
-import { UpdateShippingDto } from './dto/update-shipping.dto';
+import { ShippingService } from '../services/shipping.service';
+import { CreateShippingDto } from '../dto/create-shipping.dto';
+import { UpdateShippingDto } from '../dto/update-shipping.dto';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { GetUser } from '../../common/decorators/get-user.decorator';
+import { GetUser } from '../../../common/decorators/get-user.decorator';
 import { Role, User } from 'generated/prisma';
-import { Roles } from '../../common/decorators/role.decorator';
-import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
-import { AuthDecorator } from '../../common/decorators/auth.decorator';
-import { SkipAuth } from '../../common/decorators/skip-auth.decorator';
-import { QueryShippingDto } from './dto/query-shipping.dto';
+import { Roles } from '../../../common/decorators/role.decorator';
+import { SwaggerConsumes } from '../../../common/enums/swagger-consumes.enum';
+import { AuthDecorator } from '../../../common/decorators/auth.decorator';
+import { SkipAuth } from '../../../common/decorators/skip-auth.decorator';
+import { QueryShippingDto } from '../dto/query-shipping.dto';
 
 @Controller('shipping')
 @ApiTags('shipping')
