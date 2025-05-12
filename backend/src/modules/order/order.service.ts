@@ -121,10 +121,8 @@ export class OrderService {
       throw new BadRequestException("Your cart list is empty.");
     }
 
-    if (shippingId) {
-      const shipping = await this.shippingRepository.findOneOrThrow({ where: { id: shippingId } })
-      finalPrice += shipping.price
-    }
+    const shipping = await this.shippingRepository.findOneOrThrow({ where: { id: shippingId } })
+    finalPrice += shipping.price
 
     await this.addressRepository.findOneOrThrow({ where: { userId, id: addressId } });
 
