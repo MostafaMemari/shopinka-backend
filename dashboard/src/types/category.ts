@@ -12,6 +12,7 @@ export type Category = {
     fileUrl: string
     thumbnailUrl: string
   }
+  children: Category[] | []
   parent: Category | null
 }
 

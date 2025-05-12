@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Grid from '@mui/material/Grid2'
 import Typography from '@mui/material/Typography'
 import TabPanel from '@mui/lab/TabPanel'
@@ -15,7 +15,6 @@ import CombinationsList from './CombinationsList'
 const VariantsTab = () => {
   const [variants, setVariants] = useState<Variant[]>([])
   const [productType, setProductType] = useState<ProductType>('SIMPLE')
-  const [combinations, setCombinations] = useState<VariantCombination[]>([])
   const [selectedCombinations, setSelectedCombinations] = useState<string[]>([])
 
   const {
@@ -35,46 +34,54 @@ const VariantsTab = () => {
     staleTime: 5 * 60 * 1000
   })
 
+  // محاسبه ترکیبات با useMemo برای جلوگیری از محاسبات غیرضروری
+  const combinations = useMemo(() => {
+    if (productType === 'VARIABLE' && attributesData?.data?.items) {
+      return generateCombinations(variants, attributesData.data.items)
+    }
+
+    return []
+  }, [variants, attributesData, productType])
+
+  // تابع کمکی برای محاسبه activeCombinationIds
+  const calculateActiveCombinationIds = (selectedCombinations: string[], combinations: VariantCombination[], attributes: Attribute[]): number[][] => {
+    return selectedCombinations
+      .map(key => {
+        const combination = combinations.find(comb => {
+          const combinationKey = Object.entries(comb)
+            .map(([attrName, value]) => `${attrName}:${value}`)
+            .join('|')
+
+          return combinationKey === key
+        })
+
+        if (!combination) return null
+
+        const valueIds = Object.entries(combination)
+          .map(([attrName, value]) => {
+            const attribute = attributes.find(attr => attr.name === attrName)
+
+            if (!attribute) return null
+            const valueObj = attribute.values.find(val => val.name === value)
+
+            return valueObj ? valueObj.id : null
+          })
+          .filter((id): id is number => id !== null)
+
+        return valueIds.length > 0 ? valueIds : null
+      })
+      .filter((arr): arr is number[] => arr !== null)
+  }
+
   useEffect(() => {
     if (productType === 'VARIABLE' && attributesData?.data?.items) {
-      const newCombinations = generateCombinations(variants, attributesData.data.items)
-
-      setCombinations(newCombinations)
-
       const activeAttributeIds = variants.filter(v => v.attributeId).map(v => v.attributeId)
-
-      const activeCombinationIds = selectedCombinations
-        .map(key => {
-          const combination = combinations.find(comb => {
-            const combinationKey = Object.entries(comb)
-              .map(([attrName, value]) => `${attrName}:${value}`)
-              .join('|')
-
-            return combinationKey === key
-          })
-
-          if (!combination) return null
-
-          const valueIds = Object.entries(combination)
-            .map(([attrName, value]) => {
-              const attribute = attributesData?.data?.items?.find((attr: Attribute) => attr.name === attrName)
-
-              if (!attribute) return null
-
-              const valueObj = attribute.values.find((val: { id: number; name: string; colorCode?: string }) => val.name === value)
-
-              return valueObj ? valueObj.id : null
-            })
-            .filter(id => id !== null) as number[]
-
-          return valueIds.length > 0 ? valueIds : null
-        })
-        .filter(arr => arr !== null) as number[][]
+      const activeCombinationIds = calculateActiveCombinationIds(selectedCombinations, combinations, attributesData.data.items)
 
       setValue('attributeIds', activeAttributeIds, { shouldValidate: true })
       setValue('attributeValuesIds', activeCombinationIds, { shouldValidate: true })
     }
-  }, [variants, attributesData, productType, selectedCombinations, setValue])
+  }, [variants, attributesData, productType, selectedCombinations, setValue, combinations])
 
   const addVariant = () => {
     const usedAttributeIds = variants.map(v => v.attributeId)
@@ -91,7 +98,6 @@ const VariantsTab = () => {
     setVariants(newVariants)
 
     if (newVariants.length === 0) {
-      setCombinations([])
       setSelectedCombinations([])
       setValue('attributeIds', [], { shouldValidate: true })
       setValue('attributeValuesIds', [], { shouldValidate: true })
@@ -101,9 +107,7 @@ const VariantsTab = () => {
   const handleVariantTypeChange = (index: number, attributeId: number) => {
     const usedAttributeIds = variants.map(v => v.attributeId)
 
-    if (usedAttributeIds.includes(attributeId)) {
-      return
-    }
+    if (usedAttributeIds.includes(attributeId)) return
 
     const newVariants = [...variants]
 
@@ -113,50 +117,18 @@ const VariantsTab = () => {
   }
 
   const handleVariantValuesChange = (index: number, values: string[]) => {
-    const newVariants = [...variants]
+    const newVariants = [...variants] as Variant[]
 
     newVariants[index].values = values
     setVariants(newVariants)
   }
 
   const handleCombinationSelect = (combinationKey: string, value: string) => {
-    let updatedSelectedCombinations: string[]
-
-    if (value === 'active') {
-      updatedSelectedCombinations = [...selectedCombinations, combinationKey]
-    } else {
-      updatedSelectedCombinations = selectedCombinations.filter(key => key !== combinationKey)
-    }
+    const updatedSelectedCombinations = value === 'active' ? [...selectedCombinations, combinationKey] : selectedCombinations.filter(key => key !== combinationKey)
 
     setSelectedCombinations(updatedSelectedCombinations)
 
-    const activeCombinationIds = updatedSelectedCombinations
-      .map(key => {
-        const combination = combinations.find(comb => {
-          const combinationKey = Object.entries(comb)
-            .map(([attrName, value]) => `${attrName}:${value}`)
-            .join('|')
-
-          return combinationKey === key
-        })
-
-        if (!combination) return null
-
-        const valueIds = Object.entries(combination)
-          .map(([attrName, value]) => {
-            const attribute = attributesData?.data?.items?.find((attr: Attribute) => attr.name === attrName)
-
-            if (!attribute) return null
-
-            const valueObj = attribute.values.find((val: { id: number; name: string; colorCode?: string }) => val.name === value)
-
-            return valueObj ? valueObj.id : null
-          })
-          .filter(id => id !== null) as number[]
-
-        return valueIds.length > 0 ? valueIds : null
-      })
-      .filter(arr => arr !== null) as number[][]
+    const activeCombinationIds = calculateActiveCombinationIds(updatedSelectedCombinations, combinations, attributesData?.data?.items || [])
 
     setValue('attributeValuesIds', activeCombinationIds, { shouldValidate: true })
   }
@@ -182,12 +154,13 @@ const VariantsTab = () => {
             {...field}
             onChange={e => {
               field.onChange(e)
-              const value = e.target.value
+              const value = e.target.value as ProductType
 
               if (value === 'SIMPLE') {
                 setValue('attributeIds', [], { shouldValidate: true })
                 setValue('attributeValuesIds', [], { shouldValidate: true })
-              } else if (value === 'VARIABLE') {
+                setProductType('SIMPLE')
+              } else {
                 setProductType('VARIABLE')
               }
             }}
@@ -236,18 +209,8 @@ const VariantsTab = () => {
                             fullWidth
                             label='مقادیر'
                             value={variant.values}
-                            onChange={e => {
-                              const value = e.target.value
-
-                              if (Array.isArray(value)) {
-                                handleVariantValuesChange(index, value as string[])
-                              }
-                            }}
-                            slotProps={{
-                              select: {
-                                multiple: true
-                              }
-                            }}
+                            onChange={e => handleVariantValuesChange(index, e.target.value as unknown as string[])}
+                            slotProps={{ select: { multiple: true } }}
                           >
                             {attribute?.values?.map((value: { id: number; name: string; colorCode?: string }) => (
                               <MenuItem key={value.id} value={value.name}>

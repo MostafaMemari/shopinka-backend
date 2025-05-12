@@ -3,20 +3,26 @@ import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
-import { type GalleryForm } from '@/types/gallery'
+import { IconButton } from '@mui/material'
+import { Gallery, type GalleryForm } from '@/types/gallery'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { updateGallery } from '@/libs/api/gallery'
 import { showToast } from '@/utils/showToast'
 import { handleApiError } from '@/utils/handleApiError'
-import { useRouter } from 'next/navigation'
 import { errorGalleryMessage } from '@/messages/auth/galleryMessages'
+import getChangedFields from '@/utils/getChangedFields'
 import { gallerySchema } from '@/libs/validators/gallery.schemas'
-import { createGallery } from '@/libs/api/gallery'
-import { useQueryClient } from '@tanstack/react-query'
+import { QueryKeys } from '@/types/query-keys'
+import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
 
-const CreateGalleryModal = () => {
+const UpdateGalleryModal = ({ initialData }: { initialData: Partial<Gallery> }) => {
   const [open, setOpen] = useState<boolean>(false)
-  const router = useRouter()
-  const queryClient = useQueryClient()
+  const { invalidate } = useInvalidateQuery()
+
+  const galleryForm: GalleryForm = {
+    title: initialData?.title ?? '',
+    description: initialData?.description ?? ''
+  }
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -27,46 +33,55 @@ const CreateGalleryModal = () => {
     handleSubmit,
     formState: { errors },
     setValue
-  } = useForm<GalleryForm>({
+  } = useForm({
     resolver: yupResolver(gallerySchema),
     defaultValues: {
-      title: '',
-      description: ''
+      title: galleryForm?.title,
+      description: galleryForm?.description || null
     }
   })
 
   useEffect(() => {
     reset({
-      title: '',
-      description: null
+      title: initialData?.title,
+      description: initialData?.description || null
     })
-  }, [reset])
+  }, [initialData, reset])
 
   const onSubmit = async (formData: GalleryForm) => {
     try {
-      const res = await createGallery({
-        title: formData.title,
-        description: formData.description || null
-      })
-
-      const errorMessage = handleApiError(res.status, errorGalleryMessage)
-
-      if (errorMessage) {
-        showToast({ type: 'error', message: errorMessage })
-
-        return
-      }
-
-      if (res.status === 201 || res.status === 200) {
-        showToast({ type: 'success', message: 'گالری با موفقیت ثبت شد' })
-        await queryClient.invalidateQueries({ queryKey: ['galleries'] })
-        router.refresh()
-
-        reset({
-          title: '',
-          description: null
+      if (initialData?.id !== undefined) {
+        const changedData = getChangedFields(initialData, {
+          ...formData,
+          description: formData.description || null
         })
-        handleClose()
+
+        if (Object.keys(changedData).length === 0) {
+          showToast({ type: 'info', message: 'هیچ تغییری اعمال نشده است' })
+
+          return
+        }
+
+        const res = await updateGallery(String(initialData.id), changedData)
+
+        const errorMessage = handleApiError(res.status, errorGalleryMessage)
+
+        if (errorMessage) {
+          showToast({ type: 'error', message: errorMessage })
+
+          return
+        }
+
+        if (res.status === 200) {
+          showToast({ type: 'success', message: 'گالری با موفقیت ویرایش شد' })
+          invalidate(QueryKeys.Galleries)
+
+          reset({
+            title: formData.title || '',
+            description: formData.description || null
+          })
+          handleClose()
+        }
       }
     } catch (error: any) {
       showToast({ type: 'error', message: 'خطای سیستمی' })
@@ -75,14 +90,14 @@ const CreateGalleryModal = () => {
 
   return (
     <div>
-      <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />}>
-        ثبت گالری جدید
-      </Button>
+      <IconButton size='small' onClick={handleOpen}>
+        <i className='tabler-edit text-gray-500 text-lg' />
+      </IconButton>
 
       <CustomDialog
         open={open}
         onClose={handleClose}
-        title='افزودن گالری جدید'
+        title='بروزرسانی گالری'
         defaultMaxWidth='xs'
         actions={
           <>
@@ -103,7 +118,6 @@ const CreateGalleryModal = () => {
               <CustomTextField {...field} fullWidth label='نام گالری' placeholder='لطفا نام گالری را وارد کنید' error={!!errors.title} helperText={errors.title?.message} />
             )}
           />
-
           <Controller
             name='description'
             control={control}
@@ -128,4 +142,4 @@ const CreateGalleryModal = () => {
   )
 }
 
-export default CreateGalleryModal
+export default UpdateGalleryModal

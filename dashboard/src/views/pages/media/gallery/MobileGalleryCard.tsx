@@ -10,14 +10,14 @@ import { Box, CardContent, Chip } from '@mui/material'
 // API Import
 import { Gallery } from '@/types/gallery'
 
-const MobileGalleryCard = ({ data, paginatedData }: { data: Gallery[]; paginatedData: Gallery[] }) => (
+const MobileGalleryCard = ({ data }: { data: Gallery[] }) => (
   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, p: 2 }}>
-    {paginatedData.length === 0 ? (
+    {data.length === 0 ? (
       <Typography textAlign='center' color='text.secondary'>
         داده‌ای موجود نیست
       </Typography>
     ) : (
-      paginatedData.map(row => (
+      data.map(row => (
         <Card
           key={row.id}
           sx={{

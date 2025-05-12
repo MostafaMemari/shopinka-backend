@@ -1,18 +1,13 @@
 import { getCategories } from '@/libs/api/category'
+import { QueryKeys } from '@/types/query-keys'
+import { QueryOptions } from '@/types/queryOptions'
 import { useQuery } from '@tanstack/react-query'
 
-interface UseCategoryParams {
-  enabled?: boolean
-  search?: string
-  staleTime?: number
-  params?: Record<string, any>
-}
-
-export function useCategories({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: UseCategoryParams) {
+export function useCategories({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchCategory = () => getCategories(params).then(res => res)
 
   return useQuery<any, Error>({
-    queryKey: ['categories', params],
+    queryKey: [QueryKeys.Categories, params],
     queryFn: fetchCategory,
     enabled,
     staleTime,

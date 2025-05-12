@@ -9,52 +9,46 @@ import { Box, useMediaQuery, useTheme } from '@mui/material'
 
 // Component Imports
 import TablePaginationComponent from '@/components/TablePaginationComponent'
-import DesktopCategoryTable from './DesktopCategoryTable'
-import CreateCategoryModal from './CreateCategoryModal'
+import MobileGalleryCard from './MobileGalleryCard'
+import DesktopGalleryTable from './DesktopGalleryTable'
+import CreateGalleryModal from './CreateGalleryModal'
 import LoadingSpinner from '@/components/LoadingSpinner'
 
 // API Import
-import { useCategories } from '@/hooks/reactQuery/useCategory'
-import { Category } from '@/types/category'
-
-// Hook Import
+import { useGallery } from '@/hooks/reactQuery/useGallery'
 import { usePaginationParams } from '@/hooks/usePaginationParams'
+import { Gallery } from '@/types/gallery'
 import ErrorState from '@/components/states/ErrorState'
-import EmptyCategoryState from './EmptyCategoryState'
+import EmptyGalleryState from './EmptyGalleryState'
 
-const CategoryView = () => {
+const GalleryView = () => {
   const { page, size, setPage, setSize } = usePaginationParams()
 
-  const { data, isLoading, isFetching, error, refetch } = useCategories({
+  const { data, isLoading, isFetching, error, refetch } = useGallery({
     enabled: true,
     params: {
       page,
-      take: size,
-      includeThumbnailImage: true,
-      includeChildren: true,
-      childrenDepth: 6
+      take: size
     },
     staleTime: 5 * 60 * 1000
   })
 
-  // Hooks
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
-  const categories: Category[] = useMemo(() => data?.data?.items || [], [data])
+  const galleries: Gallery[] = useMemo(() => data?.data?.items || [], [data])
   const paginationData = useMemo(() => data?.data?.pager || { currentPage: 1, totalPages: 1, totalCount: 0 }, [data])
 
   if (isLoading || isFetching) return <LoadingSpinner />
   if (error) return <ErrorState onRetry={() => refetch()} />
-  if (categories.length === 0) return <EmptyCategoryState />
+  if (galleries.length === 0) return <EmptyGalleryState />
 
   return (
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
-        <CreateCategoryModal />
+        <CreateGalleryModal />
       </Box>
-      {!isMobile && <DesktopCategoryTable categories={categories} />}
-
+      {isMobile ? <MobileGalleryCard data={galleries} /> : <DesktopGalleryTable data={galleries} />}
       <TablePaginationComponent
         currentPage={page}
         totalPages={paginationData.totalPages}
@@ -62,10 +56,10 @@ const CategoryView = () => {
         rowsPerPage={size}
         onPageChange={setPage}
         onRowsPerPageChange={setSize}
-        currentPageItemCount={categories.length}
+        currentPageItemCount={galleries.length}
       />
     </Card>
   )
 }
 
-export default CategoryView
+export default GalleryView

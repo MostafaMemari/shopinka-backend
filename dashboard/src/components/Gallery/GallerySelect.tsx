@@ -15,7 +15,7 @@ interface GallerySelectProps {
   showAllOption?: boolean
 }
 
-const GallerySelect = ({ value, onChange, search = '', enabled = true, sx, showAllOption = false }: GallerySelectProps) => {
+const GallerySelect = ({ value, onChange, enabled = true, sx, showAllOption = false }: GallerySelectProps) => {
   const {
     data: galleriesData,
     isLoading: isLoadingGalleries,
@@ -23,7 +23,6 @@ const GallerySelect = ({ value, onChange, search = '', enabled = true, sx, showA
     error: errorGalleries
   } = useGallery({
     enabled,
-    search,
     staleTime: 5 * 60 * 1000
   })
 

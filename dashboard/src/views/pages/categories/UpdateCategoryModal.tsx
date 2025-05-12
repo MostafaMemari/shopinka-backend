@@ -159,8 +159,7 @@ const UpdateCategoryModal = ({ children, category }: UpdateCategoryModalProps) =
                   )}
                 />
                 <ParentCategorySelect control={control} errors={errors} isLoading={isLoading} />
-
-                <CategoryThumbnailImage control={control} errors={errors} setValue={setValue} isLoading={isLoading} />
+                <CategoryThumbnailImage control={control} errors={errors} setValue={setValue} isLoading={isLoading} category={category} />
               </Grid>
             </Grid>
 

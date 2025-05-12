@@ -37,19 +37,22 @@ const ModalGallery = ({ btnLabel, multi = false, onSelect, initialSelected, chil
     refetch: refetchItems
   } = useGalleryItems({
     enabled: open,
-    search: searchTerm,
-    galleryId: gallerySelected === 'all' ? undefined : gallerySelected,
+    params: {
+      galleryId: gallerySelected === 'all' ? undefined : gallerySelected,
+      title: searchTerm
+    },
     staleTime: 5 * 60 * 1000
   })
 
   const galleryItems: GalleryItem[] = galleryItemsData?.data?.items || []
 
-  const debouncedSetSearchTerm = useCallback(
-    debounce((value: string) => {
-      setSearchTerm(value)
-    }, 500),
-    []
-  )
+  const debouncedSetSearchTerm = useCallback((value: string) => {
+    const debouncedFn = debounce((val: string) => {
+      setSearchTerm(val)
+    }, 500)
+
+    debouncedFn(value)
+  }, [])
 
   useEffect(() => {
     if (open) {

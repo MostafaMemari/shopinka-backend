@@ -11,24 +11,24 @@ import ModalGallery from '@/components/Gallery/ModalGallery/ModalGallery'
 import { Typography } from '@mui/material'
 import { GalleryItem } from '@/types/gallery'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import ImagePlaceholder from '@/components/ImagePlaceholder'
 
 interface CategoryThumbnailImageProps {
   control: Control<CategoryForm>
   errors: FieldErrors<CategoryForm>
   isLoading: boolean
   setValue: (name: keyof CategoryForm, value: number | null, options?: { shouldValidate?: boolean }) => void
-  category?: Category // Optional category prop for UpdateCategoryModal
+  category?: Category
 }
 
 const CategoryThumbnailImage = ({ control, errors, isLoading, setValue, category }: CategoryThumbnailImageProps) => {
   const [selectedImage, setSelectedImage] = useState<GalleryItem | null>(null)
 
-  // Initialize selectedImage with category's thumbnail image (for UpdateCategoryModal)
   useEffect(() => {
     if (category?.thumbnailImageId && category?.thumbnailImage) {
       setSelectedImage({
         id: category.thumbnailImageId,
-        galleryId: 0, // Required but not used in this context
+        galleryId: 0,
         title: 'Thumbnail',
         description: null,
         fileUrl: category.thumbnailImage.fileUrl,
@@ -40,7 +40,6 @@ const CategoryThumbnailImage = ({ control, errors, isLoading, setValue, category
         deletedAt: null,
         isDeleted: false
       })
-
       setValue('thumbnailImageId', category.thumbnailImageId, { shouldValidate: true })
     }
   }, [category, setValue])
@@ -49,7 +48,6 @@ const CategoryThumbnailImage = ({ control, errors, isLoading, setValue, category
     const image = Array.isArray(item) ? item[0] : item
 
     setSelectedImage(image)
-
     const thumbnailImageId = typeof image.id === 'number' && image.id > 0 ? image.id : null
 
     setValue('thumbnailImageId', thumbnailImageId, { shouldValidate: true })
@@ -69,8 +67,17 @@ const CategoryThumbnailImage = ({ control, errors, isLoading, setValue, category
           <Typography variant='body2' sx={{ fontWeight: 'medium', color: 'text.primary' }}>
             تصویر بندانگشتی (اختیاری)
           </Typography>
-          {selectedImage && (
-            <Box sx={{ position: 'relative', width: 120, height: 120, borderRadius: 1, overflow: 'hidden', boxShadow: 1 }}>
+          {selectedImage ? (
+            <Box
+              sx={{
+                position: 'relative',
+                width: 120,
+                height: 120,
+                borderRadius: 1,
+                overflow: 'hidden',
+                boxShadow: 1
+              }}
+            >
               <Image src={selectedImage.fileUrl} alt={selectedImage.title} fill style={{ objectFit: 'cover' }} />
               <Tooltip title='حذف تصویر'>
                 <IconButton
@@ -90,6 +97,8 @@ const CategoryThumbnailImage = ({ control, errors, isLoading, setValue, category
                 </IconButton>
               </Tooltip>
             </Box>
+          ) : (
+            <ImagePlaceholder width={120} height={120} />
           )}
           <Box>
             <ModalGallery initialSelected={selectedImage || undefined} btnLabel={selectedImage ? 'تغییر تصویر' : 'انتخاب تصویر'} multi={false} onSelect={handleSelect} />

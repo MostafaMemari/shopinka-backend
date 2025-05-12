@@ -1,19 +1,14 @@
-import { getItemGalleries } from '@/libs/api/galleyItem'
-import GalleryItemView from '@/views/pages/media/item/GalleryIemView'
-import { notFound } from 'next/navigation'
+import GalleryItemView from '@/views/pages/media/gallery-items/GalleryIemView'
+import { type NextPage } from 'next'
 
-const MediaItems = async ({ params }: { params: { id: string } }) => {
+type MediaItemsPageProps = {
+  params: Promise<{ id: string }>
+}
+
+const MediaItems: NextPage<MediaItemsPageProps> = async ({ params }) => {
   const { id } = await params
 
-  const res = await getItemGalleries({ galleryId: id, sortBy: 'updatedAt' })
-
-  const items = res?.data?.items?.flat()
-
-  // if (!items || items.length === 0) {
-  //   notFound()
-  // }
-
-  return <GalleryItemView data={items} />
+  return <GalleryItemView galleryId={id} />
 }
 
 export default MediaItems

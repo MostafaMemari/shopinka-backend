@@ -8,7 +8,6 @@ import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import Grid from '@mui/material/Grid2'
-import CircularProgress from '@mui/material/CircularProgress'
 
 // Form Imports
 import { Controller, useForm } from 'react-hook-form'
@@ -16,7 +15,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 // API and Utility Imports
 import { showToast } from '@/utils/showToast'
-import { useQueryClient } from '@tanstack/react-query'
 import { categorySchema } from '@/libs/validators/category.schemas'
 import { createCategory } from '@/libs/api/category'
 import { CategoryForm } from '@/types/category'
@@ -26,16 +24,18 @@ import { errorCategoryMessage } from '@/messages/auth/categoryMessages.'
 import ParentCategorySelect from './ParentCategorySelect'
 import CategoryThumbnailImage from './CategoryThumbnailImage'
 import RichTextEditor from '@/components/RichTextEditor/RichTextEditor'
+import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
+import { QueryKeys } from '@/types/query-keys'
+import FormActions from '@/components/FormActions'
 
-// Types
 interface CreateCategoryModalProps {
-  children: ReactNode
+  children?: ReactNode
 }
 
 const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const queryClient = useQueryClient()
+  const { invalidate } = useInvalidateQuery()
 
   const {
     control,
@@ -67,8 +67,7 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
 
       try {
         const cleanedData = cleanObject(formData)
-
-        const { status, data } = await createCategory(cleanedData)
+        const { status } = await createCategory(cleanedData)
 
         const errorMessage = handleApiError(status, errorCategoryMessage)
 
@@ -78,28 +77,27 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
           return
         }
 
-        if (status === 201 || (status === 200 && data)) {
+        if (status === 201 || status === 200) {
           showToast({ type: 'success', message: 'دسته‌بندی با موفقیت ایجاد شد' })
-          queryClient.invalidateQueries({ queryKey: ['categories'] })
+          invalidate(QueryKeys.Categories)
           handleClose()
         }
       } catch (error: any) {
-        showToast({
-          type: 'error',
-          message: error?.data?.message || 'خطایی در ایجاد دسته‌بندی رخ داد'
-        })
+        showToast({ type: 'error', message: 'خطای سیستمی رخ داد' })
       } finally {
         setIsLoading(false)
       }
     },
-    [queryClient, handleClose]
+    [handleClose, invalidate]
   )
 
   return (
     <div>
-      <div onClick={handleOpen} role='button' tabIndex={0} onKeyDown={e => e.key === 'Enter' && handleOpen()} aria-label='باز کردن فرم ایجاد دسته‌بندی'>
-        {children}
-      </div>
+      {children || (
+        <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />}>
+          ثبت دسته‌بندی جدید
+        </Button>
+      )}
 
       <CustomDialog
         open={open}
@@ -108,12 +106,7 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
         defaultMaxWidth='lg'
         actions={
           <>
-            <Button onClick={handleClose} color='secondary' disabled={isLoading}>
-              انصراف
-            </Button>
-            <Button onClick={handleSubmit(onSubmit)} variant='contained' disabled={isLoading} startIcon={isLoading ? <CircularProgress size={20} color='inherit' /> : null}>
-              {isLoading ? 'در حال ثبت...' : 'ثبت'}
-            </Button>
+            <FormActions onCancel={handleClose} onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
           </>
         }
       >

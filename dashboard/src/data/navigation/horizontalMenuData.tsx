@@ -31,13 +31,7 @@ const horizontalMenuData = (): HorizontalMenuDataType[] => [
   {
     label: 'مدیریت رسانه‌ها',
     icon: 'tabler-photo',
-    children: [
-      {
-        label: 'همه رسانه‌ها',
-        href: '/media',
-        icon: 'tabler-files'
-      }
-    ]
+    href: '/media'
   },
   {
     label: 'دسته بندی‌ها',

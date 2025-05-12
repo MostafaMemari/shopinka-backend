@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 
 // MUI
@@ -50,12 +50,12 @@ const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBac
   const formRef = useRef<HTMLFormElement>(null)
   const router = useRouter()
 
-  const resetOtpForm = () => {
+  const resetOtpForm = useCallback(() => {
     setIsError(true)
     setOtp('')
     setTimeout(() => setIsError(false), 500)
     otpInputRef.current?.focus()
-  }
+  }, [])
 
   const { timeLeft, isExpired, formatTime, resetTimer } = useOtpTimer(300)
 
@@ -63,13 +63,7 @@ const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBac
     otpInputRef.current?.focus()
   }, [])
 
-  useEffect(() => {
-    if (otp.length === 6 && /^\d{6}$/.test(otp)) {
-      handleSubmit()
-    }
-  }, [otp])
-
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     try {
       if (otp.length === 6 && /^\d{6}$/.test(otp)) {
         if (isExpired) {
@@ -100,7 +94,13 @@ const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBac
     } catch (error) {
       showToast({ type: 'error', message: 'خطای سیستمی' })
     }
-  }
+  }, [otp, isExpired, phoneNumber, router, resetOtpForm])
+
+  useEffect(() => {
+    if (otp.length === 6 && /^\d{6}$/.test(otp)) {
+      handleSubmit()
+    }
+  }, [otp, handleSubmit])
 
   const maskedPhoneNumber = phoneNumber.slice(0, -4) + '****'
 

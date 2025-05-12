@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { ReactNode, useState } from 'react'
 import { Button, DialogContent, List, IconButton, Typography, Avatar, CircularProgress, ListItem, Box } from '@mui/material'
 import { useDropzone } from 'react-dropzone'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
@@ -13,7 +13,7 @@ import AppReactDropzone from '@/libs/styles/AppReactDropzone'
 import { createGalleryItem } from '@/libs/api/galleyItem'
 import GallerySelect from '@/components/Gallery/GallerySelect'
 import { type SelectChangeEvent } from '@mui/material'
-import CreateGalleryModal from '@/views/pages/media/CreateGalleryModal'
+import CreateGalleryModal from '@/views/pages/media/gallery/CreateGalleryModal'
 import { useQueryClient } from '@tanstack/react-query'
 
 // Styled Dropzone Component
@@ -36,7 +36,7 @@ type FileProp = {
   size: number
 }
 
-const CreateMediaModal = () => {
+const CreateMediaModal = ({ children }: { children?: ReactNode }) => {
   const [openUpload, setOpenUpload] = useState(false)
   const [openGallerySelect, setOpenGallerySelect] = useState(false)
   const [files, setFiles] = useState<File[]>([])
@@ -145,7 +145,6 @@ const CreateMediaModal = () => {
         showToast({ type: 'error', message: 'خطایی در آپلود رخ داد!' })
       }
     } catch (error) {
-      console.error('Error uploading files:', error)
       showToast({ type: 'error', message: 'خطایی در ارتباط با سرور رخ داد!' })
     } finally {
       setIsSubmitting(false)
@@ -191,10 +190,11 @@ const CreateMediaModal = () => {
 
   return (
     <>
-      <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />} sx={{ flex: { xs: '1 1 100%', sm: '0 0 auto' } }}>
-        آپلود فایل جدید
-      </Button>
-
+      {children || (
+        <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />} sx={{ flex: { xs: '1 1 100%', sm: '0 0 auto' } }}>
+          آپلود فایل جدید
+        </Button>
+      )}
       <CustomDialog
         open={openGallerySelect}
         onClose={handleCloseGallerySelect}

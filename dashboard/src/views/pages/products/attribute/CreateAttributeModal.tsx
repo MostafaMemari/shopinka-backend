@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react' // اضافه کردن useEffect
+import { useState, useEffect, ReactNode } from 'react' // اضافه کردن useEffect
 import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
@@ -12,10 +12,15 @@ import { handleApiError } from '@/utils/handleApiError'
 import { errorAttributeMessage } from '@/messages/auth/attributeMessages'
 import { useRouter } from 'next/navigation'
 import { attributeSchema } from '@/libs/validators/attribute.schemas'
+import { useQueryClient } from '@tanstack/react-query'
 
-const CreateAttributeModal = () => {
+interface CreateAttributeModalProps {
+  children?: ReactNode
+}
+
+const CreateAttributeModal = ({ children }: CreateAttributeModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
-  const router = useRouter()
+  const queryClient = useQueryClient()
 
   const [isCreating, setIsCreating] = useState<boolean>(false)
 
@@ -65,9 +70,9 @@ const CreateAttributeModal = () => {
         return
       }
 
-      if (res.status === 201) {
+      if (res.status === 201 || res.status === 200) {
         showToast({ type: 'success', message: 'ویژگی با موفقیت ثبت شد' })
-        router.refresh()
+        queryClient.invalidateQueries({ queryKey: ['attributes'] })
 
         reset({
           name: '',
@@ -86,10 +91,11 @@ const CreateAttributeModal = () => {
 
   return (
     <div>
-      <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />}>
-        افزودن ویژگی
-      </Button>
-
+      {children || (
+        <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />}>
+          افزودن ویژگی جدید
+        </Button>
+      )}
       <CustomDialog
         open={open}
         onClose={handleClose}

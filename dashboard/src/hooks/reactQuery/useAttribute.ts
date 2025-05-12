@@ -1,16 +1,13 @@
 import { getAttributes } from '@/libs/api/productAttributes'
+import { QueryKeys } from '@/types/query-keys'
+import { QueryOptions } from '@/types/queryOptions'
 import { useQuery } from '@tanstack/react-query'
 
-interface UseAttributeParams {
-  enabled?: boolean
-  staleTime?: number
-}
-
-export function useAttribute({ enabled = true, staleTime = 1 * 60 * 1000 }: UseAttributeParams) {
-  const fetchAttribute = () => getAttributes().then(res => res)
+export function useAttribute({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
+  const fetchAttribute = () => getAttributes(params).then(res => res)
 
   return useQuery<any, Error>({
-    queryKey: ['attributes'],
+    queryKey: [QueryKeys.Attributes, params],
     queryFn: fetchAttribute,
     enabled,
     staleTime,

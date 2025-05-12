@@ -9,8 +9,6 @@ export const getCategories = async (params?: Record<string, string>): Promise<Re
       query: { ...params }
     })
 
-    console.log(res)
-
     return {
       ...res
     }
