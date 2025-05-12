@@ -18,7 +18,11 @@ export const formatDate = (dateString: string): string => {
 }
 
 export const cleanObject = <T extends Record<string, any>>(obj: T): T => {
-  return Object.fromEntries(Object.entries(obj).filter(([_, value]) => value !== null && value !== '' && value !== undefined)) as T
+  return Object.fromEntries(
+    Object.entries(obj)
+      .map(([key, value]) => [key, typeof value === 'string' ? value.trim() : value])
+      .filter(([_, value]) => value !== null && value !== '' && value !== undefined)
+  ) as T
 }
 
 export const stripHtml = (html: string): string => {

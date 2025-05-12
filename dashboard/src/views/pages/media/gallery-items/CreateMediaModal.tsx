@@ -13,7 +13,7 @@ import AppReactDropzone from '@/libs/styles/AppReactDropzone'
 import { createGalleryItem } from '@/libs/api/galleyItem'
 import GallerySelect from '@/components/Gallery/GallerySelect'
 import { type SelectChangeEvent } from '@mui/material'
-import CreateGalleryModal from '@/views/pages/media/CreateGalleryModal'
+import CreateGalleryModal from '@/views/pages/media/gallery/CreateGalleryModal'
 import { useQueryClient } from '@tanstack/react-query'
 
 // Styled Dropzone Component

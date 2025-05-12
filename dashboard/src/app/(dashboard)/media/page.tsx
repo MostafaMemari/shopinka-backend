@@ -1,4 +1,4 @@
-import GalleryView from '@/views/pages/media/GalleryView'
+import GalleryView from '@/views/pages/media/gallery/GalleryView'
 
 const Media = async () => {
   return <GalleryView />

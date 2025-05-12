@@ -3,20 +3,21 @@ import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
-import { IconButton, MenuItem } from '@mui/material'
+import { IconButton } from '@mui/material'
 import { Gallery, type GalleryForm } from '@/types/gallery'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { updateGallery } from '@/libs/api/gallery'
 import { showToast } from '@/utils/showToast'
 import { handleApiError } from '@/utils/handleApiError'
 import { errorGalleryMessage } from '@/messages/auth/galleryMessages'
-import { useRouter } from 'next/navigation'
 import getChangedFields from '@/utils/getChangedFields'
 import { gallerySchema } from '@/libs/validators/gallery.schemas'
+import { QueryKeys } from '@/types/query-keys'
+import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
 
 const UpdateGalleryModal = ({ initialData }: { initialData: Partial<Gallery> }) => {
   const [open, setOpen] = useState<boolean>(false)
-  const router = useRouter()
+  const { invalidate } = useInvalidateQuery()
 
   const galleryForm: GalleryForm = {
     title: initialData?.title ?? '',
@@ -73,7 +74,7 @@ const UpdateGalleryModal = ({ initialData }: { initialData: Partial<Gallery> }) 
 
         if (res.status === 200) {
           showToast({ type: 'success', message: 'گالری با موفقیت ویرایش شد' })
-          router.refresh()
+          invalidate(QueryKeys.Galleries)
 
           reset({
             title: formData.title || '',

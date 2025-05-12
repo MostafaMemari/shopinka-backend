@@ -1,4 +1,4 @@
-import { useState, useEffect, ReactNode } from 'react' // اضافه کردن useEffect
+import { useState, useEffect, ReactNode, useCallback } from 'react'
 import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
@@ -12,6 +12,8 @@ import { gallerySchema } from '@/libs/validators/gallery.schemas'
 import { createGallery } from '@/libs/api/gallery'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
 import { QueryKeys } from '@/types/query-keys'
+import { cleanObject } from '@/utils/formatters'
+import FormActions from '@/components/FormActions'
 
 interface CreateGalleryModalProps {
   children?: ReactNode
@@ -20,9 +22,7 @@ interface CreateGalleryModalProps {
 const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
   const { invalidate } = useInvalidateQuery()
-
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const {
     control,
@@ -38,42 +38,42 @@ const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
     }
   })
 
-  useEffect(() => {
-    reset({
-      title: '',
-      description: null
-    })
+  const handleOpen = useCallback(() => setOpen(true), [])
+
+  const handleClose = useCallback(() => {
+    setOpen(false)
+    reset()
   }, [reset])
 
-  const onSubmit = async (formData: GalleryForm) => {
-    try {
-      const res = await createGallery({
-        title: formData.title,
-        description: formData.description || null
-      })
+  const onSubmit = useCallback(
+    async (formData: GalleryForm) => {
+      setIsLoading(true)
 
-      const errorMessage = handleApiError(res.status, errorGalleryMessage)
+      try {
+        const cleanedData = cleanObject(formData)
+        const { status } = await createGallery(cleanedData)
 
-      if (errorMessage) {
-        showToast({ type: 'error', message: errorMessage })
+        const errorMessage = handleApiError(status, errorGalleryMessage)
 
-        return
+        if (errorMessage) {
+          showToast({ type: 'error', message: errorMessage })
+
+          return
+        }
+
+        if (status === 200 || status === 201) {
+          showToast({ type: 'success', message: 'گالری با موفقیت ثبت شد' })
+          invalidate(QueryKeys.Attributes)
+          handleClose()
+        }
+      } catch (error: any) {
+        showToast({ type: 'error', message: 'خطای سیستمی رخ داد' })
+      } finally {
+        setIsLoading(false)
       }
-
-      if (res.status === 201 || res.status === 200) {
-        showToast({ type: 'success', message: 'گالری با موفقیت ثبت شد' })
-        invalidate(QueryKeys.Attributes)
-
-        reset({
-          title: '',
-          description: null
-        })
-        handleClose()
-      }
-    } catch (error: any) {
-      showToast({ type: 'error', message: 'خطای سیستمی' })
-    }
-  }
+    },
+    [handleClose, invalidate]
+  )
 
   return (
     <div>
@@ -90,12 +90,7 @@ const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
         defaultMaxWidth='xs'
         actions={
           <>
-            <Button onClick={handleClose} color='secondary'>
-              انصراف
-            </Button>
-            <Button onClick={handleSubmit(onSubmit)} variant='contained'>
-              ثبت
-            </Button>
+            <FormActions onCancel={handleClose} onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
           </>
         }
       >

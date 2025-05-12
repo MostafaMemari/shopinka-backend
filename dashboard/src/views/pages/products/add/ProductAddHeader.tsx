@@ -1,4 +1,3 @@
-// MUI Imports
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import { FC } from 'react'
@@ -17,13 +16,15 @@ const ProductAddHeader: FC<ProductAddHeaderProps> = ({ onButtonClick }) => {
         <Typography>مدیریت محصولات فروشگاه شما</Typography>
       </div>
       <div className='flex flex-wrap max-sm:flex-col gap-4'>
-        <Button variant='tonal' color='secondary' onClick={() => onButtonClick('cancel')}>
+        <Button variant='tonal' color='secondary' type='button' onClick={() => onButtonClick('cancel')}>
           لغو
         </Button>
-        <Button variant='tonal' onClick={() => onButtonClick('draft')}>
+
+        <Button variant='tonal' type='button' onClick={() => onButtonClick('draft')}>
           ذخیره پیش‌نویس
         </Button>
-        <Button variant='contained' type='submit' onClick={() => onButtonClick('publish')}>
+
+        <Button variant='contained' color='primary' type='submit' onClick={() => onButtonClick('publish')}>
           انتشار محصول
         </Button>
       </div>

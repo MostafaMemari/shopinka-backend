@@ -1,4 +1,4 @@
-import GalleryItemView from '@/views/pages/media/item/GalleryIemView'
+import GalleryItemView from '@/views/pages/media/gallery-items/GalleryIemView'
 
 const MediaItems = async ({ params }: { params: { id: string } }) => {
   const { id } = params

@@ -26,6 +26,9 @@ import { errorCategoryMessage } from '@/messages/auth/categoryMessages.'
 import ParentCategorySelect from './ParentCategorySelect'
 import CategoryThumbnailImage from './CategoryThumbnailImage'
 import RichTextEditor from '@/components/RichTextEditor/RichTextEditor'
+import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
+import { QueryKeys } from '@/types/query-keys'
+import FormActions from '@/components/FormActions'
 
 interface CreateCategoryModalProps {
   children?: ReactNode
@@ -34,7 +37,7 @@ interface CreateCategoryModalProps {
 const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const queryClient = useQueryClient()
+  const { invalidate } = useInvalidateQuery()
 
   const {
     control,
@@ -66,8 +69,7 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
 
       try {
         const cleanedData = cleanObject(formData)
-
-        const { status, data } = await createCategory(cleanedData)
+        const { status } = await createCategory(cleanedData)
 
         const errorMessage = handleApiError(status, errorCategoryMessage)
 
@@ -77,21 +79,18 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
           return
         }
 
-        if (status === 201 || (status === 200 && data)) {
+        if (status === 201 || status === 200) {
           showToast({ type: 'success', message: 'دسته‌بندی با موفقیت ایجاد شد' })
-          queryClient.invalidateQueries({ queryKey: ['categories'] })
+          invalidate(QueryKeys.Categories)
           handleClose()
         }
       } catch (error: any) {
-        showToast({
-          type: 'error',
-          message: error?.data?.message || 'خطایی در ایجاد دسته‌بندی رخ داد'
-        })
+        showToast({ type: 'error', message: 'خطای سیستمی رخ داد' })
       } finally {
         setIsLoading(false)
       }
     },
-    [queryClient, handleClose]
+    [handleClose, invalidate]
   )
 
   return (
@@ -109,12 +108,7 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
         defaultMaxWidth='lg'
         actions={
           <>
-            <Button onClick={handleClose} color='secondary' disabled={isLoading}>
-              انصراف
-            </Button>
-            <Button onClick={handleSubmit(onSubmit)} variant='contained' disabled={isLoading} startIcon={isLoading ? <CircularProgress size={20} color='inherit' /> : null}>
-              {isLoading ? 'در حال ثبت...' : 'ثبت'}
-            </Button>
+            <FormActions onCancel={handleClose} onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
           </>
         }
       >
