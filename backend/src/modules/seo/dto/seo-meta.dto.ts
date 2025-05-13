@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger"
 import { Transform, Type } from "class-transformer"
-import { ArrayUnique, IsArray, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from "class-validator"
+import { ArrayUnique, IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from "class-validator"
+import { SeoRobotsTag } from "generated/prisma"
 
 export class SeoMetaDto {
     @IsOptional()
@@ -48,10 +49,10 @@ export class SeoMetaDto {
     ogImage?: string
 
     @IsOptional()
-    @IsString()
+    @IsEnum(SeoRobotsTag)
     @IsNotEmpty()
-    @ApiProperty({ type: 'string', required: false, nullable: true })
-    robotsTag?: string
+    @ApiProperty({ enum: SeoRobotsTag, type: 'string', required: false, nullable: true })
+    robotsTag?: SeoRobotsTag
 
     @IsOptional()
     @IsNumber()

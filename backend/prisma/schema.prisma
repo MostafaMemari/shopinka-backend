@@ -54,6 +54,13 @@ enum BlogStatus {
   PUBLISHED
 }
 
+enum SeoRobotsTag {
+  index_follow
+  noindex_nofollow
+  index_nofollow
+  noindex_follow
+}
+
 model User {
   id               Int              @id() @default(autoincrement()) @db.Integer()
   fullName         String?          @map("full_name")
@@ -363,7 +370,7 @@ model SeoMeta {
   ogTitle       String?  @map("og_title")
   ogDescription String?  @map("og_description")
   ogImage       String?  @map("og_image")
-  robotsTag     String?
+  robotsTag     SeoRobotsTag @default(index_follow)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt()
 
