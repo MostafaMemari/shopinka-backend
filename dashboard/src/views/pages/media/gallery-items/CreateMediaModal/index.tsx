@@ -13,7 +13,7 @@ import DropzoneSection from './DropzoneSection'
 import FileList from './FileList'
 import FormActions from '@/components/FormActions'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
-import { QueryKeys } from '@/types/query-keys'
+import { QueryKeys } from '@/types/enums/query-keys'
 
 interface CreateMediaModalProps {
   children?: ReactNode

@@ -1,5 +1,5 @@
 import * as yup from 'yup'
-import { AttributeType } from '@/types/productAttributes'
+import { AttributeType } from '@/types/app/productAttributes'
 
 export const attributeSchema = yup.object({
   name: yup.string().required('نام الزامی است').min(3, 'نام باید حداقل 3 کاراکتر باشد').max(50, 'نام نمی‌تواند بیشتر از 50 کاراکتر باشد'),

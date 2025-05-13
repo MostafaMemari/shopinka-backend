@@ -1,4 +1,4 @@
-import { Attribute, Variant, VariantCombination } from '@/types/productAttributes'
+import { Attribute, Variant, VariantCombination } from '@/types/app/productAttributes'
 
 export const generateCombinations = (variants: Variant[], attributes: Attribute[]): VariantCombination[] => {
   if (variants.length === 0 || variants.every(v => v.values.length === 0)) {

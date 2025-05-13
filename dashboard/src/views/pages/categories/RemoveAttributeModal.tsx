@@ -1,7 +1,7 @@
 import ConfirmDeleteModal from '@/components/ConfirmDeleteModal'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
 import { removeCategory } from '@/libs/api/category'
-import { QueryKeys } from '@/types/query-keys'
+import { QueryKeys } from '@/types/enums/query-keys'
 import { ReactNode } from 'react'
 
 interface RemoveCategoryModalProps {

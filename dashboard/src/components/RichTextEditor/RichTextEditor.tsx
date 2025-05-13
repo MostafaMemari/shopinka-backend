@@ -29,7 +29,7 @@ import EditorToolbar from './EditorToolbar'
 // Style Imports
 import './styles.css'
 import { RichTextEditorProps } from './types'
-import { GalleryItem } from '@/types/gallery'
+import { GalleryItem } from '@/types/app/gallery'
 
 const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کنید', content = '', onChange, value, height = '250px' }: RichTextEditorProps) => {
   const [open, setOpen] = useState(false)

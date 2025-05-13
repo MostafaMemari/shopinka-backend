@@ -14,7 +14,7 @@ import CreateAttributeValueModal from './attributeValue/CreateAttributeValueModa
 import tableStyles from '@core/styles/table.module.css'
 
 // API Import
-import { AttributeType, Attribute } from '@/types/productAttributes'
+import { AttributeType, Attribute } from '@/types/app/productAttributes'
 import UpdateAttributeValuesModal from './attributeValue/UpdateAttributeValuesModal'
 import { Fragment } from 'react'
 

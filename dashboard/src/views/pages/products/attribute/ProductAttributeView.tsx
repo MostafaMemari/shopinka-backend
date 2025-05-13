@@ -12,7 +12,7 @@ import TablePaginationComponent from '@/components/TablePaginationComponent'
 import CreateAttributeModal from './CreateAttributeModal'
 
 // API Import
-import { Attribute } from '@/types/productAttributes'
+import { Attribute } from '@/types/app/productAttributes'
 import DesktopAttributeTable from './DesktopAttributeTable'
 import { usePaginationParams } from '@/hooks/usePaginationParams'
 import { useAttribute } from '@/hooks/reactQuery/useAttribute'

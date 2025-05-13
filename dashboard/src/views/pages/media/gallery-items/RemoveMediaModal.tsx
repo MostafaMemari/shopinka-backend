@@ -4,7 +4,7 @@ import { removeGalleryItem } from '@/libs/api/galleyItem'
 import { showToast } from '@/utils/showToast'
 import { Button, CircularProgress, DialogContent, DialogContentText } from '@mui/material'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
-import { QueryKeys } from '@/types/query-keys'
+import { QueryKeys } from '@/types/enums/query-keys'
 import FormActions from '@/components/FormActions'
 
 interface RemoveGalleryItemModalProps {

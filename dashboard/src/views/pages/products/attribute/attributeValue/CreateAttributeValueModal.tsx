@@ -3,7 +3,7 @@ import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
 import { IconButton } from '@mui/material'
-import { AttributeType, AttributeValueForm } from '@/types/productAttributes'
+import { AttributeType, AttributeValueForm } from '@/types/app/productAttributes'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { createAttributeValues } from '@/libs/api/productAttributeValues'
 import { showToast } from '@/utils/showToast'
@@ -16,7 +16,7 @@ import Popper from '@mui/material/Popper'
 import FormActions from '@/components/FormActions'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
 import { cleanObject } from '@/utils/formatters'
-import { QueryKeys } from '@/types/query-keys'
+import { QueryKeys } from '@/types/enums/query-keys'
 
 interface CreateAttributeValueModalProps {
   children?: ReactNode

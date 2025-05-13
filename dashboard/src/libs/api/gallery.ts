@@ -1,4 +1,4 @@
-import { Gallery, GalleryForm } from '@/types/gallery'
+import { Gallery, GalleryForm } from '@/types/app/gallery'
 import { Response } from '@/types/response'
 import { serverApiFetch } from '@/utils/api/serverApiFetch'
 

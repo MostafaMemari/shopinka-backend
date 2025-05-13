@@ -2,7 +2,7 @@
 
 import { getGalleries } from '@/libs/api/gallery'
 import { getGalleryItems } from '@/libs/api/galleyItem'
-import { QueryKeys } from '@/types/query-keys'
+import { QueryKeys } from '@/types/enums/query-keys'
 import { QueryOptions } from '@/types/queryOptions'
 import { useQuery } from '@tanstack/react-query'
 

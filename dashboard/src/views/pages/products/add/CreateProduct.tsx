@@ -14,14 +14,35 @@ import { FormProvider, useForm } from 'react-hook-form'
 
 import { productSchema } from '@/libs/validators/product.schema'
 import { useState } from 'react'
+import { type InferType } from 'yup'
+import { ProductStatus, ProductType } from '@/types/app/product'
 
 const CreateProduct = () => {
   const [submitType, setSubmitType] = useState<'cancel' | 'draft' | 'publish' | null>(null)
 
-  const methods = useForm({
+  type ProductForm = InferType<typeof productSchema>
+
+  const methods = useForm<ProductForm>({
     resolver: yupResolver(productSchema),
     defaultValues: {
-      type: 'SIMPLE'
+      sku: '',
+      name: '',
+      slug: '',
+      description: null,
+      shortDescription: null,
+      quantity: null,
+      basePrice: null,
+      salePrice: null,
+      status: ProductStatus.DRAFT,
+      type: ProductType.SIMPLE,
+      mainImageId: null,
+      galleryImageIds: [],
+      categoryIds: [],
+      attributeIds: [],
+      width: null,
+      height: null,
+      length: null,
+      weight: null
     },
     mode: 'onChange'
   })

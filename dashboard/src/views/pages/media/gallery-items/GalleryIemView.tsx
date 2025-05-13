@@ -16,7 +16,7 @@ import LoadingSpinner from '@/components/LoadingSpinner'
 
 // API Import
 import { useGalleryItems } from '@/hooks/reactQuery/useGallery'
-import { GalleryItem } from '@/types/gallery'
+import { GalleryItem } from '@/types/app/gallery'
 import { usePaginationParams } from '@/hooks/usePaginationParams'
 import ErrorState from '@/components/states/ErrorState'
 import EmptyGalleryItemsState from './EmptyGalleryItemState'

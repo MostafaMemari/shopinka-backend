@@ -2,7 +2,7 @@
 
 import { CircularProgress, MenuItem, type SelectChangeEvent, type SxProps, type Theme } from '@mui/material'
 import CustomTextField from '@/@core/components/mui/TextField'
-import { Gallery } from '@/types/gallery'
+import { Gallery } from '@/types/app/gallery'
 import { ReactNode } from 'react'
 import { useGallery } from '@/hooks/reactQuery/useGallery'
 

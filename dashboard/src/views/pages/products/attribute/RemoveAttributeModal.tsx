@@ -2,7 +2,7 @@ import { removeAttribute } from '@/libs/api/productAttributes'
 import ConfirmDeleteModal from '@/components/ConfirmDeleteModal'
 import { IconButton } from '@mui/material'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
-import { QueryKeys } from '@/types/query-keys'
+import { QueryKeys } from '@/types/enums/query-keys'
 
 const RemoveAttributeModal = ({ id }: { id: number }) => {
   const { invalidate } = useInvalidateQuery()

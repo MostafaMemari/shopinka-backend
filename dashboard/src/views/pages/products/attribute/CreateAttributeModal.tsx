@@ -4,7 +4,7 @@ import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
 import { MenuItem } from '@mui/material'
-import { AttributeType, type AttributeFormType } from '@/types/productAttributes'
+import { AttributeType, type AttributeFormType } from '@/types/app/productAttributes'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { createAttribute } from '@/libs/api/productAttributes'
 import { showToast } from '@/utils/showToast'
@@ -14,7 +14,7 @@ import { attributeSchema } from '@/libs/validators/attribute.schemas'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
 import FormActions from '@/components/FormActions'
 import { cleanObject } from '@/utils/formatters'
-import { QueryKeys } from '@/types/query-keys'
+import { QueryKeys } from '@/types/enums/query-keys'
 
 interface CreateAttributeModalProps {
   children?: ReactNode

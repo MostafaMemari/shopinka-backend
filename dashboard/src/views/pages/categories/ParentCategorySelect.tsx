@@ -5,7 +5,7 @@ import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
-import { Category, CategoryForm } from '@/types/category'
+import { Category, CategoryForm } from '@/types/app/category'
 import { useCategories } from '@/hooks/reactQuery/useCategory'
 import { Controller, type Control, type FieldErrors } from 'react-hook-form'
 
