@@ -16,10 +16,23 @@ export const productSchema = yup.object().shape({
     .matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'فرمت slug معتبر نیست'),
   description: yup.string().notRequired().default(null),
   shortDescription: yup.string().notRequired().max(300, 'حداکثر 300 کاراکتر').default(null),
-  quantity: yup.number().notRequired().positive('باید عددی مثبت باشد').default(null),
-  basePrice: yup.number().notRequired().positive('باید عددی مثبت باشد').min(1000, 'حداقل قیمت 1000').max(200000000, 'حداکثر قیمت ۲۰۰ میلیون').default(null),
+  quantity: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? null : value))
+    .notRequired()
+    .positive('باید عددی مثبت باشد')
+    .default(null),
+  basePrice: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? null : value))
+    .notRequired()
+    .positive('باید عددی مثبت باشد')
+    .min(1000, 'حداقل قیمت 1000')
+    .max(200000000, 'حداکثر قیمت ۲۰۰ میلیون')
+    .default(null),
   salePrice: yup
     .number()
+    .transform((value, originalValue) => (originalValue === '' ? null : value))
     .notRequired()
     .positive('باید عددی مثبت باشد')
     .min(1000, 'حداقل قیمت 1000')
@@ -55,8 +68,8 @@ export const productSchema = yup.object().shape({
 
   galleryImageIds: yup
     .array()
+    .of(yup.number().defined().positive('شناسه تصویر باید عددی مثبت باشد'))
     .notRequired()
-    .of(yup.number().positive('شناسه تصویر باید عددی مثبت باشد'))
     .test('unique', 'تصاویر تکراری هستند', value => {
       if (!value) return true
 
@@ -66,7 +79,7 @@ export const productSchema = yup.object().shape({
 
   categoryIds: yup
     .array()
-    .of(yup.number().positive('شناسه دسته‌بندی باید عددی مثبت باشد'))
+    .of(yup.number().defined().positive('شناسه دسته‌بندی باید عددی مثبت باشد'))
     .notRequired()
     .test('unique', 'دسته‌ها تکراری هستند', value => {
       return value ? new Set(value).size === value.length : true
@@ -75,8 +88,8 @@ export const productSchema = yup.object().shape({
 
   attributeIds: yup
     .array()
+    .of(yup.number().defined().positive('شناسه ویژگی باید عددی مثبت باشد'))
     .notRequired()
-    .of(yup.number().positive('شناسه ویژگی باید عددی مثبت باشد'))
     .test('unique', 'ویژگی‌ها تکراری هستند', value => {
       if (!value) return true
 
@@ -84,10 +97,30 @@ export const productSchema = yup.object().shape({
     })
     .default(null),
 
-  width: yup.number().notRequired().positive('باید عددی مثبت باشد').default(null),
-  height: yup.number().notRequired().positive('باید عددی مثبت باشد').default(null),
-  length: yup.number().notRequired().positive('باید عددی مثبت باشد').default(null),
-  weight: yup.number().notRequired().positive('باید عددی مثبت باشد').default(null)
+  width: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? null : value))
+    .notRequired()
+    .positive('باید عددی مثبت باشد')
+    .default(null),
+  height: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? null : value))
+    .notRequired()
+    .positive('باید عددی مثبت باشد')
+    .default(null),
+  length: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? null : value))
+    .notRequired()
+    .positive('باید عددی مثبت باشد')
+    .default(null),
+  weight: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? null : value))
+    .notRequired()
+    .positive('باید عددی مثبت باشد')
+    .default(null)
 })
 
 // attributeValuesIds: yup

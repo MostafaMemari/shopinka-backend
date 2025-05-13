@@ -1,5 +1,5 @@
 export enum ProductStatus {
-  DRAFT = 'STATUS',
+  DRAFT = 'DRAFT',
   PUBLISHED = 'PUBLISHED'
 }
 export enum ProductType {
@@ -40,9 +40,9 @@ export type ProductForm = {
   status: ProductStatus | null
   type: ProductType | null
   mainImageId: number | null
-  galleryImageIds: number[] | []
-  categoryIds: number[] | []
-  attributeIds: number[] | []
+  galleryImageIds: number[] | [] | null
+  categoryIds: number[] | [] | null
+  attributeIds: number[] | [] | null
   width: number | null
   height: number | null
   length: number | null

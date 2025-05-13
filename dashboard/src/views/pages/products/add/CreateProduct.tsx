@@ -11,14 +11,21 @@ import ProductTabs from '@/views/pages/products/add/tabs/ProductTabs'
 import { yupResolver } from '@hookform/resolvers/yup'
 import Grid from '@mui/material/Grid2'
 import { FormProvider, useForm } from 'react-hook-form'
-
-import { productSchema } from '@/libs/validators/product.schema'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { type InferType } from 'yup'
 import { ProductStatus, ProductType } from '@/types/app/product'
+import { productSchema } from '@/libs/validators/product.schema'
+import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
+import { cleanObject } from '@/utils/formatters'
+import { handleApiError } from '@/utils/handleApiError'
+import { showToast } from '@/utils/showToast'
+import { QueryKeys } from '@/types/enums/query-keys'
+import { createProduct } from '@/libs/api/product'
 
 const CreateProduct = () => {
   const [submitType, setSubmitType] = useState<'cancel' | 'draft' | 'publish' | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const { invalidate } = useInvalidateQuery()
 
   type ProductForm = InferType<typeof productSchema>
 
@@ -47,46 +54,70 @@ const CreateProduct = () => {
     mode: 'onChange'
   })
 
-  const onSubmit = methods.handleSubmit(
-    data => {
-      console.log('📦 اطلاعات محصول:', data)
-      console.log('📤 نوع دکمه کلیک‌شده:', submitType)
+  const handleClose = useCallback(() => {
+    // router.push('/products') // اگر از Next.js استفاده می‌کنید
+    methods.reset()
+  }, [methods])
 
-      // TODO: call API or handle logic based on `submitType`
+  const onSubmit = methods.handleSubmit(data => {
+    console.log('Submit Type:', submitType)
+    console.log('📦 اطلاعات محصول:', data)
+  })
+
+  const handleButtonClick = useCallback(
+    async (type: 'cancel' | 'draft' | 'publish') => {
+      setSubmitType(type)
+
+      if (type === 'cancel') {
+        methods.reset()
+        handleClose()
+
+        return
+      }
+
+      await methods.handleSubmit(async data => {
+        setIsLoading(true)
+
+        try {
+          const status = type === 'publish' ? ProductStatus.PUBLISHED : ProductStatus.DRAFT
+
+          const cleanedData = cleanObject({ ...data, status })
+
+          const { status: apiStatus } = await createProduct(cleanedData)
+
+          const errorMessage = handleApiError(apiStatus, {
+            400: 'اطلاعات محصول نامعتبر است',
+            409: 'محصول با این کد یا نامک قبلاً وجود دارد',
+            500: 'خطای سرور رخ داد'
+          })
+
+          if (errorMessage) {
+            showToast({ type: 'error', message: errorMessage })
+
+            return
+          }
+
+          if (apiStatus === 201 || apiStatus === 200) {
+            showToast({ type: 'success', message: `محصول با موفقیت ${type === 'publish' ? 'منتشر' : 'ذخیره'} شد` })
+            invalidate(QueryKeys.Products)
+            handleClose()
+          }
+        } catch (error: any) {
+          showToast({ type: 'error', message: 'خطای سیستمی رخ داد' })
+        } finally {
+          setIsLoading(false)
+        }
+      })()
     },
-    errors => {
-      console.error('🚨 خطاهای اعتبارسنجی:', errors)
-    }
+    [methods, handleClose, invalidate]
   )
-
-  const handleButtonClick = (type: 'cancel' | 'draft' | 'publish') => {
-    setSubmitType(type)
-
-    if (type === 'cancel') {
-      console.log('🟥 لغو شد')
-
-      // مثلاً: router.back() یا reset()
-
-      return
-    }
-
-    if (type === 'draft') {
-      console.log('📝 ذخیره به‌عنوان پیش‌نویس')
-      onSubmit()
-
-      return
-    }
-
-    // فقط برای publish نیاز به سابمیت واقعی داریم
-    // type="submit" دکمه‌ی منتشر، خودش اینو هندل می‌کنه
-  }
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={onSubmit}>
         <Grid container spacing={6}>
           <Grid size={{ xs: 12 }}>
-            <ProductAddHeader onButtonClick={handleButtonClick} />
+            <ProductAddHeader onButtonClick={handleButtonClick} isLoading={isLoading} />
           </Grid>
           <Grid size={{ xs: 12, md: 8 }}>
             <Grid container spacing={6}>
