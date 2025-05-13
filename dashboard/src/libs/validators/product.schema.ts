@@ -120,44 +120,37 @@ export const productSchema = yup.object().shape({
     .transform((value, originalValue) => (originalValue === '' ? null : value))
     .notRequired()
     .positive('باید عددی مثبت باشد')
+    .default(null),
+
+  seo_title: yup.string().notRequired().default(null),
+  seo_description: yup.string().notRequired().default(null),
+  seo_keywords: yup
+    .array()
+    .of(
+      yup
+        .string()
+        .required('کلمه کلیدی سئو نمی‌تواند خالی باشد')
+        .test('non-empty', 'کلمه کلیدی سئو نمی‌تواند خالی باشد', value => value.trim().length > 0)
+    )
+    .notRequired()
     .default(null)
+    .test('unique', 'کلمات کلیدی سئو باید یکتا باشند', value => {
+      if (!value) return true
+
+      return new Set(value).size === value.length
+    }),
+  seo_canonicalUrl: yup.string().notRequired().default(null),
+  seo_ogTitle: yup.string().notRequired().default(null),
+  seo_ogDescription: yup.string().notRequired().default(null),
+  seo_ogImage: yup.string().notRequired().default(null),
+  seo_robotsTag: yup
+    .string()
+    .oneOf(productRobotsValues, 'دستور ربات‌های سئو باید یکی از مقادیر مجاز باشد')
+    .required('دستور ربات‌های سئو الزامی است')
+    .default(RobotsTag.INDEX_FOLLOW)
 })
 
 // attributeValuesIds: yup
 //   .array()
 //   .of(yup.array().of(yup.number().positive('شناسه ویژگی باید عددی مثبت باشد')).min(1, 'هر ترکیب باید حداقل یک مقدار داشته باشد'))
 //   .notRequired(),
-
-// seo_title: yup.string().notRequired().notRequired(),
-
-// seo_description: yup.string().notRequired().notRequired(),
-
-// seo_keywords: yup
-//   .array()
-//   .of(
-//     yup
-//       .string()
-//       .required('کلمه کلیدی سئو نمی‌تواند خالی باشد')
-//       .test('non-empty', 'کلمه کلیدی سئو نمی‌تواند خالی باشد', value => value.trim().length > 0)
-//   )
-//   .notRequired()
-//   .notRequired()
-//   .test('unique', 'کلمات کلیدی سئو باید یکتا باشند', value => {
-//     if (!value) return true
-
-//     return new Set(value).size === value.length
-//   }),
-
-// seo_canonicalUrl: yup.string().notRequired().notRequired(),
-
-// seo_ogTitle: yup.string().notRequired().notRequired(),
-
-// seo_ogDescription: yup.string().notRequired().notRequired(),
-
-// seo_ogImage: yup.string().notRequired().notRequired(),
-
-// seo_robotsTag: yup
-//   .string()
-//   .notRequired()
-//   .notRequired()
-//   .oneOf(['index,follow', 'noindex,nofollow', 'index,nofollow', 'noindex,follow'], 'دستور ربات‌های سئو باید یکی از مقادیر مجاز باشد')

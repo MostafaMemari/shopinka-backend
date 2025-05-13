@@ -20,7 +20,9 @@ import { cleanObject } from '@/utils/formatters'
 import { handleApiError } from '@/utils/handleApiError'
 import { showToast } from '@/utils/showToast'
 import { QueryKeys } from '@/types/enums/query-keys'
-import { createProduct } from '@/libs/api/product'
+import { createProduct, removeProduct } from '@/libs/api/product'
+import { RobotsTag } from '@/types/enums/robotsTag'
+import { saveSeoMeta } from '@/libs/api/seo'
 
 const CreateProduct = () => {
   const [submitType, setSubmitType] = useState<'cancel' | 'draft' | 'publish' | null>(null)
@@ -49,7 +51,16 @@ const CreateProduct = () => {
       width: null,
       height: null,
       length: null,
-      weight: null
+      weight: null,
+
+      seo_title: null,
+      seo_description: null,
+      seo_keywords: null,
+      seo_canonicalUrl: null,
+      seo_ogTitle: null,
+      seo_ogDescription: null,
+      seo_ogImage: null,
+      seo_robotsTag: RobotsTag.INDEX_FOLLOW
     },
     mode: 'onChange'
   })
@@ -83,9 +94,9 @@ const CreateProduct = () => {
 
           const cleanedData = cleanObject({ ...data, status })
 
-          const { status: apiStatus } = await createProduct(cleanedData)
+          const response = await createProduct(cleanedData)
 
-          const errorMessage = handleApiError(apiStatus, {
+          const errorMessage = handleApiError(response.status, {
             400: 'اطلاعات محصول نامعتبر است',
             409: 'محصول با این کد یا نامک قبلاً وجود دارد',
             500: 'خطای سرور رخ داد'
@@ -97,10 +108,35 @@ const CreateProduct = () => {
             return
           }
 
-          if (apiStatus === 201 || apiStatus === 200) {
-            showToast({ type: 'success', message: `محصول با موفقیت ${type === 'publish' ? 'منتشر' : 'ذخیره'} شد` })
-            invalidate(QueryKeys.Products)
-            handleClose()
+          if ((response.status === 201 || response.status === 200) && response.data?.product) {
+            const productId = response.data.product.id
+
+            console.log(cleanedData)
+
+            const seoResponse = await saveSeoMeta('product', productId, {
+              title: cleanedData.seo_title || cleanedData.name,
+              description: cleanedData.seo_description || cleanedData?.shortDescription,
+              keywords: cleanedData.seo_keywords,
+              canonicalUrl: cleanedData.seo_canonicalUrl,
+              ogTitle: cleanedData.seo_ogTitle || cleanedData.name,
+              ogDescription: cleanedData.seo_ogDescription || cleanedData?.shortDescription,
+              ogImage: cleanedData.seo_ogImage,
+              robotsTag: 'index_follow'
+            })
+
+            console.log(seoResponse)
+
+            if (seoResponse.status === 200 || (seoResponse.status === 201 && seoResponse.data?.seo)) {
+              showToast({ type: 'success', message: `محصول با موفقیت ${type === 'publish' ? 'منتشر' : 'ذخیره'} شد` })
+
+              invalidate(QueryKeys.Products)
+
+              handleClose()
+            } else {
+              await removeProduct(productId.toString())
+
+              showToast({ type: 'error', message: 'خطای سیستمی رخ داد' })
+            }
           }
         } catch (error: any) {
           showToast({ type: 'error', message: 'خطای سیستمی رخ داد' })

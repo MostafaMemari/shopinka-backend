@@ -1,6 +1,6 @@
 export enum RobotsTag {
-  INDEX_FOLLOW = 'index_follow',
-  NOINDEX_NOFOLLOW = 'noindex_nofollow',
-  INDEX_NOFOLLOW = 'index_nofollow',
-  NOINDEX_FOLLOW = 'noindex_follow'
+  INDEX_FOLLOW = 'index, follow',
+  NOINDEX_NOFOLLOW = 'noindex, nofollow',
+  INDEX_NOFOLLOW = 'index, nofollow',
+  NOINDEX_FOLLOW = 'noindex, follow'
 }

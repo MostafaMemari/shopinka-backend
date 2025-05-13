@@ -13,7 +13,6 @@ const SeoTab: React.FC = () => {
     getValues
   } = useFormContext()
 
-  // تبدیل رشته کلمات کلیدی به آرایه و بالعکس
   const handleKeywordsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
 
@@ -109,15 +108,15 @@ const SeoTab: React.FC = () => {
             select
             fullWidth
             label='دستورات ربات‌های سئو'
-            defaultValue='index,follow'
+            defaultValue='index, follow'
             {...register('seo_robotsTag')}
             error={!!errors.seo_robotsTag}
             helperText={errors.seo_robotsTag?.message?.toString()}
           >
-            <MenuItem value='index,follow'>Index, Follow</MenuItem>
-            <MenuItem value='noindex,nofollow'>Noindex, Nofollow</MenuItem>
-            <MenuItem value='index,nofollow'>Index, Nofollow</MenuItem>
-            <MenuItem value='noindex,follow'>Noindex, Follow</MenuItem>
+            <MenuItem value='index, follow'>Index, Follow</MenuItem>
+            <MenuItem value='noindex, follow'>Noindex, Follow</MenuItem>
+            <MenuItem value='index, nofollow'>Index, Nofollow</MenuItem>
+            <MenuItem value='noindex, nofollow'>Noindex, Nofollow</MenuItem>
           </CustomTextField>
         </Grid>
       </Grid>

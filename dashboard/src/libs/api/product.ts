@@ -47,16 +47,12 @@ export const updateProduct = async (id: string, data: Partial<ProductForm>): Pro
   }
 }
 
-export const createProduct = async (data: ProductForm): Promise<{ status: number; data: Product | null }> => {
+export const createProduct = async (data: ProductForm): Promise<{ status: number; data: { product: (Product & { id: number }) | null } }> => {
   try {
-    console.log(data)
-
     const res = await serverApiFetch('/product', {
       method: 'POST',
       body: { ...data }
     })
-
-    console.log(res)
 
     return {
       ...res
@@ -64,7 +60,7 @@ export const createProduct = async (data: ProductForm): Promise<{ status: number
   } catch (error: any) {
     return {
       status: error.message.includes('401') ? 401 : 500,
-      data: null
+      data: { product: null }
     }
   }
 }
