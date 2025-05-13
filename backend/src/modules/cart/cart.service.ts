@@ -10,7 +10,7 @@ import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { pagination } from '../../common/utils/pagination.utils';
 import { IGetCart } from './interfaces/cart.interface';
-import { ShippingRepository } from '../shipping/shipping.repository';
+import { ShippingRepository } from '../shipping/repositories/shipping.repository';
 import { CartMessages } from './enums/cart-messages.enum';
 
 @Injectable()

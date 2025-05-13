@@ -12,7 +12,7 @@ import { CartRepository } from '../cart/repositories/cart.repository';
 import { ProductRepository } from '../product/repositories/product.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
 import { CartItemRepository } from '../cart/repositories/cardItem.repository';
-import { ShippingRepository } from '../shipping/shipping.repository';
+import { ShippingRepository } from '../shipping/repositories/shipping.repository';
 
 @Module({
   controllers: [OrderController],

@@ -15,7 +15,7 @@ import { ProductVariantRepository } from '../product/repositories/product-varian
 import { AddressRepository } from '../address/address.repository';
 import { OrderRepository } from '../order/repositories/order.repository';
 import { OrderItemRepository } from '../order/repositories/order-item.repository';
-import { ShippingRepository } from '../shipping/shipping.repository';
+import { ShippingRepository } from '../shipping/repositories/shipping.repository';
 
 @Module({
   imports: [ScheduleModule.forRoot()],

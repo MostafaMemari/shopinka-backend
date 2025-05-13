@@ -47,7 +47,7 @@ import { ShippingModule } from "../shipping/shipping.module";
     BlogModule,
     SeoModule,
     TagModule,
-    // ShippingModule,
+    ShippingModule,
   ],
   controllers: [],
   providers: [

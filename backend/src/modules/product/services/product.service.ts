@@ -2,7 +2,7 @@ import { BadRequestException, ConflictException, Injectable } from '@nestjs/comm
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductRepository } from '../repositories/product.repository';
-import { Prisma, Product, ProductStatus, ProductType, SeoMeta } from 'generated/prisma';
+import { Prisma, Product, ProductStatus, ProductType } from 'generated/prisma';
 import { CacheService } from '../../cache/cache.service';
 import { GalleryItemRepository } from '../../gallery/repositories/gallery-item.repository';
 import slugify from 'slugify';
@@ -42,7 +42,7 @@ export class ProductService {
 
     const categories = categoryIds ? await this.categoryRepository.findAll({ where: { id: { in: categoryIds } } }) : []
 
-    await this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } })
+    if (mainImageId) await this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } })
 
     const images = await this.galleryItemRepository.findAll({ where: { id: { in: galleryImageIds } } })
 

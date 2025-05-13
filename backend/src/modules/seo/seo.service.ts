@@ -48,7 +48,7 @@ export class SeoService {
             return { message: SeoMetaMessages.UpdatedSeoMetaSuccess, seoMeta: updatedSeo }
         }
 
-        const seoMeta = await this.seoMetaRepository.create({ data: { ...seoMetaDto, productId } })
+        const seoMeta = await this.seoMetaRepository.create({ data: {...seoMetaDto, productId } })
 
         return { message: SeoMetaMessages.CreatedSeoMetaSuccess, seoMeta }
     }
