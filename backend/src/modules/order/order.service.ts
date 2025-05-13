@@ -35,11 +35,11 @@ export class OrderService {
     private readonly cacheService: CacheService
   ) { }
 
-  @Cron(CronExpression.EVERY_12_HOURS)
+  @Cron(CronExpression.EVERY_30_MINUTES)
   async handleExpiredPendingOrders() {
     this.logger.log('Checking for expired pending orders...');
 
-    const TIMEOUT_MS = 24 * 60 * 60 * 1000; //* 24 hours
+    const TIMEOUT_MS = 60 * 60 * 1000; //* 1 hours
     const expirationTime = new Date(Date.now() - TIMEOUT_MS);
 
     try {
@@ -61,7 +61,7 @@ export class OrderService {
           },
         });
 
-        await this.orderRepository.update({ where: { id: order.id }, data: { status: OrderStatus.CANCELED } });
+        await this.orderRepository.update({ where: { id: order.id }, data: { status: OrderStatus.CANCELLED } });
 
         this.logger.warn(`Order ${order.id} canceled due to timeout (created at ${order.createdAt}). Items returned to cart.`);
       }
@@ -150,7 +150,7 @@ export class OrderService {
     return newOrder
   }
 
-  async findAll(userId: number, { page, take, ...queryOrderDto }: QueryOrderDto): Promise<unknown> {
+  async findAllForAdmin(userId: number, { page, take, ...queryOrderDto }: QueryOrderDto): Promise<unknown> {
     const paginationDto = { page, take };
     const {
       endDate,
@@ -205,7 +205,7 @@ export class OrderService {
     return { ...pagination(paginationDto, orders) }
   }
 
-  async findAllMyOrders(userId: number, paginationDto: PaginationDto): Promise<unknown> {
+  async findAllForUser(userId: number, paginationDto: PaginationDto): Promise<unknown> {
     const orders = await this.orderRepository.findAll({
       where: { userId },
       orderBy: { createdAt: "desc" },
@@ -215,7 +215,7 @@ export class OrderService {
     return pagination(paginationDto, orders)
   }
 
-  async findAllItems(userId: number, paginationDto: PaginationDto): Promise<unknown> {
+  async findAllItemsForUser(userId: number, paginationDto: PaginationDto): Promise<unknown> {
     const orderItems = await this.orderItemRepository.findAll(
       {
         where: { order: { userId } },
@@ -226,7 +226,28 @@ export class OrderService {
     return pagination(paginationDto, orderItems)
   }
 
-  findOne(userId: number, orderId: number): Promise<Order> {
-    return this.orderRepository.findOneOrThrow({ where: { id: orderId, userId }, include: { items: true, address: true } })
+  async findAllItemsForAdmin(userId: number, paginationDto: PaginationDto): Promise<unknown> {
+    const orderItems = await this.orderItemRepository.findAll(
+      {
+        where: { order: { OR: [{ items: { some: { product: { userId } } } }, { items: { some: { productVariant: { userId } } } }] } },
+        include: { order: true, product: true, productVariant: true },
+        orderBy: { createdAt: 'desc' }
+      })
+
+    return pagination(paginationDto, orderItems)
+  }
+
+  findOneForAdmin(userId: number, orderId: number): Promise<Order> {
+    return this.orderRepository.findOneOrThrow({
+      where: { id: orderId, OR: [{ items: { some: { product: { userId } } } }, { items: { some: { productVariant: { userId } } } }] },
+      include: { items: true, address: true, shipping: true, shippingInfo: true, transaction: true, user: true }
+    })
+  }
+
+  findOneForUser(userId: number, orderId: number): Promise<Order> {
+    return this.orderRepository.findOneOrThrow({
+      where: { userId, id: orderId },
+      include: { address: true, items: true, shipping: true, shippingInfo: true, transaction: true }
+    })
   }
 }

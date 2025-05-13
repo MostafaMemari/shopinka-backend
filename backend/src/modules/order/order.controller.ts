@@ -16,22 +16,34 @@ export class OrderController {
 
     @Get()
     @Roles(Role.ADMIN, Role.SUPER_ADMIN)
-    findAll(@Query() queryOrderDto: QueryOrderDto, @GetUser() user: User) {
-        return this.orderService.findAll(user.id, queryOrderDto)
+    findAllForAdmin(@Query() queryOrderDto: QueryOrderDto, @GetUser() user: User) {
+        return this.orderService.findAllForAdmin(user.id, queryOrderDto)
     }
 
     @Get('my')
-    findAllMyOrders(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
-        return this.orderService.findAllMyOrders(user.id, paginationDto)
+    findAllForUser(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
+        return this.orderService.findAllForUser(user.id, paginationDto)
     }
 
     @Get('item')
-    findAllItems(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
-        return this.orderService.findAllItems(user.id, paginationDto)
+    @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+    findAllItemsForAdmin(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
+        return this.orderService.findAllItemsForAdmin(user.id, paginationDto)
+    }
+
+    @Get('my/item')
+    findAllItemsForUser(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
+        return this.orderService.findAllItemsForUser(user.id, paginationDto)
     }
 
     @Get(":id")
-    findOne(@Param("id", ParseIntPipe) id: number, @GetUser() user: User) {
-        return this.orderService.findOne(user.id, id)
+    @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+    findOneForAdmin(@Param("id", ParseIntPipe) id: number, @GetUser() user: User) {
+        return this.orderService.findOneForAdmin(user.id, id)
+    }
+
+    @Get("my/:id")
+    findOneForUser(@Param("id", ParseIntPipe) id: number, @GetUser() user: User) {
+        return this.orderService.findOneForUser(user.id, id)
     }
 }
