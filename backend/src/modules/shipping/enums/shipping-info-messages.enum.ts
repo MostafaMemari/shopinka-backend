@@ -3,4 +3,5 @@ export enum ShippingInfoMessages {
     AlreadyExistsShippingInfo = 'ShippingInfo with this tracking code already exists.',
     CreatedShippingInfoSuccess = 'ShippingInfo created successfully',
     UpdatedShippingInfoSuccess = 'ShippingInfo Updated successfully.',
+    NotFoundShippingInfo = "ShippingInfo not found."
 }

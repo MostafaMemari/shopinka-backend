@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, Injectable } from "@nestjs/common";
 import { ShippingInfoRepository } from "../repositories/shipping-info.repository";
 import { CreateShippingInfoDto } from "../dto/create-shipping-info.dto";
-import { ShippingInfo } from "generated/prisma";
+import { OrderStatus, ShippingInfo } from "generated/prisma";
 import { ProductRepository } from "../../product/repositories/product.repository";
 import { ProductVariantRepository } from "../../product/repositories/product-variant.repository";
 import { PaginationDto } from "../../../common/dtos/pagination.dto";
@@ -33,6 +33,8 @@ export class ShippingInfoService {
 
         if (!product && !productVariant) throw new BadRequestException(ShippingInfoMessages.NoAccessToCreateShippingInfo)
 
+        await this.orderRepository.update({ where: { id: orderId }, data: { status: OrderStatus.SHIPPED } })
+
         const newShippingInfo = await this.shippingInfoRepository.create({
             data: { ...createShippingInfoDto, shippingId: order.shippingId }
         })
@@ -53,8 +55,10 @@ export class ShippingInfoService {
     async update(userId: number, shippingInfoId: number, updateShippingInfoDto: UpdateShippingInfoDto) {
         const { orderId, trackingCode } = updateShippingInfoDto
 
+        const shippingInfo = await this.shippingInfoRepository.findOneOrThrow({ where: { id: shippingInfoId } })
+
         if (trackingCode) {
-            const existingShippingInfo = await this.shippingInfoRepository.findOne({ where: { trackingCode } })
+            const existingShippingInfo = await this.shippingInfoRepository.findOne({ where: { trackingCode, id: { not: shippingInfoId } } })
 
             if (existingShippingInfo) throw new ConflictException(ShippingInfoMessages.AlreadyExistsShippingInfo)
         }
@@ -66,6 +70,9 @@ export class ShippingInfoService {
             const productVariant = await this.productVariantRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } })
 
             if (!product && !productVariant) throw new BadRequestException(ShippingInfoMessages.NoAccessToCreateShippingInfo)
+
+            await this.orderRepository.update({ where: { id: orderId }, data: { status: OrderStatus.SHIPPED } })
+            await this.orderRepository.update({ where: { id: shippingInfo.orderId }, data: { status: OrderStatus.PROCESSING } })
         }
 
         const updatedShippingInfo = this.shippingInfoRepository.update({ where: { id: shippingInfoId }, data: updateShippingInfoDto })
