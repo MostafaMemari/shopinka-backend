@@ -160,7 +160,6 @@ model Attribute {
   type            AttributeType
   description     String?
   values          AttributeValue[]
-  productVariants ProductVariant[]
   products        Product[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt()
@@ -173,6 +172,7 @@ model AttributeValue {
   colorCode   String?  @map("color_code")
   buttonLabel String?  @map("button_label")
   attributeId Int?
+  productVariants ProductVariant[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt()
 
@@ -227,7 +227,7 @@ model ProductVariant {
   mainImage   GalleryItem? @relation("VariantMainImage", fields: [mainImageId], references: [id], onDelete: SetNull)
   product     Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
   user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
-  attributes  Attribute[]
+  attributeValues  AttributeValue[]
   cartItems   CartItem[]
   orderItems  OrderItem[]
   width       Int?
@@ -365,7 +365,7 @@ model SeoMeta {
   canonicalUrl  String?      @map("canonical_url")
   ogTitle       String?      @map("og_title")
   ogDescription String?      @map("og_description")
-  ogImage       GalleryItem?  @relation(fields: [ogImageId] , references: [id] , onDelete: SetDefault)
+  ogImage       GalleryItem?  @relation(fields: [ogImageId] , references: [id] , onDelete: SetNull)
   robotsTag     String?
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt()
@@ -435,7 +435,7 @@ model ShippingInfo {
 
   shipping Shipping @relation(fields: [shippingId], references: [id], onDelete: Cascade)
   order    Order    @relation("ShippingInfoOrder", fields: [orderId], references: [id], onDelete: Cascade)
-  user     User?    @relation(fields: [userId], references: [id], onDelete: SetDefault)
+  user     User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   sentAt    DateTime @default(now())
   createdAt DateTime @default(now())
