@@ -17,6 +17,7 @@ import { ProductVariantRepository } from '../product/repositories/product-varian
 import { ProductRepository } from '../product/repositories/product.repository';
 import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 import { ShippingRepository } from '../shipping/repositories/shipping.repository';
+import { UpdateOrderStatusDto } from './dto/update-status-order.dto';
 
 @Injectable()
 export class OrderService {
@@ -249,5 +250,18 @@ export class OrderService {
       where: { userId, id: orderId },
       include: { address: true, items: true, shipping: true, shippingInfo: true, transaction: true }
     })
+  }
+
+  async updateStatus(userId: number, orderId: number, { status }: UpdateOrderStatusDto): Promise<{ message: string, order: Order }> {
+    await this.orderRepository.findOneOrThrow({
+      where: {
+        id: orderId,
+        OR: [{ items: { some: { product: { userId } } } }, { items: { some: { productVariant: { userId } } } }]
+      }
+    })
+
+    const updatedOrder = await this.orderRepository.update({ where: { id: orderId }, data: { status } })
+
+    return { message: "Updated order status successfully.", order: updatedOrder }
   }
 }

@@ -1,5 +1,5 @@
-import { Controller, Get, Param, ParseIntPipe, Query } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Query } from "@nestjs/common";
+import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { OrderService } from "./order.service";
 import { AuthDecorator } from "../../common/decorators/auth.decorator";
 import { GetUser } from "../../common/decorators/get-user.decorator";
@@ -7,6 +7,8 @@ import { Role, User } from "generated/prisma";
 import { QueryOrderDto } from "./dto/query-order.dto";
 import { PaginationDto } from "../../common/dtos/pagination.dto";
 import { Roles } from "../../common/decorators/role.decorator";
+import { UpdateOrderStatusDto } from "./dto/update-status-order.dto";
+import { SwaggerConsumes } from "../../common/enums/swagger-consumes.enum";
 
 @Controller('order')
 @ApiTags('order')
@@ -45,5 +47,12 @@ export class OrderController {
     @Get("my/:id")
     findOneForUser(@Param("id", ParseIntPipe) id: number, @GetUser() user: User) {
         return this.orderService.findOneForUser(user.id, id)
+    }
+
+    @Patch('status/:id')
+    @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+    @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+    updateStatus(@Param('id', ParseIntPipe) id: number, @Body() updateOrderStatusDto: UpdateOrderStatusDto, @GetUser() user: User) {
+        return this.orderService.updateStatus(user.id, id, updateOrderStatusDto)
     }
 }
