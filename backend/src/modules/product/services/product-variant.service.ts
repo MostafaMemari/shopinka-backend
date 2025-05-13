@@ -12,6 +12,7 @@ import { sortObject } from "../../../common/utils/functions.utils";
 import { CacheKeys } from "../../../common/enums/cache.enum";
 import { CacheService } from "../../../modules/cache/cache.service";
 import { pagination } from "../../../common/utils/pagination.utils";
+import { AttributeValueRepository } from "../../attribute/repositories/attribute-value.repository";
 
 @Injectable()
 export class ProductVariantService {
@@ -21,12 +22,12 @@ export class ProductVariantService {
         private readonly productVariantRepository: ProductVariantRepository,
         private readonly productRepository: ProductRepository,
         private readonly galleryItemRepository: GalleryItemRepository,
-        private readonly attributeRepository: AttributeRepository,
+        private readonly attributeValueRepository: AttributeValueRepository,
         private readonly cacheService: CacheService
     ) { }
 
     async create(userId: number, createProductVariantDto: CreateProductVariantDto): Promise<{ message: string, productVariant: ProductVariant }> {
-        const { sku, mainImageId, productId, salePrice, basePrice, attributeIds } = createProductVariantDto
+        const { sku, mainImageId, productId, salePrice, basePrice, attributeValueIds } = createProductVariantDto
 
         if (salePrice > basePrice)
             throw new BadRequestException(ProductVariantMessages.SalePriceTooHigh)
@@ -38,16 +39,17 @@ export class ProductVariantService {
 
         if (existingProductVariant) throw new ConflictException(ProductVariantMessages.AlreadyExistsProductVariant)
 
-        const attributes = attributeIds ? await this.attributeRepository.findAll({ where: { id: { in: attributeIds } } }) : []
+        const attributeValues = attributeValueIds
+            ? await this.attributeValueRepository.findAll({ where: { id: { in: attributeValueIds } } }) : []
 
-        attributeIds && delete createProductVariantDto.attributeIds
+        attributeValueIds && delete createProductVariantDto.attributeValueIds
 
         const newProductVariant = await this.productVariantRepository.create({
             data: {
                 ...createProductVariantDto, userId,
-                attributes: { connect: attributes.map(attribute => ({ id: attribute.id })) }
+                attributeValues: attributeValueIds && { connect: attributeValues.map(attribute => ({ id: attribute.id })) }
             },
-            include: { mainImage: true, product: true, attributes: true }
+            include: { mainImage: true, product: true, attributeValues: true }
         })
 
         return { message: ProductVariantMessages.CreatedProductVariantSuccess, productVariant: newProductVariant }
@@ -73,7 +75,7 @@ export class ProductVariantService {
             weight,
             width,
             includeProduct,
-            includeAttributes
+            includeAttributeValues
         } = queryProductVariantDto
 
         const sortedDto = sortObject(queryProductVariantDto);
@@ -108,7 +110,7 @@ export class ProductVariantService {
         const productVariants = await this.productVariantRepository.findAll({
             where: filters,
             orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-            include: { attributes: includeAttributes, mainImage: includeMainImage, product: includeProduct, user: includeUser }
+            include: { attributeValues: includeAttributeValues, mainImage: includeMainImage, product: includeProduct, user: includeUser }
         });
 
         await this.cacheService.set(cacheKey, productVariants, this.CACHE_EXPIRE_TIME);
@@ -117,11 +119,11 @@ export class ProductVariantService {
     }
 
     findOne(id: number): Promise<ProductVariant> {
-        return this.productVariantRepository.findOneOrThrow({ where: { id }, include: { mainImage: true, user: true, attributes: true, product: true } })
+        return this.productVariantRepository.findOneOrThrow({ where: { id }, include: { mainImage: true, user: true, attributeValues: true, product: true } })
     }
 
     async update(userId: number, productVariantId: number, updateProductVariantDto: UpdateProductVariantDto): Promise<{ message: string, productVariant: ProductVariant }> {
-        const { attributeIds, salePrice, basePrice, sku, mainImageId, productId } = updateProductVariantDto
+        const { attributeValueIds, salePrice, basePrice, sku, mainImageId, productId } = updateProductVariantDto
 
         if (productId) await this.productRepository.findOneOrThrow({ where: { id: productId } })
 
@@ -138,17 +140,18 @@ export class ProductVariantService {
 
         if (mainImageId) await this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } })
 
-        const attributes = attributeIds ? await this.attributeRepository.findAll({ where: { id: { in: attributeIds } } }) : undefined
+        const attributeValues = attributeValueIds
+            ? await this.attributeValueRepository.findAll({ where: { id: { in: attributeValueIds } } }) : undefined
 
-        attributeIds && delete updateProductVariantDto.attributeIds
+        attributeValueIds && delete updateProductVariantDto.attributeValueIds
 
         const updatedProductVariant = await this.productVariantRepository.update({
             where: { id: productVariantId },
             data: {
                 ...updateProductVariantDto,
-                attributes: attributes ? { set: attributes.map(attribute => ({ id: attribute.id })) } : undefined
+                attributeValues: attributeValueIds && { connect: attributeValues.map(attribute => ({ id: attribute.id })) }
             },
-            include: { attributes: true, mainImage: true, product: true }
+            include: { attributeValues: true, mainImage: true, product: true }
         })
 
 

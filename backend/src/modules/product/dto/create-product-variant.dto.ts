@@ -67,7 +67,7 @@ export class CreateProductVariantDto {
     @IsArray()
     @ArrayUnique()
     @IsNotEmpty()
-    attributeIds: number[]
+    attributeValueIds: number[]
 
     @IsOptional()
     @IsNumber()
