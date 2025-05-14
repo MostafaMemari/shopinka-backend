@@ -1,7 +1,7 @@
 import ProductForm from '@/views/pages/products/ProductForm'
 
-const AddProduct = () => {
+const EditProduct = () => {
   return <ProductForm />
 }
 
-export default AddProduct
+export default EditProduct

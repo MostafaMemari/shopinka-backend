@@ -1,3 +1,5 @@
+import { GalleryItem } from './gallery'
+
 export enum ProductStatus {
   DRAFT = 'DRAFT',
   PUBLISHED = 'PUBLISHED'
@@ -8,6 +10,7 @@ export enum ProductType {
 }
 
 export type Product = {
+  id: number
   sku: string
   name: string
   slug: string
@@ -26,4 +29,6 @@ export type Product = {
   height: number | null
   length: number | null
   weight: number | null
+
+  mainImage: GalleryItem | undefined
 }

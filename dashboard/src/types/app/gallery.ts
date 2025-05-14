@@ -26,6 +26,8 @@ export interface GalleryItem {
   description: string | null
   fileUrl: string
   fileKey: string
+  thumbnailUrl: string
+  thumbnailKey: string
   mimetype: string
   size: number
   createdAt: string

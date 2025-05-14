@@ -29,9 +29,7 @@ const ProductListView = () => {
     params: {
       page,
       take: size,
-      includeThumbnailImage: true,
-      includeChildren: true,
-      childrenDepth: 6
+      includeMainImage: true
     },
     staleTime: 5 * 60 * 1000
   })

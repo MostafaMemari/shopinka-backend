@@ -1,8 +1,7 @@
 import ProductListView from '@/views/pages/products/list/ProductListView'
 
 const ProductList = () => {
-  //   return <ProductListView />
-  ;<></>
+  return <ProductListView />
 }
 
 export default ProductList
