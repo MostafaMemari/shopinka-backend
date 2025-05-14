@@ -12,7 +12,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import ModalGallery from '@/components/Gallery/ModalGallery/ModalGallery'
 import { GalleryItem } from '@/types/app/gallery'
 import { useFormContext } from 'react-hook-form'
-import ImagePlaceholder from '@/components/ImagePlaceholder'
+import EmptyPlaceholder from '@/components/EmptyPlaceholder'
 import { Typography } from '@mui/material'
 
 const ProductMainImage = () => {
@@ -70,7 +70,7 @@ const ProductMainImage = () => {
             </Tooltip>
           </Box>
         ) : (
-          <ImagePlaceholder width={200} height={200} />
+          <EmptyPlaceholder text='تصویری یافت نشد' width={200} height={200} />
         )}
         <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
           <ModalGallery initialSelected={selectedImage || undefined} btnLabel={selectedImage ? 'تغییر تصویر' : 'انتخاب تصویر'} multi={false} onSelect={handleSelect}>

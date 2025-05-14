@@ -10,6 +10,8 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import Switch from '@mui/material/Switch'
 import Typography from '@mui/material/Typography'
 import { VariantCombination, Attribute } from '@/types/app/productAttributes'
+import EmptyPlaceholder from '@/components/EmptyPlaceholder'
+import { Box } from '@mui/material'
 
 interface CombinationsListProps {
   combinations: VariantCombination[]
@@ -50,7 +52,7 @@ const CombinationsList = ({ combinations, selectedCombinations, attributes, onCo
   }, [combinations, selectedCombinations, attributes])
 
   if (combinations.length === 0) {
-    return <Typography color='text.secondary'>هیچ ترکیبی موجود نیست</Typography>
+    return <EmptyPlaceholder text='هیچ ترکیبی موجود نیست' width={'100%'} />
   }
 
   const attributeNames = Array.from(new Set(combinations.flatMap(combination => Object.keys(combination))))

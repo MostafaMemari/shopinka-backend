@@ -11,7 +11,7 @@ import ModalGallery from '@/components/Gallery/ModalGallery/ModalGallery'
 import { Typography } from '@mui/material'
 import { GalleryItem } from '@/types/app/gallery'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
-import ImagePlaceholder from '@/components/ImagePlaceholder'
+import ImagePlaceholder from '@/components/EmptyPlaceholder'
 
 interface CategoryThumbnailImageProps {
   control: Control<CategoryForm>

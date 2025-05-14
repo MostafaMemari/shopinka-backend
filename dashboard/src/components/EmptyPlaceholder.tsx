@@ -1,8 +1,8 @@
 'use client'
 
-import { Box, Typography, useTheme } from '@mui/material'
+import { Box, Typography, useTheme, alpha } from '@mui/material'
 
-interface ImagePlaceholderProps {
+interface EmptyPlaceholderProps {
   width?: number | string
   height?: number | string
   text?: string
@@ -11,8 +11,10 @@ interface ImagePlaceholderProps {
   sx?: object
 }
 
-const ImagePlaceholder = ({ width = 120, height = 120, text = 'تصویری انتخاب نشده', borderColor, bgcolor, sx = {} }: ImagePlaceholderProps) => {
+const EmptyPlaceholder = ({ width = 120, height = 120, text = 'محتوایی یافت نشد', borderColor, bgcolor, sx = {} }: EmptyPlaceholderProps) => {
   const theme = useTheme()
+
+  const backgroundColor = bgcolor || alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.04 : 0.08)
 
   return (
     <Box
@@ -25,7 +27,9 @@ const ImagePlaceholder = ({ width = 120, height = 120, text = 'تصویری ان
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        bgcolor: bgcolor || theme.palette.background.paper,
+        bgcolor: backgroundColor,
+        textAlign: 'center',
+        px: 1,
         ...sx
       }}
     >
@@ -36,4 +40,4 @@ const ImagePlaceholder = ({ width = 120, height = 120, text = 'تصویری ان
   )
 }
 
-export default ImagePlaceholder
+export default EmptyPlaceholder

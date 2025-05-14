@@ -1,4 +1,4 @@
-import ProductForm from '@/views/pages/products/ProductForm'
+import ProductForm from '@/views/pages/products/CreateAndUpdate/ProductForm'
 
 const EditProduct = () => {
   return <ProductForm />

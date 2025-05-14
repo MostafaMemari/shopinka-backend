@@ -12,7 +12,7 @@ import ModalGallery from '@/components/Gallery/ModalGallery/ModalGallery'
 import { GalleryItem } from '@/types/app/gallery'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import { useFormContext } from 'react-hook-form'
-import ImagePlaceholder from '@/components/ImagePlaceholder'
+import EmptyPlaceholder from '@/components/EmptyPlaceholder'
 import { Typography } from '@mui/material'
 
 const ProductGallery = () => {
@@ -85,7 +85,7 @@ const ProductGallery = () => {
               </Box>
             ))
           ) : (
-            <ImagePlaceholder width={120} height={120} />
+            <EmptyPlaceholder text='تصاویری یافت نشد' width={120} height={120} />
           )}
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>

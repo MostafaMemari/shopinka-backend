@@ -11,6 +11,8 @@ import { useAttribute } from '@/hooks/reactQuery/useAttribute'
 import { type Attribute, type ProductType, type Variant, type VariantCombination } from '@/types/app/productAttributes'
 import { generateCombinations } from './generateCombinations'
 import CombinationsList from './CombinationsList'
+import CreateAttributeModal from '../../../attribute/CreateAttributeModal'
+import { Box } from '@mui/material'
 
 const VariantsTab = () => {
   const [variants, setVariants] = useState<Variant[]>([])
@@ -34,7 +36,6 @@ const VariantsTab = () => {
     staleTime: 5 * 60 * 1000
   })
 
-  // محاسبه ترکیبات با useMemo برای جلوگیری از محاسبات غیرضروری
   const combinations = useMemo(() => {
     if (productType === 'VARIABLE' && attributesData?.data?.items) {
       return generateCombinations(variants, attributesData.data.items)
@@ -43,7 +44,6 @@ const VariantsTab = () => {
     return []
   }, [variants, attributesData, productType])
 
-  // تابع کمکی برای محاسبه activeCombinationIds
   const calculateActiveCombinationIds = (selectedCombinations: string[], combinations: VariantCombination[], attributes: Attribute[]): number[][] => {
     return selectedCombinations
       .map(key => {
@@ -241,9 +241,11 @@ const VariantsTab = () => {
                 )
               })}
               <Grid size={{ xs: 12 }}>
-                <Button variant='contained' onClick={addVariant} startIcon={<i className='tabler-plus' />} disabled={variants.length >= (attributesData?.data?.items?.length || 0)}>
-                  افزودن ویژگی دیگر
-                </Button>
+                {!(variants.length >= (attributesData?.data?.items?.length || 0)) && (
+                  <Button variant='contained' onClick={addVariant} startIcon={<i className='tabler-plus' />}>
+                    افزودن ویژگی دیگر
+                  </Button>
+                )}
               </Grid>
             </Grid>
           )}
