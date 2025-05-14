@@ -13,6 +13,7 @@ import ModalGallery from '@/components/Gallery/ModalGallery/ModalGallery'
 import { type GalleryItem } from '@/types/app/gallery'
 import { useFormContext } from 'react-hook-form'
 import ImagePlaceholder from '@/components/ImagePlaceholder'
+import { Typography } from '@mui/material'
 
 const ProductMainImage = () => {
   const [selectedImage, setSelectedImage] = useState<GalleryItem | null>(null)
@@ -67,7 +68,11 @@ const ProductMainImage = () => {
           <ImagePlaceholder width={200} height={200} />
         )}
         <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-          <ModalGallery initialSelected={selectedImage || undefined} btnLabel={selectedImage ? 'تغییر تصویر' : 'انتخاب تصویر'} multi={false} onSelect={handleSelect} />
+          <ModalGallery initialSelected={selectedImage || undefined} btnLabel={selectedImage ? 'تغییر تصویر' : 'انتخاب تصویر'} multi={false} onSelect={handleSelect}>
+            <Typography variant='body2' color='primary' sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}>
+              {selectedImage ? 'تغییر تصویر' : 'انتخاب تصویر'} از گالری
+            </Typography>
+          </ModalGallery>
         </Box>
       </CardContent>
     </Card>

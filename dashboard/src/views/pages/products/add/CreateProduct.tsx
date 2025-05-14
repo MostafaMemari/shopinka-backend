@@ -72,13 +72,13 @@ const CreateProduct = () => {
   }, [methods])
 
   const onSubmit = methods.handleSubmit(data => {
-    console.log('Submit Type:', submitType)
-    console.log('📦 اطلاعات محصول:', data)
+    // console.log('Submit Type:', submitType)
+    // console.log('📦 اطلاعات محصول:', data)
   })
 
   const handleButtonClick = useCallback(
     async (type: 'cancel' | 'draft' | 'publish') => {
-      setSubmitType(type)
+      // setSubmitType(type)
 
       if (type === 'cancel') {
         methods.reset()
@@ -101,9 +101,9 @@ const CreateProduct = () => {
             attributeIds: data.attributeIds ?? []
           })
 
-          const response = await createProduct(cleanedData)
+          const productResponse = await createProduct(cleanedData)
 
-          const errorMessage = handleApiError(response.status, {
+          const errorMessage = handleApiError(productResponse.status, {
             400: 'اطلاعات محصول نامعتبر است',
             409: 'محصول با این کد یا نامک قبلاً وجود دارد',
             500: 'خطای سرور رخ داد'
@@ -115,15 +115,12 @@ const CreateProduct = () => {
             return
           }
 
-          if ((response.status === 201 || response.status === 200) && response.data?.product) {
-            const productId = response.data.product.id
+          if ((productResponse.status === 201 || productResponse.status === 200) && productResponse.data?.product) {
+            const productId = productResponse.data.product.id
 
-            console.log(cleanedData)
-            const seoRes = await handleSeoSave('product', productId, cleanedData)
+            const seoResponse = await handleSeoSave('product', productId, cleanedData)
 
-            console.log(seoRes)
-
-            if (seoRes.status === 200 || (seoRes.status === 201 && seoRes.data?.seo)) {
+            if (seoResponse.status === 200 || (seoResponse.status === 201 && seoResponse.data?.seo)) {
               showToast({ type: 'success', message: `محصول با موفقیت ${type === 'publish' ? 'منتشر' : 'ذخیره'} شد` })
 
               invalidate(QueryKeys.Products)

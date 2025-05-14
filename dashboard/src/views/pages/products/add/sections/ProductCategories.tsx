@@ -17,15 +17,14 @@ import CustomTextField from '@core/components/mui/TextField'
 import { useCategories } from '@/hooks/reactQuery/useCategory'
 import { Category } from '@/types/app/category'
 import { useFormContext } from 'react-hook-form'
+import CreateCategoryModal from '@/views/pages/categories/CreateCategoryModal'
 
 const ProductCategories = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState<string>('')
 
   const {
-    control,
-    register,
-    setValue, // برای آپدیت دستی فیلد فرم
+    setValue,
     formState: { errors }
   } = useFormContext()
 
@@ -45,7 +44,7 @@ const ProductCategories = () => {
   useEffect(() => {
     const categoryIds = selectedCategories.map(id => parseInt(id, 10))
 
-    setValue('categoryIds', categoryIds, { shouldValidate: true }) // آپدیت فیلد categoryIds
+    setValue('categoryIds', categoryIds, { shouldValidate: true })
   }, [selectedCategories, setValue])
 
   const handleCategoryChange = (categoryId: string) => {
@@ -127,6 +126,13 @@ const ProductCategories = () => {
           ) : (
             filteredCategories.map(category => <RenderCategory key={category.id} category={category} />)
           )}
+        </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: 3 }}>
+          <CreateCategoryModal>
+            <Typography variant='body2' color='primary' sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}>
+              ثبت دسته بندی جدید
+            </Typography>
+          </CreateCategoryModal>
         </Box>
       </CardContent>
     </Card>

@@ -13,6 +13,8 @@ import { type GalleryItem } from '@/types/app/gallery'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import { useFormContext } from 'react-hook-form'
 import ImagePlaceholder from '@/components/ImagePlaceholder'
+import Link from '@/components/Link'
+import { Typography } from '@mui/material'
 
 const ProductGallery = () => {
   const [selectedImages, setSelectedImages] = useState<GalleryItem[]>([])
@@ -83,7 +85,11 @@ const ProductGallery = () => {
           )}
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-          <ModalGallery btnLabel='انتخاب تصاویر' multi initialSelected={selectedImages} onSelect={handleSelect} />
+          <ModalGallery btnLabel='انتخاب تصاویر' multi initialSelected={selectedImages} onSelect={handleSelect}>
+            <Typography variant='body2' color='primary' sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}>
+              انتخاب تصاویر از گالری
+            </Typography>
+          </ModalGallery>
         </Box>
       </CardContent>
     </Card>
