@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
@@ -9,21 +9,23 @@ import Box from '@mui/material/Box'
 import Tooltip from '@mui/material/Tooltip'
 import Image from 'next/image'
 import ModalGallery from '@/components/Gallery/ModalGallery/ModalGallery'
-import { type GalleryItem } from '@/types/app/gallery'
+import { GalleryItem } from '@/types/app/gallery'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import { useFormContext } from 'react-hook-form'
 import ImagePlaceholder from '@/components/ImagePlaceholder'
-import Link from '@/components/Link'
 import { Typography } from '@mui/material'
 
 const ProductGallery = () => {
   const [selectedImages, setSelectedImages] = useState<GalleryItem[]>([])
+  const { setValue, getValues } = useFormContext()
 
-  const {
-    register,
-    formState: { errors },
-    setValue
-  } = useFormContext()
+  useEffect(() => {
+    const galleryImages = getValues('galleryImages') as GalleryItem[] | undefined
+
+    if (galleryImages && galleryImages.length > 0 && selectedImages.length === 0) {
+      setSelectedImages(galleryImages)
+    }
+  }, [getValues, selectedImages])
 
   const handleSelect = (items: GalleryItem | GalleryItem[]) => {
     const newItems = Array.isArray(items) ? items : [items]
@@ -32,6 +34,7 @@ const ProductGallery = () => {
 
     setSelectedImages(newItems)
     setValue('galleryImageIds', uniqueIds.length > 0 ? uniqueIds : undefined)
+    setValue('galleryImages', newItems)
   }
 
   const handleRemove = (id: number) => {
@@ -41,6 +44,7 @@ const ProductGallery = () => {
 
     setSelectedImages(updatedImages)
     setValue('galleryImageIds', uniqueIds.length > 0 ? uniqueIds : undefined)
+    setValue('galleryImages', updatedImages)
   }
 
   return (
@@ -61,7 +65,7 @@ const ProductGallery = () => {
                   boxShadow: 1
                 }}
               >
-                <Image src={item.fileUrl} alt={item.title} fill style={{ objectFit: 'cover' }} />
+                <Image src={item.fileUrl} alt={item.title || 'تصویر گالری'} fill style={{ objectFit: 'cover' }} />
                 <Tooltip title='حذف تصویر'>
                   <IconButton
                     size='small'

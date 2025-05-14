@@ -4,7 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { AttributeValueSchema } from '@/libs/validators/attributeValues.schema'
 import { createAttributeValues, updateAttributeValues } from '@/libs/api/attributeValues.api'
 import { AttributeValueForm, AttributeType } from '@/types/app/productAttributes'
-import { errorAttributeMessage } from '@/messages/auth/attributeMessages'
+import { errorAttributeMessage } from '@/messages/attributeMessages'
 import { QueryKeys } from '@/types/enums/query-keys'
 import { useFormSubmit } from '../useFormSubmit'
 

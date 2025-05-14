@@ -14,7 +14,7 @@ import { useProductForm } from '@/hooks/reactQuery/useProduct'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { productFormSchema } from '@/libs/validators/product.schema'
 import { type InferType } from 'yup'
-import { ProductStatus, ProductType } from '@/types/app/product'
+import { ProductStatus, ProductType } from '@/types/app/product.type'
 import { RobotsTag } from '@/types/enums/robotsTag'
 import LoadingSpinner from '@/components/LoadingSpinner'
 

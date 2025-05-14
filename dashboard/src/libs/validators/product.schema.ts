@@ -1,4 +1,4 @@
-import { ProductStatus, ProductType } from '@/types/app/product'
+import { ProductStatus, ProductType } from '@/types/app/product.type'
 import * as yup from 'yup'
 import { seoSchema } from './seo.schema'
 

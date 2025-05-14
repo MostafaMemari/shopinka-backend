@@ -5,51 +5,36 @@ import { QueryOptions } from '@/types/queryOptions'
 import { useQuery } from '@tanstack/react-query'
 import { useState, useEffect, useCallback } from 'react'
 import { type UseFormReturn } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
 import { useRouter } from 'next/navigation'
 import { productFormSchema } from '@/libs/validators/product.schema'
-import { Product, ProductStatus, ProductType } from '@/types/app/product'
-import { createProduct, getProductById, getProducts, removeProduct, updateProduct } from '@/libs/api/product.api'
+import { Product, ProductStatus, ProductType } from '@/types/app/product.type'
+import { createProduct, getProductById, getProducts, updateProduct } from '@/libs/api/product.api'
 import { useFormSubmit } from '@/hooks/useFormSubmit'
-import { RobotsTag } from '@/types/enums/robotsTag'
 import { handleSeoSave } from '@/libs/services/seo/seo.service'
 import { cleanObject } from '@/utils/formatters'
 import { showToast } from '@/utils/showToast'
-import { handleApiError } from '@/utils/handleApiError'
 import { type InferType } from 'yup'
-
-type ProductFormType = InferType<typeof productFormSchema>
-
-const errorProductMessage = {
-  400: 'اطلاعات وارد شده نامعتبر است',
-  404: 'محصول مورد نظر یافت نشد',
-  409: 'محصولی با این مشخصات قبلاً ثبت شده است',
-  500: 'خطای سیستمی رخ داد'
-}
+import { GalleryItem } from '@/types/app/gallery'
+import { errorProductMessage } from '@/messages/product.message'
 
 export function useProducts({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
-  const fetchCategory = () => getProducts(params).then(res => res)
+  const fetchProducts = () => getProducts(params).then(res => res)
 
   return useQuery<any, Error>({
     queryKey: [QueryKeys.Products, params],
-    queryFn: fetchCategory,
+    queryFn: fetchProducts,
     enabled,
     staleTime,
     refetchOnWindowFocus: false
   })
 }
 
+type ProductFormType = InferType<typeof productFormSchema>
+
 interface UseProductFormProps {
   id?: number | null
   initialData?: Product
   methods: UseFormReturn<ProductFormType>
-}
-
-interface ApiResponse {
-  status: number
-  data?: {
-    id: number
-  }
 }
 
 export const useProductForm = ({ id, initialData, methods }: UseProductFormProps) => {
@@ -71,6 +56,14 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
                 methods.setValue(key as keyof ProductFormType, value ?? null)
               }
             })
+
+            if (product.mainImage) {
+              methods.setValue('mainImage' as any, product.mainImage as GalleryItem)
+            }
+
+            if (product.galleryImages && Array.isArray(product.galleryImages)) {
+              methods.setValue('galleryImages' as any, product.galleryImages as GalleryItem[])
+            }
           }
         } catch (err) {
           showToast({ type: 'error', message: 'خطا در بارگذاری محصول' })
@@ -84,11 +77,6 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
       setIsLoading(false)
     }
   }, [id, initialData, methods])
-
-  const handleClose = useCallback(() => {
-    methods.reset()
-    router.push('/products')
-  }, [methods, router])
 
   const { isLoading: submitLoading, onSubmit: submitForm } = useFormSubmit<ProductFormType>({
     createApi: createProduct as any,
@@ -108,7 +96,7 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
   const handleButtonClick = useCallback(
     async (type: 'cancel' | 'draft' | 'publish') => {
       if (type === 'cancel') {
-        handleClose()
+        router.push('/products')
 
         return
       }
@@ -119,43 +107,36 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
         try {
           const status = type === 'publish' ? ProductStatus.PUBLISHED : ProductStatus.DRAFT
 
-          const cleanedData = {
-            ...cleanObject(data),
+          const cleanedData = cleanObject({
+            ...data,
             status,
             galleryImageIds: data.galleryImageIds ?? [],
             categoryIds: data.categoryIds ?? [],
             attributeIds: data.attributeIds ?? []
-          } as ProductFormType
+          })
 
-          const result = await submitForm(cleanedData, handleClose)
-          const response = result as unknown as ApiResponse
+          await submitForm(cleanedData, () => {})
 
-          if (response && response.status >= 200 && response.status < 300) {
-            const productId = isUpdate ? id : response.data?.id
+          if (isUpdate && id) {
+            const seoResponse = await handleSeoSave('product', id, cleanedData)
 
-            if (productId) {
-              const seoResponse = await handleSeoSave('product', productId, cleanedData)
+            if (seoResponse.status !== 200 && seoResponse.status !== 201) {
+              showToast({ type: 'error', message: 'خطا در ذخیره SEO' })
 
-              if (seoResponse.status !== 200 && seoResponse.status !== 201) {
-                if (!isUpdate) await removeProduct(productId.toString())
-
-                showToast({ type: 'error', message: 'خطا در ذخیره SEO' })
-              }
+              return
             }
           }
         } catch (error) {
-          showToast({ type: 'error', message: 'خطای سیستمی رخ داد' })
         } finally {
           setIsLoading(false)
         }
       })()
     },
-    [methods, submitForm, handleClose, id, isUpdate]
+    [methods, submitForm, id, isUpdate, router]
   )
 
   return {
     isLoading: isLoading || submitLoading,
-    handleButtonClick,
-    handleClose
+    handleButtonClick
   }
 }

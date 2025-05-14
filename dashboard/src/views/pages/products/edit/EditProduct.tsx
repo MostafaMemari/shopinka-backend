@@ -6,7 +6,7 @@ import { Typography, CircularProgress, Box } from '@mui/material'
 
 // import { getProductById } from '@/libs/api/product.api'
 
-import { Product } from '@/types/app/product'
+import { Product } from '@/types/app/product.type'
 
 const UpdateProduct = () => {
   const searchParams = useSearchParams()

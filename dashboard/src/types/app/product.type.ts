@@ -30,5 +30,6 @@ export type Product = {
   length: number | null
   weight: number | null
 
-  mainImage: GalleryItem | undefined
+  mainImage?: GalleryItem | undefined
+  galleryImages?: GalleryItem[] | undefined
 }

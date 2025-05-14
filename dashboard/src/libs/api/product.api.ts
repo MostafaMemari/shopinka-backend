@@ -1,4 +1,4 @@
-import { Product } from '@/types/app/product'
+import { Product } from '@/types/app/product.type'
 import { Response } from '@/types/response'
 import { serverApiFetch } from '@/utils/api/serverApiFetch'
 

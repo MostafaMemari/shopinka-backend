@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { attributeSchema } from '@/libs/validators/attribute.schema'
 import { AttributeFormType, Attribute, AttributeType } from '@/types/app/productAttributes'
-import { errorAttributeMessage } from '@/messages/auth/attributeMessages'
+import { errorAttributeMessage } from '@/messages/attributeMessages'
 import { useFormSubmit } from '../useFormSubmit'
 
 export function useAttribute({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {

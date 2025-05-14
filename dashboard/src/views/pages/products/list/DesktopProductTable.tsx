@@ -3,7 +3,7 @@
 import { Box, IconButton, Typography } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import tableStyles from '@core/styles/table.module.css'
-import { Product } from '@/types/app/product'
+import { Product } from '@/types/app/product.type'
 import RemoveProductModal from './RemoveProductModal'
 import { stripHtml, truncateText } from '@/utils/formatters'
 

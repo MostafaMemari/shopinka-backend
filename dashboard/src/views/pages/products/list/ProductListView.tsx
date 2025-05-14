@@ -1,25 +1,16 @@
 'use client'
 
-// React Imports
 import { useMemo } from 'react'
-
-// MUI Imports
 import Card from '@mui/material/Card'
 import { Box, Button, useMediaQuery, useTheme } from '@mui/material'
-
-// Component Imports
 import TablePaginationComponent from '@/components/TablePaginationComponent'
 import DesktopProductTable from './DesktopProductTable'
 import LoadingSpinner from '@/components/LoadingSpinner'
-
-// API Import
-import { useProducts } from '@/hooks/reactQuery/useProduct'
-import { Product } from '@/types/app/product'
-
-// Hook Import
+import { Product } from '@/types/app/product.type'
 import { usePaginationParams } from '@/hooks/usePaginationParams'
 import ErrorState from '@/components/states/ErrorState'
 import EmptyProductState from './EmptyProductState'
+import { useProducts } from '@/hooks/reactQuery/useProduct'
 
 const ProductListView = () => {
   const { page, size, setPage, setSize } = usePaginationParams()

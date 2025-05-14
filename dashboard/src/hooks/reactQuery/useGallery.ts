@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { gallerySchema } from '@/libs/validators/gallery.schema'
 import { GalleryForm, Gallery } from '@/types/app/gallery'
-import { errorGalleryMessage } from '@/messages/auth/galleryMessages'
+import { errorGalleryMessage } from '@/messages/galleryMessages'
 import { useFormSubmit } from '../useFormSubmit'
 
 export function useGalleryItems({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {

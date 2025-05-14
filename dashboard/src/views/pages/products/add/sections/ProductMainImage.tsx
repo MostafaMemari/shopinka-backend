@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
@@ -10,19 +10,22 @@ import Tooltip from '@mui/material/Tooltip'
 import Image from 'next/image'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import ModalGallery from '@/components/Gallery/ModalGallery/ModalGallery'
-import { type GalleryItem } from '@/types/app/gallery'
+import { GalleryItem } from '@/types/app/gallery'
 import { useFormContext } from 'react-hook-form'
 import ImagePlaceholder from '@/components/ImagePlaceholder'
 import { Typography } from '@mui/material'
 
 const ProductMainImage = () => {
   const [selectedImage, setSelectedImage] = useState<GalleryItem | null>(null)
+  const { setValue, getValues } = useFormContext()
 
-  const {
-    register,
-    formState: { errors },
-    setValue
-  } = useFormContext()
+  useEffect(() => {
+    const mainImage = getValues('mainImage') as GalleryItem | undefined
+
+    if (mainImage && !selectedImage) {
+      setSelectedImage(mainImage)
+    }
+  }, [getValues, selectedImage])
 
   const handleSelect = (item: GalleryItem | GalleryItem[]) => {
     const image = Array.isArray(item) ? item[0] : item
@@ -31,11 +34,13 @@ const ProductMainImage = () => {
     const mainImageId = typeof image.id === 'number' && image.id > 0 ? image.id : undefined
 
     setValue('mainImageId', mainImageId)
+    setValue('mainImage', image)
   }
 
   const handleRemove = () => {
     setSelectedImage(null)
     setValue('mainImageId', undefined)
+    setValue('mainImage', undefined)
   }
 
   return (
@@ -44,7 +49,7 @@ const ProductMainImage = () => {
       <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
         {selectedImage ? (
           <Box sx={{ position: 'relative', width: 200, height: 200, borderRadius: 2, overflow: 'hidden', boxShadow: 1 }}>
-            <Image src={selectedImage.fileUrl} alt={selectedImage.title} fill style={{ objectFit: 'cover' }} />
+            <Image src={selectedImage.fileUrl} alt={selectedImage.title || 'تصویر محصول'} fill style={{ objectFit: 'cover' }} />
             <Tooltip title='حذف تصویر'>
               <IconButton
                 size='small'
