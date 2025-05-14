@@ -1,4 +1,4 @@
-import { Product, ProductForm } from '@/types/app/product'
+import { Product } from '@/types/app/product'
 import { Response } from '@/types/response'
 import { serverApiFetch } from '@/utils/api/serverApiFetch'
 
@@ -29,7 +29,7 @@ export const getCategories = async (params?: Record<string, string>): Promise<Re
   }
 }
 
-export const updateProduct = async (id: string, data: Partial<ProductForm>): Promise<{ status: number; data: Product | null }> => {
+export const updateProduct = async (id: string, data: Partial<Product>): Promise<{ status: number; data: Product | null }> => {
   try {
     const res = await serverApiFetch(`/product/${id}`, {
       method: 'PATCH',
@@ -47,7 +47,7 @@ export const updateProduct = async (id: string, data: Partial<ProductForm>): Pro
   }
 }
 
-export const createProduct = async (data: ProductForm): Promise<{ status: number; data: { product: (Product & { id: number }) | null } }> => {
+export const createProduct = async (data: Product): Promise<{ status: number; data: { product: (Product & { id: number }) | null } }> => {
   try {
     const res = await serverApiFetch('/product', {
       method: 'POST',
@@ -65,7 +65,7 @@ export const createProduct = async (data: ProductForm): Promise<{ status: number
   }
 }
 
-export const removeProduct = async (id: string): Promise<{ status: number; data: { message: string; product: ProductForm } | null }> => {
+export const removeProduct = async (id: string): Promise<{ status: number; data: { message: string; product: Product } | null }> => {
   try {
     const res = await serverApiFetch(`/product/${id}`, { method: 'DELETE' })
 

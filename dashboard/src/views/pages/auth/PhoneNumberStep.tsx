@@ -24,7 +24,7 @@ import Logo from '@components/layout/shared/Logo'
 import AuthIllustrationWrapper from './AuthIllustrationWrapper'
 
 import OtpInputComponent from './OtpStep'
-import { sendOtp } from '@/libs/api/auth'
+import { sendOtp } from '@/libs/api/auth.api'
 import { showToast } from '@/utils/showToast'
 import { handleApiError } from '@/utils/handleApiError'
 

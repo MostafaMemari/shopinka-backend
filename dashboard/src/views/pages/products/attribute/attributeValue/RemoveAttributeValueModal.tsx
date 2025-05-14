@@ -1,5 +1,5 @@
 import ConfirmDeleteModal from '@/components/ConfirmDeleteModal'
-import { removeAttributeValue } from '@/libs/api/productAttributeValues'
+import { removeAttributeValue } from '@/libs/api/productAttributeValues.api'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
 import { QueryKeys } from '@/types/enums/query-keys'
 import { ReactNode } from 'react'

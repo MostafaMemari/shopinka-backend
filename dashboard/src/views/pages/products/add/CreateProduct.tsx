@@ -14,25 +14,26 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useState, useCallback } from 'react'
 import { type InferType } from 'yup'
 import { ProductStatus, ProductType } from '@/types/app/product'
-import { productSchema } from '@/libs/validators/product.schema'
+import { productFormSchema } from '@/libs/validators/product.schema'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
 import { cleanObject } from '@/utils/formatters'
 import { handleApiError } from '@/utils/handleApiError'
 import { showToast } from '@/utils/showToast'
 import { QueryKeys } from '@/types/enums/query-keys'
-import { createProduct, removeProduct } from '@/libs/api/product'
+import { createProduct, removeProduct } from '@/libs/api/product.api'
 import { RobotsTag } from '@/types/enums/robotsTag'
-import { saveSeoMeta } from '@/libs/api/seo'
+import { saveSeoMeta } from '@/libs/services/seo/seo.api'
+import { handleSeoSave } from '@/libs/services/seo/seo.service'
 
 const CreateProduct = () => {
   const [submitType, setSubmitType] = useState<'cancel' | 'draft' | 'publish' | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const { invalidate } = useInvalidateQuery()
 
-  type ProductForm = InferType<typeof productSchema>
+  type ProductForm = InferType<typeof productFormSchema>
 
   const methods = useForm<ProductForm>({
-    resolver: yupResolver(productSchema),
+    resolver: yupResolver(productFormSchema),
     defaultValues: {
       sku: '',
       name: '',
@@ -92,7 +93,13 @@ const CreateProduct = () => {
         try {
           const status = type === 'publish' ? ProductStatus.PUBLISHED : ProductStatus.DRAFT
 
-          const cleanedData = cleanObject({ ...data, status })
+          const cleanedData = cleanObject({
+            ...data,
+            status,
+            galleryImageIds: data.galleryImageIds ?? [],
+            categoryIds: data.categoryIds ?? [],
+            attributeIds: data.attributeIds ?? []
+          })
 
           const response = await createProduct(cleanedData)
 
@@ -112,21 +119,11 @@ const CreateProduct = () => {
             const productId = response.data.product.id
 
             console.log(cleanedData)
+            const seoRes = await handleSeoSave('product', productId, cleanedData)
 
-            const seoResponse = await saveSeoMeta('product', productId, {
-              title: cleanedData.seo_title || cleanedData.name,
-              description: cleanedData.seo_description || cleanedData?.shortDescription,
-              keywords: cleanedData.seo_keywords,
-              canonicalUrl: cleanedData.seo_canonicalUrl,
-              ogTitle: cleanedData.seo_ogTitle || cleanedData.name,
-              ogDescription: cleanedData.seo_ogDescription || cleanedData?.shortDescription,
-              ogImage: cleanedData.seo_ogImage,
-              robotsTag: 'index_follow'
-            })
+            console.log(seoRes)
 
-            console.log(seoResponse)
-
-            if (seoResponse.status === 200 || (seoResponse.status === 201 && seoResponse.data?.seo)) {
+            if (seoRes.status === 200 || (seoRes.status === 201 && seoRes.data?.seo)) {
               showToast({ type: 'success', message: `محصول با موفقیت ${type === 'publish' ? 'منتشر' : 'ذخیره'} شد` })
 
               invalidate(QueryKeys.Products)

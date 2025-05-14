@@ -1,5 +1,5 @@
 import { SeoForm } from '@/types/app/seo'
-import { serverApiFetch } from '../serverApiFetch'
+import { serverApiFetch } from '../../serverApiFetch'
 
 export const saveSeoMeta = async (
   type: 'product' | 'blog' | 'tag' | 'category',

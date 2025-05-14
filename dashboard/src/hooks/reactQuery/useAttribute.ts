@@ -1,4 +1,4 @@
-import { getAttributes } from '@/libs/api/productAttributes'
+import { getAttributes } from '@/libs/api/productAttributes.api'
 import { QueryKeys } from '@/types/enums/query-keys'
 import { QueryOptions } from '@/types/queryOptions'
 import { useQuery } from '@tanstack/react-query'

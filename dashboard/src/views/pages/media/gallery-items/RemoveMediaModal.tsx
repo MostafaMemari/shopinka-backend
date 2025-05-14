@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
-import { removeGalleryItem } from '@/libs/api/galleyItem'
+import { removeGalleryItem } from '@/libs/api/galleyItem.api'
 import { showToast } from '@/utils/showToast'
 import { Button, CircularProgress, DialogContent, DialogContentText } from '@mui/material'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'

@@ -14,8 +14,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 // API and Utility Imports
 import { showToast } from '@/utils/showToast'
-import { categorySchema } from '@/libs/validators/category.schemas'
-import { updateCategory } from '@/libs/api/category'
+import { categorySchema } from '@/libs/validators/category.schema'
+import { updateCategory } from '@/libs/api/category.api'
 import { CategoryForm, Category } from '@/types/app/category'
 import { cleanObject } from '@/utils/formatters'
 import { handleApiError } from '@/utils/handleApiError'

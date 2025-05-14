@@ -22,7 +22,7 @@ import styles from '@/libs/styles/inputOtp.module.css'
 // Messages
 import { errorOtpStepMessages, otpStepMessages } from '@/messages/auth/otpMessages'
 import { showToast } from '@/utils/showToast'
-import { verifyOtp } from '@/libs/api/auth'
+import { verifyOtp } from '@/libs/api/auth.api'
 import { handleApiError } from '@/utils/handleApiError'
 
 const Slot = (props: SlotProps & { isError?: boolean }) => (
