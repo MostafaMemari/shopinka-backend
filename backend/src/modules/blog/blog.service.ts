@@ -67,7 +67,7 @@ export class BlogService {
 
     if (cachedBlogs) return { ...pagination(paginationDto, cachedBlogs) }
 
-    const filters: Prisma.BlogWhereInput = {};
+    const filters: Prisma.BlogWhereInput = { status: BlogStatus.PUBLISHED };
 
     if (title) filters.title = { contains: title, mode: "insensitive" };
     if (startDate || endDate) {
@@ -79,7 +79,7 @@ export class BlogService {
     const blogs = await this.blogRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { categories: includeCategories, comments: includeComments, seoMeta: includeSeoMeta, tags: includeTags, user: includeUser }
+      include: { categories: includeCategories, comments: includeComments, seoMeta: includeSeoMeta, tags: includeTags, user: includeUser && { select: { id: true, fullName: true } } }
     });
 
     await this.cacheService.set(cacheKey, blogs, this.CACHE_EXPIRE_TIME);

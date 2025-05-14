@@ -156,7 +156,7 @@ export class PaymentService {
 
     async findTransactions({ page, take, ...transactionsFiltersDto }: QueryTransactionsDto): Promise<unknown> {
         const paginationDto = { page, take };
-        const { authority, endDate, maxAmount, minAmount, sortBy, sortDirection, startDate, status, userId, includeUser } = transactionsFiltersDto;
+        const { includeOrder, authority, endDate, maxAmount, minAmount, sortBy, sortDirection, startDate, status, userId, includeUser } = transactionsFiltersDto;
 
         const sortedDto = sortObject(transactionsFiltersDto);
 
@@ -185,7 +185,7 @@ export class PaymentService {
         const transactions = await this.paymentRepository.findAll({
             where: filters,
             orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-            include: { user: includeUser }
+            include: { order: includeOrder, user: includeUser }
         });
 
         await this.cacheService.set(cacheKey, transactions, this.CACHE_EXPIRE_TIME);
@@ -198,7 +198,7 @@ export class PaymentService {
     }
 
     findOneTransaction(transactionId: number): Promise<never | Transaction> {
-        return this.paymentRepository.findOneOrThrow({ where: { id: transactionId }, include: { user: true } });
+        return this.paymentRepository.findOneOrThrow({ where: { id: transactionId }, include: { order: true, user: true } });
     }
 
     private async increaseCartItemsStock(userId: number) {

@@ -203,7 +203,7 @@ model Product {
   comments         Comment[]
   cartItems        CartItem[]
   orderItems       OrderItem[]
-  tgs              Tag[]
+  tags              Tag[]
   seoMeta          SeoMeta?         @relation("SeoMetaProduct")
   width            Int?
   height           Int?

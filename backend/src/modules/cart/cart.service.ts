@@ -11,7 +11,6 @@ import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { pagination } from '../../common/utils/pagination.utils';
 import { IGetCart } from './interfaces/cart.interface';
 import { ShippingRepository } from '../shipping/repositories/shipping.repository';
-import { CartMessages } from './enums/cart-messages.enum';
 
 @Injectable()
 export class CartService {
@@ -60,7 +59,7 @@ export class CartService {
   async findAllItems(userId: number, paginationDto: PaginationDto): Promise<unknown> {
     await this.cartRepository.findOneOrThrow({ where: { userId } })
 
-    const cartItems = await this.cartItemRepository.findAll({ where: { cart: { userId } }, include: { product: true, productVariant: true } })
+    const cartItems = await this.cartItemRepository.findAll({ where: { cart: { userId } }, include: { cart: true, product: true, productVariant: true } })
     return pagination(paginationDto, cartItems)
   }
 

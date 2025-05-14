@@ -110,7 +110,7 @@ export class ProductVariantService {
         const productVariants = await this.productVariantRepository.findAll({
             where: filters,
             orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-            include: { attributeValues: includeAttributeValues, mainImage: includeMainImage, product: includeProduct, user: includeUser }
+            include: { attributeValues: includeAttributeValues, mainImage: includeMainImage, product: includeProduct, user: includeUser && { select: { id: true, fullName: true } } }
         });
 
         await this.cacheService.set(cacheKey, productVariants, this.CACHE_EXPIRE_TIME);
@@ -119,7 +119,7 @@ export class ProductVariantService {
     }
 
     findOne(id: number): Promise<ProductVariant> {
-        return this.productVariantRepository.findOneOrThrow({ where: { id }, include: { mainImage: true, user: true, attributeValues: true, product: true } })
+        return this.productVariantRepository.findOneOrThrow({ where: { id }, include: { mainImage: true, user: { select: { id: true, fullName: true } }, attributeValues: true, product: true } })
     }
 
     async update(userId: number, productVariantId: number, updateProductVariantDto: UpdateProductVariantDto): Promise<{ message: string, productVariant: ProductVariant }> {

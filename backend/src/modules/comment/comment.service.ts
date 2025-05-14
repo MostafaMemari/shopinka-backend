@@ -55,7 +55,7 @@ export class CommentService {
     }
 
     const include: Prisma.CommentInclude = {
-      user: includeUser,
+      user: includeUser && { select: { id: true, fullName: true } },
       parent: includeParent,
       blog: includeBlog,
       product: includeProduct,

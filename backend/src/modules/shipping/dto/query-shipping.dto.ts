@@ -47,6 +47,24 @@ export class QueryShippingDto extends PaginationDto {
     isActive?: boolean
 
     @IsOptional()
+    @IsBoolean()
+    @Transform(({ value }) => {
+        if (typeof value == 'string') return value == 'true'
+        return value
+    })
+    @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
+    includeOrders?: boolean
+
+    @IsOptional()
+    @IsBoolean()
+    @Transform(({ value }) => {
+        if (typeof value == 'string') return value == 'true'
+        return value
+    })
+    @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
+    includeShippingInfos?: boolean
+
+    @IsOptional()
     @IsDate()
     @Transform(({ value }) => new Date(value))
     @ApiPropertyOptional({ type: 'string', format: 'date-time' })

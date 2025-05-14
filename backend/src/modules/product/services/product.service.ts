@@ -92,7 +92,11 @@ export class ProductService {
       sku,
       weight,
       width,
-      includeVariants
+      includeVariants,
+      includeSeoMeta,
+      includeTags,
+      includeComments,
+      includeSeoCategories
     } = queryProductDto
 
     const sortedDto = sortObject(queryProductDto);
@@ -132,6 +136,10 @@ export class ProductService {
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
       include: {
+        categories: includeSeoCategories,
+        comments: includeComments,
+        tags: includeTags,
+        seoMeta: includeSeoMeta,
         attributes: includeAttributes,
         galleryImages: includeGalleryImages,
         mainImage: includeMainImage,
@@ -146,7 +154,10 @@ export class ProductService {
   }
 
   findOne(id: number): Promise<Product> {
-    return this.productRepository.findOneOrThrow({ where: { id, status: ProductStatus.PUBLISHED }, include: { galleryImages: true, mainImage: true, user: true, variants: true } })
+    return this.productRepository.findOneOrThrow({
+      where: { id, status: ProductStatus.PUBLISHED },
+      include: { galleryImages: true, mainImage: true, user: true, variants: true, tags: true, seoMeta: true, categories: true, comments: true, attributes: true }
+    })
   }
 
   findOneDraft(userId: number, id: number): Promise<Product> {
