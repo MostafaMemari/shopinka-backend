@@ -7,13 +7,13 @@ import { Box, IconButton, Typography } from '@mui/material'
 import tableStyles from '@core/styles/table.module.css'
 
 // API Import
-import { Category } from '@/types/app/category'
-import UpdateCategoryModal from './UpdateCategoryModal'
-import RemoveCategoryModal from './RemoveCategoryModal'
+import { Product } from '@/types/app/category'
+import UpdateProductModal from './UpdateProductModal'
+import RemoveProductModal from './RemoveProductModal'
 import { stripHtml, truncateText } from '@/utils/formatters'
 
-const DesktopCategoryTable = ({ categories }: { categories: Category[] }) => {
-  const renderCategoryRow = (category: Category, level: number = 0): JSX.Element[] => {
+const DesktopProductTable = ({ categories }: { categories: Product[] }) => {
+  const renderProductRow = (category: Product, level: number = 0): JSX.Element[] => {
     const rows: JSX.Element[] = []
 
     rows.push(
@@ -42,17 +42,17 @@ const DesktopCategoryTable = ({ categories }: { categories: Category[] }) => {
         </td>
         <td>
           <Box display='flex' alignItems='center' gap={2}>
-            <RemoveCategoryModal id={category.id}>
+            <RemoveProductModal id={category.id}>
               <IconButton size='small'>
                 <i className='tabler-trash text-gray-500 text-lg' />
               </IconButton>
-            </RemoveCategoryModal>
+            </RemoveProductModal>
 
-            <UpdateCategoryModal initialData={category}>
+            <UpdateProductModal initialData={category}>
               <IconButton size='small'>
                 <i className='tabler-edit text-gray-500 text-lg' />
               </IconButton>
-            </UpdateCategoryModal>
+            </UpdateProductModal>
           </Box>
         </td>
       </tr>
@@ -60,7 +60,7 @@ const DesktopCategoryTable = ({ categories }: { categories: Category[] }) => {
 
     if (category.children && category.children.length > 0) {
       category.children.forEach(child => {
-        rows.push(...renderCategoryRow(child, level + 1))
+        rows.push(...renderProductRow(child, level + 1))
       })
     }
 
@@ -87,7 +87,7 @@ const DesktopCategoryTable = ({ categories }: { categories: Category[] }) => {
               </td>
             </tr>
           ) : (
-            categories.filter(cat => cat.parentId === null).flatMap(cat => renderCategoryRow(cat))
+            categories.filter(cat => cat.parentId === null).flatMap(cat => renderProductRow(cat))
           )}
         </tbody>
       </table>
@@ -95,4 +95,4 @@ const DesktopCategoryTable = ({ categories }: { categories: Category[] }) => {
   )
 }
 
-export default DesktopCategoryTable
+export default DesktopProductTable

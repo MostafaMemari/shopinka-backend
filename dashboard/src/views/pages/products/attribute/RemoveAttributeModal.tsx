@@ -1,4 +1,4 @@
-import { removeAttribute } from '@/libs/api/productAttributes.api'
+import { removeAttribute } from '@/libs/api/attributes.api'
 import ConfirmDeleteModal from '@/components/ConfirmDeleteModal'
 import { IconButton } from '@mui/material'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'

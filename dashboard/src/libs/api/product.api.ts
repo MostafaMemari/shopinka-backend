@@ -2,7 +2,7 @@ import { Product } from '@/types/app/product'
 import { Response } from '@/types/response'
 import { serverApiFetch } from '@/utils/api/serverApiFetch'
 
-export const getCategories = async (params?: Record<string, string>): Promise<Response<Product[]>> => {
+export const getProducts = async (params?: Record<string, string>): Promise<Response<Product[]>> => {
   try {
     const res = await serverApiFetch('/product', {
       method: 'GET',

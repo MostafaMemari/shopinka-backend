@@ -1,22 +1,12 @@
+'use client'
+
 import { useState, useCallback, ReactNode } from 'react'
-import CustomTextField from '@core/components/mui/TextField'
-import CustomDialog from '@/@core/components/mui/CustomDialog'
-import { Controller, useForm } from 'react-hook-form'
 import { IconButton } from '@mui/material'
-import { AttributeType, AttributeValueForm } from '@/types/app/productAttributes'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { createAttributeValues } from '@/libs/api/productAttributeValues.api'
-import { showToast } from '@/utils/showToast'
-import { handleApiError } from '@/utils/handleApiError'
-import { errorAttributeMessage } from '@/messages/auth/attributeMessages'
-import { AttributeValueSchema } from '@/libs/validators/attributeValues.schema'
-import { HexColorPicker } from 'react-colorful'
-import ClickAwayListener from '@mui/material/ClickAwayListener'
-import Popper from '@mui/material/Popper'
+import CustomDialog from '@core/components/mui/CustomDialog'
+import AttributeValueForm from './AttributeValueForm'
 import FormActions from '@/components/FormActions'
-import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
-import { cleanObject } from '@/utils/formatters'
-import { QueryKeys } from '@/types/enums/query-keys'
+import { AttributeType } from '@/types/app/productAttributes'
+import { useAttributeValueForm } from '@/hooks/reactQuery/useAttributeValues'
 
 interface CreateAttributeValueModalProps {
   children?: ReactNode
@@ -27,73 +17,18 @@ interface CreateAttributeValueModalProps {
 
 const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType, children }: CreateAttributeValueModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { invalidate } = useInvalidateQuery()
-  const [colorAnchorEl, setColorAnchorEl] = useState<HTMLElement | null>(null)
 
-  const handleOpenColorPicker = (event: React.MouseEvent<HTMLElement>) => {
-    setColorAnchorEl(event.currentTarget)
-  }
-
-  const handleCloseColorPicker = () => setColorAnchorEl(null)
-
-  const isColorPickerOpen = Boolean(colorAnchorEl)
-
-  const {
-    control,
-    reset,
-    handleSubmit,
-    formState: { errors }
-  } = useForm<AttributeValueForm>({
-    resolver: yupResolver(AttributeValueSchema(attributeType)),
-    defaultValues: {
-      name: '',
-      slug: '',
-      buttonLabel: '',
-      attributeId: String(attributeId),
-      colorCode: ''
-    },
-    context: {
-      type: attributeType
-    }
+  const { control, errors, isLoading, onSubmit, handleClose } = useAttributeValueForm({
+    attributeType,
+    attributeId
   })
 
   const handleOpen = useCallback(() => setOpen(true), [])
 
-  const handleClose = useCallback(() => {
+  const handleModalClose = useCallback(() => {
     setOpen(false)
-    reset()
-  }, [reset])
-
-  const onSubmit = useCallback(
-    async (formData: AttributeValueForm) => {
-      setIsLoading(true)
-
-      try {
-        const cleanedData = cleanObject(formData)
-        const { status } = await createAttributeValues(cleanedData)
-
-        const errorMessage = handleApiError(status, errorAttributeMessage)
-
-        if (errorMessage) {
-          showToast({ type: 'error', message: errorMessage })
-
-          return
-        }
-
-        if (status === 201 || status === 200) {
-          showToast({ type: 'success', message: 'متغیر با موفقیت ثبت شد' })
-          invalidate(QueryKeys.Attributes)
-          handleClose()
-        }
-      } catch (error: any) {
-        showToast({ type: 'error', message: 'خطای سیستمی' })
-      } finally {
-        setIsLoading(false)
-      }
-    },
-    [handleClose, invalidate]
-  )
+    handleClose()
+  }, [handleClose])
 
   return (
     <div>
@@ -107,143 +42,12 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType, 
 
       <CustomDialog
         open={open}
-        onClose={handleClose}
+        onClose={handleModalClose}
         title={`ثبت متغیر ویژگی برای ${attributeName}`}
         defaultMaxWidth='xs'
-        actions={
-          <>
-            <FormActions onCancel={handleClose} onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
-          </>
-        }
+        actions={<FormActions onCancel={handleModalClose} onSubmit={onSubmit} isLoading={isLoading} />}
       >
-        <form
-          onKeyDown={e => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault()
-              handleSubmit(onSubmit)()
-            }
-          }}
-          onSubmit={handleSubmit(onSubmit)}
-          className='flex flex-col gap-5'
-        >
-          <Controller
-            name='name'
-            control={control}
-            disabled={isLoading}
-            render={({ field }) => (
-              <CustomTextField {...field} fullWidth label='نام ویژگی' placeholder='لطفا نام ویژگی را وارد کنید' error={!!errors.name} helperText={errors.name?.message} />
-            )}
-          />
-          <Controller
-            name='slug'
-            control={control}
-            disabled={isLoading}
-            render={({ field }) => (
-              <CustomTextField
-                {...field}
-                value={field.value ?? ''}
-                fullWidth
-                label='نامک'
-                placeholder='لطفا نامک ویژگی را وارد کنید'
-                error={!!errors.slug}
-                helperText={errors.slug?.message}
-                onChange={e => field.onChange(e.target.value || null)}
-              />
-            )}
-          />
-          {attributeType === AttributeType.BUTTON ? (
-            <Controller
-              name='buttonLabel'
-              control={control}
-              disabled={isLoading}
-              render={({ field }) => (
-                <CustomTextField
-                  {...field}
-                  value={field.value ?? ''}
-                  fullWidth
-                  label='دکمه'
-                  placeholder='لطفا نام دکمه را وارد کنید'
-                  error={!!errors.buttonLabel}
-                  helperText={errors.buttonLabel?.message}
-                  onChange={e => field.onChange(e.target.value || null)}
-                />
-              )}
-            />
-          ) : (
-            <Controller
-              name='colorCode'
-              control={control}
-              disabled={isLoading}
-              render={({ field }) => (
-                <div className='flex items-center gap-2 relative'>
-                  <CustomTextField
-                    {...field}
-                    value={field.value ?? ''}
-                    fullWidth
-                    label='انتخاب رنگ'
-                    placeholder='#FFFFFF'
-                    error={!!errors.colorCode}
-                    helperText={errors.colorCode?.message}
-                    onChange={e => {
-                      let value = e.target.value
-
-                      if (value.length > 7) value = value.slice(0, 7)
-
-                      if (!value) {
-                        field.onChange(null)
-
-                        return
-                      }
-
-                      if (!value.startsWith('#')) value = '#' + value
-
-                      value = value.replace(/[^#0-9A-Fa-f]/g, '').slice(0, 7)
-                      field.onChange(value)
-                    }}
-                  />
-                  <div
-                    onClick={handleOpenColorPicker}
-                    style={{
-                      width: 32,
-                      height: 32,
-                      marginTop: 16,
-                      borderRadius: 6,
-                      cursor: 'pointer',
-                      backgroundColor: field.value || '#eee',
-                      border: '1px solid #ccc',
-                      flexShrink: 0
-                    }}
-                    title='انتخاب رنگ'
-                  />
-                  <Popper
-                    open={isColorPickerOpen}
-                    anchorEl={colorAnchorEl}
-                    placement='top-start'
-                    modifiers={[
-                      { name: 'offset', options: { offset: [0, 8] } },
-                      { name: 'preventOverflow', options: { boundariesElement: 'viewport' } }
-                    ]}
-                    style={{ zIndex: 1300 }}
-                  >
-                    <ClickAwayListener onClickAway={handleCloseColorPicker}>
-                      <div
-                        style={{
-                          padding: 8,
-                          background: '#fff',
-                          borderRadius: 8,
-                          boxShadow: '0px 4px 12px rgba(0,0,0,0.2)',
-                          border: '1px solid #e0e0e0'
-                        }}
-                      >
-                        <HexColorPicker color={field.value || '#000000'} onChange={(color: string) => field.onChange(color)} style={{ width: 200, height: 150 }} />
-                      </div>
-                    </ClickAwayListener>
-                  </Popper>
-                </div>
-              )}
-            />
-          )}
-        </form>
+        <AttributeValueForm control={control} errors={errors} isLoading={isLoading} attributeType={attributeType} />
       </CustomDialog>
     </div>
   )
