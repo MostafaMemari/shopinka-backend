@@ -4,4 +4,5 @@ export enum PaymentMessages {
     VerifiedSuccess = 'Payment verified successfully.',
     SessionIdNotFound = 'Session id for this transaction not found.',
     RefundedSuccess = 'Payment refunded successfully.',
+    OrderNotCancelled = 'Order cannot be processed; it is not cancelled.'
 }

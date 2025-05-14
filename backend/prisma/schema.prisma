@@ -44,21 +44,15 @@ enum ProductType {
 
 enum OrderStatus {
   PENDING
-  PAID
+  PROCESSING
   SHIPPED
-  CANCELED
+  DELIVERED
+  CANCELLED
 }
 
 enum BlogStatus {
   DRAFT
   PUBLISHED
-}
-
-enum SeoRobotsTag {
-  index_follow
-  noindex_nofollow
-  index_nofollow
-  noindex_follow
 }
 
 model User {
@@ -99,7 +93,7 @@ model Transaction {
   authority     String
   sessionId     String?
 
-  transaction Order @relation("TransactionOrder", fields: [orderId], references: [id], onDelete: Cascade)
+  order Order @relation("TransactionOrder", fields: [orderId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
@@ -137,6 +131,7 @@ model GalleryItem {
   sharedIn            Product[]        @relation("ProductToGalleryItem")
   categories          Category[]
   tags                Tag[]
+  seoMeta             SeoMeta[]
 
   @@index([deletedAt])
 }
@@ -165,7 +160,6 @@ model Attribute {
   type            AttributeType
   description     String?
   values          AttributeValue[]
-  productVariants ProductVariant[]
   products        Product[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt()
@@ -178,6 +172,7 @@ model AttributeValue {
   colorCode   String?  @map("color_code")
   buttonLabel String?  @map("button_label")
   attributeId Int?
+  productVariants ProductVariant[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt()
 
@@ -232,7 +227,7 @@ model ProductVariant {
   mainImage   GalleryItem? @relation("VariantMainImage", fields: [mainImageId], references: [id], onDelete: SetNull)
   product     Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
   user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
-  attributes  Attribute[]
+  attributeValues  AttributeValue[]
   cartItems   CartItem[]
   orderItems  OrderItem[]
   width       Int?
@@ -358,21 +353,22 @@ model OrderItem {
 }
 
 model SeoMeta {
-  id            Int      @id @default(autoincrement())
-  productId     Int?     @unique
-  blogId        Int?     @unique
-  tagId         Int?     @unique
-  categoryId    Int?     @unique
+  id            Int          @id @default(autoincrement())
+  productId     Int?         @unique
+  blogId        Int?         @unique
+  tagId         Int?         @unique
+  categoryId    Int?         @unique
+  ogImageId Int?
   title         String?
   description   String?
-  keywords      String[] @default([])
-  canonicalUrl  String?  @map("canonical_url")
-  ogTitle       String?  @map("og_title")
-  ogDescription String?  @map("og_description")
-  ogImage       String?  @map("og_image")
-  robotsTag     SeoRobotsTag @default(index_follow)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt()
+  keywords      String[]     @default([])
+  canonicalUrl  String?      @map("canonical_url")
+  ogTitle       String?      @map("og_title")
+  ogDescription String?      @map("og_description")
+  ogImage       GalleryItem?  @relation(fields: [ogImageId] , references: [id] , onDelete: SetNull)
+  robotsTag     String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt()
 
   product  Product?  @relation("SeoMetaProduct", fields: [productId], references: [id], onDelete: Cascade)
   blog     Blog?     @relation("SeoMetaBlog", fields: [blogId], references: [id], onDelete: Cascade)
@@ -439,7 +435,7 @@ model ShippingInfo {
 
   shipping Shipping @relation(fields: [shippingId], references: [id], onDelete: Cascade)
   order    Order    @relation("ShippingInfoOrder", fields: [orderId], references: [id], onDelete: Cascade)
-  user     User?    @relation(fields: [userId], references: [id], onDelete: SetDefault)
+  user     User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   sentAt    DateTime @default(now())
   createdAt DateTime @default(now())

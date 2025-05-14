@@ -96,7 +96,7 @@ export class QueryProductVariantDto extends PaginationDto {
         return value
     })
     @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
-    includeAttributes?: boolean
+    includeAttributeValues?: boolean
 
     @IsOptional()
     @IsBoolean()

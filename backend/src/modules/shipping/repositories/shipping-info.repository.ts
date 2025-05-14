@@ -1,6 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
 import { ShippingInfo, Prisma } from "generated/prisma";
+import { ShippingInfoMessages } from "../enums/shipping-info-messages.enum";
 
 @Injectable()
 export class ShippingInfoRepository {
@@ -22,4 +23,11 @@ export class ShippingInfoRepository {
         return this.prismaService.shippingInfo.update(args)
     }
 
+    async findOneOrThrow(args: Prisma.ShippingInfoFindFirstArgs): Promise<ShippingInfo | never> {
+        const shipping = await this.findOne(args)
+
+        if (!shipping) throw new NotFoundException(ShippingInfoMessages.NotFoundShippingInfo)
+
+        return shipping
+    }
 }

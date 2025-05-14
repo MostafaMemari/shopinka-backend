@@ -130,13 +130,17 @@ export class PaymentService {
 
             throw new HttpException(error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }      
+    }
 
     async refund(transactionId: number, refundPaymentDto: RefundPaymentDto) {
         const { description, reason } = refundPaymentDto;
-        const transaction = await this.paymentRepository.findOneOrThrow({ where: { id: transactionId, status: TransactionStatus.SUCCESS } });
+        const transaction =
+            await this.paymentRepository.findOneOrThrow({ where: { id: transactionId, status: TransactionStatus.SUCCESS }, include: { order: true } });
 
         if (!transaction.sessionId) throw new BadRequestException(PaymentMessages.SessionIdNotFound);
+
+        if (transaction['order'].status !== OrderStatus.CANCELLED)
+            throw new BadRequestException(PaymentMessages.OrderNotCancelled)
 
         const result = await this.zarinpalService.refund({
             amount: transaction.amount,
@@ -147,7 +151,7 @@ export class PaymentService {
 
         await this.paymentRepository.update({ where: { id: transactionId }, data: { status: TransactionStatus.REFUNDED } });
 
-        return { ...result, message: PaymentMessages.RefundedSuccess }
+        return { ...result, message: PaymentMessages.RefundedSuccess, transaction }
     }
 
     async findTransactions({ page, take, ...transactionsFiltersDto }: QueryTransactionsDto): Promise<unknown> {
@@ -189,7 +193,6 @@ export class PaymentService {
         return { ...pagination(paginationDto, transactions) }
     }
 
-
     async findUserTransactions(userId: number, transactionsFilters: QueryMyTransactionsDto): Promise<unknown> {
         return await this.findTransactions({ userId, ...transactionsFilters })
     }
@@ -223,7 +226,7 @@ export class PaymentService {
     private async updateOrderStatus(orderId: number, isSuccess: boolean) {
         return this.orderRepository.update({
             where: { id: orderId },
-            data: { status: isSuccess ? OrderStatus.PAID : OrderStatus.CANCELED },
+            data: { status: isSuccess ? OrderStatus.PROCESSING : OrderStatus.CANCELLED },
             include: { items: true },
         });
     }
@@ -255,5 +258,5 @@ export class PaymentService {
             },
         });
     }
-      
+
 }

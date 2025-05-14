@@ -7,6 +7,8 @@ import { BlogRepository } from '../blog/blog.repository';
 import { ProductRepository } from '../product/repositories/product.repository';
 import { TagRepository } from '../tag/tag.repository';
 import { CategoryRepository } from '../category/category.repository';
+import { RobotsMetaTag } from './enums/seo-meta.enum';
+import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
 
 @Injectable()
 export class SeoService {
@@ -16,10 +18,11 @@ export class SeoService {
         private readonly blogRepository: BlogRepository,
         private readonly tagRepository: TagRepository,
         private readonly categoryRepository: CategoryRepository,
+        private readonly galleryItemRepository: GalleryItemRepository,
     ) { }
 
     async upsertSeoMeta(userId: number, seoMetaDto: SeoMetaDto): Promise<{ message: string, seoMeta: SeoMeta }> {
-        const { blogId, productId, tagId, categoryId } = seoMetaDto
+        const { blogId, productId, tagId, categoryId, robotsTag, ogImageId } = seoMetaDto
 
         const values = [blogId, productId, tagId, categoryId]
 
@@ -27,6 +30,7 @@ export class SeoService {
 
         if (definedCount !== 1) throw new BadRequestException(SeoMetaMessages.OnlyOneTargetAllowed)
 
+        if (ogImageId) await this.galleryItemRepository.findOneOrThrow({ where: { id: ogImageId } })
         if (productId) await this.productRepository.findOneOrThrow({ where: { id: productId } })
         if (blogId) await this.blogRepository.findOneOrThrow({ where: { id: blogId } })
         if (tagId) await this.tagRepository.findOneOrThrow({ where: { id: tagId } })
@@ -48,7 +52,7 @@ export class SeoService {
             return { message: SeoMetaMessages.UpdatedSeoMetaSuccess, seoMeta: updatedSeo }
         }
 
-        const seoMeta = await this.seoMetaRepository.create({ data: {...seoMetaDto, productId } })
+        const seoMeta = await this.seoMetaRepository.create({ data: { ...seoMetaDto, productId, robotsTag: robotsTag ?? RobotsMetaTag.IndexFollow } })
 
         return { message: SeoMetaMessages.CreatedSeoMetaSuccess, seoMeta }
     }
