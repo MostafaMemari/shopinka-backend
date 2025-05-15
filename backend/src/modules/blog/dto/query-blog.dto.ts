@@ -67,6 +67,15 @@ export class QueryBlogDto extends PaginationDto {
     })
     includeSeoMeta?: boolean
 
+    @IsBoolean()
+    @IsOptional()
+    @Transform(({ value }) => {
+        if (typeof value == 'string') return value == 'true'
+        return value
+    })
+    @ApiProperty({ type: 'boolean', nullable: true, required: false })
+    includeMainImage?: boolean;
+
     @IsOptional()
     @IsDate()
     @Transform(({ value }) => new Date(value))

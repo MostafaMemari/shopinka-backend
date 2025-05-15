@@ -35,7 +35,7 @@ export class BlogService {
       if (existingBlog) throw new ConflictException(BlogMessages.AlreadyExistsBlog)
     }
 
-    if (mainImageId) this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } })
+    if (mainImageId) await this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } })
 
     const categories = categoryIds ? await this.categoryRepository.findAll({ where: { id: { in: categoryIds } } }) : []
     const tags = tagIds ? await this.tagRepository.findAll({ where: { id: { in: tagIds } } }) : []
@@ -61,7 +61,7 @@ export class BlogService {
 
   async findAll({ take, page, ...queryBlogDto }: QueryBlogDto): Promise<unknown> {
     const paginationDto = { page, take };
-    const { endDate, sortBy, sortDirection, startDate, includeCategories, includeSeoMeta, includeTags, includeUser, title, } = queryBlogDto;
+    const { endDate, sortBy, sortDirection, startDate, includeCategories, includeSeoMeta, includeTags, includeUser, title, includeMainImage } = queryBlogDto;
 
     const sortedDto = sortObject(queryBlogDto);
 
@@ -83,7 +83,7 @@ export class BlogService {
     const blogs = await this.blogRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { categories: includeCategories, seoMeta: includeSeoMeta, tags: includeTags, user: includeUser && { select: { id: true, fullName: true } } }
+      include: { mainImage: includeMainImage, categories: includeCategories, seoMeta: includeSeoMeta, tags: includeTags, user: includeUser && { select: { id: true, fullName: true } } }
     });
 
     await this.cacheService.set(cacheKey, blogs, this.CACHE_EXPIRE_TIME);
@@ -94,7 +94,7 @@ export class BlogService {
   async findAllDrafts(userId: number, paginationDto: PaginationDto): Promise<unknown> {
     const blogs = await this.blogRepository.findAll({
       where: { userId, status: BlogStatus.DRAFT },
-      include: { categories: true, seoMeta: true, tags: true }
+      include: { mainImage: true, categories: true, seoMeta: true, tags: true }
     })
 
     return pagination(paginationDto, blogs)
@@ -103,7 +103,7 @@ export class BlogService {
   findOne(id: number): Promise<Blog> {
     return this.blogRepository.findOneOrThrow({
       where: { id, status: BlogStatus.PUBLISHED },
-      include: { categories: true, seoMeta: true, tags: true, user: { select: { id: true, fullName: true } } }
+      include: { mainImage: true, categories: true, seoMeta: true, tags: true, user: { select: { id: true, fullName: true } } }
     })
   }
 
