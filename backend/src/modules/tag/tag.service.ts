@@ -84,7 +84,7 @@ export class TagService {
       if (existingTag) throw new ConflictException(TagMessages.AlreadyExistsTag)
     }
 
-    if (thumbnailImageId) await this.galleryItemRepository.findOneOrThrow({ where: { id: thumbnailImageId } })
+    if (thumbnailImageId !== null) await this.galleryItemRepository.findOneOrThrow({ where: { id: thumbnailImageId } })
 
     const updatedTag = await this.tagRepository.update({ where: { id: tagId }, data: updateTagDto })
 
