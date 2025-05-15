@@ -16,7 +16,7 @@ export class QueryProductVariantDto extends PaginationDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty({ type: "string", required: false, nullable: true })
-    description?: string
+    shortDescription?: string
 
     @IsOptional()
     @IsNumber()

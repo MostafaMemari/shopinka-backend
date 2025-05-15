@@ -95,7 +95,8 @@ export class ProductService {
       includeVariants,
       includeSeoMeta,
       includeTags,
-      includeSeoCategories
+      includeSeoCategories,
+      includeAttributeValues
     } = queryProductDto
 
     const sortedDto = sortObject(queryProductDto);
@@ -138,7 +139,7 @@ export class ProductService {
         categories: includeSeoCategories,
         tags: includeTags,
         seoMeta: includeSeoMeta,
-        attributes: includeAttributes,
+        attributes: includeAttributes && { include: { values: includeAttributeValues } },
         galleryImages: includeGalleryImages,
         mainImage: includeMainImage,
         user: includeUser,
@@ -154,12 +155,15 @@ export class ProductService {
   findOne(id: number): Promise<Product> {
     return this.productRepository.findOneOrThrow({
       where: { id, status: ProductStatus.PUBLISHED },
-      include: { galleryImages: true, mainImage: true, user: true, variants: true, tags: true, seoMeta: true, categories: true, attributes: true }
+      include: { galleryImages: true, mainImage: true, user: true, variants: true, tags: true, seoMeta: true, categories: true, attributes: { include: { values: true } } }
     })
   }
 
   findOneDraft(userId: number, id: number): Promise<Product> {
-    return this.productRepository.findOneOrThrow({ where: { userId, id, status: ProductStatus.DRAFT }, include: { galleryImages: true, mainImage: true, user: true, variants: true } })
+    return this.productRepository.findOneOrThrow({
+      where: { userId, id, status: ProductStatus.DRAFT },
+      include: { attributes: { include: { values: true } }, galleryImages: true, mainImage: true, user: true, variants: true }
+    })
   }
 
   async update(userId: number, productId: number, updateProductDto: UpdateProductDto): Promise<{ message: string, product: Product }> {
@@ -214,7 +218,10 @@ export class ProductService {
   }
 
   async findAllDrafts(userId: number, paginationDto: PaginationDto): Promise<unknown> {
-    const products = await this.productRepository.findAll({ where: { userId, status: ProductStatus.DRAFT } })
+    const products = await this.productRepository.findAll({
+      where: { userId, status: ProductStatus.DRAFT },
+      include: { attributes: { include: { values: true } }, galleryImages: true, mainImage: true, user: true, variants: true }
+    })
     return pagination(paginationDto, products)
   }
 
