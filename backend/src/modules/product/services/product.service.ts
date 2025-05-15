@@ -186,7 +186,7 @@ export class ProductService {
 
     const attributes = attributeIds ? await this.attributeRepository.findAll({ where: { id: { in: attributeIds } } }) : undefined
 
-    const isAllowedProductType = attributeIds && product.type == ProductType.VARIABLE || type && type == ProductType.VARIABLE
+    const isAllowedProductType = attributeIds && (product.type == ProductType.VARIABLE || type && type == ProductType.VARIABLE)
 
     attributeIds && delete updateProductDto.attributeIds
     galleryImageIds && delete updateProductDto.galleryImageIds
