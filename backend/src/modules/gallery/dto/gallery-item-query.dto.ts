@@ -68,6 +68,24 @@ export class GalleryItemQueryDto extends PaginationDto {
         return value
     })
     @ApiPropertyOptional({ type: 'boolean' })
+    includeTags?: boolean
+
+    @IsBoolean()
+    @IsOptional()
+    @Transform(({ value }) => {
+        if (typeof value == 'string') return value == 'true'
+        return value
+    })
+    @ApiPropertyOptional({ type: 'boolean' })
+    includeSeoMeta?: boolean
+
+    @IsBoolean()
+    @IsOptional()
+    @Transform(({ value }) => {
+        if (typeof value == 'string') return value == 'true'
+        return value
+    })
+    @ApiPropertyOptional({ type: 'boolean' })
     isDeleted?: boolean
 
     @IsOptional()

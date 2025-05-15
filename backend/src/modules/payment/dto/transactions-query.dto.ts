@@ -70,6 +70,19 @@ export class QueryTransactionsDto extends PaginationDto {
     })
     includeUser?: boolean
 
+    @IsBoolean()
+    @IsOptional()
+    @Transform(({ value }) => {
+        if (typeof value == 'string') return value == 'true'
+        return value
+    })
+    @ApiProperty({
+        type: 'boolean',
+        nullable: true,
+        required: false
+    })
+    includeOrder?: boolean
+
     @IsOptional()
     @IsDate()
     @Transform(({ value }) => new Date(value))

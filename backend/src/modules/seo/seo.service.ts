@@ -30,7 +30,7 @@ export class SeoService {
 
         if (definedCount !== 1) throw new BadRequestException(SeoMetaMessages.OnlyOneTargetAllowed)
 
-        if (ogImageId) await this.galleryItemRepository.findOneOrThrow({ where: { id: ogImageId } })
+        if (ogImageId !== null) await this.galleryItemRepository.findOneOrThrow({ where: { id: ogImageId } })
         if (productId) await this.productRepository.findOneOrThrow({ where: { id: productId } })
         if (blogId) await this.blogRepository.findOneOrThrow({ where: { id: blogId } })
         if (tagId) await this.tagRepository.findOneOrThrow({ where: { id: tagId } })

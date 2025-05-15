@@ -59,7 +59,7 @@ export class TagService {
     const tags = await this.tagRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { blogs: includeBlogs, products: includeProducts, seoMeta: includeSeoMeta, thumbnailImage: includeThumbnailImage, user: includeUser }
+      include: { blogs: includeBlogs, products: includeProducts, seoMeta: includeSeoMeta, thumbnailImage: includeThumbnailImage, user: includeUser && { select: { id: true, fullName: true } } }
     });
 
     await this.cacheService.set(cacheKey, tags, this.CACHE_EXPIRE_TIME);
@@ -84,7 +84,7 @@ export class TagService {
       if (existingTag) throw new ConflictException(TagMessages.AlreadyExistsTag)
     }
 
-    if (thumbnailImageId) await this.galleryItemRepository.findOneOrThrow({ where: { id: thumbnailImageId } })
+    if (thumbnailImageId !== null) await this.galleryItemRepository.findOneOrThrow({ where: { id: thumbnailImageId } })
 
     const updatedTag = await this.tagRepository.update({ where: { id: tagId }, data: updateTagDto })
 

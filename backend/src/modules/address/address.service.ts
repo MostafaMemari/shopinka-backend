@@ -28,7 +28,7 @@ export class AddressService {
 
   async findAll(userId: number, { page, take, ...queryAddressDto }: QueryAddressDto): Promise<unknown> {
     const paginationDto = { page, take };
-    const { address, city, description, endDate, postalCode, province, receiverMobile, sortBy, sortDirection, startDate } = queryAddressDto;
+    const { includeOrders, address, city, description, endDate, postalCode, province, receiverMobile, sortBy, sortDirection, startDate } = queryAddressDto;
 
     const sortedDto = sortObject(queryAddressDto);
 
@@ -55,6 +55,7 @@ export class AddressService {
     const addresses = await this.addressRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
+      include: { orders: includeOrders }
     });
 
     await this.cacheService.set(cacheKey, addresses, this.CACHE_EXPIRE_TIME);
@@ -63,7 +64,7 @@ export class AddressService {
   }
 
   findOne(userId: number, id: number): Promise<never | Address> {
-    return this.addressRepository.findOneOrThrow({ where: { id, userId } })
+    return this.addressRepository.findOneOrThrow({ where: { id, userId }, include: { orders: true } })
   }
 
   async update(userId: number, id: number, updateAddressDto: UpdateAddressDto): Promise<{ message: string, address: Address }> {

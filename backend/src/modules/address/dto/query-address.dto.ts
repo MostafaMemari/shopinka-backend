@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional, IsDate, IsString, IsEnum, IsNotEmpty } from "class-validator";
+import { IsOptional, IsDate, IsString, IsEnum, IsNotEmpty, IsBoolean } from "class-validator";
 import { SortOrder } from "../../../common/enums/shared.enum";
 import { AddressSortBy } from "../enums/sortby.enum";
 import { Transform } from "class-transformer";
@@ -66,6 +66,19 @@ export class QueryAddressDto extends PaginationDto {
         nullable: true
     })
     description?: string
+
+    @IsBoolean()
+    @IsOptional()
+    @Transform(({ value }) => {
+        if (typeof value == 'string') return value == 'true'
+        return value
+    })
+    @ApiProperty({
+        type: 'boolean',
+        nullable: true,
+        required: false
+    })
+    includeOrders?: boolean
 
     @IsOptional()
     @IsDate()

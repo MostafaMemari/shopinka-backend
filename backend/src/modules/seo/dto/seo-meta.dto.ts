@@ -49,15 +49,12 @@ export class SeoMetaDto {
     robotsTag?: RobotsMetaTag
 
     @IsOptional()
-    @IsNumber()
-    @IsPositive()
-    @Transform(({ value }) => +value)
-    @ApiProperty({
-        type: 'number',
-        nullable: true,
-        required: false,
+    @Transform(({ value }) => {
+        if (value === 'null' || value === null) return null;
+        return Number.parseInt(String(value)) || 0
     })
-    ogImageId?: number
+    @ApiProperty({ required: false, nullable: true })
+    ogImageId?: number | null
 
     @IsOptional()
     @IsNumber()

@@ -104,7 +104,26 @@ export class GalleryItemService {
 
   async findAll(userId: number, { page, take, ...galleryItemsDto }: GalleryItemQueryDto): Promise<unknown> {
     const paginationDto = { page, take };
-    const { endDate, sortBy, sortDirection, startDate, description, includeGallery, title, fileKey, fileUrl, galleryId, mimetype, maxSize, minSize, isDeleted, deletedAt } = galleryItemsDto;
+    const {
+      endDate,
+      sortBy,
+      sortDirection,
+      startDate,
+      description,
+      includeGallery,
+      title,
+      fileKey,
+      fileUrl,
+      galleryId,
+      mimetype,
+      maxSize,
+      minSize,
+      isDeleted,
+      deletedAt,
+      includeTags,
+      includeSeoMeta
+
+    } = galleryItemsDto;
 
     const sortedDto = sortObject(galleryItemsDto);
 
@@ -138,7 +157,7 @@ export class GalleryItemService {
     const galleryItems = await this.galleryItemRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { gallery: includeGallery },
+      include: { seoMeta: includeSeoMeta, tags: includeTags, gallery: includeGallery },
     });
 
     await this.cacheService.set(cacheKey, galleryItems, this.CACHE_EXPIRE_TIME);
@@ -147,7 +166,7 @@ export class GalleryItemService {
   }
 
   findOne(id: number, userId: number): Promise<never | GalleryItem> {
-    return this.galleryItemRepository.findOneOrThrow({ where: { id, gallery: { userId } }, include: { gallery: true } })
+    return this.galleryItemRepository.findOneOrThrow({ where: { id, gallery: { userId } }, include: { tags: true, seoMeta: true, gallery: true } })
   }
 
   async update(galleryItemId: number, userId: number, updateGalleryItemDto: UpdateGalleryItemDto): Promise<{ message: string, galleryItem: GalleryItem }> {

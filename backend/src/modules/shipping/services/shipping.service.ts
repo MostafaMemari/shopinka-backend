@@ -27,7 +27,7 @@ export class ShippingService {
 
   async findAll({ page, take, ...queryShippingDto }: QueryShippingDto): Promise<unknown> {
     const paginationDto = { page, take };
-    const { endDate, sortBy, sortDirection, startDate, estimatedDays, isActive, maxPrice, minPrice, name, } = queryShippingDto;
+    const { endDate, sortBy, sortDirection, startDate, estimatedDays, isActive, maxPrice, minPrice, name, includeOrders, includeShippingInfos } = queryShippingDto;
 
     const sortedDto = sortObject(queryShippingDto);
 
@@ -56,7 +56,7 @@ export class ShippingService {
     const shippings = await this.shippingRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { user: { select: { id: true, fullName: true } } }
+      include: { orders: includeOrders, shippingInfos: includeShippingInfos, user: { select: { id: true, fullName: true } } }
     });
 
     await this.cacheService.set(cacheKey, shippings, this.CACHE_EXPIRE_TIME);
@@ -65,7 +65,7 @@ export class ShippingService {
   }
 
   async findOne(id: number): Promise<Shipping> {
-    return this.shippingRepository.findOneOrThrow({ where: { id }, include: { user: { select: { id: true, fullName: true } } } })
+    return this.shippingRepository.findOneOrThrow({ where: { id }, include: { orders: true, shippingInfos: true, user: { select: { id: true, fullName: true } } } })
   }
 
   async update(userId: number, shippingId: number, updateShippingDto: UpdateShippingDto): Promise<{ message: string, shipping: Shipping }> {

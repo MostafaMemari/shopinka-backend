@@ -5,12 +5,12 @@ import { CommentRepository } from './comment.repository';
 import { ProductRepository } from '../product/repositories/product.repository';
 import { Comment, Prisma } from 'generated/prisma';
 import { CommentMessages } from './enums/comment-messages.enum';
-import { QueryCommentDto } from './dto/query-category.dto';
+import { QueryCommentDto } from './dto/query-comment.dto';
 import { sortObject } from '../../common/utils/functions.utils';
 import { CacheKeys } from '../../common/enums/cache.enum';
 import { CacheService } from '../cache/cache.service';
 import { pagination } from '../../common/utils/pagination.utils';
-import { PaginationDto } from '../../common/dtos/pagination.dto';
+import { QueryAdminCommentDto } from './dto/query-admin-comment.dto';
 
 @Injectable()
 export class CommentService {
@@ -55,7 +55,7 @@ export class CommentService {
     }
 
     const include: Prisma.CommentInclude = {
-      user: includeUser,
+      user: includeUser && { select: { id: true, fullName: true } },
       parent: includeParent,
       blog: includeBlog,
       product: includeProduct,
@@ -131,10 +131,10 @@ export class CommentService {
     return { message: isActive ? CommentMessages.ActiveCommentSuccess : CommentMessages.UnActiveCommentSuccess, comment: updatedComment }
   }
 
-  async findAllUnActive(userId: number, paginationDto: PaginationDto): Promise<unknown> {
-    const comments = await this.commentRepository.findAll({ where: { isActive: false, product: { userId } } })
+  async findAllForAdmins(userId: number, { page, take, isActive }: QueryAdminCommentDto): Promise<unknown> {
+    const comments = await this.commentRepository.findAll({ where: { isActive, product: { userId } } })
 
-    return pagination(paginationDto, comments)
+    return pagination({ page, take }, comments)
   }
 
   private async isParentIdInReplies(commentId: number, parentId: number) {
