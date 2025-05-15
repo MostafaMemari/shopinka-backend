@@ -52,7 +52,7 @@ export class BlogService {
         slug: uniqueSlug,
         categories: { connect: categories.map(c => ({ id: c.id })) },
         tags: { connect: tags.map(t => ({ id: t.id })) },
-        readingTime: readingTime ?? estimateReadingTime(content)
+        readingTime: !readingTime && content ? estimateReadingTime(content) : readingTime
       }
     })
 
@@ -130,7 +130,7 @@ export class BlogService {
         userId,
         categories: categories ? { connect: categories.map(c => ({ id: c.id })) } : undefined,
         tags: tagIds ? { connect: tags.map(t => ({ id: t.id })) } : undefined,
-        readingTime: content && !readingTime ? estimateReadingTime(content) : readingTime
+        readingTime: !readingTime && content ? estimateReadingTime(content) : readingTime
       }
     })
 
