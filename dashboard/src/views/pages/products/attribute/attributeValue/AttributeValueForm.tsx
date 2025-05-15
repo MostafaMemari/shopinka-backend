@@ -6,7 +6,7 @@ import CustomTextField from '@core/components/mui/TextField'
 import { HexColorPicker } from 'react-colorful'
 import ClickAwayListener from '@mui/material/ClickAwayListener'
 import Popper from '@mui/material/Popper'
-import { AttributeType } from '@/types/app/productAttributes'
+import { AttributeType } from '@/types/app/productAttributes.type'
 
 interface AttributeValueFormProps {
   control: any

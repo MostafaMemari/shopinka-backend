@@ -9,30 +9,29 @@ import { Box, useMediaQuery, useTheme } from '@mui/material'
 
 // Component Imports
 import TablePaginationComponent from '@/components/TablePaginationComponent'
-import DesktopCategoryTable from './DesktopCategoryTable'
-import CreateCategoryModal from './CreateCategoryModal'
+import DesktopCommentTable from './DesktopCommentTable'
+import CreateCommentModal from './CreateCommentModal'
 import LoadingSpinner from '@/components/LoadingSpinner'
 
 // API Import
-import { useCategories } from '@/hooks/reactQuery/useCategory'
-import { Category } from '@/types/app/category.type'
+import { useComments } from '@/hooks/reactQuery/useComment'
+import { Comment } from '@/types/app/comment.type'
 
 // Hook Import
 import { usePaginationParams } from '@/hooks/usePaginationParams'
 import ErrorState from '@/components/states/ErrorState'
-import EmptyCategoryState from './EmptyCategoryState'
+import EmptyCommentState from './EmptyCommentState'
 
-const CategoryView = () => {
+const CommentView = () => {
   const { page, size, setPage, setSize } = usePaginationParams()
 
-  const { data, isLoading, isFetching, error, refetch } = useCategories({
+  const { data, isLoading, isFetching, error, refetch } = useComments({
     enabled: true,
     params: {
       page,
       take: size,
-      includeThumbnailImage: true,
-      includeChildren: true,
-      childrenDepth: 6
+      includeUser: true,
+      includeProduct: true
     },
     staleTime: 5 * 60 * 1000
   })
@@ -41,19 +40,19 @@ const CategoryView = () => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
-  const categories: Category[] = useMemo(() => data?.data?.items || [], [data])
+  const comments: Comment[] = useMemo(() => data?.data?.items || [], [data])
   const paginationData = useMemo(() => data?.data?.pager || { currentPage: 1, totalPages: 1, totalCount: 0 }, [data])
 
   if (isLoading || isFetching) return <LoadingSpinner />
   if (error) return <ErrorState onRetry={() => refetch()} />
-  if (categories.length === 0) return <EmptyCategoryState />
+  if (comments.length === 0) return <EmptyCommentState />
+
+  console.log(comments)
 
   return (
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
-        <CreateCategoryModal />
-      </Box>
-      {!isMobile && <DesktopCategoryTable categories={categories} />}
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>{/* <CreateCommentModal /> */}</Box>
+      {!isMobile && <DesktopCommentTable comments={comments} />}
 
       <TablePaginationComponent
         currentPage={page}
@@ -62,10 +61,10 @@ const CategoryView = () => {
         rowsPerPage={size}
         onPageChange={setPage}
         onRowsPerPageChange={setSize}
-        currentPageItemCount={categories.length}
+        currentPageItemCount={comments.length}
       />
     </Card>
   )
 }
 
-export default CategoryView
+export default CommentView

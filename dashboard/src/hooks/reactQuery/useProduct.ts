@@ -16,6 +16,8 @@ import { type InferType } from 'yup'
 import { GalleryItem } from '@/types/app/gallery'
 import { errorProductMessage } from '@/messages/product.message'
 import { useFormSubmit } from '../useFormSubmit'
+import { createProductVariants } from '@/libs/api/productVariants.api'
+import { generateRandomSKU } from '@/utils/generator'
 
 export function useProducts({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchProducts = () => getProducts(params).then(res => res)
@@ -59,8 +61,19 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
               }
             })
 
+            if (product.seoMeta) {
+              methods.setValue('seo_title', product.seoMeta.title)
+              methods.setValue('seo_description', product.seoMeta.description)
+              methods.setValue('seo_keywords', product.seoMeta.keywords)
+              methods.setValue('seo_canonicalUrl', product.seoMeta.canonicalUrl)
+              methods.setValue('seo_ogTitle', product.seoMeta.ogTitle)
+              methods.setValue('seo_ogDescription', product.seoMeta.ogDescription)
+              methods.setValue('seo_ogImage', product.seoMeta.ogImage)
+              methods.setValue('seo_robotsTag', product.seoMeta.robotsTag)
+            }
+
             if (product.mainImage) {
-              methods.setValue('mainImage' as any, product.mainImage as GalleryItem)
+              methods.setValue('mainImage' as any, product.mainImage)
             }
 
             if (product.galleryImages && Array.isArray(product.galleryImages)) {
@@ -68,8 +81,9 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
             }
 
             methods.setValue('galleryImageIds', product.galleryImages?.map(img => img.id) || [])
-            methods.setValue('categoryIds', product.categoryIds || [])
-            methods.setValue('attributeIds', product.attributeIds || [])
+            methods.setValue('categoryIds', product.categories?.map(category => category.id) || [])
+            methods.setValue('attributeIds', product.attributes?.map(attribute => attribute.id) || [])
+            methods.setValue('attributeValuesIds', product.variants?.map(variant => variant.attributeValues?.map(attr => attr.id)) || [])
           }
         })
         .catch(() => {
@@ -113,18 +127,19 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
 
       return updateProduct(Number(productId), formData as unknown as Partial<Product>)
     },
+
     errorMessages: errorProductMessage,
     queryKey: QueryKeys.Products,
     successMessage: isUpdate ? 'محصول با موفقیت به‌روزرسانی شد' : 'محصول با موفقیت ایجاد شد',
-    noChangeMessage: 'هیچ تغییری اعمال نشده است',
+    noChangeMessage: 'محصول با موفقیت به‌روزرسانی شد',
     initialData: initialProduct
       ? {
           ...initialProduct,
           id: String(initialProduct.id),
           type: initialProduct.type || ProductType.SIMPLE,
           galleryImageIds: initialProduct.galleryImages?.map(img => img.id) || [],
-          categoryIds: initialProduct.categoryIds || [],
-          attributeIds: initialProduct.attributeIds || []
+          categoryIds: initialProduct.categories?.map(category => category.id) || [],
+          attributeIds: initialProduct.attributes?.map(attribute => attribute.id) || []
         }
       : id
         ? { id: String(id) }
@@ -142,6 +157,24 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
     }
 
     return true
+  }, [])
+
+  const handleProductVariants = useCallback(async (productId: number, data: Partial<ProductFormType>) => {
+    if (data?.attributeValuesIds?.length) {
+      data.attributeValuesIds.forEach(async value => {
+        console.log(value)
+
+        if (value) {
+          await createProductVariants({
+            productId,
+            attributeValueIds: value.filter((id): id is number => id !== undefined),
+            sku: generateRandomSKU(6)
+          })
+        }
+      })
+
+      return true
+    }
   }, [])
 
   const handleButtonClick = useCallback(
@@ -171,6 +204,7 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
 
           if (productId) {
             await handleSeo(Number(productId), cleanedData)
+            await handleProductVariants(Number(productId), cleanedData)
           } else {
             showToast({ type: 'error', message: 'خطا در دریافت آیدی محصول' })
           }

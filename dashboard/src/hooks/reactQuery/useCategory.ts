@@ -6,7 +6,7 @@ import { useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { categorySchema } from '@/libs/validators/category.schema'
-import { CategoryForm, Category } from '@/types/app/category'
+import { CategoryForm, Category } from '@/types/app/category.type'
 import { useFormSubmit } from '../useFormSubmit'
 import { errorCategoryMessage } from '@/messages/categoryMessages.'
 

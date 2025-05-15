@@ -1,4 +1,4 @@
-import { Attribute, AttributeFormType, AttributeValueForm } from '@/types/app/productAttributes'
+import { Attribute, AttributeFormType, AttributeValueForm } from '@/types/app/productAttributes.type'
 import { Response } from '@/types/response'
 import { serverApiFetch } from '@/utils/api/serverApiFetch'
 

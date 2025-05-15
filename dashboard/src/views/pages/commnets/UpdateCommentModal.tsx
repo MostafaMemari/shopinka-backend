@@ -3,7 +3,7 @@
 import { useState, useCallback, ReactNode } from 'react'
 import Button from '@mui/material/Button'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
-import CategoryForm from './CategoryForm'
+import CategoryForm from './CommentForm'
 import FormActions from '@/components/FormActions'
 import { Category } from '@/types/app/category.type'
 import { useCategoryForm } from '@/hooks/reactQuery/useCategory'

@@ -38,26 +38,24 @@ function deepEqual(value1: any, value2: any): boolean {
     return true
   }
 
-  // برای بقیه موارد (مثل رشته‌ها، اعداد، بولین‌ها)
   return false
 }
 
-/**
- * Compares two objects and returns only the fields that have changed.
- * @param original The original object (e.g., initial data from the database).
- * @param updated The updated object (e.g., form data).
- * @returns A partial object containing only the changed fields.
- */
-export function getChangedFields<T extends Record<string, any>>(original: T, updated: Partial<T>): Partial<T> {
+export function getChangedFields<T extends Record<string, any>>(original: T, updated: Partial<T>, nullableKeys: (keyof T)[] = []): Partial<T> {
   const changedFields: Partial<T> = {}
 
-  for (const key in updated) {
-    if (Object.prototype.hasOwnProperty.call(updated, key) && Object.prototype.hasOwnProperty.call(original, key)) {
+  for (const key in original) {
+    if (Object.prototype.hasOwnProperty.call(original, key)) {
       const originalValue = original[key]
+      const updatedHasKey = Object.prototype.hasOwnProperty.call(updated, key)
       const updatedValue = updated[key]
 
-      if (!deepEqual(originalValue, updatedValue)) {
-        changedFields[key] = updatedValue
+      if (updatedHasKey) {
+        if (!deepEqual(originalValue, updatedValue)) {
+          changedFields[key] = updatedValue
+        }
+      } else if (nullableKeys.includes(key)) {
+        changedFields[key] = null as any
       }
     }
   }
@@ -65,12 +63,6 @@ export function getChangedFields<T extends Record<string, any>>(original: T, upd
   return changedFields
 }
 
-/**
- * Cleans an object by removing null, undefined, and empty string values.
- * Keeps empty arrays and trims non-empty strings.
- * @param obj The object to clean.
- * @returns A cleaned version of the object.
- */
 export function cleanObject<T extends Record<string, any>>(obj: T): T {
   return Object.fromEntries(
     Object.entries(obj)

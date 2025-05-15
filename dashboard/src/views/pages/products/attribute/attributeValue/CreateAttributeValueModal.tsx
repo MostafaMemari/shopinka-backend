@@ -5,7 +5,7 @@ import { IconButton } from '@mui/material'
 import CustomDialog from '@core/components/mui/CustomDialog'
 import AttributeValueForm from './AttributeValueForm'
 import FormActions from '@/components/FormActions'
-import { AttributeType } from '@/types/app/productAttributes'
+import { AttributeType } from '@/types/app/productAttributes.type'
 import { useAttributeValueForm } from '@/hooks/reactQuery/useAttributeValues'
 
 interface CreateAttributeValueModalProps {

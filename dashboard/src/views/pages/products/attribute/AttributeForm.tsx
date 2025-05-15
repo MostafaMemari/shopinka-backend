@@ -3,7 +3,7 @@
 import { Controller } from 'react-hook-form'
 import CustomTextField from '@core/components/mui/TextField'
 import { MenuItem } from '@mui/material'
-import { AttributeType } from '@/types/app/productAttributes'
+import { AttributeType } from '@/types/app/productAttributes.type'
 
 interface AttributeFormProps {
   control: any

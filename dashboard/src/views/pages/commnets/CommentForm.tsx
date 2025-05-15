@@ -4,19 +4,19 @@ import { Controller } from 'react-hook-form'
 import Grid from '@mui/material/Grid2'
 import CustomTextField from '@core/components/mui/TextField'
 import RichTextEditor from '@/components/RichTextEditor/RichTextEditor'
-import ParentCategorySelect from './ParentCategorySelect'
-import CategoryThumbnailImage from './CategoryThumbnailImage'
-import { type CategoryForm, Category } from '@/types/app/category.type'
+import ParentCommentSelect from './ParentCommentSelect'
+import CommentThumbnailImage from './CommentThumbnailImage'
+import { type CommentForm, Comment } from '@/types/app/comment.type'
 
-interface CategoryFormProps {
+interface CommentFormProps {
   control: any
   errors: any
   setValue: any
   isLoading: boolean
-  initialData?: Category
+  initialData?: Comment
 }
 
-const CategoryForm = ({ control, errors, setValue, isLoading, initialData }: CategoryFormProps) => {
+const CommentForm = ({ control, errors, setValue, isLoading, initialData }: CommentFormProps) => {
   return (
     <div>
       <Grid container spacing={6}>
@@ -54,9 +54,9 @@ const CategoryForm = ({ control, errors, setValue, isLoading, initialData }: Cat
                 />
               )}
             />
-            <ParentCategorySelect control={control} errors={errors} isLoading={isLoading} />
+            <ParentCommentSelect control={control} errors={errors} isLoading={isLoading} />
 
-            <CategoryThumbnailImage control={control} errors={errors} setValue={setValue} isLoading={isLoading} category={initialData} />
+            <CommentThumbnailImage control={control} errors={errors} setValue={setValue} isLoading={isLoading} comment.type={initialData} />
           </Grid>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
@@ -71,4 +71,4 @@ const CategoryForm = ({ control, errors, setValue, isLoading, initialData }: Cat
   )
 }
 
-export default CategoryForm
+export default CommentForm

@@ -5,7 +5,7 @@ import { Typography } from '@mui/material'
 import CustomDialog from '@core/components/mui/CustomDialog'
 import AttributeValueForm from './AttributeValueForm'
 import FormActions from '@/components/FormActions'
-import { AttributeType, AttributeValueForm as AttributeValueFormType } from '@/types/app/productAttributes'
+import { AttributeType, AttributeValueForm as AttributeValueFormType } from '@/types/app/productAttributes.type'
 import { useAttributeValueForm } from '@/hooks/reactQuery/useAttributeValues'
 
 interface UpdateAttributeValueModalProps {

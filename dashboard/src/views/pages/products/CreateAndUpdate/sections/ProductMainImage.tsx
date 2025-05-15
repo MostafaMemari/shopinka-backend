@@ -39,8 +39,8 @@ const ProductMainImage = () => {
 
   const handleRemove = () => {
     setSelectedImage(null)
-    setValue('mainImageId', undefined)
-    setValue('mainImage', undefined)
+    setValue('mainImageId', null)
+    setValue('mainImage', null)
   }
 
   return (

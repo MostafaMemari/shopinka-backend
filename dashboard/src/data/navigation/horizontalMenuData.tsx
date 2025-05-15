@@ -21,7 +21,6 @@ const horizontalMenuData = (): HorizontalMenuDataType[] => [
         href: '/products/add',
         icon: 'tabler-plus'
       },
-
       {
         label: 'ویژگی‌ها',
         href: '/products/attributes',
@@ -38,6 +37,31 @@ const horizontalMenuData = (): HorizontalMenuDataType[] => [
     label: 'دسته بندی‌ها',
     icon: 'tabler-category',
     href: '/categories'
+  },
+  {
+    label: 'نظرات',
+    icon: 'tabler-message-circle',
+    href: '/comments'
+  },
+  {
+    label: 'سفارشات',
+    icon: 'tabler-package',
+    href: '/orders'
+  },
+  {
+    label: 'وبلاگ',
+    icon: 'tabler-news',
+    href: '/blog'
+  },
+  {
+    label: 'برچسب‌ها',
+    icon: 'tabler-tag',
+    href: '/tags'
+  },
+  {
+    label: 'حمل و نقل',
+    icon: 'tabler-truck',
+    href: '/shipping'
   }
 ]
 

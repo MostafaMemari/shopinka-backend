@@ -24,6 +24,8 @@ export const getProductById = async (id: number): Promise<{ status: number; data
 }
 
 export const updateProduct = async (id: number, data: Partial<Product>): Promise<{ status: number; data: Product | null }> => {
+  console.log(data)
+
   const res = await serverApiFetch(`/product/${id}`, {
     method: 'PATCH',
     body: { ...data }

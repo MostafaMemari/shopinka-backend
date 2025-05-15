@@ -119,6 +119,11 @@ export const productSchema = yup.object().shape({
     .transform((value, originalValue) => (originalValue === '' ? null : value))
     .notRequired()
     .positive('باید عددی مثبت باشد')
+    .default(null),
+  attributeValuesIds: yup
+    .array()
+    .of(yup.array().of(yup.number().positive('شناسه ویژگی باید عددی مثبت باشد')).min(1, 'هر ترکیب باید حداقل یک مقدار داشته باشد'))
+    .notRequired()
     .default(null)
 })
 

@@ -9,7 +9,7 @@ import Paper from '@mui/material/Paper'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Switch from '@mui/material/Switch'
 import Typography from '@mui/material/Typography'
-import { VariantCombination, Attribute } from '@/types/app/productAttributes'
+import { VariantCombination, Attribute } from '@/types/app/productAttributes.type'
 import EmptyPlaceholder from '@/components/EmptyPlaceholder'
 import { Box } from '@mui/material'
 
