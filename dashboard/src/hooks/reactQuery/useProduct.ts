@@ -9,13 +9,13 @@ import { useRouter } from 'next/navigation'
 import { productFormSchema } from '@/libs/validators/product.schema'
 import { Product, ProductStatus, ProductType } from '@/types/app/product.type'
 import { createProduct, getProductById, getProducts, updateProduct } from '@/libs/api/product.api'
-import { useFormSubmit } from '@/hooks/useFormSubmit'
 import { handleSeoSave } from '@/libs/services/seo/seo.service'
 import { cleanObject } from '@/utils/formatters'
 import { showToast } from '@/utils/showToast'
 import { type InferType } from 'yup'
 import { GalleryItem } from '@/types/app/gallery'
 import { errorProductMessage } from '@/messages/product.message'
+import { useFormSubmit } from '../useFormSubmit'
 
 export function useProducts({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchProducts = () => getProducts(params).then(res => res)
@@ -40,15 +40,17 @@ interface UseProductFormProps {
 export const useProductForm = ({ id, initialData, methods }: UseProductFormProps) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(!!id)
-
+  const [initialProduct, setInitialProduct] = useState<Product | null>(null)
   const isUpdate = !!id || !!initialData
 
   useEffect(() => {
     if (id && !initialData) {
-      const fetchProduct = async () => {
-        try {
-          const response = await getProductById(id)
+      setIsLoading(true)
+      getProductById(id)
+        .then(response => {
           const product = response.data
+
+          setInitialProduct(product)
 
           if (product) {
             Object.entries(product).forEach(([key, value]) => {
@@ -64,22 +66,48 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
             if (product.galleryImages && Array.isArray(product.galleryImages)) {
               methods.setValue('galleryImages' as any, product.galleryImages as GalleryItem[])
             }
+
+            methods.setValue('galleryImageIds', product.galleryImages?.map(img => img.id) || [])
+            methods.setValue('categoryIds', product.categoryIds || [])
+            methods.setValue('attributeIds', product.attributeIds || [])
           }
-        } catch (err) {
+        })
+        .catch(() => {
           showToast({ type: 'error', message: 'خطا در بارگذاری محصول' })
-        } finally {
-          setIsLoading(false)
+        })
+        .finally(() => setIsLoading(false))
+    } else if (initialData) {
+      setInitialProduct(initialData)
+      Object.entries(initialData).forEach(([key, value]) => {
+        if (key in methods.getValues() && typeof value !== 'object') {
+          methods.setValue(key as keyof ProductFormType, value ?? null)
         }
+      })
+
+      if (initialData.mainImage) {
+        methods.setValue('mainImage' as any, initialData.mainImage as GalleryItem)
       }
 
-      fetchProduct()
+      if (initialData.galleryImages && Array.isArray(initialData.galleryImages)) {
+        methods.setValue('galleryImages' as any, initialData.galleryImages as GalleryItem[])
+      }
+
+      methods.setValue('galleryImageIds', initialData.galleryImages?.map(img => img.id) || [])
+
+      methods.setValue('categoryIds', initialData.categoryIds || [])
+      methods.setValue('attributeIds', initialData.attributeIds || [])
+      setIsLoading(false)
     } else {
       setIsLoading(false)
     }
   }, [id, initialData, methods])
 
-  const { isLoading: submitLoading, onSubmit: submitForm } = useFormSubmit<ProductFormType>({
-    createApi: createProduct as any,
+  const { isLoading: submitLoading, onSubmit: submitForm } = useFormSubmit<ProductFormType & { id?: string }>({
+    createApi: async (formData: ProductFormType) => {
+      const response = await createProduct(formData as unknown as Product)
+
+      return { status: response.status, data: { id: response.data?.product?.id } }
+    },
     updateApi: async (productId: string, formData: Partial<ProductFormType>) => {
       if (!id) throw new Error('Product ID is required for update')
 
@@ -89,9 +117,32 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
     queryKey: QueryKeys.Products,
     successMessage: isUpdate ? 'محصول با موفقیت به‌روزرسانی شد' : 'محصول با موفقیت ایجاد شد',
     noChangeMessage: 'هیچ تغییری اعمال نشده است',
-    initialData: initialData ? { id: String(initialData.id), type: initialData.type || ProductType.SIMPLE } : id ? { id: String(id) } : undefined,
+    initialData: initialProduct
+      ? {
+          ...initialProduct,
+          id: String(initialProduct.id),
+          type: initialProduct.type || ProductType.SIMPLE,
+          galleryImageIds: initialProduct.galleryImages?.map(img => img.id) || [],
+          categoryIds: initialProduct.categoryIds || [],
+          attributeIds: initialProduct.attributeIds || []
+        }
+      : id
+        ? { id: String(id) }
+        : undefined,
     isUpdate
   })
+
+  const handleSeo = useCallback(async (productId: number, data: Partial<ProductFormType>) => {
+    const seoResponse = await handleSeoSave('product', productId, data)
+
+    if (seoResponse.status !== 200 && seoResponse.status !== 201) {
+      showToast({ type: 'error', message: 'خطا در ذخیره SEO' })
+
+      return false
+    }
+
+    return true
+  }, [])
 
   const handleButtonClick = useCallback(
     async (type: 'cancel' | 'draft' | 'publish') => {
@@ -101,10 +152,9 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
         return
       }
 
-      await methods.handleSubmit(async data => {
-        setIsLoading(true)
-
-        try {
+      await methods
+        .handleSubmit(async (data: ProductFormType) => {
+          setIsLoading(true)
           const status = type === 'publish' ? ProductStatus.PUBLISHED : ProductStatus.DRAFT
 
           const cleanedData = cleanObject({
@@ -115,28 +165,24 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
             attributeIds: data.attributeIds ?? []
           })
 
-          await submitForm(cleanedData, () => {})
+          const response = await submitForm(cleanedData, () => router.refresh())
 
-          if (isUpdate && id) {
-            const seoResponse = await handleSeoSave('product', id, cleanedData)
+          const productId = isUpdate ? id! : response?.data?.id
 
-            if (seoResponse.status !== 200 && seoResponse.status !== 201) {
-              showToast({ type: 'error', message: 'خطا در ذخیره SEO' })
-
-              return
-            }
+          if (productId) {
+            await handleSeo(Number(productId), cleanedData)
+          } else {
+            showToast({ type: 'error', message: 'خطا در دریافت آیدی محصول' })
           }
-        } catch (error) {
-        } finally {
-          setIsLoading(false)
-        }
-      })()
+        })()
+        .finally(() => setIsLoading(false))
     },
-    [methods, submitForm, id, isUpdate, router]
+    [methods, submitForm, id, isUpdate, router, handleSeo]
   )
 
   return {
     isLoading: isLoading || submitLoading,
-    handleButtonClick
+    handleButtonClick,
+    isUpdate
   }
 }

@@ -55,6 +55,7 @@ const CategoryForm = ({ control, errors, setValue, isLoading, initialData }: Cat
               )}
             />
             <ParentCategorySelect control={control} errors={errors} isLoading={isLoading} />
+
             <CategoryThumbnailImage control={control} errors={errors} setValue={setValue} isLoading={isLoading} category={initialData} />
           </Grid>
         </Grid>

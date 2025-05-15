@@ -33,6 +33,8 @@ const CategoryThumbnailImage = ({ control, errors, isLoading, setValue, category
         description: null,
         fileUrl: category.thumbnailImage.fileUrl,
         fileKey: '',
+        thumbnailUrl: category.thumbnailImage.fileUrl,
+        thumbnailKey: '',
         mimetype: 'image/jpeg',
         size: 0,
         createdAt: new Date().toISOString(),

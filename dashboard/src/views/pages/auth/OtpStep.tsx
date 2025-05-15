@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 // MUI
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
+import CircularProgress from '@mui/material/CircularProgress'
 
 // Third-party
 import { OTPInput } from 'input-otp'
@@ -46,6 +47,7 @@ const FakeCaret = () => (
 const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBack: () => void }) => {
   const [otp, setOtp] = useState('')
   const [isError, setIsError] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const otpInputRef = useRef<HTMLInputElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
   const router = useRouter()
@@ -65,6 +67,8 @@ const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBac
 
   const handleSubmit = useCallback(async () => {
     try {
+      setIsLoading(true)
+
       if (otp.length === 6 && /^\d{6}$/.test(otp)) {
         if (isExpired) {
           resetOtpForm()
@@ -93,6 +97,8 @@ const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBac
       }
     } catch (error) {
       showToast({ type: 'error', message: 'خطای سیستمی' })
+    } finally {
+      setIsLoading(false)
     }
   }, [otp, isExpired, phoneNumber, router, resetOtpForm])
 
@@ -150,8 +156,14 @@ const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBac
           </Typography>
         </div>
 
-        <Button fullWidth variant='contained' type='submit' disabled={otp.length !== 6 || isExpired}>
-          {messages.submitButton}
+        <Button
+          fullWidth
+          variant='contained'
+          type='submit'
+          disabled={otp.length !== 6 || isExpired || isLoading}
+          startIcon={isLoading ? <CircularProgress size={20} color='inherit' /> : null}
+        >
+          {isLoading ? 'در حال بررسی...' : messages.submitButton}
         </Button>
 
         <div className='flex justify-center items-center flex-wrap gap-2'>

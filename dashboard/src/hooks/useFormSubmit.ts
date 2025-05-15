@@ -3,12 +3,12 @@ import { showToast } from '@/utils/showToast'
 import { cleanObject } from '@/utils/formatters'
 import { handleApiError } from '@/utils/handleApiError'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
-import getChangedFields from '@/utils/getChangedFields'
 import { QueryKeys } from '@/types/enums/query-keys'
+import { getChangedFields } from '@/utils/getChangedFields'
 
 interface UseFormSubmitProps<T extends Record<string, any>> {
-  createApi?: (data: T) => Promise<{ status: number }>
-  updateApi?: (id: string, data: Partial<T>) => Promise<{ status: number }>
+  createApi?: (data: T) => Promise<{ status: number; data?: any }>
+  updateApi?: (id: string, data: Partial<T>) => Promise<{ status: number; data?: any }>
   errorMessages: Record<number, string>
   queryKey: QueryKeys | QueryKeys[]
   successMessage: string
@@ -17,11 +17,17 @@ interface UseFormSubmitProps<T extends Record<string, any>> {
   initialData?: Partial<T & { id: string }>
   isUpdate?: boolean
   preprocessData?: (data: T) => T
+  onSuccess?: () => void
 }
 
 interface UseFormSubmitResult<T extends Record<string, any>> {
   isLoading: boolean
-  onSubmit: (formData: T, handleClose: () => void) => Promise<void>
+  onSubmit: (formData: T, handleClose: () => void) => Promise<ApiResponse<T> | undefined>
+}
+
+interface ApiResponse<T> {
+  status: number
+  data?: T
 }
 
 export const useFormSubmit = <T extends Record<string, any>>({
@@ -34,13 +40,14 @@ export const useFormSubmit = <T extends Record<string, any>>({
   errorMessage = 'خطای سیستمی رخ داد',
   initialData,
   isUpdate = false,
-  preprocessData
+  preprocessData,
+  onSuccess
 }: UseFormSubmitProps<T>): UseFormSubmitResult<T> => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { invalidate } = useInvalidateQuery()
 
   const onSubmit = useCallback(
-    async (formData: T, handleClose: () => void) => {
+    async (formData: T, handleClose: () => void): Promise<ApiResponse<T> | undefined> => {
       setIsLoading(true)
 
       try {
@@ -54,37 +61,43 @@ export const useFormSubmit = <T extends Record<string, any>>({
             showToast({ type: 'info', message: noChangeMessage })
             setIsLoading(false)
 
-            return
+            return undefined
           }
 
-          const { status } = await updateApi(String(initialData.id), changedData)
-          const apiErrorMessage = handleApiError(status, errorMessages)
+          const response = await updateApi(String(initialData.id), changedData)
+          const apiErrorMessage = handleApiError(response.status, errorMessages)
 
           if (apiErrorMessage) {
             showToast({ type: 'error', message: apiErrorMessage })
 
-            return
+            return response
           }
 
-          if (status === 200) {
+          if (response.status === 200) {
             showToast({ type: 'success', message: successMessage })
             invalidate(queryKey)
             handleClose()
+            onSuccess?.()
+
+            return response
           }
         } else if (createApi) {
-          const { status } = await createApi(cleanedData as T)
-          const apiErrorMessage = handleApiError(status, errorMessages)
+          const response = await createApi(cleanedData as T)
+          const apiErrorMessage = handleApiError(response.status, errorMessages)
 
           if (apiErrorMessage) {
             showToast({ type: 'error', message: apiErrorMessage })
 
-            return
+            return response
           }
 
-          if (status === 201 || status === 200) {
+          if (response.status === 201 || response.status === 200) {
             showToast({ type: 'success', message: successMessage })
             invalidate(queryKey)
             handleClose()
+            onSuccess?.()
+
+            return response
           }
         }
       } catch (error: any) {
@@ -93,7 +106,7 @@ export const useFormSubmit = <T extends Record<string, any>>({
         setIsLoading(false)
       }
     },
-    [createApi, updateApi, errorMessages, queryKey, successMessage, noChangeMessage, errorMessage, initialData, isUpdate, invalidate, preprocessData]
+    [createApi, updateApi, errorMessages, queryKey, successMessage, noChangeMessage, errorMessage, initialData, isUpdate, invalidate, preprocessData, onSuccess]
   )
 
   return { isLoading, onSubmit }

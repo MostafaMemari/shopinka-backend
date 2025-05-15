@@ -27,6 +27,7 @@ const GallerySelectModal: React.FC<GallerySelectModalProps> = ({ open, selectedG
     >
       <Box display='flex' gap={2}>
         <CreateGalleryModal />
+
         <GallerySelect value={selectedGalleryId} onChange={onChange} enabled={open} />
       </Box>
     </CustomDialog>

@@ -22,7 +22,6 @@ type ProductFormType = InferType<typeof productFormSchema>
 
 const ProductForm = () => {
   const searchParams = useSearchParams()
-
   const id = searchParams.get('id') ? Number(searchParams.get('id')) : null
 
   const methods = useForm<ProductFormType>({
@@ -58,7 +57,7 @@ const ProductForm = () => {
     }
   })
 
-  const { isLoading, handleButtonClick } = useProductForm({ id, methods })
+  const { isLoading, handleButtonClick, isUpdate } = useProductForm({ id, methods })
 
   if (isLoading) return <LoadingSpinner />
 
@@ -66,7 +65,7 @@ const ProductForm = () => {
     <FormProvider {...methods}>
       <Grid container spacing={6}>
         <Grid size={{ xs: 12 }}>
-          <ProductAddHeader onButtonClick={handleButtonClick} isLoading={isLoading} />
+          <ProductAddHeader onButtonClick={handleButtonClick} isLoading={isLoading} isUpdate={isUpdate} />
         </Grid>
         <Grid size={{ xs: 12, md: 8 }}>
           <Grid container spacing={6}>

@@ -11,8 +11,6 @@ import { useAttribute } from '@/hooks/reactQuery/useAttribute'
 import { type Attribute, type ProductType, type Variant, type VariantCombination } from '@/types/app/productAttributes'
 import { generateCombinations } from './generateCombinations'
 import CombinationsList from './CombinationsList'
-import CreateAttributeModal from '../../../attribute/CreateAttributeModal'
-import { Box } from '@mui/material'
 
 const VariantsTab = () => {
   const [variants, setVariants] = useState<Variant[]>([])
@@ -22,9 +20,21 @@ const VariantsTab = () => {
   const {
     register,
     control,
+    watch,
     formState: { errors },
     setValue
   } = useFormContext()
+
+  // دریافت مقادیر attributeIds و attributeValuesIds
+  const attributeIds = watch('attributeIds')
+  const attributeValuesIds = watch('attributeValuesIds')
+
+  // تنظیم پیش‌فرض برای productType بر اساس مقدار اولیه type
+  const formType = watch('type') || 'SIMPLE'
+
+  useEffect(() => {
+    setProductType(formType)
+  }, [formType])
 
   const {
     data: attributesData,
@@ -108,7 +118,6 @@ const VariantsTab = () => {
     const usedAttributeIds = variants.map(v => v.attributeId)
 
     if (usedAttributeIds.includes(attributeId)) return
-
     const newVariants = [...variants]
 
     newVariants[index].attributeId = attributeId
@@ -127,7 +136,6 @@ const VariantsTab = () => {
     const updatedSelectedCombinations = value === 'active' ? [...selectedCombinations, combinationKey] : selectedCombinations.filter(key => key !== combinationKey)
 
     setSelectedCombinations(updatedSelectedCombinations)
-
     const activeCombinationIds = calculateActiveCombinationIds(updatedSelectedCombinations, combinations, attributesData?.data?.items || [])
 
     setValue('attributeValuesIds', activeCombinationIds, { shouldValidate: true })
@@ -154,6 +162,7 @@ const VariantsTab = () => {
             {...field}
             onChange={e => {
               field.onChange(e)
+
               const value = e.target.value as ProductType
 
               if (value === 'SIMPLE') {
@@ -171,6 +180,20 @@ const VariantsTab = () => {
           </CustomTextField>
         )}
       />
+      {/* نمایش مقادیر attributeIds و attributeValuesIds */}
+      {productType === 'VARIABLE' && (
+        <Grid container spacing={6}>
+          <Grid size={{ xs: 12 }}>
+            <Typography variant='body1'>
+              <strong>شناسه‌های ویژگی‌ها:</strong> {attributeIds?.length > 0 ? attributeIds.join(', ') : 'هیچ ویژگی انتخاب نشده'}
+            </Typography>
+            <Typography variant='body1'>
+              <strong>شناسه‌های مقادیر ویژگی‌ها:</strong>{' '}
+              {attributeValuesIds?.length > 0 ? attributeValuesIds.map((ids: number[]) => `[${ids.join(', ')}]`).join(' | ') : 'هیچ مقداری انتخاب نشده'}
+            </Typography>
+          </Grid>
+        </Grid>
+      )}
       {productType === 'VARIABLE' && (
         <>
           {isLoadingAttributes || isFetchingAttributes ? (

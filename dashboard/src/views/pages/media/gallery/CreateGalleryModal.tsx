@@ -13,9 +13,12 @@ interface CreateGalleryModalProps {
 
 const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
-  const { control, errors, isLoading, onSubmit, handleClose } = useGalleryForm({})
 
   const handleOpen = useCallback(() => setOpen(true), [])
+
+  const { control, errors, isLoading, onSubmit, handleClose } = useGalleryForm({
+    onSuccess: () => setOpen(false)
+  })
 
   const handleModalClose = useCallback(() => {
     setOpen(false)

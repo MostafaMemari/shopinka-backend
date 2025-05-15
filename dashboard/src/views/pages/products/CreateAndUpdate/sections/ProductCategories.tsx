@@ -20,13 +20,16 @@ import { useFormContext } from 'react-hook-form'
 import CreateCategoryModal from '@/views/pages/categories/CreateCategoryModal'
 
 const ProductCategories = () => {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [searchQuery, setSearchQuery] = useState<string>('')
-
   const {
     setValue,
+    getValues,
     formState: { errors }
   } = useFormContext()
+
+  const initialCategoryIds = getValues('categoryIds') || []
+
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(initialCategoryIds.map((id: number) => id.toString()))
+  const [searchQuery, setSearchQuery] = useState<string>('')
 
   const { data, isLoading, isFetching, error } = useCategories({
     enabled: true,

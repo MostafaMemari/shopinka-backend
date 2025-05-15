@@ -40,9 +40,10 @@ export function useGallery({ enabled = true, params = {}, staleTime = 1 * 60 * 1
 interface UseGalleryFormProps {
   initialData?: Gallery
   isUpdate?: boolean
+  onSuccess?: () => void
 }
 
-export const useGalleryForm = ({ initialData, isUpdate = false }: UseGalleryFormProps) => {
+export const useGalleryForm = ({ initialData, isUpdate = false, onSuccess }: UseGalleryFormProps) => {
   const defaultValues: GalleryForm = {
     title: initialData?.title ?? '',
     description: initialData?.description ?? ''
@@ -71,7 +72,8 @@ export const useGalleryForm = ({ initialData, isUpdate = false }: UseGalleryForm
     noChangeMessage: 'هیچ تغییری اعمال نشده است',
     errorMessage: isUpdate ? 'خطایی در ویرایش گالری رخ داد' : 'خطای سیستمی رخ داد',
     initialData: initialData ? { ...initialData, id: String(initialData.id) } : undefined,
-    isUpdate
+    isUpdate,
+    onSuccess
   })
 
   return {
