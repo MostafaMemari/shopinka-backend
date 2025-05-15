@@ -2,7 +2,7 @@ import { BadRequestException, ConflictException, Injectable } from '@nestjs/comm
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductRepository } from '../repositories/product.repository';
-import { Prisma, Product, ProductStatus, ProductType } from 'generated/prisma';
+import { OrderStatus, Prisma, Product, ProductStatus, ProductType } from 'generated/prisma';
 import { CacheService } from '../../cache/cache.service';
 import { GalleryItemRepository } from '../../gallery/repositories/gallery-item.repository';
 import slugify from 'slugify';
@@ -16,6 +16,7 @@ import { ProductMessages } from '../enums/product-messages.enum';
 import { FavoriteRepository } from '../repositories/favorite.repository';
 import { FavoriteMessages } from '../enums/favorite-messages.enum';
 import { CategoryRepository } from '../../category/category.repository';
+import { OrderItemRepository } from '../../order/repositories/order-item.repository';
 
 @Injectable()
 export class ProductService {
@@ -28,6 +29,7 @@ export class ProductService {
     private readonly galleryItemRepository: GalleryItemRepository,
     private readonly attributeRepository: AttributeRepository,
     private readonly categoryRepository: CategoryRepository,
+    private readonly orderItemRepository: OrderItemRepository,
   ) { }
 
   async create(userId: number, createProductDto: CreateProductDto): Promise<{ message: string, product: Product }> {
@@ -167,7 +169,7 @@ export class ProductService {
   }
 
   async update(userId: number, productId: number, updateProductDto: UpdateProductDto): Promise<{ message: string, product: Product }> {
-    const { categoryIds, galleryImageIds, mainImageId, slug, sku, basePrice, salePrice, attributeIds, type } = updateProductDto
+    const { status, categoryIds, galleryImageIds, mainImageId, slug, sku, basePrice, salePrice, attributeIds, type } = updateProductDto
 
     const product = await this.productRepository.findOneOrThrow({ where: { id: productId, userId } })
 
@@ -182,6 +184,18 @@ export class ProductService {
 
     if (mainImageId !== null) await this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } })
 
+    const orderItems = await this.orderItemRepository.findAll({ where: { productId }, include: { order: true } })
+
+    const hasUndeliveredOrderItems = orderItems.some(item => item['order'].status !== OrderStatus.DELIVERED)
+
+    if (hasUndeliveredOrderItems && type && type === ProductType.VARIABLE) {
+      throw new BadRequestException(ProductMessages.CannotChangeToVariableType);
+    }
+
+    if (hasUndeliveredOrderItems && status && status === ProductStatus.DRAFT) {
+      throw new BadRequestException(ProductMessages.CannotDraftProductWithPendingOrders);
+    }
+
     const categories = categoryIds ? await this.categoryRepository.findAll({ where: { id: { in: categoryIds } } }) : []
 
     const images = galleryImageIds ? await this.galleryItemRepository.findAll({ where: { id: { in: galleryImageIds } } }) : undefined
@@ -190,9 +204,9 @@ export class ProductService {
 
     const isAllowedProductType = attributeIds && (product.type == ProductType.VARIABLE || type && type == ProductType.VARIABLE)
 
-    attributeIds && delete updateProductDto.attributeIds
-    galleryImageIds && delete updateProductDto.galleryImageIds
-    categoryIds && delete updateProductDto.categoryIds
+    delete updateProductDto.attributeIds
+    delete updateProductDto.galleryImageIds
+    delete updateProductDto.categoryIds
 
     const updatedProduct = await this.productRepository.update({
       where: { id: productId },
@@ -200,11 +214,13 @@ export class ProductService {
         ...updateProductDto,
         galleryImages: images ? { set: images.map(image => ({ id: image.id })) } : undefined,
         attributes: isAllowedProductType ? { set: attributes.map(attribute => ({ id: attribute.id })) } : undefined,
-        categories: categoryIds && { set: categories.map(cat => ({ id: cat.id })) }
+        categories: categoryIds && { set: categories.map(cat => ({ id: cat.id })) },
+        variants: type && type == ProductType.SIMPLE ? { deleteMany: { productId } } : undefined,
+        orderItems: status && status == ProductStatus.DRAFT ? { deleteMany: { productId } } : undefined,
+        cartItems: status && status == ProductStatus.DRAFT ? { deleteMany: { productId } } : undefined
       },
       include: { attributes: true, galleryImages: true, mainImage: true }
     })
-
 
     return { message: ProductMessages.UpdatedProductSuccess, product: updatedProduct }
   }
