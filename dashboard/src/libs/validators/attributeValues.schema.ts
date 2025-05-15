@@ -1,4 +1,4 @@
-import { AttributeType } from '@/types/app/productAttributes'
+import { AttributeType } from '@/types/app/productAttributes.type'
 import * as yup from 'yup'
 
 export const AttributeValueSchema = (type: AttributeType) => {

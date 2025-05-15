@@ -1,11 +1,11 @@
-import { SeoForm } from '@/types/app/seo'
+import { Seo } from '@/types/app/seo'
 import { serverApiFetch } from '../../serverApiFetch'
 
 export const saveSeoMeta = async (
   type: 'product' | 'blog' | 'tag' | 'category',
   id: number,
-  data: Omit<SeoForm, 'productId' | 'blogId' | 'tagId' | 'categoryId'>
-): Promise<{ status: number; data: { seo: (SeoForm & { id: number }) | null } }> => {
+  data: Omit<Seo, 'productId' | 'blogId' | 'tagId' | 'categoryId'>
+): Promise<{ status: number; data: { seo: (Seo & { id: number }) | null } }> => {
   try {
     const targetIdKey = type === 'product' ? 'productId' : type === 'blog' ? 'blogId' : type === 'tag' ? 'tagId' : 'categoryId'
 

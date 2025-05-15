@@ -7,9 +7,9 @@ import { Box, IconButton, Typography } from '@mui/material'
 import tableStyles from '@core/styles/table.module.css'
 
 // API Import
-import { Category } from '@/types/app/category'
+import { Category } from '@/types/app/category.type'
 import UpdateCategoryModal from './UpdateCategoryModal'
-import RemoveCategoryModal from './RemoveAttributeModal'
+import RemoveCategoryModal from './RemoveCategoryModal'
 import { stripHtml, truncateText } from '@/utils/formatters'
 
 const DesktopCategoryTable = ({ categories }: { categories: Category[] }) => {

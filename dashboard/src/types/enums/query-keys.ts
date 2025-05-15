@@ -3,5 +3,6 @@ export enum QueryKeys {
   GalleryItems = 'gallery-items',
   Categories = 'categories',
   Products = 'products',
-  Galleries = 'galleries'
+  Galleries = 'galleries',
+  Comments = 'comments'
 }

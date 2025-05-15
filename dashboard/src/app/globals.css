@@ -18,7 +18,10 @@
   --mui-mainColorChannels-shadow: var(--mui-mainColorChannels-lightShadow);
 
   --toastify-color-light: #fff !important;
+  /* --toastify-text-color-light: #757575 !important; */
+
   --toastify-color-dark: var(--mui-palette-background-default) !important;
+  /* --toastify-text-color-dark: #fff !important; */
 }
 
 [data-dark] {

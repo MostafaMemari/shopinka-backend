@@ -8,7 +8,7 @@ export const handleSeoSave = async (type: 'product' | 'blog' | 'tag' | 'category
     canonicalUrl: data.seo_canonicalUrl,
     ogTitle: data.seo_ogTitle || data.name,
     ogDescription: data.seo_ogDescription || data.shortDescription,
-    ogImage: data.seo_ogImage,
+    ogImage: data.seo_ogImage || data.mainImageId,
     robotsTag: data.seo_robotsTag || 'index, follow'
   })
 

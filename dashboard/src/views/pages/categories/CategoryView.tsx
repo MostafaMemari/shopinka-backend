@@ -15,7 +15,7 @@ import LoadingSpinner from '@/components/LoadingSpinner'
 
 // API Import
 import { useCategories } from '@/hooks/reactQuery/useCategory'
-import { Category } from '@/types/app/category'
+import { Category } from '@/types/app/category.type'
 
 // Hook Import
 import { usePaginationParams } from '@/hooks/usePaginationParams'

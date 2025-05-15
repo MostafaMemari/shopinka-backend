@@ -4,7 +4,7 @@ import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
 import { QueryKeys } from '@/types/enums/query-keys'
 import { removeGallery } from '@/libs/api/gallery.api'
 
-const RemoveGalleryModal = ({ id }: { id: number }) => {
+const RemoveGalleryModal = ({ id }: { id: string }) => {
   const { invalidate } = useInvalidateQuery()
 
   return (

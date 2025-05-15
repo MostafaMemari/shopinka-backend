@@ -12,14 +12,14 @@ const horizontalMenuData = (): HorizontalMenuDataType[] => [
     icon: 'tabler-shopping-cart',
     children: [
       {
+        label: 'لیست',
+        href: '/products',
+        icon: 'tabler-list'
+      },
+      {
         label: 'افزودن',
         href: '/products/add',
         icon: 'tabler-plus'
-      },
-      {
-        label: 'لیست',
-        href: '/products/list',
-        icon: 'tabler-list'
       },
       {
         label: 'ویژگی‌ها',
@@ -37,6 +37,31 @@ const horizontalMenuData = (): HorizontalMenuDataType[] => [
     label: 'دسته بندی‌ها',
     icon: 'tabler-category',
     href: '/categories'
+  },
+  {
+    label: 'نظرات',
+    icon: 'tabler-message-circle',
+    href: '/comments'
+  },
+  {
+    label: 'سفارشات',
+    icon: 'tabler-package',
+    href: '/orders'
+  },
+  {
+    label: 'وبلاگ',
+    icon: 'tabler-news',
+    href: '/blog'
+  },
+  {
+    label: 'برچسب‌ها',
+    icon: 'tabler-tag',
+    href: '/tags'
+  },
+  {
+    label: 'حمل و نقل',
+    icon: 'tabler-truck',
+    href: '/shipping'
   }
 ]
 

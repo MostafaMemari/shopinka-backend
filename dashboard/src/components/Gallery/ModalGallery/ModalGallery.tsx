@@ -98,13 +98,13 @@ const ModalGallery = ({ btnLabel, multi = false, onSelect, initialSelected, chil
 
   return (
     <>
-      {children ? (
-        <div onClick={handleOpen}>{children}</div>
-      ) : (
-        <Button variant='contained' className='max-sm:w-full' sx={{ width: 200, maxWidth: '100%' }} onClick={handleOpen}>
-          {btnLabel}
-        </Button>
-      )}
+      <div onClick={handleOpen} className='cursor-pointer'>
+        {children || (
+          <Button variant='contained' className='max-sm:w-full' sx={{ width: 200, maxWidth: '100%' }} onClick={handleOpen}>
+            {btnLabel}
+          </Button>
+        )}
+      </div>
 
       <CustomDialog
         open={open}

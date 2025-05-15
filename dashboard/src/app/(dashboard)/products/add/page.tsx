@@ -1,7 +1,7 @@
-import CreateProduct from '@/views/pages/products/add/CreateProduct'
+import ProductForm from '@/views/pages/products/CreateAndUpdate/ProductForm'
 
-const AppProduct = () => {
-  return <CreateProduct />
+const AddProduct = () => {
+  return <ProductForm />
 }
 
-export default AppProduct
+export default AddProduct
