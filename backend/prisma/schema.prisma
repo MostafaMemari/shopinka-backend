@@ -215,28 +215,28 @@ model Product {
 }
 
 model ProductVariant {
-  id              Int              @id @default(autoincrement())
-  sku             String           @unique()
-  mainImageId     Int?
-  productId       Int
-  orderId         Int?
-  userId          Int?
-  description     String?
-  quantity        Int?
-  basePrice       Int?             @map("base_price")
-  salePrice       Int?             @map("sale_price")
-  mainImage       GalleryItem?     @relation("VariantMainImage", fields: [mainImageId], references: [id], onDelete: SetNull)
-  product         Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
-  user            User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
-  attributeValues AttributeValue[]
-  cartItems       CartItem[]
-  orderItems      OrderItem[]
-  width           Int?
-  height          Int?
-  length          Int?
-  weight          Int?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt()
+  id               Int              @id @default(autoincrement())
+  sku              String           @unique()
+  mainImageId      Int?
+  productId        Int
+  orderId          Int?
+  userId           Int?
+  shortDescription String?          @map("short_description")
+  quantity         Int?
+  basePrice        Int?             @map("base_price")
+  salePrice        Int?             @map("sale_price")
+  mainImage        GalleryItem?     @relation("VariantMainImage", fields: [mainImageId], references: [id], onDelete: SetNull)
+  product          Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user             User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  attributeValues  AttributeValue[]
+  cartItems        CartItem[]
+  orderItems       OrderItem[]
+  width            Int?
+  height           Int?
+  length           Int?
+  weight           Int?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt()
 }
 
 model Favorite {

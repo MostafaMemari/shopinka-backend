@@ -5,7 +5,6 @@ import { ProductVariantMessages } from "../enums/product-variant-messages.enum";
 import { Prisma, ProductVariant } from "generated/prisma";
 import { ProductRepository } from "../repositories/product.repository";
 import { GalleryItemRepository } from "../../gallery/repositories/gallery-item.repository";
-import { AttributeRepository } from "../../attribute/repositories/attribute.repository";
 import { UpdateProductVariantDto } from "../dto/update-product-variant.dto";
 import { QueryProductVariantDto } from "../dto/query-product-variant.dto";
 import { sortObject } from "../../../common/utils/functions.utils";
@@ -58,7 +57,7 @@ export class ProductVariantService {
     async findAll({ page, take, ...queryProductVariantDto }: QueryProductVariantDto): Promise<unknown> {
         const paginationDto = { page, take };
         const {
-            description,
+            shortDescription,
             endDate,
             includeUser,
             sortBy,
@@ -89,7 +88,7 @@ export class ProductVariantService {
         const filters: Prisma.ProductVariantWhereInput = {};
 
         if (sku) filters.sku = { contains: sku, mode: "insensitive" };
-        if (description) filters.description = { contains: description, mode: "insensitive" };
+        if (shortDescription) filters.shortDescription = { contains: shortDescription, mode: "insensitive" };
         if (salePrice) filters.salePrice = salePrice
         if (height) filters.height = height
         if (weight) filters.weight = weight
