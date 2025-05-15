@@ -138,7 +138,7 @@ export class ProductVariantService {
             if (existingProductVariant) throw new ConflictException(ProductVariantMessages.AlreadyExistsProductVariant)
         }
 
-        if (mainImageId) await this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } })
+        if (mainImageId !== null) await this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } })
 
         const attributeValues = attributeValueIds
             ? await this.attributeValueRepository.findAll({ where: { id: { in: attributeValueIds } } }) : undefined

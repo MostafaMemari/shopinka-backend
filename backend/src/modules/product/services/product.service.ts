@@ -95,7 +95,6 @@ export class ProductService {
       includeVariants,
       includeSeoMeta,
       includeTags,
-      includeComments,
       includeSeoCategories
     } = queryProductDto
 
@@ -137,7 +136,6 @@ export class ProductService {
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
       include: {
         categories: includeSeoCategories,
-        comments: includeComments,
         tags: includeTags,
         seoMeta: includeSeoMeta,
         attributes: includeAttributes,
@@ -156,7 +154,7 @@ export class ProductService {
   findOne(id: number): Promise<Product> {
     return this.productRepository.findOneOrThrow({
       where: { id, status: ProductStatus.PUBLISHED },
-      include: { galleryImages: true, mainImage: true, user: true, variants: true, tags: true, seoMeta: true, categories: true, comments: true, attributes: true }
+      include: { galleryImages: true, mainImage: true, user: true, variants: true, tags: true, seoMeta: true, categories: true, attributes: true }
     })
   }
 
@@ -178,7 +176,7 @@ export class ProductService {
       if (existingProduct) throw new ConflictException(ProductMessages.AlreadyExistsProduct)
     }
 
-    if (mainImageId) await this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } })
+    if (mainImageId !== null) await this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } })
 
     const categories = categoryIds ? await this.categoryRepository.findAll({ where: { id: { in: categoryIds } } }) : []
 
@@ -198,7 +196,7 @@ export class ProductService {
         ...updateProductDto,
         galleryImages: images ? { set: images.map(image => ({ id: image.id })) } : undefined,
         attributes: isAllowedProductType ? { set: attributes.map(attribute => ({ id: attribute.id })) } : undefined,
-        categories: { set: categories.map(cat => ({ id: cat.id })) }
+        categories: categoryIds && { set: categories.map(cat => ({ id: cat.id })) }
       },
       include: { attributes: true, galleryImages: true, mainImage: true }
     })
