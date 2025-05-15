@@ -130,15 +130,6 @@ export class QueryProductDto extends PaginationDto {
         return value
     })
     @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
-    includeComments?: boolean
-
-    @IsOptional()
-    @IsBoolean()
-    @Transform(({ value }) => {
-        if (typeof value == 'string') return value == 'true'
-        return value
-    })
-    @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
     includeSeoCategories?: boolean
 
     @IsOptional()

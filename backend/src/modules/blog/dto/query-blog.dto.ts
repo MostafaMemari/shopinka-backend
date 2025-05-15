@@ -26,22 +26,7 @@ export class QueryBlogDto extends PaginationDto {
         nullable: true,
         required: false
     })
-    includeComments?: boolean
-
-
-    @IsBoolean()
-    @IsOptional()
-    @Transform(({ value }) => {
-        if (typeof value == 'string') return value == 'true'
-        return value
-    })
-    @ApiProperty({
-        type: 'boolean',
-        nullable: true,
-        required: false
-    })
     includeCategories?: boolean
-
 
     @IsBoolean()
     @IsOptional()
@@ -56,7 +41,6 @@ export class QueryBlogDto extends PaginationDto {
     })
     includeTags?: boolean
 
-
     @IsBoolean()
     @IsOptional()
     @Transform(({ value }) => {
@@ -69,7 +53,6 @@ export class QueryBlogDto extends PaginationDto {
         required: false
     })
     includeUser?: boolean
-
 
     @IsBoolean()
     @IsOptional()

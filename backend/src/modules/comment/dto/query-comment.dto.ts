@@ -1,6 +1,6 @@
-import { ApiPropertyOptional } from "@nestjs/swagger"
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
 import { Transform } from "class-transformer"
-import { IsOptional, IsString, IsDate, IsEnum, IsBoolean, IsNumber, Min } from "class-validator"
+import { IsOptional, IsString, IsDate, IsEnum, IsBoolean, IsNumber, Min, IsPositive } from "class-validator"
 import { SortOrder } from "../../../common/enums/shared.enum"
 import { CommentSortBy } from "../enums/comment-sortby.enum"
 import { PaginationDto } from "../../../common/dtos/pagination.dto"
@@ -17,10 +17,23 @@ export class QueryCommentDto extends PaginationDto {
 
     @IsOptional()
     @IsNumber()
-    @Min(0)
+    @IsPositive()
     @Transform(({ value }) => +value)
     @ApiPropertyOptional({ type: "number", nullable: true, required: false })
     repliesDepth?: number
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => +value)
+    @ApiPropertyOptional({ type: "number", nullable: true, required: false })
+    blogId?: number
+
+    @IsOptional()
+    @IsNumber()
+    @IsPositive()
+    @Transform(({ value }) => +value)
+    @ApiPropertyOptional({ type: "number", nullable: true, required: false })
+    productId?: number
 
     @IsOptional()
     @IsBoolean()
@@ -66,33 +79,4 @@ export class QueryCommentDto extends PaginationDto {
     })
     @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
     includeReplies?: boolean
-
-    @IsOptional()
-    @IsDate()
-    @Transform(({ value }) => new Date(value))
-    @ApiPropertyOptional({ type: 'string', format: 'date-time' })
-    startDate?: Date;
-
-    @IsOptional()
-    @IsDate()
-    @Transform(({ value }) => new Date(value))
-    @ApiPropertyOptional({ type: 'string', format: 'date-time' })
-    endDate?: Date;
-
-    @IsOptional()
-    @IsString()
-    @IsEnum(CommentSortBy)
-    @ApiPropertyOptional({
-        type: 'string',
-        enum: CommentSortBy,
-    })
-    sortBy?: CommentSortBy;
-
-    @IsOptional()
-    @IsEnum(SortOrder)
-    @ApiPropertyOptional({
-        type: 'string',
-        enum: SortOrder,
-    })
-    sortDirection?: SortOrder;
 }

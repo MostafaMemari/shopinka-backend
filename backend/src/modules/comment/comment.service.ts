@@ -35,7 +35,17 @@ export class CommentService {
 
   async findAll({ take, page, ...queryCommentDto }: QueryCommentDto): Promise<unknown> {
     const paginationDto = { page, take };
-    const { endDate, includeUser, sortBy, sortDirection, startDate, includeParent, includeProduct, includeReplies, isRecommended, includeBlog, repliesDepth } = queryCommentDto
+    const {
+      includeUser,
+      includeParent,
+      includeProduct,
+      includeReplies,
+      isRecommended,
+      includeBlog,
+      repliesDepth,
+      blogId,
+      productId
+    } = queryCommentDto
 
     const sortedDto = sortObject(queryCommentDto);
 
@@ -48,11 +58,8 @@ export class CommentService {
     const filters: Prisma.CommentWhereInput = { isActive: true, parent: null };
 
     if (isRecommended !== undefined) filters.isRecommended = isRecommended
-    if (startDate || endDate) {
-      filters.createdAt = {};
-      if (startDate) filters.createdAt.gte = new Date(startDate);
-      if (endDate) filters.createdAt.lte = new Date(endDate);
-    }
+    if (blogId) filters.blogId = blogId
+    if (productId) filters.productId = productId
 
     const include: Prisma.CommentInclude = {
       user: includeUser && { select: { id: true, fullName: true } },
@@ -64,7 +71,7 @@ export class CommentService {
 
     const comments = await this.commentRepository.findAll({
       where: filters,
-      orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
+      orderBy: { createdAt: 'desc' },
       include
     });
 
@@ -131,10 +138,70 @@ export class CommentService {
     return { message: isActive ? CommentMessages.ActiveCommentSuccess : CommentMessages.UnActiveCommentSuccess, comment: updatedComment }
   }
 
-  async findAllForAdmins(userId: number, { page, take, isActive }: QueryAdminCommentDto): Promise<unknown> {
-    const comments = await this.commentRepository.findAll({ where: { isActive, product: { userId } } })
+  async findAllForAdmins(userId: number, { page, take, ...queryCommentDto }: QueryAdminCommentDto): Promise<unknown> {
+    const paginationDto = { page, take };
+    const {
+      includeUser,
+      includeParent,
+      includeProduct,
+      includeReplies,
+      isRecommended,
+      includeBlog,
+      repliesDepth,
+      blogId,
+      productId,
+      endDate,
+      isActive,
+      sortBy,
+      sortDirection,
+      startDate
+    } = queryCommentDto
 
-    return pagination({ page, take }, comments)
+    const sortedDto = sortObject(queryCommentDto);
+
+    const cacheKey = `${CacheKeys.Comments}_${JSON.stringify(sortedDto)}`;
+
+    const cachedComments = await this.cacheService.get<null | Comment[]>(cacheKey);
+
+    if (cachedComments) return { ...pagination(paginationDto, cachedComments) }
+
+    const filters: Prisma.CommentWhereInput = { isActive, parent: null };
+
+    if (isRecommended !== undefined) filters.isRecommended = isRecommended
+    if (blogId) filters.blog = { userId, id: blogId }
+    if (productId) filters.product = { userId, id: productId }
+    if (startDate || endDate) {
+      filters.createdAt = {}
+      if (startDate) filters.createdAt.gte = new Date(startDate)
+      if (endDate) filters.createdAt.lte = new Date(endDate)
+    }
+
+    const include: Prisma.CommentInclude = {
+      user: includeUser,
+      parent: includeParent,
+      blog: includeBlog,
+      product: includeProduct,
+      replies: includeReplies
+    };
+
+    const comments = await this.commentRepository.findAll({
+      where: filters,
+      orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
+      include
+    });
+
+    let resultComments = comments;
+    if (includeReplies && repliesDepth > 0) {
+      resultComments = await Promise.all(
+        comments.map(async (comment) =>
+          await this.loadReplies(comment.id, include, repliesDepth),
+        ),
+      );
+    }
+
+    await this.cacheService.set(cacheKey, resultComments, this.CACHE_EXPIRE_TIME);
+
+    return { ...pagination(paginationDto, resultComments) }
   }
 
   private async isParentIdInReplies(commentId: number, parentId: number) {

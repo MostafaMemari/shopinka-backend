@@ -57,7 +57,7 @@ export class BlogService {
 
   async findAll({ take, page, ...queryBlogDto }: QueryBlogDto): Promise<unknown> {
     const paginationDto = { page, take };
-    const { endDate, sortBy, sortDirection, startDate, includeCategories, includeComments, includeSeoMeta, includeTags, includeUser, title, } = queryBlogDto;
+    const { endDate, sortBy, sortDirection, startDate, includeCategories, includeSeoMeta, includeTags, includeUser, title, } = queryBlogDto;
 
     const sortedDto = sortObject(queryBlogDto);
 
@@ -79,7 +79,7 @@ export class BlogService {
     const blogs = await this.blogRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { categories: includeCategories, comments: includeComments, seoMeta: includeSeoMeta, tags: includeTags, user: includeUser && { select: { id: true, fullName: true } } }
+      include: { categories: includeCategories, seoMeta: includeSeoMeta, tags: includeTags, user: includeUser && { select: { id: true, fullName: true } } }
     });
 
     await this.cacheService.set(cacheKey, blogs, this.CACHE_EXPIRE_TIME);
@@ -99,7 +99,7 @@ export class BlogService {
   findOne(id: number): Promise<Blog> {
     return this.blogRepository.findOneOrThrow({
       where: { id, status: BlogStatus.PUBLISHED },
-      include: { categories: true, comments: true, seoMeta: true, tags: true, user: { select: { id: true, fullName: true } } }
+      include: { categories: true, seoMeta: true, tags: true, user: { select: { id: true, fullName: true } } }
     })
   }
 
