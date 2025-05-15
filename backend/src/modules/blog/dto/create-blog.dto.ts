@@ -36,6 +36,13 @@ export class CreateBlogDto {
     @Transform(({ value }) => +value)
     @ApiProperty({ type: "number", required: false, nullable: true })
     readingTime?: number
+    
+    @IsOptional()
+    @IsNumber()
+    @IsPositive()
+    @Transform(({ value }) => +value)
+    @ApiProperty({ type: "number", nullable: true, required: false })
+    mainImageId: number
 
     @IsOptional()
     @ApiProperty({

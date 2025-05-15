@@ -36,6 +36,6 @@ export class CreateAttributeValueDto {
     @IsNumber()
     @IsPositive()
     @Transform(({ value }) => +value)
-    @ApiProperty({ type: "string", nullable: false, required: true })
+    @ApiProperty({ type: "number", nullable: false, required: true })
     attributeId: number
 }

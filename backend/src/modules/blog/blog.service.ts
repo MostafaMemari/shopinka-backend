@@ -13,6 +13,7 @@ import { estimateReadingTime, sortObject } from '../../common/utils/functions.ut
 import { CacheKeys } from '../../common/enums/cache.enum';
 import { TagRepository } from '../tag/tag.repository';
 import slugify from 'slugify';
+import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
 
 @Injectable()
 export class BlogService {
@@ -23,15 +24,18 @@ export class BlogService {
     private readonly categoryRepository: CategoryRepository,
     private readonly tagRepository: TagRepository,
     private readonly cacheService: CacheService,
+    private readonly galleryItemRepository: GalleryItemRepository,
   ) { }
 
   async create(userId: number, createBlogDto: CreateBlogDto): Promise<{ message: string, blog: Blog }> {
-    const { title, categoryIds, slug, tagIds, content, readingTime } = createBlogDto
+    const { title, categoryIds, slug, tagIds, content, readingTime, mainImageId } = createBlogDto
 
     if (slug) {
       const existingBlog = await this.blogRepository.findOne({ where: { slug } })
       if (existingBlog) throw new ConflictException(BlogMessages.AlreadyExistsBlog)
     }
+
+    if (mainImageId) this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } })
 
     const categories = categoryIds ? await this.categoryRepository.findAll({ where: { id: { in: categoryIds } } }) : []
     const tags = tagIds ? await this.tagRepository.findAll({ where: { id: { in: tagIds } } }) : []
@@ -104,7 +108,7 @@ export class BlogService {
   }
 
   async update(userId: number, blogId: number, updateBlogDto: UpdateBlogDto): Promise<{ message: string, blog: Blog }> {
-    const { categoryIds, tagIds, slug, content, readingTime } = updateBlogDto
+    const { categoryIds, tagIds, slug, content, readingTime, mainImageId } = updateBlogDto
     await this.blogRepository.findOneOrThrow({ where: { id: blogId, userId } })
 
     if (slug) {
@@ -112,6 +116,7 @@ export class BlogService {
       if (existingBlog) throw new ConflictException(BlogMessages.AlreadyExistsBlog)
     }
 
+    if (mainImageId !== null) await this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } })
     const categories = categoryIds ? await this.categoryRepository.findAll({ where: { id: { in: categoryIds } } }) : undefined
     const tags = tagIds ? await this.tagRepository.findAll({ where: { id: { in: tagIds } } }) : undefined
 

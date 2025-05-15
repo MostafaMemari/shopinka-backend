@@ -132,6 +132,7 @@ model GalleryItem {
   categories          Category[]
   tags                Tag[]
   seoMeta             SeoMeta[]
+  blogs               Blog[]
 
   @@index([deletedAt])
 }
@@ -152,29 +153,29 @@ model Address {
 }
 
 model Attribute {
-  id              Int              @id() @default(autoincrement())
-  name            String
-  slug            String           @unique()
-  userId          Int?
-  user            User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
-  type            AttributeType
-  description     String?
-  values          AttributeValue[]
-  products        Product[]
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt()
+  id          Int              @id() @default(autoincrement())
+  name        String
+  slug        String           @unique()
+  userId      Int?
+  user        User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  type        AttributeType
+  description String?
+  values      AttributeValue[]
+  products    Product[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt()
 }
 
 model AttributeValue {
-  id          Int      @id() @default(autoincrement())
-  name        String
-  slug        String   @unique()
-  colorCode   String?  @map("color_code")
-  buttonLabel String?  @map("button_label")
-  attributeId Int?
+  id              Int              @id() @default(autoincrement())
+  name            String
+  slug            String           @unique()
+  colorCode       String?          @map("color_code")
+  buttonLabel     String?          @map("button_label")
+  attributeId     Int?
   productVariants ProductVariant[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt()
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt()
 
   attribute Attribute? @relation(fields: [attributeId], references: [id], onDelete: SetNull)
 }
@@ -203,7 +204,7 @@ model Product {
   comments         Comment[]
   cartItems        CartItem[]
   orderItems       OrderItem[]
-  tags              Tag[]
+  tags             Tag[]
   seoMeta          SeoMeta?         @relation("SeoMetaProduct")
   width            Int?
   height           Int?
@@ -214,28 +215,28 @@ model Product {
 }
 
 model ProductVariant {
-  id          Int          @id @default(autoincrement())
-  sku         String       @unique()
-  mainImageId Int?
-  productId   Int
-  orderId     Int?
-  userId      Int?
-  description String?
-  quantity    Int?
-  basePrice   Int?         @map("base_price")
-  salePrice   Int?         @map("sale_price")
-  mainImage   GalleryItem? @relation("VariantMainImage", fields: [mainImageId], references: [id], onDelete: SetNull)
-  product     Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
-  user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
-  attributeValues  AttributeValue[]
-  cartItems   CartItem[]
-  orderItems  OrderItem[]
-  width       Int?
-  height      Int?
-  length      Int?
-  weight      Int?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt()
+  id              Int              @id @default(autoincrement())
+  sku             String           @unique()
+  mainImageId     Int?
+  productId       Int
+  orderId         Int?
+  userId          Int?
+  description     String?
+  quantity        Int?
+  basePrice       Int?             @map("base_price")
+  salePrice       Int?             @map("sale_price")
+  mainImage       GalleryItem?     @relation("VariantMainImage", fields: [mainImageId], references: [id], onDelete: SetNull)
+  product         Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user            User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  attributeValues AttributeValue[]
+  cartItems       CartItem[]
+  orderItems      OrderItem[]
+  width           Int?
+  height          Int?
+  length          Int?
+  weight          Int?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt()
 }
 
 model Favorite {
@@ -358,14 +359,14 @@ model SeoMeta {
   blogId        Int?         @unique
   tagId         Int?         @unique
   categoryId    Int?         @unique
-  ogImageId Int?
+  ogImageId     Int?
   title         String?
   description   String?
   keywords      String[]     @default([])
   canonicalUrl  String?      @map("canonical_url")
   ogTitle       String?      @map("og_title")
   ogDescription String?      @map("og_description")
-  ogImage       GalleryItem?  @relation(fields: [ogImageId] , references: [id] , onDelete: SetNull)
+  ogImage       GalleryItem? @relation(fields: [ogImageId], references: [id], onDelete: SetNull)
   robotsTag     String?
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt()
@@ -379,6 +380,7 @@ model SeoMeta {
 model Blog {
   id          Int        @id() @default(autoincrement())
   userId      Int?
+  mainImageId Int?
   slug        String     @unique()
   title       String
   content     String?
@@ -387,11 +389,12 @@ model Blog {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt()
 
-  user       User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user       User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  mainImage  GalleryItem? @relation(fields: [mainImageId], references: [id], onDelete: SetNull)
   comments   Comment[]
   categories Category[]
   tags       Tag[]
-  seoMeta    SeoMeta?   @relation("SeoMetaBlog")
+  seoMeta    SeoMeta?     @relation("SeoMetaBlog")
 }
 
 model Tag {
