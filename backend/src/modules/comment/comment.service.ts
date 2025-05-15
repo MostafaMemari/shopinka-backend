@@ -37,11 +37,8 @@ export class CommentService {
     const paginationDto = { page, take };
     const {
       includeUser,
-      includeParent,
-      includeProduct,
       includeReplies,
       isRecommended,
-      includeBlog,
       repliesDepth,
       blogId,
       productId
@@ -63,9 +60,6 @@ export class CommentService {
 
     const include: Prisma.CommentInclude = {
       user: includeUser && { select: { id: true, fullName: true } },
-      parent: includeParent,
-      blog: includeBlog,
-      product: includeProduct,
       replies: includeReplies
     };
 

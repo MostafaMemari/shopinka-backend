@@ -7,6 +7,7 @@ import { UserRepository } from '../user/user.repository';
 import { CategoryRepository } from '../category/category.repository';
 import { CacheService } from '../cache/cache.service';
 import { TagRepository } from '../tag/tag.repository';
+import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
 
 @Module({
   controllers: [BlogController],
@@ -17,7 +18,8 @@ import { TagRepository } from '../tag/tag.repository';
     UserRepository,
     CategoryRepository,
     CacheService,
-    TagRepository
+    TagRepository,
+    GalleryItemRepository
   ],
 })
 export class BlogModule { }
