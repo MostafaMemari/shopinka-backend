@@ -51,32 +51,5 @@ export class QueryCommentDto extends PaginationDto {
         return value
     })
     @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
-    includeProduct?: boolean
-
-    @IsOptional()
-    @IsBoolean()
-    @Transform(({ value }) => {
-        if (typeof value == 'string') return value == 'true'
-        return value
-    })
-    @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
-    includeParent?: boolean
-
-    @IsOptional()
-    @IsBoolean()
-    @Transform(({ value }) => {
-        if (typeof value == 'string') return value == 'true'
-        return value
-    })
-    @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
-    includeBlog?: boolean
-
-    @IsOptional()
-    @IsBoolean()
-    @Transform(({ value }) => {
-        if (typeof value == 'string') return value == 'true'
-        return value
-    })
-    @ApiPropertyOptional({ type: "boolean", nullable: true, required: false })
     includeReplies?: boolean
 }
