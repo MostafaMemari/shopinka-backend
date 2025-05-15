@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Button, CircularProgress, DialogContent, DialogContentText } from '@mui/material'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { showToast } from '@/utils/showToast'
+import FormActions from './FormActions'
 
 type ConfirmDeleteModalProps = {
   id: string | number
@@ -92,18 +93,15 @@ const ConfirmDeleteModal = ({
         defaultMaxWidth='sm'
         actions={
           <>
-            <Button onClick={handleCancel} color='secondary' disabled={isDeleting}>
-              لغو
-            </Button>
-            <Button onClick={handleConfirm} disabled={isDeleting} variant='contained' color='error' startIcon={isDeleting ? <CircularProgress size={20} color='inherit' /> : null}>
-              {isDeleting ? 'در حال حذف...' : buttonText}
-            </Button>
+            <FormActions submitText='حذف' submitColor='error' onCancel={handleCancel} onSubmit={handleConfirm} isLoading={isDeleting} />
           </>
         }
       >
-        <DialogContent>
-          <DialogContentText>{dialogMessage}</DialogContentText>
-        </DialogContent>
+        {dialogMessage && (
+          <DialogContent>
+            <DialogContentText>{dialogMessage}</DialogContentText>
+          </DialogContent>
+        )}
       </CustomDialog>
     </>
   )

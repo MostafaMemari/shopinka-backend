@@ -10,7 +10,7 @@ import Tooltip from '@mui/material/Tooltip'
 import Image from 'next/image'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import ModalGallery from '@/components/Gallery/ModalGallery/ModalGallery'
-import { type GalleryItem } from '@/types/gallery'
+import { type GalleryItem } from '@/types/app/gallery'
 import { useFormContext } from 'react-hook-form'
 import ImagePlaceholder from '@/components/ImagePlaceholder'
 

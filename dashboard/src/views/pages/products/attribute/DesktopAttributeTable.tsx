@@ -14,7 +14,7 @@ import CreateAttributeValueModal from './attributeValue/CreateAttributeValueModa
 import tableStyles from '@core/styles/table.module.css'
 
 // API Import
-import { AttributeType, Attribute } from '@/types/productAttributes'
+import { AttributeType, Attribute } from '@/types/app/productAttributes'
 import UpdateAttributeValuesModal from './attributeValue/UpdateAttributeValuesModal'
 import { Fragment } from 'react'
 
@@ -72,7 +72,7 @@ const DesktopAttributeTable = ({ data }: { data: Attribute[] }) => {
                                   />
 
                                   <div className='mt-1'>
-                                    <RemoveAttributeValueModal id={row.id} />
+                                    <RemoveAttributeValueModal id={item.id} />
                                   </div>
                                 </Box>
                               }
@@ -100,7 +100,6 @@ const DesktopAttributeTable = ({ data }: { data: Attribute[] }) => {
                                       attributeId: String(item.attributeId)
                                     }}
                                   />
-
                                   <div className='mt-1'>
                                     <RemoveAttributeValueModal id={row.id} />
                                   </div>

@@ -1,4 +1,4 @@
-import { QueryKeys } from '@/types/query-keys'
+import { QueryKeys } from '@/types/enums/query-keys'
 import { useQueryClient } from '@tanstack/react-query'
 
 export const useInvalidateQuery = () => {

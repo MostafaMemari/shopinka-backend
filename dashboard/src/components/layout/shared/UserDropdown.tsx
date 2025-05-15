@@ -23,7 +23,7 @@ import Button from '@mui/material/Button'
 
 // Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
-import { logout } from '@/libs/api/auth'
+import { logout } from '@/libs/api/auth.api'
 import { showToast } from '@/utils/showToast'
 
 // Styled component for badge content

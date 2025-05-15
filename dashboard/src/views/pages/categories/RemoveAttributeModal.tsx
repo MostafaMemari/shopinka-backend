@@ -1,6 +1,7 @@
 import ConfirmDeleteModal from '@/components/ConfirmDeleteModal'
-import { removeCategory } from '@/libs/api/category'
-import { useQueryClient } from '@tanstack/react-query'
+import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
+import { removeCategory } from '@/libs/api/category.api'
+import { QueryKeys } from '@/types/enums/query-keys'
 import { ReactNode } from 'react'
 
 interface RemoveCategoryModalProps {
@@ -9,7 +10,7 @@ interface RemoveCategoryModalProps {
 }
 
 const RemoveCategoryModal = ({ id, children }: RemoveCategoryModalProps) => {
-  const queryClient = useQueryClient()
+  const { invalidate } = useInvalidateQuery()
 
   return (
     <ConfirmDeleteModal
@@ -17,7 +18,7 @@ const RemoveCategoryModal = ({ id, children }: RemoveCategoryModalProps) => {
       onDelete={async id => {
         const res = await removeCategory(id as string)
 
-        queryClient.invalidateQueries({ queryKey: ['categories'] })
+        if (res.status === 200) invalidate(QueryKeys.Categories)
 
         return res
       }}

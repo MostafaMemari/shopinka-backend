@@ -1,4 +1,4 @@
-import { Category, CategoryForm } from '@/types/category'
+import { Category, CategoryForm } from '@/types/app/category'
 import { Response } from '@/types/response'
 import { serverApiFetch } from '@/utils/api/serverApiFetch'
 

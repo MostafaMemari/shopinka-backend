@@ -10,7 +10,7 @@ import ModalGallery from '../Gallery/ModalGallery/ModalGallery'
 
 // Types
 import { EditorToolbarProps } from './types'
-import { GalleryItem } from '@/types/gallery'
+import { GalleryItem } from '@/types/app/gallery'
 
 const EditorToolbar = ({ editor, openLinkDialog, toggleFullScreen, isFullScreen, onSelectImages }: EditorToolbarProps) => {
   const [selectedImages, setSelectedImages] = useState<GalleryItem[]>([])

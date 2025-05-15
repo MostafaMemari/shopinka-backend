@@ -8,7 +8,7 @@ import CustomTextField from '@core/components/mui/TextField'
 import CustomIconButton from '@core/components/mui/IconButton'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAttribute } from '@/hooks/reactQuery/useAttribute'
-import { type Attribute, type ProductType, type Variant, type VariantCombination } from '@/types/productAttributes'
+import { type Attribute, type ProductType, type Variant, type VariantCombination } from '@/types/app/productAttributes'
 import { generateCombinations } from './generateCombinations'
 import CombinationsList from './CombinationsList'
 

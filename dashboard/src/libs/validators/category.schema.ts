@@ -13,24 +13,10 @@ export const categorySchema = yup
       .required('نامک الزامی است')
       .max(120, 'نامک نمی‌تواند بیشتر از 120 کاراکتر باشد'),
 
-    parentId: yup
-      .number()
-      .transform(value => (value === '' || value === undefined ? null : value))
-      .nullable()
-      .positive()
-      .default(null),
+    parentId: yup.number().notRequired().positive().default(null),
 
-    thumbnailImageId: yup
-      .number()
-      .transform(value => (value === '' || value === undefined ? null : value))
-      .positive()
-      .nullable()
-      .default(null),
+    thumbnailImageId: yup.number().positive().notRequired().default(null),
 
-    description: yup
-      .string()
-      .transform(value => (value === '' || value === undefined ? null : value))
-      .nullable()
-      .default(null)
+    description: yup.string().nullable().default(null)
   })
   .required()

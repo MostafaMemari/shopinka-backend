@@ -1,5 +1,5 @@
-import { getCategories } from '@/libs/api/category'
-import { QueryKeys } from '@/types/query-keys'
+import { getCategories } from '@/libs/api/category.api'
+import { QueryKeys } from '@/types/enums/query-keys'
 import { QueryOptions } from '@/types/queryOptions'
 import { useQuery } from '@tanstack/react-query'
 

@@ -4,11 +4,9 @@
 import { useState, useCallback, ReactNode } from 'react'
 
 // MUI Imports
-import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import Grid from '@mui/material/Grid2'
-import CircularProgress from '@mui/material/CircularProgress'
 
 // Form Imports
 import { Controller, useForm } from 'react-hook-form'
@@ -16,41 +14,44 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 // API and Utility Imports
 import { showToast } from '@/utils/showToast'
-import { useQueryClient } from '@tanstack/react-query'
-import { categorySchema } from '@/libs/validators/category.schemas'
-import { updateCategory } from '@/libs/api/category'
-import { CategoryForm, Category } from '@/types/category'
+import { categorySchema } from '@/libs/validators/category.schema'
+import { updateCategory } from '@/libs/api/category.api'
+import { CategoryForm, Category } from '@/types/app/category'
 import { cleanObject } from '@/utils/formatters'
 import { handleApiError } from '@/utils/handleApiError'
 import ParentCategorySelect from './ParentCategorySelect'
 import CategoryThumbnailImage from './CategoryThumbnailImage'
 import RichTextEditor from '@/components/RichTextEditor/RichTextEditor'
 import { errorCategoryMessage } from '@/messages/auth/categoryMessages.'
+import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
+import { QueryKeys } from '@/types/enums/query-keys'
+import getChangedFields from '@/utils/getChangedFields'
+import FormActions from '@/components/FormActions'
+import { Button } from '@mui/material'
 
-// Types
 interface UpdateCategoryModalProps {
   children: ReactNode
-  category: Category
+  initialData: Category
 }
 
-const UpdateCategoryModal = ({ children, category }: UpdateCategoryModalProps) => {
+const UpdateCategoryModal = ({ children, initialData }: UpdateCategoryModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const queryClient = useQueryClient()
+  const { invalidate } = useInvalidateQuery()
 
   const {
     control,
     handleSubmit,
     reset,
     setValue,
-    formState: { errors, isDirty }
+    formState: { errors }
   } = useForm<CategoryForm>({
     defaultValues: {
-      name: category.name || '',
-      slug: category.slug || '',
-      description: category.description || null,
-      parentId: category.parentId || null,
-      thumbnailImageId: category.thumbnailImageId || null
+      name: initialData.name ?? '',
+      slug: initialData.slug ?? '',
+      description: initialData.description ?? '',
+      parentId: initialData.parentId,
+      thumbnailImageId: initialData.thumbnailImageId
     },
     resolver: yupResolver(categorySchema)
   })
@@ -67,38 +68,49 @@ const UpdateCategoryModal = ({ children, category }: UpdateCategoryModalProps) =
       setIsLoading(true)
 
       try {
-        const cleanedData = cleanObject(formData)
-        const { status, data } = await updateCategory(String(category.id), cleanedData)
+        if (initialData?.id !== undefined) {
+          const cleanedData = cleanObject(formData)
+          const changedData = getChangedFields(initialData, cleanedData)
 
-        const errorMessage = handleApiError(status, errorCategoryMessage)
+          if (Object.keys(changedData).length === 0) {
+            showToast({ type: 'info', message: 'هیچ تغییری اعمال نشده است' })
 
-        if (errorMessage) {
-          showToast({ type: 'error', message: errorMessage })
+            return
+          }
 
-          return
-        }
+          const { status } = await updateCategory(String(initialData.id), changedData)
 
-        if (status === 200 && data) {
-          showToast({ type: 'success', message: 'دسته‌بندی با موفقیت به‌روزرسانی شد' })
-          queryClient.invalidateQueries({ queryKey: ['categories'] })
-          handleClose()
+          const errorMessage = handleApiError(status, errorCategoryMessage)
+
+          if (errorMessage) {
+            showToast({ type: 'error', message: errorMessage })
+
+            return
+          }
+
+          if (status === 200) {
+            showToast({ type: 'success', message: 'دسته‌بندی با موفقیت به‌روزرسانی شد' })
+            invalidate(QueryKeys.Categories)
+            handleClose()
+          }
         }
       } catch (error: any) {
-        showToast({
-          type: 'error',
-          message: error?.data?.message || 'خطایی در به‌روزرسانی دسته‌بندی رخ داد'
-        })
+        showToast({ type: 'error', message: 'خطایی در به‌روزرسانی دسته‌بندی رخ داد' })
       } finally {
         setIsLoading(false)
       }
     },
-    [queryClient, handleClose, category.id]
+    [handleClose, initialData, invalidate]
   )
 
   return (
     <div>
-      <div onClick={handleOpen} role='button' tabIndex={0} onKeyDown={e => e.key === 'Enter' && handleOpen()} aria-label='باز کردن فرم ویرایش دسته‌بندی'>
-        {children}
+      <div onClick={handleOpen} role='button' tabIndex={0} onKeyDown={e => e.key === 'Enter' && handleOpen()}>
+        {children || (
+          <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-edit' />}>
+            بروزرسانی دسته‌بندی
+          </Button>
+        )}
       </div>
 
       <CustomDialog
@@ -108,17 +120,7 @@ const UpdateCategoryModal = ({ children, category }: UpdateCategoryModalProps) =
         defaultMaxWidth='lg'
         actions={
           <>
-            <Button onClick={handleClose} color='secondary' disabled={isLoading}>
-              انصراف
-            </Button>
-            <Button
-              onClick={handleSubmit(onSubmit)}
-              variant='contained'
-              disabled={isLoading || !isDirty}
-              startIcon={isLoading ? <CircularProgress size={20} color='inherit' /> : null}
-            >
-              {isLoading ? 'در حال به‌روزرسانی...' : 'به‌روزرسانی'}
-            </Button>
+            <FormActions onCancel={handleClose} submitText='بروزرسانی' onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
           </>
         }
       >
@@ -159,7 +161,7 @@ const UpdateCategoryModal = ({ children, category }: UpdateCategoryModalProps) =
                   )}
                 />
                 <ParentCategorySelect control={control} errors={errors} isLoading={isLoading} />
-                <CategoryThumbnailImage control={control} errors={errors} setValue={setValue} isLoading={isLoading} category={category} />
+                <CategoryThumbnailImage control={control} errors={errors} setValue={setValue} isLoading={isLoading} category={initialData} />
               </Grid>
             </Grid>
 

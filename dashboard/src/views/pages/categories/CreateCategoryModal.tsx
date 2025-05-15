@@ -15,9 +15,9 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 // API and Utility Imports
 import { showToast } from '@/utils/showToast'
-import { categorySchema } from '@/libs/validators/category.schemas'
-import { createCategory } from '@/libs/api/category'
-import { CategoryForm } from '@/types/category'
+import { categorySchema } from '@/libs/validators/category.schema'
+import { createCategory } from '@/libs/api/category.api'
+import { CategoryForm } from '@/types/app/category'
 import { cleanObject } from '@/utils/formatters'
 import { handleApiError } from '@/utils/handleApiError'
 import { errorCategoryMessage } from '@/messages/auth/categoryMessages.'
@@ -25,7 +25,7 @@ import ParentCategorySelect from './ParentCategorySelect'
 import CategoryThumbnailImage from './CategoryThumbnailImage'
 import RichTextEditor from '@/components/RichTextEditor/RichTextEditor'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
-import { QueryKeys } from '@/types/query-keys'
+import { QueryKeys } from '@/types/enums/query-keys'
 import FormActions from '@/components/FormActions'
 
 interface CreateCategoryModalProps {
@@ -93,11 +93,13 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
 
   return (
     <div>
-      {children || (
-        <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />}>
-          ثبت دسته‌بندی جدید
-        </Button>
-      )}
+      <div onClick={handleOpen}>
+        {children || (
+          <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
+            ثبت دسته‌بندی جدید
+          </Button>
+        )}
+      </div>
 
       <CustomDialog
         open={open}

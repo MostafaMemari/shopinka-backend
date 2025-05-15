@@ -1,98 +1,102 @@
-import { useState, useEffect } from 'react' // اضافه کردن useEffect
-import Button from '@mui/material/Button'
+import { useState, ReactNode, useCallback } from 'react' // اضافه کردن useEffect
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
 import { IconButton } from '@mui/material'
-import { Gallery, type GalleryForm } from '@/types/gallery'
+import { Gallery, type GalleryForm } from '@/types/app/gallery'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { updateGallery } from '@/libs/api/gallery'
+import { updateGallery } from '@/libs/api/gallery.api'
 import { showToast } from '@/utils/showToast'
 import { handleApiError } from '@/utils/handleApiError'
 import { errorGalleryMessage } from '@/messages/auth/galleryMessages'
 import getChangedFields from '@/utils/getChangedFields'
-import { gallerySchema } from '@/libs/validators/gallery.schemas'
-import { QueryKeys } from '@/types/query-keys'
+import { gallerySchema } from '@/libs/validators/gallery.schema'
+import { QueryKeys } from '@/types/enums/query-keys'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
+import { cleanObject } from '@/utils/formatters'
+import FormActions from '@/components/FormActions'
 
-const UpdateGalleryModal = ({ initialData }: { initialData: Partial<Gallery> }) => {
+interface UpdateGalleryModalProps {
+  initialData: Gallery
+  children?: ReactNode
+}
+
+const UpdateGalleryModal = ({ children, initialData }: UpdateGalleryModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const { invalidate } = useInvalidateQuery()
-
-  const galleryForm: GalleryForm = {
-    title: initialData?.title ?? '',
-    description: initialData?.description ?? ''
-  }
-
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
 
   const {
     control,
     reset,
     handleSubmit,
-    formState: { errors },
-    setValue
+    formState: { errors }
   } = useForm({
     resolver: yupResolver(gallerySchema),
     defaultValues: {
-      title: galleryForm?.title,
-      description: galleryForm?.description || null
+      title: initialData?.title ?? '',
+      description: initialData?.description ?? ''
     }
   })
 
-  useEffect(() => {
-    reset({
-      title: initialData?.title,
-      description: initialData?.description || null
-    })
-  }, [initialData, reset])
+  const handleOpen = useCallback(() => setOpen(true), [])
 
-  const onSubmit = async (formData: GalleryForm) => {
-    try {
-      if (initialData?.id !== undefined) {
-        const changedData = getChangedFields(initialData, {
-          ...formData,
-          description: formData.description || null
-        })
+  const handleClose = useCallback(() => {
+    setOpen(false)
+    reset()
+  }, [reset])
 
-        if (Object.keys(changedData).length === 0) {
-          showToast({ type: 'info', message: 'هیچ تغییری اعمال نشده است' })
+  const onSubmit = useCallback(
+    async (formData: GalleryForm) => {
+      setIsLoading(true)
 
-          return
+      try {
+        if (initialData?.id !== undefined) {
+          const cleanedData = cleanObject(formData)
+          const changedData = getChangedFields(initialData, cleanedData)
+
+          if (formData.description === null && !('description' in cleanedData)) changedData.description = ''
+
+          if (Object.keys(changedData).length === 0) {
+            showToast({ type: 'info', message: 'هیچ تغییری اعمال نشده است' })
+
+            return
+          }
+
+          const { status } = await updateGallery(String(initialData.id), changedData)
+
+          const errorMessage = handleApiError(status, errorGalleryMessage)
+
+          if (errorMessage) {
+            showToast({ type: 'error', message: errorMessage })
+
+            return
+          }
+
+          if (status === 200) {
+            showToast({ type: 'success', message: 'گالری با موفقیت ویرایش شد' })
+            invalidate(QueryKeys.Galleries)
+            handleClose()
+          }
         }
-
-        const res = await updateGallery(String(initialData.id), changedData)
-
-        const errorMessage = handleApiError(res.status, errorGalleryMessage)
-
-        if (errorMessage) {
-          showToast({ type: 'error', message: errorMessage })
-
-          return
-        }
-
-        if (res.status === 200) {
-          showToast({ type: 'success', message: 'گالری با موفقیت ویرایش شد' })
-          invalidate(QueryKeys.Galleries)
-
-          reset({
-            title: formData.title || '',
-            description: formData.description || null
-          })
-          handleClose()
-        }
+      } catch (error: any) {
+        showToast({ type: 'error', message: 'خطای سیستمی رخ داد' })
+      } finally {
+        setIsLoading(false)
       }
-    } catch (error: any) {
-      showToast({ type: 'error', message: 'خطای سیستمی' })
-    }
-  }
+    },
+    [handleClose, initialData, invalidate]
+  )
 
   return (
     <div>
-      <IconButton size='small' onClick={handleOpen}>
-        <i className='tabler-edit text-gray-500 text-lg' />
-      </IconButton>
+      <div onClick={handleOpen} role='button' tabIndex={0} onKeyDown={e => e.key === 'Enter' && handleOpen()} aria-label='باز کردن فرم ویرایش دسته‌بندی'>
+        {children || (
+          <IconButton size='small'>
+            <i className='tabler-edit text-gray-500 text-lg' />
+          </IconButton>
+        )}
+      </div>
 
       <CustomDialog
         open={open}
@@ -101,12 +105,7 @@ const UpdateGalleryModal = ({ initialData }: { initialData: Partial<Gallery> }) 
         defaultMaxWidth='xs'
         actions={
           <>
-            <Button onClick={handleClose} color='secondary'>
-              انصراف
-            </Button>
-            <Button onClick={handleSubmit(onSubmit)} variant='contained'>
-              ثبت
-            </Button>
+            <FormActions onCancel={handleClose} submitText='بروزرسانی' onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
           </>
         }
       >
@@ -114,6 +113,7 @@ const UpdateGalleryModal = ({ initialData }: { initialData: Partial<Gallery> }) 
           <Controller
             name='title'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField {...field} fullWidth label='نام گالری' placeholder='لطفا نام گالری را وارد کنید' error={!!errors.title} helperText={errors.title?.message} />
             )}
@@ -121,6 +121,7 @@ const UpdateGalleryModal = ({ initialData }: { initialData: Partial<Gallery> }) 
           <Controller
             name='description'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField
                 {...field}

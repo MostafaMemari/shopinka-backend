@@ -1,122 +1,104 @@
-import { useState, useEffect, useMemo } from 'react' // اضافه کردن useEffect
-import Button from '@mui/material/Button'
+import { useState, ReactNode, useCallback } from 'react'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
 import { IconButton, MenuItem } from '@mui/material'
-import { AttributeFormType, AttributeType } from '@/types/productAttributes'
+import { Attribute, AttributeFormType, AttributeType } from '@/types/app/productAttributes'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { updateAttribute } from '@/libs/api/productAttributes'
+import { updateAttribute } from '@/libs/api/productAttributes.api'
 import { showToast } from '@/utils/showToast'
 import { handleApiError } from '@/utils/handleApiError'
 import { errorAttributeMessage } from '@/messages/auth/attributeMessages'
-import { useRouter } from 'next/navigation'
 import getChangedFields from '@/utils/getChangedFields'
-import { attributeSchema } from '@/libs/validators/attribute.schemas'
+import { attributeSchema } from '@/libs/validators/attribute.schema'
+import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
+import { QueryKeys } from '@/types/enums/query-keys'
+import FormActions from '@/components/FormActions'
+import { cleanObject } from '@/utils/formatters'
 
-const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeFormType> & { id: number } }) => {
+interface UpdateAttributeModalProps {
+  initialData: Attribute
+  children?: ReactNode
+}
+
+const UpdateAttributeModal = ({ children, initialData }: UpdateAttributeModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
-  const router = useRouter()
-
-  const handleOpen = () => {
-    setOpen(true)
-    reset()
-  }
-
-  const handleClose = () => setOpen(false)
-
-  const attributeForm: AttributeFormType = useMemo(
-    () => ({
-      name: initialData?.name ?? '',
-      slug: initialData?.slug ?? '',
-      type: initialData?.type ?? AttributeType.COLOR,
-      description: initialData?.description ?? null
-    }),
-    [initialData]
-  )
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { invalidate } = useInvalidateQuery()
 
   const {
     control,
     reset,
     handleSubmit,
-    formState: { errors },
-    setValue
+    formState: { errors }
   } = useForm({
     resolver: yupResolver(attributeSchema),
     defaultValues: {
-      name: attributeForm?.name,
-      slug: attributeForm?.slug,
-      type: attributeForm?.type,
-      description: attributeForm?.description || null
+      name: initialData?.name ?? '',
+      slug: initialData?.slug ?? '',
+      type: initialData?.type ?? AttributeType.COLOR,
+      description: initialData?.description ?? ''
     }
   })
 
-  useEffect(() => {
-    reset({
-      name: attributeForm?.name,
-      slug: attributeForm?.slug,
-      type: attributeForm?.type,
-      description: attributeForm?.description || null
-    })
-  }, [attributeForm, reset])
+  const handleOpen = useCallback(() => setOpen(true), [])
 
-  useEffect(() => {
-    reset({
-      name: initialData?.name,
-      slug: initialData?.slug,
-      type: initialData?.type,
-      description: initialData?.description || null
-    })
-  }, [initialData, reset])
+  const handleClose = useCallback(() => {
+    setOpen(false)
+    reset()
+  }, [reset])
 
-  const onSubmit = async (formData: AttributeFormType) => {
-    try {
-      if (initialData?.id !== undefined) {
-        const changedData = getChangedFields(initialData, {
-          ...formData,
-          slug: formData.slug,
-          description: formData.description || null
-        })
+  const onSubmit = useCallback(
+    async (formData: AttributeFormType) => {
+      setIsLoading(true)
 
-        if (Object.keys(changedData).length === 0) {
-          showToast({ type: 'info', message: 'هیچ تغییری اعمال نشده است' })
+      try {
+        if (initialData?.id) {
+          const cleanedData = cleanObject(formData)
+          const changedData = getChangedFields(initialData, cleanedData)
 
-          return
+          if (formData.description === null && !('description' in cleanedData)) changedData.description = ''
+
+          if (Object.keys(changedData).length === 0) {
+            showToast({ type: 'info', message: 'هیچ تغییری اعمال نشده است' })
+
+            return
+          }
+
+          const { status } = await updateAttribute(String(initialData.id), changedData)
+
+          const errorMessage = handleApiError(status, errorAttributeMessage)
+
+          if (errorMessage) {
+            showToast({ type: 'error', message: errorMessage })
+
+            return
+          }
+
+          if (status === 200) {
+            showToast({ type: 'success', message: 'ویژگی با موفقیت به‌روزرسانی شد' })
+            invalidate(QueryKeys.Attributes)
+            handleClose()
+          }
         }
-
-        const res = await updateAttribute(String(initialData.id), changedData)
-
-        const errorMessage = handleApiError(res.status, errorAttributeMessage)
-
-        if (errorMessage) {
-          showToast({ type: 'error', message: errorMessage })
-
-          return
-        }
-
-        if (res.status === 200) {
-          showToast({ type: 'success', message: 'ویژگی با موفقیت ویرایش شد' })
-          router.refresh()
-
-          reset({
-            name: formData.name || '',
-            slug: formData.slug ?? undefined,
-            type: formData.type || AttributeType.COLOR,
-            description: formData.description || null
-          })
-          handleClose()
-        }
+      } catch (error: any) {
+        showToast({ type: 'error', message: 'خطای سیستمی رخ داد' })
+      } finally {
+        setIsLoading(false)
       }
-    } catch (error: any) {
-      showToast({ type: 'error', message: 'خطای سیستمی' })
-    }
-  }
+    },
+    [handleClose, initialData, invalidate]
+  )
 
   return (
     <div>
-      <IconButton size='small' onClick={handleOpen}>
-        <i className='tabler-edit text-gray-500 text-lg' />
-      </IconButton>
+      <div onClick={handleOpen} role='button' tabIndex={0} onKeyDown={e => e.key === 'Enter' && handleOpen()} aria-label='باز کردن فرم ویرایش دسته‌بندی'>
+        {children || (
+          <IconButton size='small' onClick={handleOpen}>
+            <i className='tabler-edit text-gray-500 text-lg' />
+          </IconButton>
+        )}
+      </div>
 
       <CustomDialog
         open={open}
@@ -125,12 +107,7 @@ const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeF
         defaultMaxWidth='xs'
         actions={
           <>
-            <Button onClick={handleClose} color='secondary'>
-              انصراف
-            </Button>
-            <Button onClick={handleSubmit(onSubmit)} variant='contained'>
-              ثبت
-            </Button>
+            <FormActions onCancel={handleClose} submitText='بروزرسانی' onSubmit={handleSubmit(onSubmit)} isLoading={isLoading} />
           </>
         }
       >
@@ -145,6 +122,7 @@ const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeF
           <Controller
             name='slug'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField
                 {...field}
@@ -161,6 +139,7 @@ const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeF
           <Controller
             name='type'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField
                 {...field}
@@ -180,6 +159,7 @@ const UpdateAttributeModal = ({ initialData }: { initialData: Partial<AttributeF
           <Controller
             name='description'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField
                 {...field}

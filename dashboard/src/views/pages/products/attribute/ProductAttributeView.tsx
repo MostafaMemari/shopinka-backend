@@ -12,7 +12,7 @@ import TablePaginationComponent from '@/components/TablePaginationComponent'
 import CreateAttributeModal from './CreateAttributeModal'
 
 // API Import
-import { Attribute } from '@/types/productAttributes'
+import { Attribute } from '@/types/app/productAttributes'
 import DesktopAttributeTable from './DesktopAttributeTable'
 import { usePaginationParams } from '@/hooks/usePaginationParams'
 import { useAttribute } from '@/hooks/reactQuery/useAttribute'
@@ -50,7 +50,7 @@ const ProductAttributeView = () => {
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
         <CreateAttributeModal />
       </Box>
-      {!isMobile && <DesktopAttributeTable data={attributes} />}
+      <DesktopAttributeTable data={attributes} />
       <TablePaginationComponent
         currentPage={page}
         totalPages={paginationData.totalPages}

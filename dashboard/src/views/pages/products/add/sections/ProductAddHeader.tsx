@@ -4,9 +4,10 @@ import { FC } from 'react'
 
 interface ProductAddHeaderProps {
   onButtonClick: (buttonType: 'cancel' | 'draft' | 'publish') => void
+  isLoading: boolean
 }
 
-const ProductAddHeader: FC<ProductAddHeaderProps> = ({ onButtonClick }) => {
+const ProductAddHeader: FC<ProductAddHeaderProps> = ({ onButtonClick, isLoading }) => {
   return (
     <div className='flex flex-wrap sm:items-center justify-between max-sm:flex-col gap-6'>
       <div>
@@ -16,16 +17,14 @@ const ProductAddHeader: FC<ProductAddHeaderProps> = ({ onButtonClick }) => {
         <Typography>مدیریت محصولات فروشگاه شما</Typography>
       </div>
       <div className='flex flex-wrap max-sm:flex-col gap-4'>
-        <Button variant='tonal' color='secondary' type='button' onClick={() => onButtonClick('cancel')}>
+        <Button variant='tonal' color='secondary' type='button' onClick={() => onButtonClick('cancel')} disabled={isLoading}>
           لغو
         </Button>
-
-        <Button variant='tonal' type='button' onClick={() => onButtonClick('draft')}>
+        <Button variant='tonal' type='button' onClick={() => onButtonClick('draft')} disabled={isLoading}>
           ذخیره پیش‌نویس
         </Button>
-
-        <Button variant='contained' color='primary' type='submit' onClick={() => onButtonClick('publish')}>
-          انتشار محصول
+        <Button variant='contained' color='primary' type='button' onClick={() => onButtonClick('publish')} disabled={isLoading}>
+          {isLoading ? 'در حال ارسال...' : 'انتشار محصول'}
         </Button>
       </div>
     </div>

@@ -9,7 +9,6 @@ import { Box, useMediaQuery, useTheme } from '@mui/material'
 
 // Component Imports
 import TablePaginationComponent from '@/components/TablePaginationComponent'
-import MobileGalleryCard from './MobileGalleryCard'
 import DesktopGalleryTable from './DesktopGalleryTable'
 import CreateGalleryModal from './CreateGalleryModal'
 import LoadingSpinner from '@/components/LoadingSpinner'
@@ -17,7 +16,7 @@ import LoadingSpinner from '@/components/LoadingSpinner'
 // API Import
 import { useGallery } from '@/hooks/reactQuery/useGallery'
 import { usePaginationParams } from '@/hooks/usePaginationParams'
-import { Gallery } from '@/types/gallery'
+import { Gallery } from '@/types/app/gallery'
 import ErrorState from '@/components/states/ErrorState'
 import EmptyGalleryState from './EmptyGalleryState'
 
@@ -48,7 +47,7 @@ const GalleryView = () => {
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
         <CreateGalleryModal />
       </Box>
-      {isMobile ? <MobileGalleryCard data={galleries} /> : <DesktopGalleryTable data={galleries} />}
+      {<DesktopGalleryTable data={galleries} />}
       <TablePaginationComponent
         currentPage={page}
         totalPages={paginationData.totalPages}

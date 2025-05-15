@@ -1,17 +1,17 @@
-import { useState, useEffect, ReactNode, useCallback } from 'react'
+import { useState, ReactNode, useCallback } from 'react'
 import Button from '@mui/material/Button'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { Controller, useForm } from 'react-hook-form'
-import { type GalleryForm } from '@/types/gallery'
+import { type GalleryForm } from '@/types/app/gallery'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { showToast } from '@/utils/showToast'
 import { handleApiError } from '@/utils/handleApiError'
 import { errorGalleryMessage } from '@/messages/auth/galleryMessages'
-import { gallerySchema } from '@/libs/validators/gallery.schemas'
-import { createGallery } from '@/libs/api/gallery'
+import { gallerySchema } from '@/libs/validators/gallery.schema'
+import { createGallery } from '@/libs/api/gallery.api'
 import { useInvalidateQuery } from '@/hooks/useInvalidateQuery'
-import { QueryKeys } from '@/types/query-keys'
+import { QueryKeys } from '@/types/enums/query-keys'
 import { cleanObject } from '@/utils/formatters'
 import FormActions from '@/components/FormActions'
 
@@ -28,8 +28,7 @@ const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
     control,
     reset,
     handleSubmit,
-    formState: { errors },
-    setValue
+    formState: { errors }
   } = useForm<GalleryForm>({
     resolver: yupResolver(gallerySchema),
     defaultValues: {
@@ -63,7 +62,7 @@ const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
 
         if (status === 200 || status === 201) {
           showToast({ type: 'success', message: 'گالری با موفقیت ثبت شد' })
-          invalidate(QueryKeys.Attributes)
+          invalidate(QueryKeys.Galleries)
           handleClose()
         }
       } catch (error: any) {
@@ -77,16 +76,18 @@ const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
 
   return (
     <div>
-      {children || (
-        <Button variant='contained' className='max-sm:w-full' onClick={handleOpen} startIcon={<i className='tabler-plus' />}>
-          ثبت گالری جدید
-        </Button>
-      )}
+      <div onClick={handleOpen}>
+        {children || (
+          <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
+            ثبت گالری جدید
+          </Button>
+        )}
+      </div>
 
       <CustomDialog
         open={open}
         onClose={handleClose}
-        title='افزودن گالری جدید'
+        title='ثبت گالری جدید'
         defaultMaxWidth='xs'
         actions={
           <>
@@ -94,10 +95,20 @@ const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
           </>
         }
       >
-        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
+        <form
+          onKeyDown={e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault()
+              handleSubmit(onSubmit)()
+            }
+          }}
+          onSubmit={handleSubmit(onSubmit)}
+          className='flex flex-col gap-5'
+        >
           <Controller
             name='title'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField {...field} fullWidth label='نام گالری' placeholder='لطفا نام گالری را وارد کنید' error={!!errors.title} helperText={errors.title?.message} />
             )}
@@ -106,6 +117,7 @@ const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
           <Controller
             name='description'
             control={control}
+            disabled={isLoading}
             render={({ field }) => (
               <CustomTextField
                 {...field}

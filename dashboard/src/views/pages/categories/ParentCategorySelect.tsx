@@ -5,7 +5,7 @@ import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
-import { Category, CategoryForm } from '@/types/category'
+import { Category, CategoryForm } from '@/types/app/category'
 import { useCategories } from '@/hooks/reactQuery/useCategory'
 import { Controller, type Control, type FieldErrors } from 'react-hook-form'
 
@@ -42,7 +42,6 @@ const ParentCategorySelect = ({ control, errors, isLoading }: ParentCategorySele
     return undefined
   }
 
-  // تابع رندر هر دسته‌بندی
   const renderCategoryRow = (category: Category, level: number = 0): JSX.Element => (
     <MenuItem key={category.id} value={category.id}>
       <Typography className='font-medium' color='text.primary' style={{ marginRight: `${level * 12}px` }}>
@@ -51,7 +50,6 @@ const ParentCategorySelect = ({ control, errors, isLoading }: ParentCategorySele
     </MenuItem>
   )
 
-  // تابع رندر دسته‌بندی‌ها به صورت درختی
   const renderCategories = (categories: Category[], level: number = 0): JSX.Element[] => {
     const rows: JSX.Element[] = []
 
