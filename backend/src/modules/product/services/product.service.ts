@@ -143,7 +143,7 @@ export class ProductService {
         galleryImages: includeGalleryImages,
         mainImage: includeMainImage,
         user: includeUser,
-        variants: includeVariants
+        variants: includeVariants && { include: { attributeValues: includeAttributeValues } }
       }
     });
 
@@ -155,14 +155,14 @@ export class ProductService {
   findOne(id: number): Promise<Product> {
     return this.productRepository.findOneOrThrow({
       where: { id, status: ProductStatus.PUBLISHED },
-      include: { galleryImages: true, mainImage: true, user: true, variants: true, tags: true, seoMeta: true, categories: true, attributes: { include: { values: true } } }
+      include: { galleryImages: true, mainImage: true, user: true, variants: { include: { attributeValues: true } }, tags: true, seoMeta: true, categories: true, attributes: { include: { values: true } } }
     })
   }
 
   findOneDraft(userId: number, id: number): Promise<Product> {
     return this.productRepository.findOneOrThrow({
       where: { userId, id, status: ProductStatus.DRAFT },
-      include: { attributes: { include: { values: true } }, galleryImages: true, mainImage: true, user: true, variants: true }
+      include: { attributes: { include: { values: true } }, galleryImages: true, mainImage: true, user: true, variants: { include: { attributeValues: true } } }
     })
   }
 
@@ -220,7 +220,7 @@ export class ProductService {
   async findAllDrafts(userId: number, paginationDto: PaginationDto): Promise<unknown> {
     const products = await this.productRepository.findAll({
       where: { userId, status: ProductStatus.DRAFT },
-      include: { attributes: { include: { values: true } }, galleryImages: true, mainImage: true, user: true, variants: true }
+      include: { attributes: { include: { values: true } }, galleryImages: true, mainImage: true, user: true, variants: { include: { attributeValues: true } } }
     })
     return pagination(paginationDto, products)
   }
