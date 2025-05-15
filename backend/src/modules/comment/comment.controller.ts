@@ -8,9 +8,9 @@ import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 import { GetUser } from '../../common/decorators/get-user.decorator';
 import { Role, User } from 'generated/prisma';
 import { SkipAuth } from '../../common/decorators/skip-auth.decorator';
-import { QueryCommentDto } from './dto/query-category.dto';
+import { QueryCommentDto } from './dto/query-comment.dto';
 import { Roles } from '../../common/decorators/role.decorator';
-import { PaginationDto } from '../../common/dtos/pagination.dto';
+import { QueryAdminCommentDto } from './dto/query-admin-comment.dto';
 
 @Controller('comment')
 @ApiTags('comment')
@@ -30,10 +30,10 @@ export class CommentController {
     return this.commentService.findAll(queryCommentDto);
   }
 
-  @Get('unactive')
+  @Get('admin')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
-  findAllUnActive(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
-    return this.commentService.findAllUnActive(user.id, paginationDto);
+  findAllForAdmins(@Query() queryAdminCommentDto: QueryAdminCommentDto, @GetUser() user: User) {
+    return this.commentService.findAllForAdmins(user.id, queryAdminCommentDto);
   }
 
   @Get(':id')
