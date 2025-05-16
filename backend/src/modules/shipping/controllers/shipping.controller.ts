@@ -11,11 +11,11 @@ import { AuthDecorator } from '../../../common/decorators/auth.decorator';
 import { SkipAuth } from '../../../common/decorators/skip-auth.decorator';
 import { QueryShippingDto } from '../dto/query-shipping.dto';
 
-@Controller('shipping')
-@ApiTags('shipping')
+@Controller("shipping")
+@ApiTags("shipping")
 @AuthDecorator()
 export class ShippingController {
-  constructor(private readonly shippingService: ShippingService) { }
+  constructor(private readonly shippingService: ShippingService) {}
 
   @Post()
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
@@ -30,22 +30,22 @@ export class ShippingController {
     return this.shippingService.findAll(queryShippingDto);
   }
 
-  @Get(':id')
+  @Get(":id")
   @SkipAuth()
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param("id", ParseIntPipe) id: number) {
     return this.shippingService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch(":id")
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
-  update(@Param('id') id: number, @Body() updateShippingDto: UpdateShippingDto, @GetUser() user: User) {
+  update(@Param("id", ParseIntPipe) id: number, @Body() updateShippingDto: UpdateShippingDto, @GetUser() user: User) {
     return this.shippingService.update(user.id, id, updateShippingDto);
   }
 
-  @Delete(':id')
+  @Delete(":id")
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
-  remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+  remove(@Param("id", ParseIntPipe) id: number, @GetUser() user: User) {
     return this.shippingService.remove(user.id, id);
   }
 }

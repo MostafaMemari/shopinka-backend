@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { categorySchema } from '@/libs/validators/category.schema'
 import { CategoryForm, Category } from '@/types/app/category.type'
 import { useFormSubmit } from '../useFormSubmit'
-import { errorCategoryMessage } from '@/messages/categoryMessages.'
+import { errorCategoryMessage } from '@/messages/shippingMessages'
 
 export function useCategories({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchCategory = () => getCategories(params).then(res => res)
