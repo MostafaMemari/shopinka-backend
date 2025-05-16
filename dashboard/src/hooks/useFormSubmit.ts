@@ -55,7 +55,7 @@ export const useFormSubmit = <T extends Record<string, any>>({
         const cleanedData = cleanObject(processedData)
 
         if (isUpdate && initialData?.id && updateApi) {
-          const changedData = getChangedFields(initialData as unknown as T, cleanedData, ['mainImageId'])
+          const changedData = getChangedFields(initialData as unknown as T, cleanedData, ['mainImageId', 'thumbnailImageId'])
 
           if (Object.keys(changedData).length === 0) {
             showToast({ type: 'info', message: noChangeMessage })
