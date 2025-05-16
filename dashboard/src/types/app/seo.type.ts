@@ -14,3 +14,14 @@ export type Seo = {
   tagId: number | null
   categoryId: number | null
 }
+
+export interface SeoFormInput {
+  seo_title?: string | null
+  seo_description?: string | null
+  seo_keywords?: string[] | null
+  seo_canonicalUrl?: string | null
+  seo_ogTitle?: string | null
+  seo_ogDescription?: string | null
+  seo_ogImage?: number | null
+  seo_robotsTag?: RobotsTag | null
+}

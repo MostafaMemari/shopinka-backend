@@ -1,3 +1,5 @@
+import { Seo } from './seo.type'
+
 export type Category = {
   id: number
   name: string
@@ -14,6 +16,7 @@ export type Category = {
   }
   children: Category[] | []
   parent: Category | null
+  seoMeta: Seo | null
 }
 
 export type CategoryForm = {

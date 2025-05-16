@@ -1,4 +1,5 @@
 import * as yup from 'yup'
+import { seoSchema } from './seo.schema'
 
 // title: yup.string().required('نام الزامی است').min(3, 'نام باید حداقل 3 کاراکتر باشد').max(50, 'نام نمی‌تواند بیشتر از 50 کاراکتر باشد'),
 export const categorySchema = yup
@@ -20,3 +21,5 @@ export const categorySchema = yup
     description: yup.string().nullable().default(null)
   })
   .required()
+
+export const categoryFormSchema = categorySchema.concat(seoSchema)

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Autocomplete, Typography } from '@mui/material'
 import Grid from '@mui/material/Grid2'
@@ -15,15 +15,21 @@ const VariantsTab = () => {
     setValue,
     formState: { errors }
   } = useFormContext()
+
   const formType = watch('type') || 'SIMPLE'
-  const attributeIds = watch('attributeIds') || []
+  const watchedAttributeIds = watch('attributeIds')
+
+  const [attributeIds, setAttributeIds] = useState<number[]>([])
+
+  useEffect(() => {
+    setAttributeIds(watchedAttributeIds || [])
+  }, [watchedAttributeIds])
 
   const { attributesData, isLoadingAttributes, isFetchingAttributes, errorAttributes } = useVariants(formType, attributeIds)
 
-  // فیلتر کردن مقادیر تکراری و غیرمعتبر بعد از لود attributesData
   useEffect(() => {
     if (!isLoadingAttributes && !isFetchingAttributes && attributesData?.data?.items) {
-      const cleanAttributeIds = Array.from(new Set(attributeIds.filter(id => attributesData.data.items.some((attr: Attribute) => attr.id === id))))
+      const cleanAttributeIds = Array.from(new Set(attributeIds.filter((id: number) => attributesData.data.items.some((attr: Attribute) => attr.id === id))))
 
       if (cleanAttributeIds.length !== attributeIds.length) {
         setValue('attributeIds', cleanAttributeIds, { shouldValidate: true })
@@ -48,12 +54,12 @@ const VariantsTab = () => {
             {...field}
             onChange={e => {
               field.onChange(e)
+
               if (e.target.value === 'SIMPLE') {
                 setValue('attributeIds', [], { shouldValidate: true })
               }
             }}
             error={!!errors.type}
-            helperText={errors.type?.message}
           >
             <MenuItem value='SIMPLE'>ساده</MenuItem>
             <MenuItem value='VARIABLE'>متغیر</MenuItem>

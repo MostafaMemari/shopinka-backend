@@ -1,18 +1,7 @@
 import { RobotsTag } from '@/types/enums/robotsTag'
 import { saveSeoMeta } from './seo.api'
-import { Seo } from '@/types/app/seo.type'
+import { Seo, SeoFormInput } from '@/types/app/seo.type'
 import { cleanObject } from '@/utils/getChangedFields'
-
-interface SeoFormInput {
-  seo_title?: string | null
-  seo_description?: string | null
-  seo_keywords?: string[] | null
-  seo_canonicalUrl?: string | null
-  seo_ogTitle?: string | null
-  seo_ogDescription?: string | null
-  seo_ogImage?: number | null
-  seo_robotsTag?: RobotsTag | null
-}
 
 export const handleSeoSave = async (type: 'product' | 'blog' | 'tag' | 'category', entityId: number, data: SeoFormInput) => {
   const seoPayload: Omit<Seo, 'productId' | 'blogId' | 'tagId' | 'categoryId'> = {

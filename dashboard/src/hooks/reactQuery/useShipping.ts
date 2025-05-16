@@ -8,7 +8,7 @@ import { useFormSubmit } from '../useFormSubmit'
 import { Shipping, ShippingForm } from '@/types/app/shipping.type'
 import { createShipping, getShippings, updateShipping } from '@/libs/api/shipping.api'
 import { shippingSchema } from '@/libs/validators/shipping.schema'
-import { errorShippingMessage } from '@/messages/categoryMessages'
+import { errorShippingMessage } from '@/messages/shippingMessages'
 
 export function useShippings({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchShipping = () => getShippings(params).then(res => res)

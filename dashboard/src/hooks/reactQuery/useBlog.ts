@@ -16,8 +16,8 @@ import { blogFormSchema } from '@/libs/validators/blog.schema'
 import { type InferType } from 'yup'
 import { errorBlogMessage } from '@/messages/blog.message'
 import { useRouter } from 'next/navigation'
-import { stripHtml } from '@/utils/formatters'
 import { generateBlogSeoDescription } from './seoDescriptionGenerators'
+import { Seo } from '@/types/app/seo.type'
 
 export function useBlogs({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchBlogs = () => getBlogs(params).then(res => res)
@@ -70,7 +70,7 @@ export const useBlogForm = ({ id, initialData, methods }: UseBlogFormProps) => {
               methods.setValue('seo_canonicalUrl', blog.seoMeta.canonicalUrl)
               methods.setValue('seo_ogTitle', blog.seoMeta.ogTitle)
               methods.setValue('seo_ogDescription', blog.seoMeta.ogDescription)
-              methods.setValue('seo_ogImage', blog.seoMeta.ogImage)
+              methods.setValue('seo_ogImage', String(blog.seoMeta.ogImage))
               methods.setValue('seo_robotsTag', blog.seoMeta.robotsTag)
             }
 
@@ -139,7 +139,7 @@ export const useBlogForm = ({ id, initialData, methods }: UseBlogFormProps) => {
       seo_canonicalUrl: data.seo_canonicalUrl ?? undefined,
       seo_ogTitle: data.seo_ogTitle || data.title,
       seo_ogDescription: data.seo_ogDescription || generateBlogSeoDescription({ title: data.title, description: data.content ?? '' }),
-      seo_ogImage: data.seo_ogImage || data.mainImageId,
+      seo_ogImage: typeof data.mainImageId === 'number' ? data.mainImageId : data.seo_ogImage ? Number(data.seo_ogImage) : null,
       seo_robotsTag: data.seo_robotsTag
     }
 

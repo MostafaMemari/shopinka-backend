@@ -1,6 +1,14 @@
 import { Product } from '@/types/app/product.type'
 import { Response } from '@/types/response'
 import { serverApiFetch } from '@/utils/api/serverApiFetch'
+import { handleSeoSave } from '../services/seo/seo.service'
+import { showToast } from '@/utils/showToast'
+import { generateProductSeoDescription } from '@/hooks/reactQuery/seoDescriptionGenerators'
+import { productFormSchema } from '../validators/product.schema'
+import { type InferType } from 'yup'
+import { type SeoFormInput } from '@/types/app/seo.type'
+
+type ProductForm = InferType<typeof productFormSchema>
 
 export const getProducts = async (params?: Record<string, string>): Promise<Response<Product[]>> => {
   const res = await serverApiFetch('/product', {
@@ -23,24 +31,38 @@ export const getProductById = async (id: number): Promise<{ status: number; data
   }
 }
 
-export const updateProduct = async (id: number, data: Partial<Product>): Promise<{ status: number; data: Product | null }> => {
-  console.log(data)
-
+export const updateProduct = async (id: number, data: Partial<ProductForm>): Promise<{ status: number; data: Product | null }> => {
   const res = await serverApiFetch(`/product/${id}`, {
     method: 'PATCH',
     body: { ...data }
   })
+
+  console.log(data)
+
+  if (id) {
+    await handleSeo(Number(id), data, true)
+  } else {
+    showToast({ type: 'error', message: 'خطا در دریافت آیدی محصول' })
+  }
 
   return {
     ...res
   }
 }
 
-export const createProduct = async (data: Product): Promise<{ status: number; data: { product: (Product & { id: number }) | null } }> => {
+export const createProduct = async (data: ProductForm): Promise<{ status: number; data: { product: (Product & { id: number }) | null } }> => {
   const res = await serverApiFetch('/product', {
     method: 'POST',
     body: { ...data }
   })
+
+  const productId = res?.data?.product?.id
+
+  if (productId) {
+    await handleSeo(Number(productId), data)
+  } else {
+    showToast({ type: 'error', message: 'خطا در دریافت آیدی محصول' })
+  }
 
   return {
     ...res
@@ -53,4 +75,48 @@ export const removeProduct = async (id: string): Promise<{ status: number; data:
   return {
     ...res
   }
+}
+
+const handleSeo = async (productId: number, data: Partial<ProductForm>, isUpdate?: boolean) => {
+  const seoData = isUpdate
+    ? {
+        seo_title: data.seo_title,
+        seo_description: data.seo_description,
+        seo_keywords: data.seo_keywords,
+        seo_canonicalUrl: data.seo_canonicalUrl,
+        seo_ogTitle: data.seo_ogTitle,
+        seo_ogDescription: data.seo_ogDescription,
+        seo_ogImage: data.seo_ogImage,
+        seo_robotsTag: data.seo_robotsTag
+      }
+    : {
+        seo_title: data.seo_title || data.name,
+        seo_description:
+          data.seo_description ||
+          generateProductSeoDescription({
+            title: data.name,
+            description: data.shortDescription ?? ''
+          }),
+        seo_keywords: data.seo_keywords,
+        seo_canonicalUrl: data.seo_canonicalUrl,
+        seo_ogTitle: data.seo_ogTitle || data.name,
+        seo_ogDescription:
+          data.seo_ogDescription ||
+          generateProductSeoDescription({
+            title: data.name,
+            description: data.shortDescription ?? ''
+          }),
+        seo_ogImage: data.seo_ogImage || data.mainImageId,
+        seo_robotsTag: data.seo_robotsTag
+      }
+
+  const seoResponse = await handleSeoSave('product', productId, seoData as SeoFormInput)
+
+  if (seoResponse.status !== 200 && seoResponse.status !== 201) {
+    showToast({ type: 'error', message: 'خطا در ذخیره SEO' })
+
+    return false
+  }
+
+  return true
 }

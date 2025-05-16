@@ -9,14 +9,12 @@ import { useRouter } from 'next/navigation'
 import { productFormSchema } from '@/libs/validators/product.schema'
 import { Product, ProductStatus, ProductType } from '@/types/app/product.type'
 import { createProduct, getProductById, getProducts, updateProduct } from '@/libs/api/product.api'
-import { handleSeoSave } from '@/libs/services/seo/seo.service'
 import { cleanObject } from '@/utils/formatters'
 import { showToast } from '@/utils/showToast'
 import { type InferType } from 'yup'
 import { GalleryItem } from '@/types/app/gallery.type'
 import { errorProductMessage } from '@/messages/product.message'
 import { useFormSubmit } from '../useFormSubmit'
-import { generateProductSeoDescription } from './seoDescriptionGenerators'
 
 export function useProducts({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchProducts = () => getProducts(params).then(res => res)
@@ -51,8 +49,6 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
         .then(response => {
           const product = response.data
 
-          console.log(product)
-
           setInitialProduct(product)
 
           if (product) {
@@ -69,7 +65,7 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
               methods.setValue('seo_canonicalUrl', product.seoMeta.canonicalUrl)
               methods.setValue('seo_ogTitle', product.seoMeta.ogTitle)
               methods.setValue('seo_ogDescription', product.seoMeta.ogDescription)
-              methods.setValue('seo_ogImage', product.seoMeta.ogImage)
+              methods.setValue('seo_ogImage', String(product.seoMeta.ogImage))
               methods.setValue('seo_robotsTag', product.seoMeta.robotsTag)
             }
 
@@ -119,14 +115,15 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
 
   const { isLoading: submitLoading, onSubmit: submitForm } = useFormSubmit<ProductFormType & { id?: string }>({
     createApi: async (formData: ProductFormType) => {
-      const response = await createProduct(formData as unknown as Product)
+      const response = await createProduct(formData as ProductFormType)
 
       return { status: response.status, data: { id: response.data?.product?.id } }
     },
+
     updateApi: async (productId: string, formData: Partial<ProductFormType>) => {
       if (!id) throw new Error('Product ID is required for update')
 
-      return updateProduct(Number(productId), formData as unknown as Partial<Product>)
+      return updateProduct(Number(productId), formData as Partial<ProductFormType>)
     },
 
     errorMessages: errorProductMessage,
@@ -139,36 +136,20 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
           type: initialProduct.type || ProductType.SIMPLE,
           galleryImageIds: initialProduct.galleryImages?.map(img => img.id) || [],
           categoryIds: initialProduct.categories?.map(category => category.id) || [],
-          attributeIds: initialProduct.attributes?.map(attribute => attribute.id) || []
+          attributeIds: initialProduct.attributes?.map(attribute => attribute.id) || [],
+          seo_canonicalUrl: initialProduct.seoMeta?.canonicalUrl,
+          seo_description: initialProduct.seoMeta?.description,
+          seo_keywords: initialProduct.seoMeta?.keywords,
+          seo_ogDescription: initialProduct.seoMeta?.ogDescription,
+          seo_ogTitle: initialProduct.seoMeta?.ogTitle,
+          seo_robotsTag: initialProduct.seoMeta?.robotsTag,
+          seo_title: initialProduct.seoMeta?.title
         }
       : id
         ? { id: String(id) }
         : undefined,
     isUpdate
   })
-
-  const handleSeo = useCallback(async (productId: number, data: Partial<ProductFormType>) => {
-    const seoData = {
-      seo_title: data.seo_title || data.name,
-      seo_description: data.seo_description || generateProductSeoDescription({ title: data.name, description: data.shortDescription ?? '' }),
-      seo_keywords: data.seo_keywords,
-      seo_canonicalUrl: data.seo_canonicalUrl,
-      seo_ogTitle: data.seo_ogTitle || data.name,
-      seo_ogDescription: data.seo_ogDescription || generateProductSeoDescription({ title: data.name, description: data.shortDescription ?? '' }),
-      seo_ogImage: data.seo_ogImage || data.mainImageId,
-      seo_robotsTag: data.seo_robotsTag
-    }
-
-    const seoResponse = await handleSeoSave('product', productId, seoData)
-
-    if (seoResponse.status !== 200 && seoResponse.status !== 201) {
-      showToast({ type: 'error', message: 'خطا در ذخیره SEO' })
-
-      return false
-    }
-
-    return true
-  }, [])
 
   const handleButtonClick = useCallback(
     async (type: 'cancel' | 'draft' | 'publish') => {
@@ -194,18 +175,10 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
           const response = await submitForm(cleanedData, () => {})
 
           if (response?.status === 201) router.replace(`/products/edit?id=${response.data?.id}`)
-
-          const productId = isUpdate ? id! : response?.data?.id
-
-          if (productId) {
-            await handleSeo(Number(productId), cleanedData)
-          } else {
-            showToast({ type: 'error', message: 'خطا در دریافت آیدی محصول' })
-          }
         })()
         .finally(() => setIsLoading(false))
     },
-    [methods, submitForm, id, isUpdate, router, handleSeo]
+    [methods, submitForm, router]
   )
 
   return {

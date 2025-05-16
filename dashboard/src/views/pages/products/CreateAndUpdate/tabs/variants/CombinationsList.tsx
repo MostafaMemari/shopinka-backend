@@ -24,19 +24,23 @@ const CombinationsList = ({ combinations, selectedCombinations, attributes, onCo
   // محاسبه آی‌دی‌های انتخاب‌شده برای بهینه‌سازی
   const selectedValueIds = useMemo(() => {
     const ids: number[] = []
+
     selectedCombinations.forEach(combinationKey => {
       const combination = combinations.find(comb => {
         const key = Object.entries(comb)
           .map(([attrName, value]) => `${attrName}:${value}`)
           .join('|')
+
         return key === combinationKey
       })
 
       if (combination) {
         Object.entries(combination).forEach(([attrName, value]) => {
           const attribute = attributes.find(attr => attr.name === attrName)
+
           if (attribute) {
             const valueObj = attribute.values.find(val => val.name === value)
+
             if (valueObj) {
               ids.push(valueObj.id)
             }
@@ -44,6 +48,7 @@ const CombinationsList = ({ combinations, selectedCombinations, attributes, onCo
         })
       }
     })
+
     return Array.from(new Set(ids))
   }, [combinations, selectedCombinations, attributes])
 
@@ -53,7 +58,7 @@ const CombinationsList = ({ combinations, selectedCombinations, attributes, onCo
   }
 
   // استخراج نام‌های ویژگی‌ها
-  const attributeNames = useMemo(() => Array.from(new Set(combinations.flatMap(combination => Object.keys(combination)))), [combinations])
+  const attributeNames = Array.from(new Set(combinations.flatMap(combination => Object.keys(combination))))
 
   return (
     <Box sx={{ mt: 4 }}>
@@ -118,17 +123,15 @@ const CombinationsList = ({ combinations, selectedCombinations, attributes, onCo
         </Table>
       </TableContainer>
 
-      {/* نمایش ترکیب‌های انتخاب‌شده */}
       {selectedCombinations.length > 0 && (
         <Box sx={{ mt: 4 }}>
-          <Typography variant='h6' className='font-medium'>
-            ترکیب‌های انتخاب‌شده:
-          </Typography>
+          <Typography variant='h6' className='font-medium'></Typography>
           {selectedCombinations.map(combinationKey => {
             const combination = combinations.find(comb => {
               const key = Object.entries(comb)
                 .map(([attrName, value]) => `${attrName}:${value}`)
                 .join('|')
+
               return key === combinationKey
             })
 

@@ -50,6 +50,8 @@ export const useFormSubmit = <T extends Record<string, any>>({
     async (formData: T, handleClose: () => void): Promise<ApiResponse<T> | undefined> => {
       setIsLoading(true)
 
+      console.log(formData)
+
       try {
         const processedData = preprocessData ? preprocessData(formData) : formData
         const cleanedData = cleanObject(processedData)
@@ -65,6 +67,7 @@ export const useFormSubmit = <T extends Record<string, any>>({
           }
 
           const response = await updateApi(String(initialData.id), changedData)
+
           const apiErrorMessage = handleApiError(response.status, errorMessages)
 
           if (apiErrorMessage) {
