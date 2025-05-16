@@ -4,14 +4,14 @@ import { Box, IconButton, Typography, Chip } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import tableStyles from '@core/styles/table.module.css'
 import { stripHtml, truncateText } from '@/utils/formatters'
-import RemoveProductModal from './RemoveProductModal'
-import { Product } from '@/types/app/product.type'
+import RemoveBlogModal from './RemoveBlogModal'
+import { Blog } from '@/types/app/blog.type'
 
-const DesktopProductTable = ({ products }: { products: Product[] }) => {
+const DesktopBlogTable = ({ blogs }: { blogs: Blog[] }) => {
   const router = useRouter()
 
-  const handleEditProduct = (id: number) => {
-    router.push(`/products/edit?id=${id}`)
+  const handleEditBlog = (id: number) => {
+    router.push(`/blogs/edit?id=${id}`)
   }
 
   return (
@@ -20,67 +20,64 @@ const DesktopProductTable = ({ products }: { products: Product[] }) => {
         <thead>
           <tr>
             <th>تصویر</th>
-            <th>نام محصول</th>
+            <th>عنوان</th>
             <th>نامک</th>
+            <th>توضیحات</th>
             <th>وضعیت</th>
-            <th>قیمت پایه</th>
             <th>دسته‌بندی‌ها</th>
             <th>عملیات</th>
           </tr>
         </thead>
         <tbody>
-          {products.length === 0 ? (
+          {blogs.length === 0 ? (
             <tr>
-              <td colSpan={8} className='text-center'>
-                هیچ محصولی یافت نشد
+              <td colSpan={7} className='text-center'>
+                هیچ بلاگی یافت نشد
               </td>
             </tr>
           ) : (
-            products.map(product => (
-              <tr key={product.id}>
+            blogs.map(blog => (
+              <tr key={blog.id}>
                 <td>
-                  {product.mainImageId && product.mainImage?.thumbnailUrl ? (
-                    <img
-                      src={product.mainImage.thumbnailUrl}
-                      alt={product.name || 'تصویر محصول'}
-                      style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }}
-                    />
+                  {blog.mainImageId && blog.mainImage?.thumbnailUrl ? (
+                    <img src={blog.mainImage.thumbnailUrl} alt={blog.title || 'تصویر بلاگ'} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
                   ) : (
                     <Typography color='text.secondary'>-</Typography>
                   )}
                 </td>
                 <td>
                   <Typography className='font-medium' color='text.primary'>
-                    {product.name || '-'}
+                    {blog.title || '-'}
                   </Typography>
                 </td>
                 <td>
                   <Typography className='font-medium' color='text.primary'>
-                    {product.slug || '-'}
+                    {blog.slug || '-'}
                   </Typography>
                 </td>
-
                 <td>
-                  {product.status ? (
-                    <Chip label={product.status === 'PUBLISHED' ? 'منتشر شده' : 'پیش‌نویس'} color={product.status === 'PUBLISHED' ? 'success' : 'warning'} size='small' />
+                  <Typography className='font-medium line-clamp-2 max-w-[250px] text-ellipsis overflow-hidden' color='text.primary'>
+                    {truncateText(stripHtml(blog.content || '-'), 100)}
+                  </Typography>
+                </td>
+                <td>
+                  {blog.status ? (
+                    <Chip label={blog.status === 'PUBLISHED' ? 'منتشر شده' : 'پیش‌نویس'} color={blog.status === 'PUBLISHED' ? 'success' : 'warning'} size='small' />
                   ) : (
                     <Typography color='text.secondary'>-</Typography>
                   )}
                 </td>
                 <td>
-                  <Typography color='text.primary'>{product.basePrice ? `${product.basePrice.toLocaleString('fa-IR')} تومان` : '-'}</Typography>
-                </td>
-                <td>
-                  <Typography color='text.primary'>{product.categories && product.categories.length > 0 ? product.categories.map(cat => cat.name).join(', ') : '-'}</Typography>
+                  <Typography color='text.primary'>{blog.categories && blog.categories.length > 0 ? blog.categories.map(cat => cat.name).join(', ') : '-'}</Typography>
                 </td>
                 <td>
                   <Box display='flex' alignItems='center' gap={2}>
-                    <RemoveProductModal id={product.id}>
+                    <RemoveBlogModal id={blog.id}>
                       <IconButton size='small'>
                         <i className='tabler-trash text-gray-500 text-lg' />
                       </IconButton>
-                    </RemoveProductModal>
-                    <IconButton size='small' onClick={() => handleEditProduct(product.id)}>
+                    </RemoveBlogModal>
+                    <IconButton size='small' onClick={() => handleEditBlog(blog.id)}>
                       <i className='tabler-edit text-gray-500 text-lg' />
                     </IconButton>
                   </Box>
@@ -94,4 +91,4 @@ const DesktopProductTable = ({ products }: { products: Product[] }) => {
   )
 }
 
-export default DesktopProductTable
+export default DesktopBlogTable

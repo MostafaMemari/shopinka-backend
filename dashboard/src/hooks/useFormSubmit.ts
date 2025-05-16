@@ -79,7 +79,10 @@ export const useFormSubmit = <T extends Record<string, any>>({
             handleClose()
             onSuccess?.()
 
-            return response
+            return {
+              status: 200,
+              data: response.data
+            }
           }
         } else if (createApi) {
           const response = await createApi(cleanedData as T)
@@ -97,7 +100,10 @@ export const useFormSubmit = <T extends Record<string, any>>({
             handleClose()
             onSuccess?.()
 
-            return response
+            return {
+              status: 201,
+              data: response.data
+            }
           }
         }
       } catch (error: any) {

@@ -16,6 +16,7 @@ import { type InferType } from 'yup'
 import { GalleryItem } from '@/types/app/gallery'
 import { errorProductMessage } from '@/messages/product.message'
 import { useFormSubmit } from '../useFormSubmit'
+import { generateProductSeoDescription } from './seoDescriptionGenerators'
 
 export function useProducts({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchProducts = () => getProducts(params).then(res => res)
@@ -147,7 +148,18 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
   })
 
   const handleSeo = useCallback(async (productId: number, data: Partial<ProductFormType>) => {
-    const seoResponse = await handleSeoSave('product', productId, data)
+    const seoData = {
+      seo_title: data.seo_title || data.name,
+      seo_description: data.seo_description || generateProductSeoDescription({ title: data.name, description: data.shortDescription ?? '' }),
+      seo_keywords: data.seo_keywords,
+      seo_canonicalUrl: data.seo_canonicalUrl,
+      seo_ogTitle: data.seo_ogTitle || data.name,
+      seo_ogDescription: data.seo_ogDescription || generateProductSeoDescription({ title: data.name, description: data.shortDescription ?? '' }),
+      seo_ogImage: data.seo_ogImage || data.mainImageId,
+      seo_robotsTag: data.seo_robotsTag
+    }
+
+    const seoResponse = await handleSeoSave('product', productId, seoData)
 
     if (seoResponse.status !== 200 && seoResponse.status !== 201) {
       showToast({ type: 'error', message: 'خطا در ذخیره SEO' })
@@ -179,7 +191,9 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
             attributeIds: data.attributeIds ?? []
           })
 
-          const response = await submitForm(cleanedData, () => router.refresh())
+          const response = await submitForm(cleanedData, () => {})
+
+          if (response?.status === 201) router.replace(`/products/edit?id=${response.data?.id}`)
 
           const productId = isUpdate ? id! : response?.data?.id
 
