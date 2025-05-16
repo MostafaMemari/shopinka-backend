@@ -1,6 +1,6 @@
 import { Category } from './category.type'
-import { GalleryItem } from './gallery'
-import { Seo } from './seo'
+import { GalleryItem } from './gallery.type'
+import { Seo } from './seo.type'
 
 export enum BlogStatus {
   DRAFT = 'DRAFT',

@@ -4,7 +4,7 @@ import Checkbox from '@mui/material/Checkbox'
 import UpdateGalleryItemModal from './UpdateGalleryItemModal'
 import DetailMediaModal from './DetailMediaModal'
 
-import { GalleryItem } from '@/types/app/gallery'
+import { GalleryItem } from '@/types/app/gallery.type'
 
 interface MediaGridProps {
   data: GalleryItem[]

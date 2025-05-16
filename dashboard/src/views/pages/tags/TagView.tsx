@@ -1,53 +1,51 @@
 'use client'
 
-// React Imports
 import { useMemo } from 'react'
-
-// MUI Imports
 import Card from '@mui/material/Card'
 import { Box, useMediaQuery, useTheme } from '@mui/material'
-
-// Component Imports
 import TablePaginationComponent from '@/components/TablePaginationComponent'
-import DesktopGalleryTable from './DesktopGalleryTable'
-import CreateGalleryModal from './CreateGalleryModal'
+import DesktopTagTable from './DesktopTagTable'
+import CreateTagModal from './CreateTagModal'
 import LoadingSpinner from '@/components/LoadingSpinner'
-
-// API Import
-import { useGallery } from '@/hooks/reactQuery/useGallery'
+import { useTags } from '@/hooks/reactQuery/useTag'
 import { usePaginationParams } from '@/hooks/usePaginationParams'
-import { Gallery } from '@/types/app/gallery.type'
 import ErrorState from '@/components/states/ErrorState'
-import EmptyGalleryState from './EmptyGalleryState'
+import EmptyTagState from './EmptyTagState'
+import { Tag } from '@/types/app/tag.type'
 
-const GalleryView = () => {
+const TagsView = () => {
   const { page, size, setPage, setSize } = usePaginationParams()
 
-  const { data, isLoading, isFetching, error, refetch } = useGallery({
+  const { data, isLoading, isFetching, error, refetch } = useTags({
     enabled: true,
     params: {
       page,
-      take: size
+      take: size,
+      includeThumbnailImage: true,
+      includeChildren: true,
+      childrenDepth: 6
     },
     staleTime: 5 * 60 * 1000
   })
 
+  // Hooks
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
-  const galleries: Gallery[] = useMemo(() => data?.data?.items || [], [data])
+  const tags: Tag[] = useMemo(() => data?.data?.items || [], [data])
   const paginationData = useMemo(() => data?.data?.pager || { currentPage: 1, totalPages: 1, totalCount: 0 }, [data])
 
   if (isLoading || isFetching) return <LoadingSpinner />
   if (error) return <ErrorState onRetry={() => refetch()} />
-  if (galleries.length === 0) return <EmptyGalleryState />
+  if (tags.length === 0) return <EmptyTagState />
 
   return (
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
-        <CreateGalleryModal />
+        <CreateTagModal />
       </Box>
-      {<DesktopGalleryTable data={galleries} />}
+      {!isMobile && <DesktopTagTable tags={tags} />}
+
       <TablePaginationComponent
         currentPage={page}
         totalPages={paginationData.totalPages}
@@ -55,10 +53,10 @@ const GalleryView = () => {
         rowsPerPage={size}
         onPageChange={setPage}
         onRowsPerPageChange={setSize}
-        currentPageItemCount={galleries.length}
+        currentPageItemCount={tags.length}
       />
     </Card>
   )
 }
 
-export default GalleryView
+export default TagsView

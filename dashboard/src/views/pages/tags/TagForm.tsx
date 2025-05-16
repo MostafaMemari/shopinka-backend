@@ -4,24 +4,24 @@ import { Controller } from 'react-hook-form'
 import Grid from '@mui/material/Grid2'
 import CustomTextField from '@core/components/mui/TextField'
 import RichTextEditor from '@/components/RichTextEditor/RichTextEditor'
-import ParentCategorySelect from './ParentCategorySelect'
-import { type CategoryForm, Category } from '@/types/app/category.type'
-import CategoryThumbnailImage from './CategoryThumbnailImage'
+import TagThumbnailImage from './TagThumbnailImage'
+import { type TagForm, Tag } from '@/types/app/tag.type'
 
-interface CategoryFormProps {
+interface TagFormProps {
   control: any
   errors: any
   setValue: any
   isLoading: boolean
-  initialData?: Category
+  initialData?: Tag
 }
 
-const CategoryForm = ({ control, errors, setValue, isLoading, initialData }: CategoryFormProps) => {
+const TagForm = ({ control, errors, setValue, isLoading, initialData }: TagFormProps) => {
   return (
     <div>
       <Grid container spacing={6}>
         <Grid size={{ xs: 12, md: 6 }}>
-          <CategoryThumbnailImage control={control} errors={errors} setValue={setValue} isLoading={isLoading} category={initialData} />
+          <TagThumbnailImage control={control} errors={errors} setValue={setValue} isLoading={isLoading} tag={initialData} />
+
           <Grid container spacing={6}>
             <Controller
               name='name'
@@ -31,7 +31,7 @@ const CategoryForm = ({ control, errors, setValue, isLoading, initialData }: Cat
                   {...field}
                   fullWidth
                   label='نام'
-                  placeholder='نام دسته‌بندی را وارد کنید'
+                  placeholder='نام برچسب را وارد کنید'
                   error={!!errors.name}
                   helperText={errors.name?.message}
                   disabled={isLoading}
@@ -47,7 +47,7 @@ const CategoryForm = ({ control, errors, setValue, isLoading, initialData }: Cat
                   {...field}
                   fullWidth
                   label='نامک (Slug)'
-                  placeholder='نامک دسته‌بندی را وارد کنید'
+                  placeholder='نامک برچسب را وارد کنید'
                   error={!!errors.slug}
                   helperText={errors.slug?.message}
                   disabled={isLoading}
@@ -55,14 +55,13 @@ const CategoryForm = ({ control, errors, setValue, isLoading, initialData }: Cat
                 />
               )}
             />
-            <ParentCategorySelect control={control} errors={errors} isLoading={isLoading} />
           </Grid>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
           <Controller
             name='description'
             control={control}
-            render={({ field }) => <RichTextEditor label='توضیحات (اختیاری)' placeholder='توضیحات دسته‌بندی' value={field.value || ''} onChange={field.onChange} />}
+            render={({ field }) => <RichTextEditor label='توضیحات (اختیاری)' placeholder='توضیحات برچسب' value={field.value || ''} onChange={field.onChange} />}
           />
         </Grid>
       </Grid>
@@ -70,4 +69,4 @@ const CategoryForm = ({ control, errors, setValue, isLoading, initialData }: Cat
   )
 }
 
-export default CategoryForm
+export default TagForm

@@ -5,5 +5,6 @@ export enum QueryKeys {
   Products = 'products',
   Galleries = 'galleries',
   Comments = 'comments',
-  Blogs = 'blogs'
+  Blogs = 'blogs',
+  Tags = 'tags'
 }

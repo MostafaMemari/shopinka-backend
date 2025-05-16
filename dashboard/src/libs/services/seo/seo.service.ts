@@ -1,6 +1,6 @@
 import { RobotsTag } from '@/types/enums/robotsTag'
 import { saveSeoMeta } from './seo.api'
-import { Seo } from '@/types/app/seo'
+import { Seo } from '@/types/app/seo.type'
 import { cleanObject } from '@/utils/getChangedFields'
 
 interface SeoFormInput {

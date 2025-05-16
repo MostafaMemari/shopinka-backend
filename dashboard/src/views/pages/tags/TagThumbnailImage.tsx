@@ -9,32 +9,32 @@ import Image from 'next/image'
 import { Typography, Button } from '@mui/material'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 
+import { TagForm, Tag } from '@/types/app/tag.type'
 import { GalleryItem } from '@/types/app/gallery.type'
 import ModalGallery from '@/components/Gallery/ModalGallery/ModalGallery'
 import ImagePlaceholder from '@/components/EmptyPlaceholder'
-import { Category, CategoryForm } from '@/types/app/category.type'
 
-interface CategoryThumbnailImageProps {
-  control: Control<CategoryForm>
-  errors: FieldErrors<CategoryForm>
+interface TagThumbnailImageProps {
+  control: Control<TagForm>
+  errors: FieldErrors<TagForm>
   isLoading: boolean
-  setValue: (name: keyof CategoryForm, value: number | null, options?: { shouldValidate?: boolean }) => void
-  category?: Category
+  setValue: (name: keyof TagForm, value: number | null, options?: { shouldValidate?: boolean }) => void
+  tag?: Tag
 }
 
-const CategoryThumbnailImage = ({ control, errors, isLoading, setValue, category }: CategoryThumbnailImageProps) => {
+const TagThumbnailImage = ({ control, errors, isLoading, setValue, tag }: TagThumbnailImageProps) => {
   const [selectedImage, setSelectedImage] = useState<GalleryItem | null>(null)
 
   useEffect(() => {
-    if (category?.thumbnailImageId && category?.thumbnailImage) {
+    if (tag?.thumbnailImageId && tag?.thumbnailImage) {
       setSelectedImage({
-        id: category.thumbnailImageId,
+        id: tag.thumbnailImageId,
         galleryId: 0,
         title: 'Thumbnail',
         description: null,
-        fileUrl: category.thumbnailImage.fileUrl,
+        fileUrl: tag.thumbnailImage.fileUrl,
         fileKey: '',
-        thumbnailUrl: category.thumbnailImage.fileUrl,
+        thumbnailUrl: tag.thumbnailImage.fileUrl,
         thumbnailKey: '',
         mimetype: 'image/jpeg',
         size: 0,
@@ -43,9 +43,9 @@ const CategoryThumbnailImage = ({ control, errors, isLoading, setValue, category
         deletedAt: null,
         isDeleted: false
       })
-      setValue('thumbnailImageId', category.thumbnailImageId, { shouldValidate: true })
+      setValue('thumbnailImageId', tag.thumbnailImageId, { shouldValidate: true })
     }
-  }, [category, setValue])
+  }, [tag, setValue])
 
   const handleSelect = (item: GalleryItem | GalleryItem[]) => {
     const image = Array.isArray(item) ? item[0] : item
@@ -116,4 +116,4 @@ const CategoryThumbnailImage = ({ control, errors, isLoading, setValue, category
   )
 }
 
-export default CategoryThumbnailImage
+export default TagThumbnailImage

@@ -55,6 +55,11 @@ const horizontalMenuData = (): HorizontalMenuDataType[] => [
     href: '/categories'
   },
   {
+    label: 'برچسب‌ها',
+    icon: 'tabler-tag',
+    href: '/tags'
+  },
+  {
     label: 'نظرات',
     icon: 'tabler-message-circle',
     href: '/comments'
@@ -65,11 +70,6 @@ const horizontalMenuData = (): HorizontalMenuDataType[] => [
     href: '/orders'
   },
 
-  {
-    label: 'برچسب‌ها',
-    icon: 'tabler-tag',
-    href: '/tags'
-  },
   {
     label: 'حمل و نقل',
     icon: 'tabler-truck',
