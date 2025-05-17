@@ -11,9 +11,15 @@ import { usePaginationParams } from '@/hooks/usePaginationParams'
 import ErrorState from '@/components/states/ErrorState'
 import EmptyProductState from './EmptyProductState'
 import { useProducts } from '@/hooks/reactQuery/useProduct'
+import { useRouter } from 'next/navigation'
 
 const ProductListView = () => {
   const { page, size, setPage, setSize } = usePaginationParams()
+  const router = useRouter()
+
+  const handleAddProduct = () => {
+    router.push('/products/add')
+  }
 
   const { data, isLoading, isFetching, error, refetch } = useProducts({
     enabled: true,
@@ -39,7 +45,7 @@ const ProductListView = () => {
   return (
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
-        <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
+        <Button onClick={handleAddProduct} variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
           ثبت محصول جدید
         </Button>
       </Box>

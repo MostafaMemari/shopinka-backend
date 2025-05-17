@@ -9,7 +9,7 @@ import { useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { gallerySchema } from '@/libs/validators/gallery.schema'
-import { GalleryForm, Gallery } from '@/types/app/gallery'
+import { GalleryForm, Gallery } from '@/types/app/gallery.type'
 import { errorGalleryMessage } from '@/messages/galleryMessages'
 import { useFormSubmit } from '../useFormSubmit'
 

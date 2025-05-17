@@ -3,17 +3,17 @@
 import { useState, useCallback, ReactNode } from 'react'
 import Button from '@mui/material/Button'
 import CustomDialog from '@core/components/mui/CustomDialog'
-// import CategoryForm from './CommentForm'
+import TagForm from './TagForm'
 import FormActions from '@/components/FormActions'
-import { useCategoryForm } from '@/hooks/reactQuery/useCategory'
+import { useTagForm } from '@/hooks/reactQuery/useTag'
 
-interface CreateCategoryModalProps {
+interface CreateTagModalProps {
   children?: ReactNode
 }
 
-const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
+const CreateTagModal = ({ children }: CreateTagModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
-  const { control, errors, setValue, isLoading, onSubmit, handleClose } = useCategoryForm({})
+  const { control, errors, setValue, isLoading, onSubmit, handleClose } = useTagForm({})
 
   const handleOpen = useCallback(() => setOpen(true), [])
 
@@ -25,20 +25,24 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
   return (
     <div>
       <div onClick={handleOpen}>
-        <FormControlLabel control={<Switch size='small' checked={comment.isActive} onChange={() => handleConfirmComment(comment.id)} />} label='' sx={{ margin: 0 }} />
+        {children || (
+          <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
+            ثبت برچسب جدید
+          </Button>
+        )}
       </div>
 
       <CustomDialog
         open={open}
         onClose={handleModalClose}
-        title='ثبت دسته‌بندی جدید'
-        defaultMaxWidth='md'
+        title='ثبت برچسب جدید'
+        defaultMaxWidth='lg'
         actions={<FormActions submitText='ثبت' onCancel={handleModalClose} onSubmit={onSubmit} isLoading={isLoading} />}
       >
-        {/* <CategoryForm control={control} errors={errors} setValue={setValue} isLoading={isLoading} /> */}
+        <TagForm control={control} errors={errors} setValue={setValue} isLoading={isLoading} />
       </CustomDialog>
     </div>
   )
 }
 
-export default CreateCategoryModal
+export default CreateTagModal

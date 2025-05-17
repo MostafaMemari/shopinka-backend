@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
-import { GalleryItem } from '@/types/app/gallery'
+import { GalleryItem } from '@/types/app/gallery.type'
 
 interface Props {
   activeItem: GalleryItem | null

@@ -5,7 +5,7 @@ import { IconButton } from '@mui/material'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import GalleryForm from './GalleryForm'
 import FormActions from '@/components/FormActions'
-import { Gallery } from '@/types/app/gallery'
+import { Gallery } from '@/types/app/gallery.type'
 import { useGalleryForm } from '@/hooks/reactQuery/useGallery'
 
 interface UpdateGalleryModalProps {

@@ -83,7 +83,6 @@ const useVariants = (productType: ProductType, attributeIds: number[]) => {
       const activeCombinationIds = calculateActiveCombinationIds(selectedCombinations, combinations, attributesData.data.items)
 
       setValue('attributeIds', activeAttributeIds, { shouldValidate: true })
-      //   setValue('attributeValuesIds', activeCombinationIds, { shouldValidate: true })
     } else {
       setValue('attributeIds', [], { shouldValidate: true })
       setValue('attributeValuesIds', [], { shouldValidate: true })

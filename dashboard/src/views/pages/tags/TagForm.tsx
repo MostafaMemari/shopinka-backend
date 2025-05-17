@@ -4,23 +4,24 @@ import { Controller } from 'react-hook-form'
 import Grid from '@mui/material/Grid2'
 import CustomTextField from '@core/components/mui/TextField'
 import RichTextEditor from '@/components/RichTextEditor/RichTextEditor'
-import ParentCommentSelect from './ParentCommentSelect'
-import CommentThumbnailImage from './CommentThumbnailImage'
-import { type CommentForm, Comment } from '@/types/app/comment.type'
+import TagThumbnailImage from './TagThumbnailImage'
+import { type TagForm, Tag } from '@/types/app/tag.type'
 
-interface CommentFormProps {
+interface TagFormProps {
   control: any
   errors: any
   setValue: any
   isLoading: boolean
-  initialData?: Comment
+  initialData?: Tag
 }
 
-const CommentForm = ({ control, errors, setValue, isLoading, initialData }: CommentFormProps) => {
+const TagForm = ({ control, errors, setValue, isLoading, initialData }: TagFormProps) => {
   return (
     <div>
       <Grid container spacing={6}>
         <Grid size={{ xs: 12, md: 6 }}>
+          <TagThumbnailImage control={control} errors={errors} setValue={setValue} isLoading={isLoading} tag={initialData} />
+
           <Grid container spacing={6}>
             <Controller
               name='name'
@@ -30,7 +31,7 @@ const CommentForm = ({ control, errors, setValue, isLoading, initialData }: Comm
                   {...field}
                   fullWidth
                   label='نام'
-                  placeholder='نام دسته‌بندی را وارد کنید'
+                  placeholder='نام برچسب را وارد کنید'
                   error={!!errors.name}
                   helperText={errors.name?.message}
                   disabled={isLoading}
@@ -46,7 +47,7 @@ const CommentForm = ({ control, errors, setValue, isLoading, initialData }: Comm
                   {...field}
                   fullWidth
                   label='نامک (Slug)'
-                  placeholder='نامک دسته‌بندی را وارد کنید'
+                  placeholder='نامک برچسب را وارد کنید'
                   error={!!errors.slug}
                   helperText={errors.slug?.message}
                   disabled={isLoading}
@@ -54,16 +55,13 @@ const CommentForm = ({ control, errors, setValue, isLoading, initialData }: Comm
                 />
               )}
             />
-            <ParentCommentSelect control={control} errors={errors} isLoading={isLoading} />
-
-            <CommentThumbnailImage control={control} errors={errors} setValue={setValue} isLoading={isLoading} comment.type={initialData} />
           </Grid>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
           <Controller
             name='description'
             control={control}
-            render={({ field }) => <RichTextEditor label='توضیحات (اختیاری)' placeholder='توضیحات دسته‌بندی' value={field.value || ''} onChange={field.onChange} />}
+            render={({ field }) => <RichTextEditor label='توضیحات (اختیاری)' placeholder='توضیحات برچسب' value={field.value || ''} onChange={field.onChange} />}
           />
         </Grid>
       </Grid>
@@ -71,4 +69,4 @@ const CommentForm = ({ control, errors, setValue, isLoading, initialData }: Comm
   )
 }
 
-export default CommentForm
+export default TagForm

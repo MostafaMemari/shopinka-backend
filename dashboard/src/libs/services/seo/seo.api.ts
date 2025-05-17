@@ -1,4 +1,4 @@
-import { Seo } from '@/types/app/seo'
+import { Seo } from '@/types/app/seo.type'
 import { serverApiFetch } from '../../serverApiFetch'
 
 export const saveSeoMeta = async (

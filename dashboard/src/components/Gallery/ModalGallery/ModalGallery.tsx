@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import { debounce, type SelectChangeEvent } from '@mui/material'
-import { GalleryItem } from '@/types/app/gallery'
+import { GalleryItem } from '@/types/app/gallery.type'
 import { useGalleryItems } from '@/hooks/reactQuery/useGallery'
 import GalleryItemDetails from './GalleryItemDetails'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
@@ -13,7 +13,7 @@ import GalleryHeader from './GalleryHeader'
 import GalleryContent from './GalleryContent'
 
 interface Props {
-  btnLabel: string
+  btnLabel?: string
   multi?: boolean
   onSelect?: (items: GalleryItem[] | GalleryItem) => void
   initialSelected?: GalleryItem | GalleryItem[] | undefined

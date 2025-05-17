@@ -12,7 +12,7 @@ import UpdateGalleryModal from './UpdateGalleryModal'
 import tableStyles from '@core/styles/table.module.css'
 
 // API Import
-import { Gallery } from '@/types/app/gallery'
+import { Gallery } from '@/types/app/gallery.type'
 import Link from 'next/link'
 
 // Desktop Table Component

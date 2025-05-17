@@ -50,12 +50,14 @@ export const useFormSubmit = <T extends Record<string, any>>({
     async (formData: T, handleClose: () => void): Promise<ApiResponse<T> | undefined> => {
       setIsLoading(true)
 
+      console.log(formData)
+
       try {
         const processedData = preprocessData ? preprocessData(formData) : formData
         const cleanedData = cleanObject(processedData)
 
         if (isUpdate && initialData?.id && updateApi) {
-          const changedData = getChangedFields(initialData as unknown as T, cleanedData, ['mainImageId'])
+          const changedData = getChangedFields(initialData as unknown as T, cleanedData, ['mainImageId', 'thumbnailImageId'])
 
           if (Object.keys(changedData).length === 0) {
             showToast({ type: 'info', message: noChangeMessage })
@@ -65,6 +67,7 @@ export const useFormSubmit = <T extends Record<string, any>>({
           }
 
           const response = await updateApi(String(initialData.id), changedData)
+
           const apiErrorMessage = handleApiError(response.status, errorMessages)
 
           if (apiErrorMessage) {
@@ -79,7 +82,10 @@ export const useFormSubmit = <T extends Record<string, any>>({
             handleClose()
             onSuccess?.()
 
-            return response
+            return {
+              status: 200,
+              data: response.data
+            }
           }
         } else if (createApi) {
           const response = await createApi(cleanedData as T)
@@ -97,7 +103,10 @@ export const useFormSubmit = <T extends Record<string, any>>({
             handleClose()
             onSuccess?.()
 
-            return response
+            return {
+              status: 201,
+              data: response.data
+            }
           }
         }
       } catch (error: any) {

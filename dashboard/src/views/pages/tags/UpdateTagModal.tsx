@@ -3,20 +3,20 @@
 import { useState, useCallback, ReactNode } from 'react'
 import Button from '@mui/material/Button'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
-import CategoryForm from './CommentForm'
+import TagForm from './TagForm'
 import FormActions from '@/components/FormActions'
-import { Category } from '@/types/app/category.type'
-import { useCategoryForm } from '@/hooks/reactQuery/useCategory'
+import { Tag } from '@/types/app/tag.type'
+import { useTagForm } from '@/hooks/reactQuery/useTag'
 
-interface UpdateCategoryModalProps {
+interface UpdateTagModalProps {
   children: ReactNode
-  initialData: Category
+  initialData: Tag
 }
 
-const UpdateCategoryModal = ({ children, initialData }: UpdateCategoryModalProps) => {
+const UpdateTagModal = ({ children, initialData }: UpdateTagModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
 
-  const { control, errors, setValue, isLoading, onSubmit, handleClose } = useCategoryForm({
+  const { control, errors, setValue, isLoading, onSubmit, handleClose } = useTagForm({
     initialData,
     isUpdate: true
   })
@@ -33,7 +33,7 @@ const UpdateCategoryModal = ({ children, initialData }: UpdateCategoryModalProps
       <div onClick={handleOpen} role='button' tabIndex={0} onKeyDown={e => e.key === 'Enter' && handleOpen()}>
         {children || (
           <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-edit' />}>
-            بروزرسانی دسته‌بندی
+            بروزرسانی برچسب
           </Button>
         )}
       </div>
@@ -41,14 +41,14 @@ const UpdateCategoryModal = ({ children, initialData }: UpdateCategoryModalProps
       <CustomDialog
         open={open}
         onClose={handleModalClose}
-        title='ویرایش دسته‌بندی'
+        title='ویرایش برچسب'
         defaultMaxWidth='lg'
         actions={<FormActions onSubmit={onSubmit} onCancel={handleModalClose} isLoading={isLoading} submitText={initialData ? 'بروزرسانی' : 'ثبت'} />}
       >
-        <CategoryForm control={control} errors={errors} setValue={setValue} isLoading={isLoading} initialData={initialData} />
+        <TagForm control={control} errors={errors} setValue={setValue} isLoading={isLoading} initialData={initialData} />
       </CustomDialog>
     </div>
   )
 }
 
-export default UpdateCategoryModal
+export default UpdateTagModal

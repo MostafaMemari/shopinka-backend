@@ -30,6 +30,7 @@ const CategoryView = () => {
     params: {
       page,
       take: size,
+      includeSeoMeta: true,
       includeThumbnailImage: true,
       includeChildren: true,
       childrenDepth: 6

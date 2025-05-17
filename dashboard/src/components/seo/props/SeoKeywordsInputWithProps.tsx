@@ -1,11 +1,17 @@
 import { Autocomplete, TextField } from '@mui/material'
-import { useFormContext, Controller } from 'react-hook-form'
+import { Controller } from 'react-hook-form'
 import { useState } from 'react'
 
 const keywordsOptions: string[] = []
 
-const SeoKeywordsInput = () => {
-  const { control, setValue } = useFormContext()
+interface SeoKeywordsInputProps {
+  control: any
+  errors: any
+  setValue: any
+  isLoading?: boolean
+}
+
+const SeoKeywordsInputWithProps: React.FC<SeoKeywordsInputProps> = ({ control, errors, setValue, isLoading = false }) => {
   const [inputValue, setInputValue] = useState('')
 
   return (
@@ -13,7 +19,7 @@ const SeoKeywordsInput = () => {
       name='seo_keywords'
       control={control}
       defaultValue={[]}
-      render={({ field, fieldState }) => (
+      render={({ field }) => (
         <Autocomplete
           multiple
           freeSolo
@@ -26,16 +32,18 @@ const SeoKeywordsInput = () => {
           onChange={(_, newValue) => {
             const uniqueValues = Array.from(new Set(newValue.map(v => v.trim()).filter(v => v)))
 
-            setValue('seo_keywords', uniqueValues)
+            setValue('seo_keywords', uniqueValues, { shouldValidate: true })
             field.onChange(uniqueValues)
           }}
+          disabled={isLoading}
           renderInput={params => (
             <TextField
               {...params}
               label='کلمات کلیدی سئو'
               placeholder='با Enter یا , اضافه کن'
-              error={!!fieldState.error}
-              helperText={fieldState.error?.message?.toString()}
+              error={!!errors.seo_keywords}
+              helperText={errors.seo_keywords?.message?.toString()}
+              disabled={isLoading}
               onKeyDown={e => {
                 if ((e.key === 'Enter' || e.key === ',') && inputValue.trim()) {
                   e.preventDefault()
@@ -43,11 +51,11 @@ const SeoKeywordsInput = () => {
 
                   if (Array.isArray(field.value) && !field.value.includes(newKeyword)) {
                     const updated = [...field.value, newKeyword]
-
-                    setValue('seo_keywords', updated)
+                    
+                    setValue('seo_keywords', updated, { shouldValidate: true })
                     field.onChange(updated)
                   }
-
+                  
                   setInputValue('')
                 }
               }}
@@ -59,4 +67,4 @@ const SeoKeywordsInput = () => {
   )
 }
 
-export default SeoKeywordsInput
+export default SeoKeywordsInputWithProps

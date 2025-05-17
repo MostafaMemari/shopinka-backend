@@ -1,11 +1,11 @@
 'use client'
 
-import { Box, IconButton, Typography } from '@mui/material'
+import { Box, IconButton, Typography, Chip } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import tableStyles from '@core/styles/table.module.css'
-import { Product } from '@/types/app/product.type'
-import RemoveProductModal from './RemoveProductModal'
 import { stripHtml, truncateText } from '@/utils/formatters'
+import RemoveProductModal from './RemoveProductModal'
+import { Product } from '@/types/app/product.type'
 
 const DesktopProductTable = ({ products }: { products: Product[] }) => {
   const router = useRouter()
@@ -21,16 +21,18 @@ const DesktopProductTable = ({ products }: { products: Product[] }) => {
           <tr>
             <th>تصویر</th>
             <th>نام محصول</th>
-            <th>نامک محصول</th>
-            <th>توضیحات</th>
+            <th>نامک</th>
+            <th>وضعیت</th>
+            <th>قیمت پایه</th>
+            <th>دسته‌بندی‌ها</th>
             <th>عملیات</th>
           </tr>
         </thead>
         <tbody>
           {products.length === 0 ? (
             <tr>
-              <td colSpan={5} className='text-center'>
-                داده‌ای موجود نیست
+              <td colSpan={8} className='text-center'>
+                هیچ محصولی یافت نشد
               </td>
             </tr>
           ) : (
@@ -38,14 +40,18 @@ const DesktopProductTable = ({ products }: { products: Product[] }) => {
               <tr key={product.id}>
                 <td>
                   {product.mainImageId && product.mainImage?.thumbnailUrl ? (
-                    <img src={product.mainImage.thumbnailUrl} alt={product.name || 'تصویر محصول'} style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
+                    <img
+                      src={product.mainImage.thumbnailUrl}
+                      alt={product.name || 'تصویر محصول'}
+                      style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }}
+                    />
                   ) : (
                     <Typography color='text.secondary'>-</Typography>
                   )}
                 </td>
                 <td>
                   <Typography className='font-medium' color='text.primary'>
-                    {product.name}
+                    {product.name || '-'}
                   </Typography>
                 </td>
                 <td>
@@ -53,10 +59,19 @@ const DesktopProductTable = ({ products }: { products: Product[] }) => {
                     {product.slug || '-'}
                   </Typography>
                 </td>
+
                 <td>
-                  <Typography className='font-medium line-clamp-2 max-w-[300px] text-ellipsis overflow-hidden' color='text.primary'>
-                    {truncateText(stripHtml(product.description || '-'))}
-                  </Typography>
+                  {product.status ? (
+                    <Chip label={product.status === 'PUBLISHED' ? 'منتشر شده' : 'پیش‌نویس'} color={product.status === 'PUBLISHED' ? 'success' : 'warning'} size='small' />
+                  ) : (
+                    <Typography color='text.secondary'>-</Typography>
+                  )}
+                </td>
+                <td>
+                  <Typography color='text.primary'>{product.basePrice ? `${product.basePrice.toLocaleString('fa-IR')} تومان` : '-'}</Typography>
+                </td>
+                <td>
+                  <Typography color='text.primary'>{product.categories && product.categories.length > 0 ? product.categories.map(cat => cat.name).join(', ') : '-'}</Typography>
                 </td>
                 <td>
                   <Box display='flex' alignItems='center' gap={2}>

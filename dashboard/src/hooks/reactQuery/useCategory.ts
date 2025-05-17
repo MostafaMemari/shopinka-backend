@@ -5,10 +5,13 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { categorySchema } from '@/libs/validators/category.schema'
+import { categoryFormSchema, categorySchema } from '@/libs/validators/category.schema'
 import { CategoryForm, Category } from '@/types/app/category.type'
 import { useFormSubmit } from '../useFormSubmit'
-import { errorCategoryMessage } from '@/messages/categoryMessages.'
+import { RobotsTag } from '@/types/enums/robotsTag'
+import { type InferType } from 'yup'
+import { generateBlogSeoDescription } from './seoDescriptionGenerators'
+import { errorCategoryMessage } from '@/messages/categoryMessages'
 
 export function useCategories({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchCategory = () => getCategories(params).then(res => res)
@@ -27,14 +30,36 @@ interface UseCategoryFormProps {
   isUpdate?: boolean
 }
 
+type CategoryFormType = InferType<typeof categoryFormSchema>
+
 export const useCategoryForm = ({ initialData, isUpdate = false }: UseCategoryFormProps) => {
-  const defaultValues: CategoryForm = {
+  console.log(initialData)
+
+  const defaultValues: CategoryFormType = {
     name: initialData?.name ?? '',
     slug: initialData?.slug ?? '',
-    description: initialData?.description ?? null,
-    parentId: initialData?.parentId ?? null,
-    thumbnailImageId: initialData?.thumbnailImageId ?? null
+    description: initialData?.description ?? '',
+    parentId: initialData?.parentId || null,
+    thumbnailImageId: null,
+
+    seo_title: null,
+    seo_description: null,
+    seo_keywords: null,
+    seo_canonicalUrl: null,
+    seo_ogTitle: initialData?.seoMeta?.title ?? null,
+    seo_ogDescription: null,
+    seo_ogImage: null,
+    seo_robotsTag: RobotsTag.INDEX_FOLLOW
   }
+
+  //   seo_title: initialData?.seoMeta?.title ?? null,
+  // seo_description: generateBlogSeoDescription({ title: initialData?.name, description: initialData?.description ?? '' }) ?? null,
+  // seo_keywords: initialData?.seoMeta?.keywords ?? null,
+  // seo_canonicalUrl: initialData?.seoMeta?.canonicalUrl ?? null,
+  // seo_ogTitle: initialData?.seoMeta?.title ?? null,
+  // seo_ogDescription: generateBlogSeoDescription({ title: initialData?.name, description: initialData?.description ?? '' }) ?? null,
+  // seo_ogImage: initialData?.seoMeta?.ogImage ?? (initialData?.thumbnailImageId || null),
+  // seo_robotsTag: RobotsTag.INDEX_FOLLOW
 
   const {
     control,
@@ -42,9 +67,9 @@ export const useCategoryForm = ({ initialData, isUpdate = false }: UseCategoryFo
     reset,
     setValue,
     formState: { errors }
-  } = useForm<CategoryForm>({
+  } = useForm<CategoryFormType>({
     defaultValues,
-    resolver: yupResolver(categorySchema)
+    resolver: yupResolver(categoryFormSchema)
   })
 
   const handleClose = useCallback(() => {

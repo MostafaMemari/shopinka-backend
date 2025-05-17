@@ -36,7 +36,7 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
         open={open}
         onClose={handleModalClose}
         title='ثبت دسته‌بندی جدید'
-        defaultMaxWidth='md'
+        defaultMaxWidth='lg'
         actions={<FormActions submitText='ثبت' onCancel={handleModalClose} onSubmit={onSubmit} isLoading={isLoading} />}
       >
         <CategoryForm control={control} errors={errors} setValue={setValue} isLoading={isLoading} />

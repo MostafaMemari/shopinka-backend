@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react'
+import { memo, useMemo } from 'react'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -21,6 +21,7 @@ interface CombinationsListProps {
 }
 
 const CombinationsList = ({ combinations, selectedCombinations, attributes, onCombinationSelect }: CombinationsListProps) => {
+  // محاسبه آی‌دی‌های انتخاب‌شده برای بهینه‌سازی
   const selectedValueIds = useMemo(() => {
     const ids: number[] = []
 
@@ -51,73 +52,100 @@ const CombinationsList = ({ combinations, selectedCombinations, attributes, onCo
     return Array.from(new Set(ids))
   }, [combinations, selectedCombinations, attributes])
 
+  // اگر هیچ ترکیبی وجود نداشته باشه
   if (combinations.length === 0) {
-    return <EmptyPlaceholder text='هیچ ترکیبی موجود نیست' width={'100%'} />
+    return <EmptyPlaceholder text='هیچ ترکیبی موجود نیست' width='100%' />
   }
 
+  // استخراج نام‌های ویژگی‌ها
   const attributeNames = Array.from(new Set(combinations.flatMap(combination => Object.keys(combination))))
 
   return (
-    <TableContainer component={Paper} sx={{ boxShadow: 2, borderRadius: 1 }}>
-      <Table sx={{ minWidth: 300 }}>
-        <TableHead>
-          <TableRow>
-            {attributeNames.map(attrName => (
-              <TableCell key={attrName} sx={{ fontWeight: 'bold' }}>
-                {attrName}
+    <Box sx={{ mt: 4 }}>
+      <TableContainer component={Paper} sx={{ boxShadow: 2, borderRadius: 1 }}>
+        <Table sx={{ minWidth: 300 }}>
+          <TableHead>
+            <TableRow>
+              {attributeNames.map(attrName => (
+                <TableCell key={attrName} sx={{ fontWeight: 'bold' }}>
+                  {attrName}
+                </TableCell>
+              ))}
+              <TableCell align='right' sx={{ fontWeight: 'bold' }}>
+                وضعیت
               </TableCell>
-            ))}
-            <TableCell align='right' sx={{ fontWeight: 'bold' }}>
-              وضعیت
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {combinations.map((combination, index) => {
-            const combinationKey = Object.entries(combination)
-              .map(([attrName, value]) => `${attrName}:${value}`)
-              .join('|')
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {combinations.map((combination, index) => {
+              const combinationKey = Object.entries(combination)
+                .map(([attrName, value]) => `${attrName}:${value}`)
+                .join('|')
+
+              return (
+                <TableRow
+                  key={combinationKey}
+                  sx={{
+                    '&:hover': { bgcolor: 'action.hover' },
+                    '&:last-child td, &:last-child th': { border: 0 }
+                  }}
+                >
+                  {attributeNames.map(attrName => (
+                    <TableCell key={attrName}>
+                      <Typography variant='body1' fontWeight='medium'>
+                        {combination[attrName] || '-'}
+                      </Typography>
+                    </TableCell>
+                  ))}
+                  <TableCell align='right'>
+                    <FormControlLabel
+                      label={
+                        <Typography variant='body2' color='text.secondary'>
+                          {selectedCombinations.includes(combinationKey) ? 'فعال' : 'غیرفعال'}
+                        </Typography>
+                      }
+                      labelPlacement='start'
+                      control={
+                        <Switch
+                          checked={selectedCombinations.includes(combinationKey)}
+                          onChange={e => onCombinationSelect(combinationKey, e.target.checked ? 'active' : 'inactive')}
+                          color='primary'
+                          size='small'
+                        />
+                      }
+                      sx={{ mr: 1 }}
+                    />
+                  </TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {selectedCombinations.length > 0 && (
+        <Box sx={{ mt: 4 }}>
+          <Typography variant='h6' className='font-medium'></Typography>
+          {selectedCombinations.map(combinationKey => {
+            const combination = combinations.find(comb => {
+              const key = Object.entries(comb)
+                .map(([attrName, value]) => `${attrName}:${value}`)
+                .join('|')
+
+              return key === combinationKey
+            })
 
             return (
-              <TableRow
-                key={combinationKey}
-                sx={{
-                  '&:hover': { bgcolor: 'action.hover' },
-                  '&:last-child td, &:last-child th': { border: 0 }
-                }}
-              >
-                {attributeNames.map(attrName => (
-                  <TableCell key={attrName}>
-                    <Typography variant='body1' fontWeight='medium'>
-                      {combination[attrName] || '-'}
-                    </Typography>
-                  </TableCell>
-                ))}
-                <TableCell align='right'>
-                  <FormControlLabel
-                    label={
-                      <Typography variant='body2' color='text.secondary'>
-                        {selectedCombinations.includes(combinationKey) ? 'فعال' : 'غیرفعال'}
-                      </Typography>
-                    }
-                    labelPlacement='start'
-                    control={
-                      <Switch
-                        checked={selectedCombinations.includes(combinationKey)}
-                        onChange={e => onCombinationSelect(combinationKey, e.target.checked ? 'active' : 'inactive')}
-                        color='primary'
-                        size='small'
-                      />
-                    }
-                    sx={{ mr: 1 }}
-                  />
-                </TableCell>
-              </TableRow>
+              <Typography key={combinationKey} variant='body2' sx={{ mt: 1 }}>
+                {Object.entries(combination || {})
+                  .map(([attrName, value]) => `${attrName}: ${value}`)
+                  .join(', ')}
+              </Typography>
             )
           })}
-        </TableBody>
-      </Table>
-    </TableContainer>
+        </Box>
+      )}
+    </Box>
   )
 }
 

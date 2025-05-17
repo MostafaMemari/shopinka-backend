@@ -10,7 +10,6 @@ import { Box, useMediaQuery, useTheme } from '@mui/material'
 // Component Imports
 import TablePaginationComponent from '@/components/TablePaginationComponent'
 import DesktopCommentTable from './DesktopCommentTable'
-import CreateCommentModal from './CreateCommentModal'
 import LoadingSpinner from '@/components/LoadingSpinner'
 
 // API Import
