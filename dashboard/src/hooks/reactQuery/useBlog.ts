@@ -1,7 +1,6 @@
 'use client'
 
 import { createBlog, getBlogById, getBlogs, updateBlog } from '@/libs/api/blog.api'
-import { handleSeoSave } from '@/libs/services/seo/seo.service'
 import { Blog, BlogStatus } from '@/types/app/blog.type'
 import { QueryKeys } from '@/types/enums/query-keys'
 import { QueryOptions } from '@/types/queryOptions'
@@ -16,8 +15,6 @@ import { blogFormSchema } from '@/libs/validators/blog.schema'
 import { type InferType } from 'yup'
 import { errorBlogMessage } from '@/messages/blog.message'
 import { useRouter } from 'next/navigation'
-import { generateBlogSeoDescription } from './seoDescriptionGenerators'
-import { Seo } from '@/types/app/seo.type'
 
 export function useBlogs({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchBlogs = () => getBlogs(params).then(res => res)
@@ -131,29 +128,6 @@ export const useBlogForm = ({ id, initialData, methods }: UseBlogFormProps) => {
     isUpdate
   })
 
-  const handleSeo = useCallback(async (blogId: number, data: Partial<BlogFormType>) => {
-    const seoData = {
-      seo_title: data.seo_title || data.title,
-      seo_description: data.seo_description || generateBlogSeoDescription({ title: data.title, description: data.content ?? '' }),
-      seo_keywords: data.seo_keywords ?? undefined,
-      seo_canonicalUrl: data.seo_canonicalUrl ?? undefined,
-      seo_ogTitle: data.seo_ogTitle || data.title,
-      seo_ogDescription: data.seo_ogDescription || generateBlogSeoDescription({ title: data.title, description: data.content ?? '' }),
-      seo_ogImage: typeof data.mainImageId === 'number' ? data.mainImageId : data.seo_ogImage ? Number(data.seo_ogImage) : null,
-      seo_robotsTag: data.seo_robotsTag
-    }
-
-    const seoResponse = await handleSeoSave('blog', blogId, seoData)
-
-    if (seoResponse.status !== 200 && seoResponse.status !== 201) {
-      showToast({ type: 'error', message: 'خطا در ذخیره SEO' })
-
-      return false
-    }
-
-    return true
-  }, [])
-
   const handleButtonClick = useCallback(
     async (type: 'cancel' | 'draft' | 'publish') => {
       if (type === 'cancel') {
@@ -170,26 +144,17 @@ export const useBlogForm = ({ id, initialData, methods }: UseBlogFormProps) => {
           const cleanedData = cleanObject({
             ...data,
             status,
-            categoryIds: data.categoryIds ?? []
+            categoryIds: data.categoryIds ?? [],
+            mainImageId: data.mainImageId ?? null
           })
 
           const response = await submitForm(cleanedData, () => router.refresh())
 
           if (response?.status === 201) router.replace(`/blogs/edit?id=${response.data?.id}`)
-
-          console.log(response)
-
-          const blogId = isUpdate ? id! : response?.data?.id
-
-          if (blogId) {
-            await handleSeo(Number(blogId), cleanedData)
-          } else {
-            showToast({ type: 'error', message: 'خطا در دریافت آیدی بلاگ' })
-          }
         })()
         .finally(() => setIsLoading(false))
     },
-    [methods, submitForm, id, isUpdate, router, handleSeo]
+    [methods, submitForm, router]
   )
 
   return {

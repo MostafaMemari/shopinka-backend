@@ -1,6 +1,14 @@
+import { generateBlogSeoDescription } from '@/hooks/reactQuery/seoDescriptionGenerators'
 import { Blog } from '@/types/app/blog.type'
 import { Response } from '@/types/response'
 import { serverApiFetch } from '@/utils/api/serverApiFetch'
+import { blogFormSchema } from '../validators/blog.schema'
+import { type InferType } from 'yup'
+import { handleSeoSave } from '../services/seo/seo.service'
+import { SeoFormInput } from '@/types/app/seo.type'
+import { showToast } from '@/utils/showToast'
+
+type BlogForm = InferType<typeof blogFormSchema>
 
 export const getBlogs = async (params?: Record<string, string>): Promise<Response<Blog[]>> => {
   const res = await serverApiFetch('/blog', {
@@ -31,6 +39,12 @@ export const updateBlog = async (id: number, data: Partial<Blog>): Promise<{ sta
     body: { ...data }
   })
 
+  if (id) {
+    await handleSeo(Number(id), data, true)
+  } else {
+    showToast({ type: 'error', message: 'خطا در دریافت آیدی وبلاگ' })
+  }
+
   return {
     ...res
   }
@@ -41,6 +55,10 @@ export const createBlog = async (data: Blog): Promise<{ status: number; data: { 
     method: 'POST',
     body: { ...data }
   })
+
+  if (res.status === 200 || res.status === 201) {
+    await handleSeo(res.data.blog.id, data)
+  }
 
   return {
     ...res
@@ -53,4 +71,48 @@ export const removeBlog = async (id: string): Promise<{ status: number; data: { 
   return {
     ...res
   }
+}
+
+const handleSeo = async (productId: number, data: Partial<BlogForm>, isUpdate?: boolean) => {
+  const seoData = isUpdate
+    ? {
+        seo_title: data.seo_title,
+        seo_description: data.seo_description,
+        seo_keywords: data.seo_keywords,
+        seo_canonicalUrl: data.seo_canonicalUrl,
+        seo_ogTitle: data.seo_ogTitle,
+        seo_ogDescription: data.seo_ogDescription,
+        seo_ogImage: data.seo_ogImage,
+        seo_robotsTag: data.seo_robotsTag
+      }
+    : {
+        seo_title: data.seo_title || data.title,
+        seo_description:
+          data.seo_description ||
+          generateBlogSeoDescription({
+            title: data.title,
+            description: data.content ?? ''
+          }),
+        seo_keywords: data.seo_keywords,
+        seo_canonicalUrl: data.seo_canonicalUrl,
+        seo_ogTitle: data.seo_ogTitle || data.title,
+        seo_ogDescription:
+          data.seo_ogDescription ||
+          generateBlogSeoDescription({
+            title: data.title,
+            description: data.content ?? ''
+          }),
+        seo_ogImage: data.seo_ogImage || data.mainImageId,
+        seo_robotsTag: data.seo_robotsTag
+      }
+
+  const seoResponse = await handleSeoSave('blog', productId, seoData as SeoFormInput)
+
+  if (seoResponse.status !== 200 && seoResponse.status !== 201) {
+    showToast({ type: 'error', message: 'خطا در ذخیره SEO' })
+
+    return false
+  }
+
+  return true
 }

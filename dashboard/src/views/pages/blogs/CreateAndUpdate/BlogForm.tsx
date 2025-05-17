@@ -33,13 +33,13 @@ const BlogForm = () => {
       categoryIds: [],
       readingTime: null,
 
-      seo_title: null,
-      seo_description: null,
-      seo_keywords: null,
-      seo_canonicalUrl: null,
-      seo_ogTitle: null,
-      seo_ogDescription: null,
-      seo_ogImage: null,
+      seo_title: '',
+      seo_description: '',
+      seo_keywords: [],
+      seo_canonicalUrl: '',
+      seo_ogTitle: '',
+      seo_ogDescription: '',
+      seo_ogImage: '',
       seo_robotsTag: RobotsTag.INDEX_FOLLOW
     }
   })

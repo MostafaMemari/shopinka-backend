@@ -46,6 +46,7 @@ const ProductForm = () => {
       height: null,
       length: null,
       weight: null,
+
       seo_title: '',
       seo_description: '',
       seo_keywords: [],

@@ -56,12 +56,8 @@ export const createProduct = async (data: ProductForm): Promise<{ status: number
     body: { ...data }
   })
 
-  const productId = res?.data?.product?.id
-
-  if (productId) {
-    await handleSeo(Number(productId), data)
-  } else {
-    showToast({ type: 'error', message: 'خطا در دریافت آیدی محصول' })
+  if (res.status === 200 || res.status === 201) {
+    await handleSeo(res.data.product.id, data)
   }
 
   return {
