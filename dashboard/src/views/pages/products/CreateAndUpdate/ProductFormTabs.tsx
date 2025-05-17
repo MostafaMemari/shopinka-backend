@@ -12,7 +12,7 @@ import ProductMainImage from '@/views/pages/products/CreateAndUpdate/sections/Pr
 import ProductGallery from '@/views/pages/products/CreateAndUpdate/sections/ProductGallery'
 import ProductCategories from '@/views/pages/products/CreateAndUpdate/sections/ProductCategories'
 import SeoTabContent from '@/views/pages/products/CreateAndUpdate/SeoTabContent'
-import VariableTabContent from '@/views/pages/products/CreateAndUpdate/VariableTabContent'
+import VariableTabContent from '@/views/pages/products/CreateAndUpdate/variants/VariableTabContent'
 import { ProductType } from '@/types/app/product.type'
 
 interface ProductFormTabsProps {

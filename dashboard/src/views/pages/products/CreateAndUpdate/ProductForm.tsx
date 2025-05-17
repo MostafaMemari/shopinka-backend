@@ -4,6 +4,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useSearchParams } from 'next/navigation'
 import Grid from '@mui/material/Grid2'
 import ProductAddHeader from '@/views/pages/products/CreateAndUpdate/sections/ProductAddHeader'
+import { useProductForm } from '@/hooks/reactQuery/useProduct'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { productFormSchema } from '@/libs/validators/product.schema'
 import { type InferType } from 'yup'
@@ -11,7 +12,6 @@ import { ProductStatus, ProductType } from '@/types/app/product.type'
 import { RobotsTag } from '@/types/enums/robotsTag'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import ProductFormTabs from './ProductFormTabs'
-import { useProductForm } from '@/hooks/reactQuery/useProduct'
 
 type ProductFormType = InferType<typeof productFormSchema>
 
@@ -54,7 +54,6 @@ const ProductForm = () => {
 
   const { isLoading, handleButtonClick, isUpdate } = useProductForm({ id, methods })
 
-  // دسترسی به مقدار type از فرم
   const productType = methods.watch('type')
 
   if (isLoading) return <LoadingSpinner />

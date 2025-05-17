@@ -1,19 +1,8 @@
-import { ProductStatus, ProductType } from '@/types/app/product.type'
 import * as yup from 'yup'
 import { seoSchema } from './seo.schema'
 
-const productStatusValues = Object.values(ProductStatus)
-const productTypeValues = Object.values(ProductType)
-
-export const productSchema = yup.object().shape({
+export const productVariantSchema = yup.object().shape({
   sku: yup.string().required('کد محصول الزامی است').max(30, 'حداکثر 30 کاراکتر'),
-  name: yup.string().required('نام محصول الزامی است').max(100, 'حداکثر 100 کاراکتر'),
-  slug: yup
-    .string()
-    .required('نامک الزامی است')
-    .max(120, 'حداکثر 120 کاراکتر')
-    .matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'فرمت slug معتبر نیست'),
-  description: yup.string().notRequired().default(null),
   shortDescription: yup.string().notRequired().max(300, 'حداکثر 300 کاراکتر').default(null),
   quantity: yup
     .number()
@@ -59,42 +48,7 @@ export const productSchema = yup.object().shape({
     })
     .default(null),
 
-  status: yup.mixed<ProductStatus>().oneOf(productStatusValues, 'وضعیت نامعتبر است').notRequired().default(null),
-
-  type: yup.mixed<ProductType>().oneOf(productTypeValues, 'نوع محصول نامعتبر است').required('نوع محصول الزامی است').default(null),
-
   mainImageId: yup.number().notRequired().positive('عدد باید مثبت باشد').default(null),
-
-  galleryImageIds: yup
-    .array()
-    .of(yup.number().defined().positive('شناسه تصویر باید عددی مثبت باشد'))
-    .notRequired()
-    .test('unique', 'تصاویر تکراری هستند', value => {
-      if (!value) return true
-
-      return new Set(value).size === value.length
-    })
-    .default(null),
-
-  categoryIds: yup
-    .array()
-    .of(yup.number().defined().positive('شناسه دسته‌بندی باید عددی مثبت باشد'))
-    .notRequired()
-    .test('unique', 'دسته‌ها تکراری هستند', value => {
-      return value ? new Set(value).size === value.length : true
-    })
-    .default(null),
-
-  attributeIds: yup
-    .array()
-    .of(yup.number().defined().positive('شناسه ویژگی باید عددی مثبت باشد'))
-    .notRequired()
-    .test('unique', 'ویژگی‌ها تکراری هستند', value => {
-      if (!value) return true
-
-      return new Set(value).size === value.length
-    })
-    .default(null),
 
   width: yup
     .number()
@@ -124,7 +78,7 @@ export const productSchema = yup.object().shape({
 
 attributeValuesIds: yup.array().of(yup.array().of(yup.number()).min(1, 'هر ترکیب باید حداقل یک مقدار داشته باشد')).notRequired().default(null)
 
-export const productFormSchema = productSchema.concat(seoSchema)
+export const productFormSchema = productVariantSchema.concat(seoSchema)
 
 // attributeValuesIds: yup
 //   .array()

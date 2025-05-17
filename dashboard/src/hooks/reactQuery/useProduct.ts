@@ -15,6 +15,8 @@ import { type InferType } from 'yup'
 import { GalleryItem } from '@/types/app/gallery.type'
 import { errorProductMessage } from '@/messages/product.message'
 import { useFormSubmit } from '../useFormSubmit'
+import { Attribute } from '@/types/app/productAttributes.type'
+import { ProductVariant } from '@/types/app/productVariant.type'
 
 export function useProducts({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchProducts = () => getProducts(params).then(res => res)
@@ -28,7 +30,11 @@ export function useProducts({ enabled = true, params = {}, staleTime = 1 * 60 * 
   })
 }
 
-type ProductFormType = InferType<typeof productFormSchema>
+// type ProductFormType = InferType<typeof productFormSchema & { attributes?: Attribute }>
+type ProductFormType = InferType<typeof productFormSchema> & {
+  attributes?: Attribute[]
+  variants?: ProductVariant[]
+}
 
 interface UseProductFormProps {
   id?: number | null
@@ -48,6 +54,8 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
       getProductById(id)
         .then(response => {
           const product = response.data
+
+          console.log(product)
 
           setInitialProduct(product)
 
@@ -79,8 +87,9 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
 
             methods.setValue('galleryImageIds', product.galleryImages?.map(img => img.id) || [])
             methods.setValue('categoryIds', product.categories?.map(category => category.id) || [])
-            methods.setValue('attributeIds', product.attributes?.map(attribute => attribute.id) || [])
-            methods.setValue('attributeValuesIds', product.variants?.map(variant => variant.attributeValues?.map(attr => attr.id)) || [])
+
+            methods.setValue('attributes', product.attributes || [])
+            methods.setValue('variants', product.variants || [])
           }
         })
         .catch(() => {

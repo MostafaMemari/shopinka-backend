@@ -1,7 +1,7 @@
 import { Category } from './category.type'
 import { GalleryItem } from './gallery.type'
 import { Attribute } from './productAttributes.type'
-import { ProductVariants } from './productVariant.type'
+import { ProductVariant } from './productVariant.type'
 import { Seo } from './seo.type'
 
 export enum ProductStatus {
@@ -39,5 +39,5 @@ export type Product = {
   galleryImages: GalleryItem[] | undefined
   attributes: Attribute[] | undefined
   categories: Category[] | undefined
-  variants: ProductVariants[] | undefined
+  variants: ProductVariant[] | undefined
 }
