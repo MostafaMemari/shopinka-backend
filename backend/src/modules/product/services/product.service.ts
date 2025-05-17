@@ -143,7 +143,7 @@ export class ProductService {
         galleryImages: includeGalleryImages,
         mainImage: includeMainImage,
         user: includeUser,
-        variants: includeVariants && { include: { attributeValues: includeAttributeValues } }
+        variants: includeVariants && { include: {mainImage: true, attributeValues: includeAttributeValues } }
       }
     });
 
@@ -155,7 +155,7 @@ export class ProductService {
   findOne(id: number): Promise<Product> {
     return this.productRepository.findOneOrThrow({
       where: { id, status: ProductStatus.PUBLISHED },
-      include: { galleryImages: true, mainImage: true, user: true, variants: { include: { attributeValues: true } }, tags: true, seoMeta: true, categories: true, attributes: { include: { values: true } } }
+      include: { galleryImages: true, mainImage: true, user: true, variants: { include: { mainImage: true,attributeValues: true } }, tags: true, seoMeta: true, categories: true, attributes: { include: { values: true } } }
     })
   }
 
