@@ -10,7 +10,6 @@ import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { pagination } from '../../common/utils/pagination.utils';
 import { IGetCart } from './interfaces/cart.interface';
-import { ShippingRepository } from '../shipping/repositories/shipping.repository';
 
 @Injectable()
 export class CartService {
@@ -19,12 +18,17 @@ export class CartService {
     private readonly cartItemRepository: CartItemRepository,
     private readonly productRepository: ProductRepository,
     private readonly productVariantRepository: ProductVariantRepository,
-    private readonly shippingRepository: ShippingRepository
   ) { }
 
   async me(userId: number): Promise<IGetCart> {
-    const { items: cartItems, ...cart }: Cart & { items: CartItem[] } =
-      await this.cartRepository.findOneOrThrow({ where: { userId }, include: { items: { include: { product: true, productVariant: true } } } }) as any
+    let cart = await this.cartRepository.findOne({ where: { userId }, include: { items: { include: { product: true, productVariant: true } } } }) as any
+
+    if (!cart) {
+      await this.cartRepository.create({ data: { userId } })
+      return { finalPrice: 0, totalSaved: 0, cartItems: [] }
+    }
+
+    const { items: cartItems } = cart
 
     let finalPrice = 0
     let totalSaved = 0

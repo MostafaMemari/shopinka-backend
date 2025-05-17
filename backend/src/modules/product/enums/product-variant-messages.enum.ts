@@ -4,5 +4,6 @@ export enum ProductVariantMessages {
     RemovedProductVariantSuccess = 'ProductVariant removed successfully',
     CreatedProductVariantSuccess = 'ProductVariant created successfully',
     UpdatedProductVariantSuccess = 'ProductVariant Updated successfully.',
-    SalePriceTooHigh = 'SalePrice cannot be higher than basePrice.'
+    SalePriceTooHigh = 'SalePrice cannot be higher than basePrice.',
+    CannotRemoveProductVariant = "Cannot remove productVariant: undelivered order items exist."
 }
