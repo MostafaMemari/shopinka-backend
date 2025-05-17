@@ -9,21 +9,18 @@ import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
 import TabContext from '@mui/lab/TabContext'
 import Tab from '@mui/material/Tab'
-import Divider from '@mui/material/Divider'
+import TabPanel from '@mui/lab/TabPanel'
 
 // Component Imports
 import CustomTabList from '@core/components/mui/TabList'
-import ShippingTab from './ShippingTab'
-import VariantsTab from './variants/VariantsTab'
-import SeoTab from './SeoTab'
+import VariantsTab from './VariantsTab'
 import RestockTab from './RestockTab'
 
 // Types
-type TabValue = 'restock' | 'shipping' | 'variants' | 'seo'
+type TabValue = 'restock' | 'variants'
 
 const ProductTabs: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabValue>('restock')
-  const [isBelowMdScreen, setIsBelowMdScreen] = useState<boolean>(false)
 
   const handleChange = (_: React.SyntheticEvent, newValue: TabValue) => {
     setActiveTab(newValue)
@@ -38,17 +35,16 @@ const ProductTabs: React.FC = () => {
             <div className='md:is-4/12'>
               <CustomTabList orientation='vertical' onChange={handleChange} pill='true'>
                 <Tab value='restock' label='موجودی' icon={<i className='tabler-box' />} iconPosition='start' className='flex-row justify-start min-is-full text-start' />
-                {/* <Tab value='shipping' label='حمل‌ونقل' icon={<i className='tabler-car' />} iconPosition='start' className='flex-row justify-start min-is-full text-start' /> */}
                 <Tab value='variants' label='متغیر' icon={<i className='tabler-link' />} iconPosition='start' className='flex-row justify-start min-is-full text-start' />
-                <Tab value='seo' label='سئو' icon={<i className='tabler-search' />} iconPosition='start' className='flex-row justify-start min-is-full text-start' />
               </CustomTabList>
             </div>
-            <Divider orientation={isBelowMdScreen ? 'horizontal' : 'vertical'} flexItem />
             <div className='md:is-8/12'>
-              <RestockTab />
-              <ShippingTab />
-              <VariantsTab />
-              <SeoTab />
+              <TabPanel value='restock' sx={{ p: 0 }}>
+                <RestockTab />
+              </TabPanel>
+              <TabPanel value='variants' sx={{ p: 0 }}>
+                <VariantsTab />
+              </TabPanel>
             </div>
           </div>
         </TabContext>
