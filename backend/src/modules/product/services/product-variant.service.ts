@@ -1,8 +1,8 @@
-import { BadRequestException, ConflictException, Injectable } from "@nestjs/common";
+import { BadRequestException, ConflictException, ForbiddenException, Injectable } from "@nestjs/common";
 import { CreateProductVariantDto } from "../dto/create-product-variant.dto";
 import { ProductVariantRepository } from "../repositories/product-variant.repository";
 import { ProductVariantMessages } from "../enums/product-variant-messages.enum";
-import { Prisma, ProductVariant } from "generated/prisma";
+import { OrderStatus, Prisma, ProductVariant } from "generated/prisma";
 import { ProductRepository } from "../repositories/product.repository";
 import { GalleryItemRepository } from "../../gallery/repositories/gallery-item.repository";
 import { UpdateProductVariantDto } from "../dto/update-product-variant.dto";
@@ -12,6 +12,7 @@ import { CacheKeys } from "../../../common/enums/cache.enum";
 import { CacheService } from "../../../modules/cache/cache.service";
 import { pagination } from "../../../common/utils/pagination.utils";
 import { AttributeValueRepository } from "../../attribute/repositories/attribute-value.repository";
+import { OrderItemRepository } from "../../order/repositories/order-item.repository";
 
 @Injectable()
 export class ProductVariantService {
@@ -22,6 +23,7 @@ export class ProductVariantService {
         private readonly productRepository: ProductRepository,
         private readonly galleryItemRepository: GalleryItemRepository,
         private readonly attributeValueRepository: AttributeValueRepository,
+        private readonly orderItemRepository: OrderItemRepository,
         private readonly cacheService: CacheService
     ) { }
 
@@ -38,10 +40,9 @@ export class ProductVariantService {
 
         if (existingProductVariant) throw new ConflictException(ProductVariantMessages.AlreadyExistsProductVariant)
 
-        const attributeValues = attributeValueIds
-            ? await this.attributeValueRepository.findAll({ where: { id: { in: attributeValueIds } } }) : []
+        const attributeValues = attributeValueIds && await this.attributeValueRepository.findAll({ where: { id: { in: attributeValueIds } } })
 
-        attributeValueIds && delete createProductVariantDto.attributeValueIds
+        delete createProductVariantDto.attributeValueIds
 
         const newProductVariant = await this.productVariantRepository.create({
             data: {
@@ -153,12 +154,17 @@ export class ProductVariantService {
             include: { attributeValues: true, mainImage: true, product: true }
         })
 
-
         return { message: ProductVariantMessages.UpdatedProductVariantSuccess, productVariant: updatedProductVariant }
     }
 
     async remove(userId: number, productVariantId: number): Promise<{ message: string, productVariant: ProductVariant }> {
         await this.productVariantRepository.findOneOrThrow({ where: { id: productVariantId, userId } })
+
+        const orderItems = await this.orderItemRepository.findAll({ where: { productVariantId }, include: { order: true } })
+
+        const hasUndeliveredOrderItems = orderItems.some(item => item['order'].status !== OrderStatus.DELIVERED)
+
+        if (hasUndeliveredOrderItems) throw new ForbiddenException(ProductVariantMessages.CannotRemoveProductVariant)
 
         const removedProductVariant = await this.productVariantRepository.delete({ where: { id: productVariantId } })
 

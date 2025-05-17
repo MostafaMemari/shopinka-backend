@@ -13,6 +13,7 @@ import { ProductVariantController } from './controllers/product-variant.controll
 import { FavoriteRepository } from './repositories/favorite.repository';
 import { CategoryRepository } from '../category/category.repository';
 import { AttributeValueRepository } from '../attribute/repositories/attribute-value.repository';
+import { OrderItemRepository } from '../order/repositories/order-item.repository';
 
 @Module({
   controllers: [ProductController, ProductVariantController],
@@ -29,6 +30,7 @@ import { AttributeValueRepository } from '../attribute/repositories/attribute-va
     FavoriteRepository,
     CategoryRepository,
     AttributeValueRepository,
+    OrderItemRepository
   ],
 })
 export class ProductModule { }

@@ -6,5 +6,8 @@ export enum ProductMessages {
     UpdatedProductSuccess = 'Product Updated successfully.',
     SalePriceTooHigh = 'SalePrice cannot be higher than basePrice.',
     CreatedSeoMetaSuccess = "Seo meta created successfully.",
-    UpdatedSeoMetaSuccess = "Seo meta updated successfully."
+    UpdatedSeoMetaSuccess = "Seo meta updated successfully.",
+    CannotChangeToSimpleType = "Cannot change product type to SIMPLE while there are undelivered orders.",
+    CannotDraftProductWithPendingOrders = "Cannot set product status to DRAFT while there are undelivered orders.",
+    CannotRemoveProduct = "Cannot remove product: undelivered order items exist."
 }
