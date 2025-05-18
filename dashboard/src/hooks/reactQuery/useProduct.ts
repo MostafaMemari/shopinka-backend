@@ -30,7 +30,6 @@ export function useProducts({ enabled = true, params = {}, staleTime = 1 * 60 * 
   })
 }
 
-// type ProductFormType = InferType<typeof productFormSchema & { attributes?: Attribute }>
 type ProductFormType = InferType<typeof productFormSchema> & {
   attributes?: Attribute[]
   variants?: ProductVariant[]

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { useQueryClient } from '@tanstack/react-query'
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
@@ -17,11 +18,35 @@ import LoadingSpinner from '@/components/LoadingSpinner'
 import ErrorState from '@/components/states/ErrorState'
 import EmptyCategoryState from '@/views/pages/categories/EmptyCategoryState'
 import CreateProductVariantModal from './CreateProductVariant'
-import { updateProductVariant } from './UpdateProductVariant'
+import { QueryKeys } from '@/types/enums/query-keys'
+
+const updateProductVariant = (
+  variants: ProductVariant[],
+  setVariants: React.Dispatch<React.SetStateAction<ProductVariant[]>>,
+  id: string,
+  updatedFields: Partial<ProductVariant>,
+  queryClient: any
+) => {
+  setVariants(prevVariants => prevVariants.map(variant => (String(variant.id) === id ? { ...variant, ...updatedFields } : variant)))
+
+  // Update query cache
+  queryClient.setQueryData([QueryKeys.ProductVariants, { productId: variants[0]?.productId }], (oldData: any) => {
+    if (!oldData?.data?.items) return oldData
+
+    return {
+      ...oldData,
+      data: {
+        ...oldData.data,
+        items: oldData.data.items.map((item: ProductVariant) => (String(item.id) === id ? { ...item, ...updatedFields } : item))
+      }
+    }
+  })
+}
 
 const VariableTabContent = () => {
   const searchParams = useSearchParams()
   const productId = searchParams.get('id')
+  const queryClient = useQueryClient()
 
   const { data, isLoading, isFetching, error, refetch } = useProductVariants({
     enabled: !!productId,
@@ -41,24 +66,11 @@ const VariableTabContent = () => {
   const attributes: Attribute[] = useMemo(() => watch('attributes') || [], [watch])
 
   const [variants, setVariants] = useState<ProductVariant[]>([])
+
   const [expanded, setExpanded] = useState<string | false>(false)
 
   useEffect(() => {
-    setVariants([])
-  }, [productId])
-
-  useEffect(() => {
-    if (ProductVariants.length > 0) {
-      setVariants(prevVariants => {
-        const updatedVariants = ProductVariants.map(newVariant => {
-          const existingVariant = prevVariants.find(v => String(v.id) === String(newVariant.id))
-
-          return existingVariant ? { ...newVariant, ...existingVariant } : newVariant
-        })
-
-        return updatedVariants
-      })
-    }
+    setVariants(ProductVariants)
   }, [ProductVariants])
 
   useEffect(() => {
@@ -91,7 +103,7 @@ const VariableTabContent = () => {
               variant={variant}
               expanded={expanded === String(variant.id)}
               onChange={() => setExpanded(expanded === String(variant.id) ? false : String(variant.id))}
-              onUpdate={(id, updatedFields) => updateProductVariant(variants, setVariants, id, updatedFields)}
+              onUpdate={(id, updatedFields) => updateProductVariant(variants, setVariants, id, updatedFields, queryClient)}
             />
           ))
         )}

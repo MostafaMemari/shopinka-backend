@@ -20,9 +20,6 @@ export const getProductVariantById = async (id: number): Promise<{ status: numbe
 }
 
 export const updateProductVariant = async (id: number, data: Partial<ProductVariantForm>): Promise<{ status: number; data: ProductVariant | null }> => {
-  console.log(id)
-  console.log(data)
-
   const res = await serverApiFetch(`/product-variant/${id}`, {
     method: 'PATCH',
     body: { ...data }
