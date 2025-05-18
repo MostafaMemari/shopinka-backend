@@ -9,8 +9,6 @@ import { Product } from '@/types/app/product.type'
 const DesktopProductTable = ({ products }: { products: Product[] }) => {
   const router = useRouter()
 
-  console.log(products)
-
   const handleEditProduct = (id: number) => {
     router.push(`/products/edit?id=${id}`)
   }

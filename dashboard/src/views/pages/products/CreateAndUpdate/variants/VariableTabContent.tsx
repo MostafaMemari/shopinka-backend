@@ -28,7 +28,6 @@ const updateProductVariant = (
 ) => {
   setVariants(prevVariants => prevVariants.map(variant => (String(variant.id) === id ? { ...variant, ...updatedFields } : variant)))
 
-  // Update query cache
   queryClient.setQueryData([QueryKeys.ProductVariants, { productId: variants[0]?.productId }], (oldData: any) => {
     if (!oldData?.data?.items) return oldData
 
@@ -58,14 +57,13 @@ const VariableTabContent = () => {
     staleTime: 10 * 60 * 1000
   })
 
+  console.log(data)
+
   const ProductVariants: ProductVariant[] = useMemo(() => data?.data?.items || [], [data])
 
   const { watch, setValue } = useFormContext()
-
   const attributes: Attribute[] = useMemo(() => watch('attributes') || [], [watch])
-
   const [variants, setVariants] = useState<ProductVariant[]>([])
-
   const [expanded, setExpanded] = useState<string | false>(false)
 
   useEffect(() => {
@@ -76,6 +74,15 @@ const VariableTabContent = () => {
     setValue('variants', variants, { shouldValidate: true })
   }, [variants, setValue])
 
+  const existingAttributeCombinations = useMemo(() => {
+    return ProductVariants.map(variant =>
+      variant.attributeValues
+        ?.map(attr => attr.id)
+        .sort()
+        .join(',')
+    ).filter((combo): combo is string => combo !== undefined)
+  }, [ProductVariants])
+
   if (isLoading || isFetching) return <LoadingSpinner />
   if (error) return <ErrorState onRetry={() => refetch()} />
 
@@ -84,7 +91,7 @@ const VariableTabContent = () => {
       <CardHeader
         title='مدیریت متغیرهای محصول'
         action={
-          <CreateProductVariantModal productId={String(productId)} attributes={attributes}>
+          <CreateProductVariantModal productId={String(productId)} attributes={attributes} existingAttributeCombinations={existingAttributeCombinations}>
             <Button variant='contained' startIcon={<AddIcon />}>
               افزودن متغیر
             </Button>

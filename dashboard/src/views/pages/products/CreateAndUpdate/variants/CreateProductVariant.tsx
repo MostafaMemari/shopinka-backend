@@ -8,14 +8,16 @@ import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { useProductVariantForm } from '@/hooks/reactQuery/useProductVariant'
 import { Attribute } from '@/types/app/productAttributes.type'
 import { useFormContext } from 'react-hook-form'
+import { showToast } from '@/utils/showToast'
 
 interface CreateProductVariantModalProps {
   children?: ReactNode
   productId: string | number
   attributes: Attribute[]
+  existingAttributeCombinations: string[]
 }
 
-const CreateProductVariantModal = ({ children, productId, attributes }: CreateProductVariantModalProps) => {
+const CreateProductVariantModal = ({ children, productId, attributes, existingAttributeCombinations }: CreateProductVariantModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
 
   const { watch } = useFormContext()
@@ -40,19 +42,31 @@ const CreateProductVariantModal = ({ children, productId, attributes }: CreatePr
     productId: Number(productId)
   })
 
-  setValue('quantity', quantity)
-  setValue('basePrice', basePrice)
-  setValue('salePrice', salePrice)
-  setValue('width', width)
-  setValue('height', height)
-  setValue('length', length)
-  setValue('weight', weight)
+  useEffect(() => {
+    setValue('quantity', quantity)
+    setValue('basePrice', basePrice)
+    setValue('salePrice', salePrice)
+    setValue('width', width)
+    setValue('height', height)
+    setValue('length', length)
+    setValue('weight', weight)
+  }, [quantity, basePrice, salePrice, width, height, length, weight, setValue])
 
   useEffect(() => {
     const newAttributeValueIds = selectedValues.map(item => item.valueId).filter((id): id is number => id !== null)
 
     setValue('attributeValueIds', newAttributeValueIds, { shouldValidate: true })
   }, [selectedValues, setValue])
+
+  const isDuplicate = useMemo(() => {
+    const currentCombination = selectedValues
+      .map(item => item.valueId)
+      .filter((id): id is number => id !== null)
+      .sort()
+      .join(',')
+
+    return existingAttributeCombinations.includes(currentCombination)
+  }, [selectedValues, existingAttributeCombinations])
 
   const handleOpen = useCallback(() => setOpen(true), [])
 
@@ -67,6 +81,16 @@ const CreateProductVariantModal = ({ children, productId, attributes }: CreatePr
     )
     handleClose()
   }, [handleClose, attributes])
+
+  const handleSubmit = useCallback(() => {
+    if (isDuplicate) {
+      showToast({ type: 'error', message: 'این ترکیب ویژگی‌ها قبلاً وجود دارد!' })
+
+      return
+    }
+
+    onSubmit()
+  }, [isDuplicate, onSubmit])
 
   return (
     <div>
@@ -83,7 +107,7 @@ const CreateProductVariantModal = ({ children, productId, attributes }: CreatePr
         onClose={handleModalClose}
         title='افزودن متغیر جدید'
         defaultMaxWidth='lg'
-        actions={<FormActions submitText='ثبت' onCancel={handleModalClose} onSubmit={onSubmit} isLoading={isLoading} />}
+        actions={<FormActions submitText='ثبت' onCancel={handleModalClose} onSubmit={handleSubmit} isLoading={isLoading} disabled={isDuplicate} />}
       >
         <AttributeSelector attributes={attributes} selectedValues={selectedValues} setSelectedValues={setSelectedValues} />
       </CustomDialog>

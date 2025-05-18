@@ -16,10 +16,9 @@ import VariableTabContent from './VariableTabContent'
 
 interface Props {
   productType: ProductType
-  id: number | null
 }
 
-const ProductFormTabs = ({ productType, id }: Props) => {
+const ProductFormTabs = ({ productType }: Props) => {
   const [tabValue, setTabValue] = useState('1')
 
   const handleChange = (_: React.SyntheticEvent, newValue: string) => {

@@ -102,6 +102,7 @@ const SeoFormWithContext: React.FC = () => {
             render={({ field }) => (
               <CustomTextField
                 {...field}
+                value={field.value ?? ''}
                 fullWidth
                 label='تصویر اوپن‌گراف'
                 placeholder='https://...'

@@ -4,7 +4,7 @@ import { QueryKeys } from '@/types/enums/query-keys'
 import { QueryOptions } from '@/types/queryOptions'
 import { useQuery } from '@tanstack/react-query'
 import { useState, useEffect, useCallback } from 'react'
-import { type UseFormReturn } from 'react-hook-form'
+import { useForm, type UseFormReturn } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { productFormSchema } from '@/libs/validators/product.schema'
 import { Product, ProductStatus, ProductType } from '@/types/app/product.type'
@@ -17,6 +17,8 @@ import { errorProductMessage } from '@/messages/product.message'
 import { useFormSubmit } from '../useFormSubmit'
 import { Attribute } from '@/types/app/productAttributes.type'
 import { ProductVariant } from '@/types/app/productVariant.type'
+import { RobotsTag } from '@/types/enums/robotsTag'
+import { yupResolver } from '@hookform/resolvers/yup'
 
 export function useProducts({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchProducts = () => getProducts(params).then(res => res)
@@ -30,7 +32,6 @@ export function useProducts({ enabled = true, params = {}, staleTime = 1 * 60 * 
   })
 }
 
-// type ProductFormType = InferType<typeof productFormSchema & { attributes?: Attribute }>
 type ProductFormType = InferType<typeof productFormSchema> & {
   attributes?: Attribute[]
   variants?: ProductVariant[]
@@ -39,14 +40,46 @@ type ProductFormType = InferType<typeof productFormSchema> & {
 interface UseProductFormProps {
   id?: number | null
   initialData?: Product
-  methods: UseFormReturn<ProductFormType>
 }
 
-export const useProductForm = ({ id, initialData, methods }: UseProductFormProps) => {
+export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(!!id)
   const [initialProduct, setInitialProduct] = useState<Product | null>(null)
   const isUpdate = !!id || !!initialData
+
+  const methods = useForm<ProductFormType>({
+    resolver: yupResolver(productFormSchema),
+    mode: 'onChange',
+    defaultValues: {
+      sku: '',
+      name: '',
+      slug: '',
+      description: '',
+      shortDescription: '',
+      quantity: null,
+      basePrice: null,
+      salePrice: null,
+      status: ProductStatus.DRAFT,
+      type: ProductType.SIMPLE,
+      mainImageId: null,
+      galleryImageIds: [],
+      categoryIds: [],
+      attributeIds: [],
+      width: null,
+      height: null,
+      length: null,
+      weight: null,
+      seo_title: '',
+      seo_description: '',
+      seo_keywords: [],
+      seo_canonicalUrl: '',
+      seo_ogTitle: '',
+      seo_ogDescription: '',
+      seo_ogImage: null,
+      seo_robotsTag: RobotsTag.INDEX_FOLLOW
+    } as any
+  })
 
   useEffect(() => {
     if (id && !initialData) {
@@ -65,14 +98,14 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
             })
 
             if (product.seoMeta) {
-              methods.setValue('seo_title', product.seoMeta.title)
-              methods.setValue('seo_description', product.seoMeta.description)
-              methods.setValue('seo_keywords', product.seoMeta.keywords)
-              methods.setValue('seo_canonicalUrl', product.seoMeta.canonicalUrl)
-              methods.setValue('seo_ogTitle', product.seoMeta.ogTitle)
-              methods.setValue('seo_ogDescription', product.seoMeta.ogDescription)
-              methods.setValue('seo_ogImage' as any, product.seoMeta.ogImage)
-              methods.setValue('seo_robotsTag', product.seoMeta.robotsTag)
+              methods.setValue('seo_title', product?.seoMeta.title || '')
+              methods.setValue('seo_description', product?.seoMeta.description || '')
+              methods.setValue('seo_keywords', product?.seoMeta.keywords || [])
+              methods.setValue('seo_canonicalUrl', product?.seoMeta.canonicalUrl || '')
+              methods.setValue('seo_ogTitle', product?.seoMeta.ogTitle || '')
+              methods.setValue('seo_ogDescription', product?.seoMeta.ogDescription || '')
+              methods.setValue('seo_ogImage', product?.seoMeta.ogImage || null)
+              methods.setValue('seo_robotsTag', product?.seoMeta.robotsTag || '')
             }
 
             if (product.mainImage) {
@@ -85,9 +118,8 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
 
             methods.setValue('galleryImageIds', product.galleryImages?.map(img => img.id) || [])
             methods.setValue('categoryIds', product.categories?.map(category => category.id) || [])
-
             methods.setValue('attributes', product.attributes || [])
-            methods.setValue('variants', product.variants || [])
+            methods.setValue('attributeIds', product.attributes?.map(attribute => attribute.id) || [])
           }
         })
         .catch(() => {
@@ -192,7 +224,8 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
   return {
     isLoading: isLoading || submitLoading,
     handleButtonClick,
-    isUpdate
+    isUpdate,
+    methods
   }
 }
 
