@@ -30,6 +30,7 @@ export function useProducts({ enabled = true, params = {}, staleTime = 1 * 60 * 
   })
 }
 
+// type ProductFormType = InferType<typeof productFormSchema & { attributes?: Attribute }>
 type ProductFormType = InferType<typeof productFormSchema> & {
   attributes?: Attribute[]
   variants?: ProductVariant[]
@@ -70,7 +71,7 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
               methods.setValue('seo_canonicalUrl', product.seoMeta.canonicalUrl)
               methods.setValue('seo_ogTitle', product.seoMeta.ogTitle)
               methods.setValue('seo_ogDescription', product.seoMeta.ogDescription)
-              methods.setValue('seo_ogImage', String(product.seoMeta.ogImage))
+              methods.setValue('seo_ogImage' as any, product.seoMeta.ogImage)
               methods.setValue('seo_robotsTag', product.seoMeta.robotsTag)
             }
 
@@ -136,7 +137,7 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
     queryKey: QueryKeys.Products,
     successMessage: isUpdate ? 'محصول با موفقیت به‌روزرسانی شد' : 'محصول با موفقیت ایجاد شد',
     initialData: initialProduct
-      ? {
+      ? ({
           ...initialProduct,
           id: String(initialProduct.id),
           type: initialProduct.type || ProductType.SIMPLE,
@@ -148,9 +149,10 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
           seo_keywords: initialProduct.seoMeta?.keywords,
           seo_ogDescription: initialProduct.seoMeta?.ogDescription,
           seo_ogTitle: initialProduct.seoMeta?.ogTitle,
+          seo_ogImage: initialProduct.seoMeta?.ogImage,
           seo_robotsTag: initialProduct.seoMeta?.robotsTag,
           seo_title: initialProduct.seoMeta?.title
-        }
+        } as any)
       : id
         ? { id: String(id) }
         : undefined,

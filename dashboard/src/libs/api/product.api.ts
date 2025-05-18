@@ -61,7 +61,8 @@ export const createProduct = async (data: ProductForm): Promise<{ status: number
   }
 
   return {
-    ...res
+    ...res,
+    status: 201
   }
 }
 
@@ -82,7 +83,7 @@ const handleSeo = async (productId: number, data: Partial<ProductForm>, isUpdate
         seo_canonicalUrl: data.seo_canonicalUrl,
         seo_ogTitle: data.seo_ogTitle,
         seo_ogDescription: data.seo_ogDescription,
-        seo_ogImage: data.seo_ogImage,
+        seo_ogImage: (data as any).seo_ogImage,
         seo_robotsTag: data.seo_robotsTag
       }
     : {
@@ -102,7 +103,7 @@ const handleSeo = async (productId: number, data: Partial<ProductForm>, isUpdate
             title: data.name,
             description: data.shortDescription ?? ''
           }),
-        seo_ogImage: data.seo_ogImage || data.mainImageId,
+        seo_ogImage: (data as any).seo_ogImage || data.mainImageId,
         seo_robotsTag: data.seo_robotsTag
       }
 

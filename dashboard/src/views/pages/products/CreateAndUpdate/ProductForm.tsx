@@ -47,9 +47,9 @@ const ProductForm = () => {
       seo_canonicalUrl: '',
       seo_ogTitle: '',
       seo_ogDescription: '',
-      seo_ogImage: '',
+      seo_ogImage: null,
       seo_robotsTag: RobotsTag.INDEX_FOLLOW
-    }
+    } as any
   })
 
   const { isLoading, handleButtonClick, isUpdate } = useProductForm({ id, methods })

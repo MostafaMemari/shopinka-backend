@@ -17,7 +17,7 @@ interface UseFormSubmitProps<T extends Record<string, any>> {
   initialData?: Partial<T & { id: string }>
   isUpdate?: boolean
   preprocessData?: (data: T) => T
-  onSuccess?: () => void
+  onSuccess?: (response: { status: number; data?: any }) => void
 }
 
 interface UseFormSubmitResult<T extends Record<string, any>> {
@@ -77,8 +77,7 @@ export const useFormSubmit = <T extends Record<string, any>>({
           if (response.status === 200) {
             showToast({ type: 'success', message: successMessage })
             invalidate(queryKey)
-            handleClose()
-            onSuccess?.()
+            onSuccess?.(response)
 
             return {
               status: 200,
@@ -99,7 +98,7 @@ export const useFormSubmit = <T extends Record<string, any>>({
             showToast({ type: 'success', message: successMessage })
             invalidate(queryKey)
             handleClose()
-            onSuccess?.()
+            onSuccess?.(response)
 
             return {
               status: 201,

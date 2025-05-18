@@ -20,13 +20,13 @@ const CreateProductVariantModal = ({ children, productId, attributes }: CreatePr
 
   const { watch } = useFormContext()
 
-  const quantity: number = useMemo(() => watch('quantity') || [], [watch])
-  const basePrice: number = useMemo(() => watch('basePrice') || [], [watch])
-  const salePrice: number = useMemo(() => watch('salePrice') || [], [watch])
-  const width: number = useMemo(() => watch('width') || [], [watch])
-  const height: number = useMemo(() => watch('height') || [], [watch])
-  const length: number = useMemo(() => watch('length') || [], [watch])
-  const weight: number = useMemo(() => watch('weight') || [], [watch])
+  const quantity: number = useMemo(() => watch('quantity') || null, [watch])
+  const basePrice: number = useMemo(() => watch('basePrice') || null, [watch])
+  const salePrice: number = useMemo(() => watch('salePrice') || null, [watch])
+  const width: number = useMemo(() => watch('width') || null, [watch])
+  const height: number = useMemo(() => watch('height') || null, [watch])
+  const length: number = useMemo(() => watch('length') || null, [watch])
+  const weight: number = useMemo(() => watch('weight') || null, [watch])
 
   const [selectedValues, setSelectedValues] = useState<SelectedValue[]>(() =>
     attributes.map(attr => ({

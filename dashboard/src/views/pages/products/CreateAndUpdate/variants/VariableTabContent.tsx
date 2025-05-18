@@ -16,7 +16,6 @@ import { useSearchParams } from 'next/navigation'
 import { useProductVariants } from '@/hooks/reactQuery/useProductVariant'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import ErrorState from '@/components/states/ErrorState'
-import EmptyCategoryState from '@/views/pages/categories/EmptyCategoryState'
 import CreateProductVariantModal from './CreateProductVariant'
 import { QueryKeys } from '@/types/enums/query-keys'
 
@@ -79,7 +78,6 @@ const VariableTabContent = () => {
 
   if (isLoading || isFetching) return <LoadingSpinner />
   if (error) return <ErrorState onRetry={() => refetch()} />
-  if (ProductVariants.length === 0 && variants.length === 0) return <EmptyCategoryState />
 
   return (
     <Card sx={{ border: '1px solid', borderColor: 'divider' }}>
@@ -94,7 +92,7 @@ const VariableTabContent = () => {
         }
       />
       <CardContent>
-        {variants.length === 0 ? (
+        {ProductVariants.length === 0 ? (
           <Typography color='text.secondary'>هیچ متغیری وجود ندارد. ویژگی‌ها را انتخاب کنید و متغیر اضافه کنید.</Typography>
         ) : (
           variants.map(variant => (
