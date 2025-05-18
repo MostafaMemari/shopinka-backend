@@ -28,6 +28,13 @@ export class QueryProductVariantDto extends PaginationDto {
     @IsOptional()
     @IsNumber()
     @IsPositive()
+    @Transform(({ value }) => +value)
+    @ApiProperty({ type: "number", required: false, nullable: true })
+    productId?: number
+
+    @IsOptional()
+    @IsNumber()
+    @IsPositive()
     @Max(200_000_000)
     @Min(1000)
     @Transform(({ value }) => +value)

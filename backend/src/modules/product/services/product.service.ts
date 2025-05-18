@@ -56,7 +56,10 @@ export class ProductService {
 
     const newProduct = await this.productRepository.create({
       data: {
-        ...createProductDto, userId, slug: uniqueSlug, mainImageId,
+        ...createProductDto,
+        userId,
+        slug: uniqueSlug,
+        mainImageId,
         galleryImages: galleryImageIds && { connect: images.map((image => ({ id: image.id }))) },
         attributes: type == ProductType.VARIABLE && attributeIds ? { connect: attributes.map(attribute => ({ id: attribute.id })) } : undefined,
         categories: categoryIds && { connect: categories.map(cat => ({ id: cat.id })) }
@@ -143,7 +146,7 @@ export class ProductService {
         galleryImages: includeGalleryImages,
         mainImage: includeMainImage,
         user: includeUser,
-        variants: includeVariants && { include: {mainImage: true, attributeValues: includeAttributeValues } }
+        variants: includeVariants && { include: { mainImage: true, attributeValues: includeAttributeValues } }
       }
     });
 
@@ -155,14 +158,14 @@ export class ProductService {
   findOne(id: number): Promise<Product> {
     return this.productRepository.findOneOrThrow({
       where: { id, status: ProductStatus.PUBLISHED },
-      include: { galleryImages: true, mainImage: true, user: true, variants: { include: { mainImage: true,attributeValues: true } }, tags: true, seoMeta: true, categories: true, attributes: { include: { values: true } } }
+      include: { galleryImages: true, mainImage: true, user: true, tags: true, seoMeta: true, categories: true, attributes: { include: { values: true } } }
     })
   }
 
   findOneDraft(userId: number, id: number): Promise<Product> {
     return this.productRepository.findOneOrThrow({
       where: { userId, id, status: ProductStatus.DRAFT },
-      include: { attributes: { include: { values: true } }, galleryImages: true, mainImage: true, user: true, variants: { include: { attributeValues: true } } }
+      include: { attributes: { include: { values: true } }, galleryImages: true, mainImage: true, user: true }
     })
   }
 

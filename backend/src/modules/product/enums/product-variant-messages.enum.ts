@@ -5,5 +5,6 @@ export enum ProductVariantMessages {
     CreatedProductVariantSuccess = 'ProductVariant created successfully',
     UpdatedProductVariantSuccess = 'ProductVariant Updated successfully.',
     SalePriceTooHigh = 'SalePrice cannot be higher than basePrice.',
-    CannotRemoveProductVariant = "Cannot remove productVariant: undelivered order items exist."
+    CannotRemoveProductVariant = "Cannot remove productVariant: undelivered order items exist.",
+    MinOneAttributeValueRequired = 'At least one attribute value id is required.'
 }
