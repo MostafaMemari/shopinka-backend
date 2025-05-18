@@ -3,12 +3,13 @@
 import { Box, IconButton, Typography, Chip } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import tableStyles from '@core/styles/table.module.css'
-import { stripHtml, truncateText } from '@/utils/formatters'
 import RemoveProductModal from './RemoveProductModal'
 import { Product } from '@/types/app/product.type'
 
 const DesktopProductTable = ({ products }: { products: Product[] }) => {
   const router = useRouter()
+
+  console.log(products)
 
   const handleEditProduct = (id: number) => {
     router.push(`/products/edit?id=${id}`)
@@ -24,7 +25,8 @@ const DesktopProductTable = ({ products }: { products: Product[] }) => {
             <th>نامک</th>
             <th>وضعیت</th>
             <th>قیمت پایه</th>
-            <th>دسته‌بندی‌ها</th>
+            <th>قیمت فروش</th>
+            <th>نوع</th>
             <th>عملیات</th>
           </tr>
         </thead>
@@ -59,7 +61,6 @@ const DesktopProductTable = ({ products }: { products: Product[] }) => {
                     {product.slug || '-'}
                   </Typography>
                 </td>
-
                 <td>
                   {product.status ? (
                     <Chip label={product.status === 'PUBLISHED' ? 'منتشر شده' : 'پیش‌نویس'} color={product.status === 'PUBLISHED' ? 'success' : 'warning'} size='small' />
@@ -71,7 +72,14 @@ const DesktopProductTable = ({ products }: { products: Product[] }) => {
                   <Typography color='text.primary'>{product.basePrice ? `${product.basePrice.toLocaleString('fa-IR')} تومان` : '-'}</Typography>
                 </td>
                 <td>
-                  <Typography color='text.primary'>{product.categories && product.categories.length > 0 ? product.categories.map(cat => cat.name).join(', ') : '-'}</Typography>
+                  <Typography color='text.primary'>{product.salePrice ? `${product.salePrice.toLocaleString('fa-IR')} تومان` : '-'}</Typography>
+                </td>
+                <td>
+                  {product.type ? (
+                    <Chip label={product.type === 'SIMPLE' ? 'ساده' : 'متغیر'} color={product.type === 'SIMPLE' ? 'primary' : 'secondary'} size='small' />
+                  ) : (
+                    <Typography color='text.secondary'>-</Typography>
+                  )}
                 </td>
                 <td>
                   <Box display='flex' alignItems='center' gap={2}>

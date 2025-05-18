@@ -22,7 +22,13 @@ export type ProductVariant = {
   productId?: number
   mainImage: GalleryItem | undefined
   attributeValueIds?: number[] | null
-  attributeValues?: AttributeValues[] | null
+  attributeValues?: VariantAttributeValue[] | null
+}
+
+export type VariantAttributeValue = {
+  attributeId: number
+  valueId: number
+  value: string
 }
 
 export type ProductVariantForm = InferType<typeof productVariantSchema>
