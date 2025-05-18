@@ -4,11 +4,12 @@ import { ArrayUnique, IsArray, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsS
 import { transformNumberArray } from "../../../common/utils/functions.utils"
 
 export class CreateProductVariantDto {
+    @IsOptional()
     @IsString()
     @IsNotEmpty()
     @MaxLength(30)
-    @ApiProperty({ type: "string", required: true, nullable: false, maxLength: 30 })
-    sku: string
+    @ApiProperty({ type: "string", required: false, nullable: true, maxLength: 30 })
+    sku?: string
 
     @IsOptional()
     @IsString()
@@ -55,15 +56,14 @@ export class CreateProductVariantDto {
     productId: number
 
     @ApiProperty({
-        required: false,
-        nullable: true,
+        required: true,
+        nullable: false,
         isArray: true,
         type: 'array',
         uniqueItems: true,
         items: { type: 'number', nullable: false },
     })
     @Transform(({ value }) => transformNumberArray(value))
-    @IsOptional()
     @IsArray()
     @ArrayUnique()
     @IsNotEmpty()

@@ -42,6 +42,8 @@ export class ProductVariantService {
 
         const attributeValues = attributeValueIds && await this.attributeValueRepository.findAll({ where: { id: { in: attributeValueIds } } })
 
+        if (!attributeValues?.length) throw new BadRequestException(ProductVariantMessages.MinOneAttributeValueRequired);
+
         delete createProductVariantDto.attributeValueIds
 
         const newProductVariant = await this.productVariantRepository.create({
@@ -75,7 +77,8 @@ export class ProductVariantService {
             weight,
             width,
             includeProduct,
-            includeAttributeValues
+            includeAttributeValues,
+            productId
         } = queryProductVariantDto
 
         const sortedDto = sortObject(queryProductVariantDto);
@@ -96,6 +99,7 @@ export class ProductVariantService {
         if (width) filters.width = width
         if (length) filters.length = length
         if (quantity) filters.quantity = quantity
+        if (productId) filters.productId = productId
         if (startDate || endDate) {
             filters.createdAt = {};
             if (startDate) filters.createdAt.gte = new Date(startDate);

@@ -182,7 +182,7 @@ model AttributeValue {
 
 model Product {
   id               Int              @id @default(autoincrement())
-  sku              String           @unique()
+  sku              String?           @unique()
   name             String
   mainImageId      Int?
   userId           Int?
@@ -216,7 +216,7 @@ model Product {
 
 model ProductVariant {
   id               Int              @id @default(autoincrement())
-  sku              String           @unique()
+  sku              String?           @unique()
   mainImageId      Int?
   productId        Int
   orderId          Int?
