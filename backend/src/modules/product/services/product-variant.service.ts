@@ -36,9 +36,8 @@ export class ProductVariantService {
         await this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } })
         await this.productRepository.findOneOrThrow({ where: { id: productId } })
 
-        const existingProductVariant = await this.productVariantRepository.findOne({ where: { sku } })
-
-        if (existingProductVariant) throw new ConflictException(ProductVariantMessages.AlreadyExistsProductVariant)
+        // const existingProductVariant = await this.productVariantRepository.findOne({ where: { sku } })
+        // if (existingProductVariant) throw new ConflictException(ProductVariantMessages.AlreadyExistsProductVariant)
 
         const attributeValues = attributeValueIds && await this.attributeValueRepository.findAll({ where: { id: { in: attributeValueIds } } })
 

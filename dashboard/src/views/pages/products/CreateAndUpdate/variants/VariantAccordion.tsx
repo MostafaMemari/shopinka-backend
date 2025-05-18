@@ -13,7 +13,6 @@ import VariantRestock from './sections/VariantRestock'
 import VariantPricing from './sections/VariantPricing'
 import VariantImage from './sections/VariantImage'
 import { ProductVariant } from '@/types/app/productVariant.type'
-import { Attribute } from '@/types/app/productAttributes.type'
 import RemoveProductVariantModal from './RemoveProductVariantModal'
 
 type VariantAccordionProps = {

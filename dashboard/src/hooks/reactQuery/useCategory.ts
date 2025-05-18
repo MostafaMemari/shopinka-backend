@@ -5,12 +5,11 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { categoryFormSchema, categorySchema } from '@/libs/validators/category.schema'
+import { categoryFormSchema } from '@/libs/validators/category.schema'
 import { CategoryForm, Category } from '@/types/app/category.type'
 import { useFormSubmit } from '../useFormSubmit'
 import { RobotsTag } from '@/types/enums/robotsTag'
 import { type InferType } from 'yup'
-import { generateBlogSeoDescription } from './seoDescriptionGenerators'
 import { errorCategoryMessage } from '@/messages/categoryMessages'
 
 export function useCategories({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {

@@ -30,14 +30,10 @@ export const updateProductVariant = async (id: number, data: Partial<ProductVari
   return { ...res }
 }
 
-export const createProductVariant = async (
-  productId: number,
-  attributeValueIds: number[],
-  data: ProductVariantForm
-): Promise<{ status: number; data: { product: ProductVariant | null } }> => {
+export const createProductVariant = async (productId: number, data: ProductVariantForm): Promise<{ status: number; data: { product: ProductVariant | null } }> => {
   const res = await serverApiFetch('/product-variant', {
     method: 'POST',
-    body: { ...data, productId, attributeValueIds }
+    body: { ...data, productId }
   })
 
   console.log(res)

@@ -122,7 +122,6 @@ export const productSchema = yup.object().shape({
     .default(null)
 })
 
-attributeValuesIds: yup.array().of(yup.array().of(yup.number()).min(1, 'هر ترکیب باید حداقل یک مقدار داشته باشد')).notRequired().default(null)
 
 export const productFormSchema = productSchema.concat(seoSchema)
 

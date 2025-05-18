@@ -1,13 +1,16 @@
 'use client'
 
 import { createProductVariant, getProductVariants, updateProductVariant } from '@/libs/api/productVariants.api'
+import { errorProductVariantMessage } from '@/messages/productVariant.message'
 import { ProductVariant, ProductVariantForm } from '@/types/app/productVariant.type'
 import { QueryKeys } from '@/types/enums/query-keys'
-import { RobotsTag } from '@/types/enums/robotsTag'
 import { QueryOptions } from '@/types/queryOptions'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useQuery } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
+import { useFormSubmit } from '../useFormSubmit'
+import { useCallback } from 'react'
+import { productVariantSchema } from '@/libs/validators/productVariante.schema'
 
 export function useProductVariants({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchProductVariants = () => getProductVariants(params).then(res => res)
@@ -22,26 +25,24 @@ export function useProductVariants({ enabled = true, params = {}, staleTime = 1 
 }
 
 interface UseProductVariantFormProps {
+  productId: number
   initialData?: ProductVariant
   isUpdate?: boolean
 }
 
-export const useProductVariantForm = ({ initialData, isUpdate = false }: UseProductVariantFormProps) => {
-  const defaultValues: ProductVariantFormType = {
-    name: initialData?.name ?? '',
-    slug: initialData?.slug ?? '',
-    description: initialData?.description ?? '',
-    parentId: initialData?.parentId || null,
-    thumbnailImageId: null,
-
-    seo_title: '',
-    seo_description: '',
-    seo_keywords: [],
-    seo_canonicalUrl: '',
-    seo_ogTitle: '',
-    seo_ogDescription: '',
-    seo_ogImage: '',
-    seo_robotsTag: RobotsTag.INDEX_FOLLOW
+export const useProductVariantForm = ({ initialData, productId, isUpdate = false }: UseProductVariantFormProps) => {
+  const defaultValues: ProductVariantForm = {
+    sku: '',
+    shortDescription: '',
+    quantity: null,
+    basePrice: null,
+    salePrice: null,
+    mainImageId: null,
+    width: null,
+    height: null,
+    length: null,
+    weight: null,
+    attributeValueIds: []
   }
 
   const {
@@ -50,9 +51,9 @@ export const useProductVariantForm = ({ initialData, isUpdate = false }: UseProd
     reset,
     setValue,
     formState: { errors }
-  } = useForm<ProductVariantFormType>({
+  } = useForm<ProductVariantForm>({
     defaultValues,
-    resolver: yupResolver(productVariantForm)
+    resolver: yupResolver(productVariantSchema)
   })
 
   const handleClose = useCallback(() => {
@@ -60,12 +61,18 @@ export const useProductVariantForm = ({ initialData, isUpdate = false }: UseProd
   }, [reset])
 
   const { isLoading, onSubmit } = useFormSubmit<ProductVariantForm>({
-    createApi: createProductVariant,
-    updateApi: updateProductVariant,
+    createApi: async (formData: ProductVariantForm) => {
+      console.log('Submitting:', { productId, formData })
+
+      const response = await createProductVariant(productId, formData)
+
+      return { status: response.status, data: { id: response.data?.product?.id } }
+    },
+    updateApi: (id, data) => updateProductVariant(Number(id), data),
     errorMessages: errorProductVariantMessage,
-    queryKey: QueryKeys.Categories,
-    successMessage: isUpdate ? 'دسته‌بندی با موفقیت به‌روزرسانی شد' : 'دسته‌بندی با موفقیت ایجاد شد',
-    initialData: initialData ? { ...initialData, id: String(initialData.id) } : undefined,
+    queryKey: [QueryKeys.ProductVariants],
+    successMessage: isUpdate ? 'متغییر با موفقیت به‌روزرسانی شد' : 'متغییر با موفقیت ایجاد شد',
+    initialData: initialData ? { ...initialData, id: String(initialData.id), attributeValueIds: [] } : undefined,
     isUpdate
   })
 

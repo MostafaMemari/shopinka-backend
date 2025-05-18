@@ -55,8 +55,6 @@ export const useProductForm = ({ id, initialData, methods }: UseProductFormProps
         .then(response => {
           const product = response.data
 
-          console.log(product)
-
           setInitialProduct(product)
 
           if (product) {

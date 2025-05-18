@@ -1,3 +1,5 @@
+'use client'
+
 import Grid from '@mui/material/Grid2'
 import Typography from '@mui/material/Typography'
 import Autocomplete from '@mui/material/Autocomplete'
@@ -29,10 +31,24 @@ const AttributeSelector = ({ attributes, selectedValues, setSelectedValues }: At
             <Autocomplete
               options={attribute.values || []}
               getOptionLabel={option => option.name || ''}
-              getOptionKey={option => option.id}
-              value={(attribute.values || []).find(opt => opt.id === selectedValues.find(v => v.attributeId === attribute.id)?.valueId) || null}
+              value={(attribute.values || []).find(opt => opt.id === selectedValues.find(v => v.attributeId === attribute.id)?.valueId) ?? null}
               onChange={(_, newValue) => {
-                setSelectedValues(prev => prev.map(v => (v.attributeId === attribute.id ? { ...v, valueId: newValue?.id || null, value: newValue?.name || '' } : v)))
+                setSelectedValues(prev => {
+                  const existingValue = prev.find(v => v.attributeId === attribute.id)
+
+                  if (existingValue) {
+                    return prev.map(v => (v.attributeId === attribute.id ? { ...v, valueId: newValue?.id || null, value: newValue?.name || '' } : v))
+                  } else {
+                    return [
+                      ...prev,
+                      {
+                        attributeId: attribute.id,
+                        valueId: newValue?.id || null,
+                        value: newValue?.name || ''
+                      }
+                    ]
+                  }
+                })
               }}
               renderInput={params => <CustomTextField {...params} label={attribute.name || 'ویژگی'} placeholder={`انتخاب ${attribute.name || 'ویژگی'}`} />}
               noOptionsText='هیچ مقداری یافت نشد'

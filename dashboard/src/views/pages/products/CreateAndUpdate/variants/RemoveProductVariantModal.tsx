@@ -18,7 +18,7 @@ const RemoveProductVariantModal = ({ id, children }: RemoveProductVariantModalPr
       onDelete={async id => {
         const res = await removeProductVariant(id as string)
 
-        if (res.status === 200) invalidate(QueryKeys.Categories)
+        if (res.status === 200) invalidate(QueryKeys.ProductVariants)
 
         return res
       }}

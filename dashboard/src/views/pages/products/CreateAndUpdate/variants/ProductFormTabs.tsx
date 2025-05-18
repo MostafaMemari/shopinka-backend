@@ -11,8 +11,8 @@ import Tab from '@mui/material/Tab'
 
 import { ProductType } from '@/types/app/product.type'
 import VariantsTab from './VariantsTab'
-import VariableTabContent from './VariableTabContent'
 import SeoTabContent from '../SeoTabContent'
+import VariableTabContent from './VariableTabContent'
 
 interface Props {
   productType: ProductType

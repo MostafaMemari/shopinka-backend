@@ -2,7 +2,7 @@ import * as yup from 'yup'
 import { seoSchema } from './seo.schema'
 
 export const productVariantSchema = yup.object().shape({
-  sku: yup.string().required('کد محصول الزامی است').max(30, 'حداکثر 30 کاراکتر'),
+  sku: yup.string().notRequired().max(30, 'حداکثر 30 کاراکتر').default(null),
   shortDescription: yup.string().notRequired().max(300, 'حداکثر 300 کاراکتر').default(null),
   quantity: yup
     .number()
@@ -73,14 +73,9 @@ export const productVariantSchema = yup.object().shape({
     .transform((value, originalValue) => (originalValue === '' ? null : value))
     .notRequired()
     .positive('باید عددی مثبت باشد')
-    .default(null)
+    .default(null),
+
+  attributeValueIds: yup.array().of(yup.number().required('هر مقدار باید یک عدد باشد')).min(1, 'حداقل یک ویژگی باید انتخاب شود').required('ویژگی‌ها الزامی هستند')
 })
 
-attributeValuesIds: yup.array().of(yup.array().of(yup.number()).min(1, 'هر ترکیب باید حداقل یک مقدار داشته باشد')).notRequired().default(null)
-
 export const productFormSchema = productVariantSchema.concat(seoSchema)
-
-// attributeValuesIds: yup
-//   .array()
-//   .of(yup.array().of(yup.number().positive('شناسه ویژگی باید عددی مثبت باشد')).min(1, 'هر ترکیب باید حداقل یک مقدار داشته باشد'))
-//   .notRequired(),
