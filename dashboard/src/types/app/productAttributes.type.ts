@@ -12,12 +12,12 @@ export type Attribute = {
   userId: number
   type: AttributeType
   description: string | null
-  values: AttributeValues[] | []
+  values: AttributeValue[] | []
   createdAt: string
   updatedAt: string
 }
 
-export type AttributeValues = {
+export type AttributeValue = {
   id: number
   name: string
   slug: string

@@ -11,52 +11,69 @@ import Typography from '@mui/material/Typography'
 import AttributeSelector, { SelectedValue } from './AttributeSelector'
 import VariantAccordion from './VariantAccordion'
 import { Attribute } from '@/types/app/productAttributes.type'
-import { ProductVariant } from '@/types/app/productVariant.type'
+import { ProductVariant, ProductVariantForm } from '@/types/app/productVariant.type'
+import { useSearchParams } from 'next/navigation'
+import { useProductVariants } from '@/hooks/reactQuery/useProductVariant'
+import LoadingSpinner from '@/components/LoadingSpinner'
+import ErrorState from '@/components/states/ErrorState'
+import EmptyCategoryState from '@/views/pages/categories/EmptyCategoryState'
+import { createProductVariant } from '@/libs/api/productVariants.api'
+import { useFormSubmit } from '@/hooks/useFormSubmit'
 
 const VariableTabContent = () => {
+  const searchParams = useSearchParams()
+  const productId = searchParams.get('id')
+
+  const { data, isLoading, isFetching, error, refetch } = useProductVariants({
+    enabled: !!productId,
+    params: {
+      take: 50,
+      productId,
+      includeAttributeValues: true,
+      includeMainImage: true
+    },
+    staleTime: 10 * 60 * 1000 // 10 minutes
+  })
+
+  const ProductVariants: ProductVariant[] = useMemo(() => data?.data?.items || [], [data])
+
   const { watch, setValue } = useFormContext()
 
   const attributes: Attribute[] = useMemo(() => watch('attributes') || [], [watch])
   const formVariants: ProductVariant[] = useMemo(() => watch('variants') || [], [watch])
-  const quantity: number = useMemo(() => watch('quantity') || null, [watch])
-  const weight: number = useMemo(() => watch('weight') || null, [watch])
-  const width: number = useMemo(() => watch('width') || null, [watch])
-  const height: number = useMemo(() => watch('height') || null, [watch])
-  const length: number = useMemo(() => watch('length') || null, [watch])
-  const basePrice: number = useMemo(() => watch('basePrice') || null, [watch])
-  const salePrice: number = useMemo(() => watch('salePrice') || null, [watch])
+  const quantity: number | null = useMemo(() => watch('quantity') || null, [watch])
+  const weight: number | null = useMemo(() => watch('weight') || null, [watch])
+  const width: number | null = useMemo(() => watch('width') || null, [watch])
+  const height: number | null = useMemo(() => watch('height') || null, [watch])
+  const length: number | null = useMemo(() => watch('length') || null, [watch])
+  const basePrice: number | null = useMemo(() => watch('basePrice') || null, [watch])
+  const salePrice: number | null = useMemo(() => watch('salePrice') || null, [watch])
 
   const [variants, setVariants] = useState<ProductVariant[]>([])
   const [expanded, setExpanded] = useState<string | false>(false)
   const [selectedValues, setSelectedValues] = useState<SelectedValue[]>([])
 
+  // Initialize variants with ProductVariants from API
   useEffect(() => {
-    if (formVariants.length > 0 && variants.length === 0) {
-      setVariants(
-        formVariants.map(variant => ({
-          id: variant.id || Date.now(),
-          attributeValues: (variant.attributeValues ?? []).map(attr => ({
-            attributeId: attr.attributeId,
-            valueId: attr.id,
-            value: attr.name
-          })),
-          name: variant.shortDescription || '',
-          sku: variant.sku || '',
-          shortDescription: variant.shortDescription || '',
-          quantity: variant.quantity ?? null,
-          weight: variant.weight ?? null,
-          width: variant.width ?? null,
-          height: variant.height ?? null,
-          length: variant.length ?? null,
-          basePrice: variant.basePrice ?? null,
-          salePrice: variant.salePrice ?? null,
-          image: variant.mainImageId ? { fileUrl: `/images/${variant.mainImageId}`, title: variant.shortDescription || 'تصویر متغیر' } : undefined,
-          mainImage: variant.mainImage ?? undefined
-        }))
+    if (ProductVariants.length > 0 && variants.length === 0) {
+      setVariants(ProductVariants)
+    }
+  }, [ProductVariants, variants.length])
+
+  // Sync formVariants with variants
+  useEffect(() => {
+    if (formVariants.length > 0) {
+      setVariants(prev =>
+        prev.map(variant => {
+          const formVariant = formVariants.find(fv => fv.id === variant.id)
+
+          return formVariant ? { ...variant, ...formVariant } : variant
+        })
       )
     }
-  }, [formVariants, variants.length])
+  }, [formVariants])
 
+  // Initialize selectedValues based on attributes
   useEffect(() => {
     setSelectedValues(prev => {
       const newValues = attributes.map(attr => {
@@ -69,6 +86,7 @@ const VariableTabContent = () => {
     })
   }, [attributes])
 
+  // Sync variants with form
   useEffect(() => {
     setValue('variants', variants, { shouldValidate: true })
   }, [variants, setValue])
@@ -86,7 +104,7 @@ const VariableTabContent = () => {
         }, {})
 
       const variantValuesMap = variantValues.reduce<{ [key: string]: number | null }>((acc, v) => {
-        acc[v.attributeId] = v.valueId
+        acc[v.attributeId] = v.id // Use `id` from attributeValues
 
         return acc
       }, {})
@@ -98,16 +116,46 @@ const VariableTabContent = () => {
     })
   }
 
-  const handleAddVariant = () => {
+  const handleAddVariant = async () => {
     const newAttributeValues = selectedValues.filter(v => v.value && v.valueId !== null)
+    const attributeValueIds = newAttributeValues.map(v => v.attributeId)
+
+    const { isLoading, onSubmit } = useFormSubmit<ProductVariantForm>({
+      createApi: createProductVariant,
+      updateApi: updateCategory,
+      errorMessages: errorCategoryMessage,
+      queryKey: QueryKeys.Categories,
+      successMessage: isUpdate ? 'دسته‌بندی با موفقیت به‌روزرسانی شد' : 'دسته‌بندی با موفقیت ایجاد شد',
+      initialData: initialData ? { ...initialData, id: String(initialData.id) } : undefined,
+      isUpdate
+    })
+
+    await createProductVariant(Number(productId), attributeValueIds, {
+      quantity: quantity ?? null,
+      basePrice: basePrice ?? null,
+      salePrice: salePrice ?? null,
+      mainImageId: null,
+      width: weight ?? null,
+      height: weight ?? null,
+      length: weight ?? null,
+      weight: weight ?? null,
+      sku: '',
+      shortDescription: null
+    })
 
     if (newAttributeValues.length > 0 && !isDuplicateVariant(newAttributeValues)) {
       const newVariant: ProductVariant = {
         id: Date.now(),
+
         attributeValues: newAttributeValues.map(v => ({
+          id: v.valueId!,
+          name: v.value, // Use `value` as `name`
           attributeId: v.attributeId,
-          valueId: v.valueId!,
-          value: v.value
+          slug: v.value.toLowerCase().replace(/\s+/g, '-'), // Generate slug from value
+          colorCode: null,
+          buttonLabel: v.value,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         })),
         sku: '',
         shortDescription: '',
@@ -128,14 +176,18 @@ const VariableTabContent = () => {
   }
 
   const handleDeleteVariant = (id: string) => {
+    console.log('Deleted product variant id:', id)
     setVariants(variants.filter(variant => String(variant.id) !== id))
   }
 
   const handleUpdateVariant = (id: string, updatedFields: Partial<ProductVariant>) => {
-    console.log(updatedFields)
-
-    setVariants(variants.map(variant => (String(variant.id) === id ? { ...variant, ...updatedFields } : variant))) // اصلاح شرط
+    console.log(`Updating variant id: ${id}, updated fields:`, updatedFields)
+    setVariants(variants.map(variant => (String(variant.id) === id ? { ...variant, ...updatedFields } : variant)))
   }
+
+  if (isLoading || isFetching) return <LoadingSpinner />
+  if (error) return <ErrorState onRetry={() => refetch()} />
+  if (ProductVariants.length === 0 && variants.length === 0) return <EmptyCategoryState />
 
   return (
     <Card sx={{ border: '1px solid', borderColor: 'divider' }}>
@@ -155,13 +207,12 @@ const VariableTabContent = () => {
       <CardContent>
         <AttributeSelector attributes={attributes} selectedValues={selectedValues} setSelectedValues={setSelectedValues} />
         {variants.length === 0 ? (
-          <Typography color='text.secondary'>هیچ متغیری اضافه نشده است. ویژگی‌ها را انتخاب کنید و متغیر اضافه کنید.</Typography>
+          <Typography color='text.secondary'>هیچ متغیری وجود ندارد. ویژگی‌ها را انتخاب کنید و متغیر اضافه کنید.</Typography>
         ) : (
           variants.map(variant => (
             <VariantAccordion
               key={variant.id}
               variant={variant}
-              attributes={attributes}
               expanded={expanded === String(variant.id)}
               onChange={() => setExpanded(expanded === String(variant.id) ? false : String(variant.id))}
               onDelete={handleDeleteVariant}

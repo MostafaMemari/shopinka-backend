@@ -1,7 +1,7 @@
 import { type InferType } from 'yup'
-import { AttributeValues } from './productAttributes.type'
 import { productVariantSchema } from '@/libs/validators/productVariante.schema'
 import { GalleryItem } from './gallery.type'
+import { AttributeValue } from './productAttributes.type'
 
 export type ProductVariant = {
   id?: number
@@ -22,13 +22,7 @@ export type ProductVariant = {
   productId?: number
   mainImage: GalleryItem | undefined
   attributeValueIds?: number[] | null
-  attributeValues?: VariantAttributeValue[] | null
-}
-
-export type VariantAttributeValue = {
-  attributeId: number
-  valueId: number
-  value: string
+  attributeValues?: AttributeValue[] | null
 }
 
 export type ProductVariantForm = InferType<typeof productVariantSchema>

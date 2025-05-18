@@ -1,39 +1,33 @@
-import { createCategory, getCategories, updateCategory } from '@/libs/api/category.api'
-import { QueryKeys } from '@/types/enums/query-keys'
-import { QueryOptions } from '@/types/queryOptions'
-import { useQuery } from '@tanstack/react-query'
-import { useCallback } from 'react'
-import { useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { categoryFormSchema, categorySchema } from '@/libs/validators/category.schema'
-import { CategoryForm, Category } from '@/types/app/category.type'
-import { useFormSubmit } from '../useFormSubmit'
-import { RobotsTag } from '@/types/enums/robotsTag'
-import { type InferType } from 'yup'
-import { generateBlogSeoDescription } from './seoDescriptionGenerators'
-import { errorCategoryMessage } from '@/messages/categoryMessages'
+'use client'
 
-export function useCategories({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
-  const fetchCategory = () => getCategories(params).then(res => res)
+import { createProductVariant, getProductVariants, updateProductVariant } from '@/libs/api/productVariants.api'
+import { ProductVariant, ProductVariantForm } from '@/types/app/productVariant.type'
+import { QueryKeys } from '@/types/enums/query-keys'
+import { RobotsTag } from '@/types/enums/robotsTag'
+import { QueryOptions } from '@/types/queryOptions'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useQuery } from '@tanstack/react-query'
+import { useForm } from 'react-hook-form'
+
+export function useProductVariants({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
+  const fetchProductVariants = () => getProductVariants(params).then(res => res)
 
   return useQuery<any, Error>({
-    queryKey: [QueryKeys.Categories, params],
-    queryFn: fetchCategory,
+    queryKey: [QueryKeys.ProductVariants, params],
+    queryFn: fetchProductVariants,
     enabled,
     staleTime,
     refetchOnWindowFocus: false
   })
 }
 
-interface UseCategoryFormProps {
-  initialData?: Category
+interface UseProductVariantFormProps {
+  initialData?: ProductVariant
   isUpdate?: boolean
 }
 
-type CategoryFormType = InferType<typeof categoryFormSchema>
-
-export const useCategoryForm = ({ initialData, isUpdate = false }: UseCategoryFormProps) => {
-  const defaultValues: CategoryFormType = {
+export const useProductVariantForm = ({ initialData, isUpdate = false }: UseProductVariantFormProps) => {
+  const defaultValues: ProductVariantFormType = {
     name: initialData?.name ?? '',
     slug: initialData?.slug ?? '',
     description: initialData?.description ?? '',
@@ -56,19 +50,19 @@ export const useCategoryForm = ({ initialData, isUpdate = false }: UseCategoryFo
     reset,
     setValue,
     formState: { errors }
-  } = useForm<CategoryFormType>({
+  } = useForm<ProductVariantFormType>({
     defaultValues,
-    resolver: yupResolver(categoryFormSchema)
+    resolver: yupResolver(productVariantForm)
   })
 
   const handleClose = useCallback(() => {
     reset()
   }, [reset])
 
-  const { isLoading, onSubmit } = useFormSubmit<CategoryForm>({
-    createApi: createCategory,
-    updateApi: updateCategory,
-    errorMessages: errorCategoryMessage,
+  const { isLoading, onSubmit } = useFormSubmit<ProductVariantForm>({
+    createApi: createProductVariant,
+    updateApi: updateProductVariant,
+    errorMessages: errorProductVariantMessage,
     queryKey: QueryKeys.Categories,
     successMessage: isUpdate ? 'دسته‌بندی با موفقیت به‌روزرسانی شد' : 'دسته‌بندی با موفقیت ایجاد شد',
     initialData: initialData ? { ...initialData, id: String(initialData.id) } : undefined,

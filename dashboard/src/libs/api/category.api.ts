@@ -1,6 +1,14 @@
-import { Category, CategoryForm } from '@/types/app/category.type'
+import { generateCategorySeoDescription } from '@/hooks/reactQuery/seoDescriptionGenerators'
+import { Category } from '@/types/app/category.type'
 import { Response } from '@/types/response'
 import { serverApiFetch } from '@/utils/api/serverApiFetch'
+import { handleSeoSave } from '../services/seo/seo.service'
+import { showToast } from '@/utils/showToast'
+import { SeoFormInput } from '@/types/app/seo.type'
+import { type InferType } from 'yup'
+import { categorySchema } from '../validators/category.schema'
+
+type CategoryForm = InferType<typeof categorySchema>
 
 export const getCategories = async (params?: Record<string, string>): Promise<Response<Category[]>> => {
   const res = await serverApiFetch('/category', {
@@ -41,4 +49,48 @@ export const removeCategory = async (id: string): Promise<{ status: number; data
   return {
     ...res
   }
+}
+
+const handleSeo = async (productId: number, data: Partial<CategoryForm>, isUpdate?: boolean) => {
+  const seoData = isUpdate
+    ? {
+        seo_title: data.seo_title,
+        seo_description: data.seo_description,
+        seo_keywords: data.seo_keywords,
+        seo_canonicalUrl: data.seo_canonicalUrl,
+        seo_ogTitle: data.seo_ogTitle,
+        seo_ogDescription: data.seo_ogDescription,
+        seo_ogImage: data.seo_ogImage,
+        seo_robotsTag: data.seo_robotsTag
+      }
+    : {
+        seo_title: data.seo_title || data.name,
+        seo_description:
+          data.seo_description ||
+          generateCategorySeoDescription({
+            title: data.name,
+            description: data.shortDescription ?? ''
+          }),
+        seo_keywords: data.seo_keywords,
+        seo_canonicalUrl: data.seo_canonicalUrl,
+        seo_ogTitle: data.seo_ogTitle || data.name,
+        seo_ogDescription:
+          data.seo_ogDescription ||
+          generateCategorySeoDescription({
+            title: data.name,
+            description: data.shortDescription ?? ''
+          }),
+        seo_ogImage: data.seo_ogImage || data.mainImageId,
+        seo_robotsTag: data.seo_robotsTag
+      }
+
+  const seoResponse = await handleSeoSave('category', productId, seoData as SeoFormInput)
+
+  if (seoResponse.status !== 200 && seoResponse.status !== 201) {
+    showToast({ type: 'error', message: 'خطا در ذخیره SEO' })
+
+    return false
+  }
+
+  return true
 }

@@ -1,9 +1,9 @@
-import { ProductVariants } from '@/types/app/productVariant.type'
 import { Response } from '@/types/response'
 import { serverApiFetch } from '@/utils/api/serverApiFetch'
+import { ProductVariantForm, ProductVariant } from '@/types/app/productVariant.type'
 
-export const getProductVariants = async (params?: Record<string, string>): Promise<Response<ProductVariants[]>> => {
-  const res = await serverApiFetch('/product', {
+export const getProductVariants = async (params?: Record<string, string>): Promise<Response<ProductVariant[]>> => {
+  const res = await serverApiFetch('/product-variant', {
     method: 'GET',
     query: { ...params }
   })
@@ -11,7 +11,7 @@ export const getProductVariants = async (params?: Record<string, string>): Promi
   return { ...res }
 }
 
-export const getProductVariantsById = async (id: number): Promise<{ status: number; data: ProductVariants | null }> => {
+export const getProductVariantById = async (id: number): Promise<{ status: number; data: ProductVariant | null }> => {
   const res = await serverApiFetch(`/product-variant${id}`, {
     method: 'GET'
   })
@@ -19,7 +19,7 @@ export const getProductVariantsById = async (id: number): Promise<{ status: numb
   return { ...res }
 }
 
-export const updateProductVariants = async (id: number, data: Partial<ProductVariants>): Promise<{ status: number; data: ProductVariants | null }> => {
+export const updateProductVariant = async (id: number, data: Partial<ProductVariantForm>): Promise<{ status: number; data: ProductVariant | null }> => {
   console.log(data)
 
   const res = await serverApiFetch(`/product-variant${id}`, {
@@ -30,12 +30,14 @@ export const updateProductVariants = async (id: number, data: Partial<ProductVar
   return { ...res }
 }
 
-export const createProductVariants = async (data: ProductVariants): Promise<{ status: number; data: { product: (ProductVariants & { id: number }) | null } }> => {
-  console.log(data)
-
+export const createProductVariant = async (
+  productId: number,
+  attributeValueIds: number[],
+  data: ProductVariantForm
+): Promise<{ status: number; data: { product: ProductVariant | null } }> => {
   const res = await serverApiFetch('/product-variant', {
     method: 'POST',
-    body: { ...data }
+    body: { ...data, productId, attributeValueIds }
   })
 
   console.log(res)
@@ -43,8 +45,8 @@ export const createProductVariants = async (data: ProductVariants): Promise<{ st
   return { ...res }
 }
 
-export const removeProductVariants = async (id: string): Promise<{ status: number; data: { message: string; product: ProductVariants } | null }> => {
-  const res = await serverApiFetch(`/product-variant${id}`, { method: 'DELETE' })
+export const removeProductVariant = async (id: string): Promise<{ status: number; data: { message: string; product: ProductVariant } | null }> => {
+  const res = await serverApiFetch(`/product-variant/${id}`, { method: 'DELETE' })
 
   return { ...res }
 }
