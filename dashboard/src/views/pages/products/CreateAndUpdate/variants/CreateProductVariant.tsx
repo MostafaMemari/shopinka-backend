@@ -7,6 +7,7 @@ import AttributeSelector, { SelectedValue } from './AttributeSelector'
 import CustomDialog from '@/@core/components/mui/CustomDialog'
 import { useProductVariantForm } from '@/hooks/reactQuery/useProductVariant'
 import { Attribute } from '@/types/app/productAttributes.type'
+import { useFormContext } from 'react-hook-form'
 
 interface CreateProductVariantModalProps {
   children?: ReactNode
@@ -16,6 +17,16 @@ interface CreateProductVariantModalProps {
 
 const CreateProductVariantModal = ({ children, productId, attributes }: CreateProductVariantModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
+
+  const { watch } = useFormContext()
+
+  const quantity: number = useMemo(() => watch('quantity') || [], [watch])
+  const basePrice: number = useMemo(() => watch('basePrice') || [], [watch])
+  const salePrice: number = useMemo(() => watch('salePrice') || [], [watch])
+  const width: number = useMemo(() => watch('width') || [], [watch])
+  const height: number = useMemo(() => watch('height') || [], [watch])
+  const length: number = useMemo(() => watch('length') || [], [watch])
+  const weight: number = useMemo(() => watch('weight') || [], [watch])
 
   const [selectedValues, setSelectedValues] = useState<SelectedValue[]>(() =>
     attributes.map(attr => ({
@@ -28,6 +39,14 @@ const CreateProductVariantModal = ({ children, productId, attributes }: CreatePr
   const { control, errors, setValue, isLoading, onSubmit, handleClose } = useProductVariantForm({
     productId: Number(productId)
   })
+
+  setValue('quantity', quantity)
+  setValue('basePrice', basePrice)
+  setValue('salePrice', salePrice)
+  setValue('width', width)
+  setValue('height', height)
+  setValue('length', length)
+  setValue('weight', weight)
 
   useEffect(() => {
     const newAttributeValueIds = selectedValues.map(item => item.valueId).filter((id): id is number => id !== null)

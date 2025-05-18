@@ -17,6 +17,7 @@ import LoadingSpinner from '@/components/LoadingSpinner'
 import ErrorState from '@/components/states/ErrorState'
 import EmptyCategoryState from '@/views/pages/categories/EmptyCategoryState'
 import CreateProductVariantModal from './CreateProductVariant'
+import { updateProductVariant } from './UpdateProductVariant'
 
 const VariableTabContent = () => {
   const searchParams = useSearchParams()
@@ -46,7 +47,6 @@ const VariableTabContent = () => {
     setVariants([])
   }, [productId])
 
-  // Sync variants with ProductVariants, preserving local changes
   useEffect(() => {
     if (ProductVariants.length > 0) {
       setVariants(prevVariants => {
@@ -64,16 +64,6 @@ const VariableTabContent = () => {
   useEffect(() => {
     setValue('variants', variants, { shouldValidate: true })
   }, [variants, setValue])
-
-  const handleDeleteVariant = (id: string) => {
-    console.log('Deleted product variant id:', id)
-    setVariants(variants.filter(variant => String(variant.id) !== id))
-  }
-
-  const handleUpdateVariant = (id: string, updatedFields: Partial<ProductVariant>) => {
-    console.log(`Updating variant id: ${id}, updated fields:`, updatedFields)
-    setVariants(variants.map(variant => (String(variant.id) === id ? { ...variant, ...updatedFields } : variant)))
-  }
 
   if (isLoading || isFetching) return <LoadingSpinner />
   if (error) return <ErrorState onRetry={() => refetch()} />
@@ -101,8 +91,7 @@ const VariableTabContent = () => {
               variant={variant}
               expanded={expanded === String(variant.id)}
               onChange={() => setExpanded(expanded === String(variant.id) ? false : String(variant.id))}
-              onDelete={handleDeleteVariant}
-              onUpdate={handleUpdateVariant}
+              onUpdate={(id, updatedFields) => updateProductVariant(variants, setVariants, id, updatedFields)}
             />
           ))
         )}

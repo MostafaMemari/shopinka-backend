@@ -1,3 +1,5 @@
+'use client'
+
 import Accordion from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
@@ -12,21 +14,38 @@ import VariantInformation from './sections/VariantInformation'
 import VariantRestock from './sections/VariantRestock'
 import VariantPricing from './sections/VariantPricing'
 import VariantImage from './sections/VariantImage'
-import { ProductVariant } from '@/types/app/productVariant.type'
 import RemoveProductVariantModal from './RemoveProductVariantModal'
+import { ProductVariant } from '@/types/app/productVariant.type'
+import { useProductVariantForm } from '@/hooks/reactQuery/useProductVariant'
+import { useEffect } from 'react'
 
 type VariantAccordionProps = {
   variant: ProductVariant
   expanded: boolean
   onChange: (id: string) => void
-  onDelete: (id: string) => void
   onUpdate: (id: string, updatedFields: Partial<ProductVariant>) => void
 }
 
-const VariantAccordion = ({ variant, expanded, onChange, onDelete, onUpdate }: VariantAccordionProps) => {
-  const handleSaveVariant = () => {
-    console.log(`Saved Variant (Accordion ${variant.id}):`, variant)
-  }
+const VariantAccordion = ({ variant, expanded, onChange }: VariantAccordionProps) => {
+  const { control, errors, setValue, isLoading, onSubmit } = useProductVariantForm({
+    productId: Number(variant.productId),
+    initialData: variant,
+    isUpdate: true
+  })
+
+  useEffect(() => {
+    setValue('sku', variant.sku ?? '')
+    setValue('shortDescription', variant.shortDescription ?? '')
+    setValue('quantity', variant.quantity ?? null)
+    setValue('basePrice', variant.basePrice ?? null)
+    setValue('salePrice', variant.salePrice ?? null)
+    setValue('mainImageId', variant.mainImage?.id ?? null)
+    setValue('width', variant.width ?? null)
+    setValue('height', variant.height ?? null)
+    setValue('length', variant.length ?? null)
+    setValue('weight', variant.weight ?? null)
+    setValue('attributeValueIds', variant.attributeValues?.map(av => av.id) ?? [])
+  }, [variant, setValue])
 
   return (
     <Accordion expanded={expanded} onChange={() => onChange(String(variant.id ?? ''))} sx={{ mb: 2, border: '1px solid', borderColor: 'divider' }}>
@@ -39,8 +58,8 @@ const VariantAccordion = ({ variant, expanded, onChange, onDelete, onUpdate }: V
               </IconButton>
             </Tooltip>
           </RemoveProductVariantModal>
-          <Tooltip title='ثبت متغیر'>
-            <IconButton size='small' color='primary' onClick={handleSaveVariant} sx={{ mr: 2 }}>
+          <Tooltip title='بروزرسانی متغیر'>
+            <IconButton size='small' color='primary' onClick={onSubmit} sx={{ mr: 2 }} disabled={isLoading}>
               <SaveIcon fontSize='small' />
             </IconButton>
           </Tooltip>
@@ -52,20 +71,20 @@ const VariantAccordion = ({ variant, expanded, onChange, onDelete, onUpdate }: V
           <Grid size={{ xs: 12, md: 8 }}>
             <Grid container spacing={6}>
               <Grid size={{ xs: 12 }}>
-                <VariantInformation variant={variant} onUpdate={fields => onUpdate(String(variant.id ?? ''), fields)} />
+                <VariantInformation control={control} errors={errors} />
               </Grid>
               <Grid size={{ xs: 12 }}>
-                <VariantRestock variant={variant} onUpdate={fields => onUpdate(String(variant.id ?? ''), fields)} />
+                <VariantRestock control={control} errors={errors} />
               </Grid>
             </Grid>
           </Grid>
           <Grid size={{ xs: 12, md: 4 }}>
             <Grid container spacing={6}>
               <Grid size={{ xs: 12 }}>
-                <VariantPricing variant={variant} onUpdate={fields => onUpdate(String(variant.id ?? ''), fields)} />
+                <VariantPricing control={control} errors={errors} />
               </Grid>
               <Grid size={{ xs: 12 }}>
-                <VariantImage variant={variant} onUpdate={fields => onUpdate(String(variant.id ?? ''), fields)} />
+                <VariantImage variant={variant} control={control} setValue={setValue} />
               </Grid>
             </Grid>
           </Grid>

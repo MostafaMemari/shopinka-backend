@@ -12,7 +12,7 @@ export const getProductVariants = async (params?: Record<string, string>): Promi
 }
 
 export const getProductVariantById = async (id: number): Promise<{ status: number; data: ProductVariant | null }> => {
-  const res = await serverApiFetch(`/product-variant${id}`, {
+  const res = await serverApiFetch(`/product-variant/${id}`, {
     method: 'GET'
   })
 
@@ -20,9 +20,10 @@ export const getProductVariantById = async (id: number): Promise<{ status: numbe
 }
 
 export const updateProductVariant = async (id: number, data: Partial<ProductVariantForm>): Promise<{ status: number; data: ProductVariant | null }> => {
+  console.log(id)
   console.log(data)
 
-  const res = await serverApiFetch(`/product-variant${id}`, {
+  const res = await serverApiFetch(`/product-variant/${id}`, {
     method: 'PATCH',
     body: { ...data }
   })
@@ -35,8 +36,6 @@ export const createProductVariant = async (productId: number, data: ProductVaria
     method: 'POST',
     body: { ...data, productId }
   })
-
-  console.log(res)
 
   return { ...res }
 }
