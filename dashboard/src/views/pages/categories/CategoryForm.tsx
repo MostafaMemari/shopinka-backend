@@ -10,7 +10,7 @@ import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
 import { useState } from 'react'
-import { type CategoryForm, Category } from '@/types/app/category.type'
+import { Category } from '@/types/app/category.type'
 import SeoFormWithProps from '@/components/seo/props/SeoFormWithProps'
 
 interface CategoryFormProps {

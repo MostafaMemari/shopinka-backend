@@ -67,12 +67,12 @@ export const useBlogForm = ({ id, initialData, methods }: UseBlogFormProps) => {
               methods.setValue('seo_canonicalUrl', blog.seoMeta.canonicalUrl)
               methods.setValue('seo_ogTitle', blog.seoMeta.ogTitle)
               methods.setValue('seo_ogDescription', blog.seoMeta.ogDescription)
-              methods.setValue('seo_ogImage', String(blog.seoMeta.ogImage))
+              methods.setValue('seo_ogImage', blog.seoMeta.ogImage)
               methods.setValue('seo_robotsTag', blog.seoMeta.robotsTag)
             }
 
             if (blog.mainImage) {
-              methods.setValue('mainImage' as any, blog.mainImage)
+              methods.setValue('mainImage' as any, blog.mainImage as GalleryItem)
             }
 
             methods.setValue('categoryIds', blog.categories?.map(category => category.id) || [])

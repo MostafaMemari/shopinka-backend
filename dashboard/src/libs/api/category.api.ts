@@ -5,10 +5,7 @@ import { serverApiFetch } from '@/utils/api/serverApiFetch'
 import { handleSeoSave } from '../services/seo/seo.service'
 import { showToast } from '@/utils/showToast'
 import { SeoFormInput } from '@/types/app/seo.type'
-import { type InferType } from 'yup'
-import { categorySchema } from '../validators/category.schema'
-
-type CategoryForm = InferType<typeof categorySchema>
+import { CategoryForm } from '../validators/category.schema'
 
 export const getCategories = async (params?: Record<string, string>): Promise<Response<Category[]>> => {
   const res = await serverApiFetch('/category', {
@@ -68,8 +65,8 @@ const handleSeo = async (productId: number, data: Partial<CategoryForm>, isUpdat
         seo_description:
           data.seo_description ||
           generateCategorySeoDescription({
-            title: data.name,
-            description: data.shortDescription ?? ''
+            name: data.name,
+            description: data.description ?? ''
           }),
         seo_keywords: data.seo_keywords,
         seo_canonicalUrl: data.seo_canonicalUrl,
@@ -77,10 +74,10 @@ const handleSeo = async (productId: number, data: Partial<CategoryForm>, isUpdat
         seo_ogDescription:
           data.seo_ogDescription ||
           generateCategorySeoDescription({
-            title: data.name,
-            description: data.shortDescription ?? ''
+            name: data.name,
+            description: data.description ?? ''
           }),
-        seo_ogImage: data.seo_ogImage || data.mainImageId,
+        seo_ogImage: data.seo_ogImage || data.thumbnailImageId,
         seo_robotsTag: data.seo_robotsTag
       }
 

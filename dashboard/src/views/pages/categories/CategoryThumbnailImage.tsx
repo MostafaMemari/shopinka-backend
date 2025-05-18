@@ -12,7 +12,8 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import { GalleryItem } from '@/types/app/gallery.type'
 import ModalGallery from '@/components/Gallery/ModalGallery/ModalGallery'
 import ImagePlaceholder from '@/components/EmptyPlaceholder'
-import { Category, CategoryForm } from '@/types/app/category.type'
+import { Category } from '@/types/app/category.type'
+import { CategoryForm } from '@/libs/validators/category.schema'
 
 interface CategoryThumbnailImageProps {
   control: Control<CategoryForm>

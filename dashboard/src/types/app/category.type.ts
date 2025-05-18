@@ -18,11 +18,3 @@ export type Category = {
   parent: Category | null
   seoMeta: Seo | null
 }
-
-export type CategoryForm = {
-  name: string
-  slug: string
-  description: string | null
-  parentId: number | null
-  thumbnailImageId: number | null
-}

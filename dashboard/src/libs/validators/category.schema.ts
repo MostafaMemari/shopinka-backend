@@ -23,3 +23,5 @@ export const categorySchema = yup
   .required()
 
 export const categoryFormSchema = categorySchema.concat(seoSchema)
+
+export type CategoryForm = yup.InferType<typeof categoryFormSchema>

@@ -39,7 +39,7 @@ const BlogForm = () => {
       seo_canonicalUrl: '',
       seo_ogTitle: '',
       seo_ogDescription: '',
-      seo_ogImage: '',
+      seo_ogImage: null,
       seo_robotsTag: RobotsTag.INDEX_FOLLOW
     }
   })

@@ -5,8 +5,8 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { categoryFormSchema } from '@/libs/validators/category.schema'
-import { CategoryForm, Category } from '@/types/app/category.type'
+import { CategoryForm, categoryFormSchema } from '@/libs/validators/category.schema'
+import { Category } from '@/types/app/category.type'
 import { useFormSubmit } from '../useFormSubmit'
 import { RobotsTag } from '@/types/enums/robotsTag'
 import { type InferType } from 'yup'
@@ -45,7 +45,7 @@ export const useCategoryForm = ({ initialData, isUpdate = false }: UseCategoryFo
     seo_canonicalUrl: '',
     seo_ogTitle: '',
     seo_ogDescription: '',
-    seo_ogImage: '',
+    seo_ogImage: null,
     seo_robotsTag: RobotsTag.INDEX_FOLLOW
   }
 

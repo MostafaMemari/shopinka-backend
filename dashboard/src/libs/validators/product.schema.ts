@@ -122,8 +122,9 @@ export const productSchema = yup.object().shape({
     .default(null)
 })
 
-
 export const productFormSchema = productSchema.concat(seoSchema)
+
+export type ProductForm = yup.InferType<typeof productFormSchema>
 
 // attributeValuesIds: yup
 //   .array()
