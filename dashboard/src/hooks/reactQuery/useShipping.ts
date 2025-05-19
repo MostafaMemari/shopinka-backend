@@ -25,9 +25,10 @@ export function useShippings({ enabled = true, params = {}, staleTime = 1 * 60 *
 interface UseShippingFormProps {
   initialData?: Shipping
   isUpdate?: boolean
+  handleModalClose?: () => void
 }
 
-export const useShippingForm = ({ initialData, isUpdate = false }: UseShippingFormProps) => {
+export const useShippingForm = ({ initialData, isUpdate = false, handleModalClose }: UseShippingFormProps) => {
   const defaultValues: ShippingForm = {
     name: initialData?.name ?? '',
     price: initialData?.price ?? null,
@@ -65,7 +66,7 @@ export const useShippingForm = ({ initialData, isUpdate = false }: UseShippingFo
     errors,
     setValue,
     isLoading,
-    onSubmit: handleSubmit(data => onSubmit(data, handleClose)),
+    onSubmit: handleSubmit(data => onSubmit(data, handleModalClose ?? (() => {}))),
     handleClose
   }
 }

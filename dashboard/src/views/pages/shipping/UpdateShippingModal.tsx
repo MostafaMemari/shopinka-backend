@@ -16,17 +16,14 @@ interface UpdateShippingModalProps {
 const UpdateShippingModal = ({ children, initialData }: UpdateShippingModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
 
-  const { control, errors, isLoading, onSubmit, handleClose } = useShippingForm({
-    initialData,
-    isUpdate: true
-  })
-
   const handleOpen = useCallback(() => setOpen(true), [])
+  const handleClose = useCallback(() => setOpen(false), [])
 
-  const handleModalClose = useCallback(() => {
-    setOpen(false)
-    handleClose()
-  }, [handleClose])
+  const { control, errors, isLoading, onSubmit } = useShippingForm({
+    initialData,
+    isUpdate: true,
+    handleModalClose: handleClose
+  })
 
   return (
     <div>
@@ -40,10 +37,10 @@ const UpdateShippingModal = ({ children, initialData }: UpdateShippingModalProps
 
       <CustomDialog
         open={open}
-        onClose={handleModalClose}
+        onClose={handleClose}
         title='بروزرسانی حمل و نقل'
         defaultMaxWidth='xs'
-        actions={<FormActions onCancel={handleModalClose} submitText='بروزرسانی' onSubmit={onSubmit} isLoading={isLoading} />}
+        actions={<FormActions onCancel={handleClose} submitText='بروزرسانی' onSubmit={onSubmit} isLoading={isLoading} />}
       >
         <ShippingForm control={control} errors={errors} isLoading={isLoading} />
       </CustomDialog>

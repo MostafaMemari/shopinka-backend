@@ -25,9 +25,10 @@ export function useTags({ enabled = true, params = {}, staleTime = 1 * 60 * 1000
 interface UseTagFormProps {
   initialData?: Tag
   isUpdate?: boolean
+  handleModalClose?: () => void
 }
 
-export const useTagForm = ({ initialData, isUpdate = false }: UseTagFormProps) => {
+export const useTagForm = ({ initialData, isUpdate = false, handleModalClose }: UseTagFormProps) => {
   const defaultValues: TagForm = {
     name: initialData?.name ?? '',
     slug: initialData?.slug ?? '',
@@ -65,7 +66,7 @@ export const useTagForm = ({ initialData, isUpdate = false }: UseTagFormProps) =
     errors,
     setValue,
     isLoading,
-    onSubmit: handleSubmit(data => onSubmit(data, handleClose)),
+    onSubmit: handleSubmit(data => onSubmit(data, handleModalClose ?? (() => {}))),
     handleClose
   }
 }

@@ -15,13 +15,9 @@ const CreateShippingModal = ({ children }: CreateShippingModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
 
   const handleOpen = useCallback(() => setOpen(true), [])
+  const handleClose = useCallback(() => setOpen(false), [])
 
-  const { control, errors, isLoading, onSubmit, handleClose } = useShippingForm({})
-
-  const handleModalClose = useCallback(() => {
-    setOpen(false)
-    handleClose()
-  }, [handleClose])
+  const { control, errors, isLoading, onSubmit } = useShippingForm({ handleModalClose: handleClose })
 
   return (
     <div>
@@ -35,10 +31,10 @@ const CreateShippingModal = ({ children }: CreateShippingModalProps) => {
 
       <CustomDialog
         open={open}
-        onClose={handleModalClose}
+        onClose={handleClose}
         title='ثبت حمل و نقل جدید'
         defaultMaxWidth='xs'
-        actions={<FormActions onCancel={handleModalClose} onSubmit={onSubmit} isLoading={isLoading} />}
+        actions={<FormActions onCancel={handleClose} onSubmit={onSubmit} isLoading={isLoading} />}
       >
         <ShippingForm control={control} errors={errors} isLoading={isLoading} />
       </CustomDialog>

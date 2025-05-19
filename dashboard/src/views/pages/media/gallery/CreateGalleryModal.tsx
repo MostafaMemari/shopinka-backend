@@ -15,15 +15,9 @@ const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
 
   const handleOpen = useCallback(() => setOpen(true), [])
+  const handleClose = useCallback(() => setOpen(false), [])
 
-  const { control, errors, isLoading, onSubmit, handleClose } = useGalleryForm({
-    onSuccess: () => setOpen(false)
-  })
-
-  const handleModalClose = useCallback(() => {
-    setOpen(false)
-    handleClose()
-  }, [handleClose])
+  const { control, errors, isLoading, onSubmit } = useGalleryForm({ handleModalClose: handleClose })
 
   return (
     <div>
@@ -37,10 +31,10 @@ const CreateGalleryModal = ({ children }: CreateGalleryModalProps) => {
 
       <CustomDialog
         open={open}
-        onClose={handleModalClose}
+        onClose={handleClose}
         title='ثبت گالری جدید'
         defaultMaxWidth='xs'
-        actions={<FormActions onCancel={handleModalClose} onSubmit={onSubmit} isLoading={isLoading} />}
+        actions={<FormActions onCancel={handleClose} onSubmit={onSubmit} isLoading={isLoading} />}
       >
         <GalleryForm control={control} errors={errors} isLoading={isLoading} />
       </CustomDialog>

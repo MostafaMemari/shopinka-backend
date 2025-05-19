@@ -16,17 +16,14 @@ interface UpdateTagModalProps {
 const UpdateTagModal = ({ children, initialData }: UpdateTagModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
 
-  const { control, errors, setValue, isLoading, onSubmit, handleClose } = useTagForm({
-    initialData,
-    isUpdate: true
-  })
-
   const handleOpen = useCallback(() => setOpen(true), [])
+  const handleClose = useCallback(() => setOpen(false), [])
 
-  const handleModalClose = useCallback(() => {
-    setOpen(false)
-    handleClose()
-  }, [handleClose])
+  const { control, errors, setValue, isLoading, onSubmit } = useTagForm({
+    initialData,
+    isUpdate: true,
+    handleModalClose: handleClose
+  })
 
   return (
     <div>
@@ -40,10 +37,10 @@ const UpdateTagModal = ({ children, initialData }: UpdateTagModalProps) => {
 
       <CustomDialog
         open={open}
-        onClose={handleModalClose}
+        onClose={handleClose}
         title='ویرایش برچسب'
         defaultMaxWidth='lg'
-        actions={<FormActions onSubmit={onSubmit} onCancel={handleModalClose} isLoading={isLoading} submitText={initialData ? 'بروزرسانی' : 'ثبت'} />}
+        actions={<FormActions onSubmit={onSubmit} onCancel={handleClose} isLoading={isLoading} submitText={initialData ? 'بروزرسانی' : 'ثبت'} />}
       >
         <TagForm control={control} errors={errors} setValue={setValue} isLoading={isLoading} initialData={initialData} />
       </CustomDialog>

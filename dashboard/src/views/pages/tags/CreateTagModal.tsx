@@ -13,14 +13,11 @@ interface CreateTagModalProps {
 
 const CreateTagModal = ({ children }: CreateTagModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
-  const { control, errors, setValue, isLoading, onSubmit, handleClose } = useTagForm({})
 
   const handleOpen = useCallback(() => setOpen(true), [])
+  const handleClose = useCallback(() => setOpen(false), [])
 
-  const handleModalClose = useCallback(() => {
-    setOpen(false)
-    handleClose()
-  }, [handleClose])
+  const { control, errors, setValue, isLoading, onSubmit } = useTagForm({ handleModalClose: handleClose })
 
   return (
     <div>
@@ -34,10 +31,10 @@ const CreateTagModal = ({ children }: CreateTagModalProps) => {
 
       <CustomDialog
         open={open}
-        onClose={handleModalClose}
+        onClose={handleClose}
         title='ثبت برچسب جدید'
         defaultMaxWidth='md'
-        actions={<FormActions submitText='ثبت' onCancel={handleModalClose} onSubmit={onSubmit} isLoading={isLoading} />}
+        actions={<FormActions submitText='ثبت' onCancel={handleClose} onSubmit={onSubmit} isLoading={isLoading} />}
       >
         <TagForm control={control} errors={errors} setValue={setValue} isLoading={isLoading} />
       </CustomDialog>

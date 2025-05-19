@@ -26,8 +26,6 @@ const CreateMediaModal = ({ children }: CreateMediaModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedGalleryId, setSelectedGalleryId] = useState<string>('')
   const maxFiles = 5
-  const router = useRouter()
-  const queryClient = useQueryClient()
 
   const { invalidate } = useInvalidateQuery()
 
