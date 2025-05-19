@@ -21,6 +21,10 @@ import { Placeholder } from '@tiptap/extension-placeholder'
 import { TextAlign } from '@tiptap/extension-text-align'
 import { Link } from '@tiptap/extension-link'
 import { Image } from '@tiptap/extension-image'
+import { BulletList } from '@tiptap/extension-bullet-list'
+import { OrderedList } from '@tiptap/extension-ordered-list'
+import { ListItem } from '@tiptap/extension-list-item'
+import { Heading } from '@tiptap/extension-heading'
 import { useEffect, useState } from 'react'
 
 // Components Imports
@@ -35,7 +39,6 @@ const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کن
   const [open, setOpen] = useState(false)
   const [linkUrl, setLinkUrl] = useState('')
   const [isFullScreen, setIsFullScreen] = useState(false)
-  const [isGalleryOpen, setIsGalleryOpen] = useState(false)
 
   const editor = useEditor({
     extensions: [
@@ -57,6 +60,20 @@ const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کن
           class: 'max-w-full h-auto rounded',
           style: 'max-width: 300px;'
         }
+      }),
+      BulletList.configure({
+        HTMLAttributes: {
+          class: 'list-disc pli-6'
+        }
+      }),
+      OrderedList.configure({
+        HTMLAttributes: {
+          class: 'list-decimal pli-6'
+        }
+      }),
+      ListItem,
+      Heading.configure({
+        levels: [1, 2, 3]
       })
     ],
     immediatelyRender: false,
@@ -79,7 +96,6 @@ const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کن
   const handleLinkDialog = () => {
     if (editor) {
       const previousUrl = editor.getAttributes('link').href || ''
-
       setLinkUrl(previousUrl)
       setOpen(true)
     }
@@ -92,7 +108,6 @@ const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کن
       } else {
         editor.chain().focus().unsetLink().run()
       }
-
       setOpen(false)
       setLinkUrl('')
     }
@@ -108,7 +123,7 @@ const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کن
     setIsFullScreen(!isFullScreen)
   }
 
-  // Handle Esc key to exit full screen
+  // Handle Esc key to exit full screen and manage body scroll
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isFullScreen) {
@@ -116,9 +131,20 @@ const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کن
       }
     }
 
+    // Disable body scroll in full-screen mode
+    if (isFullScreen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'auto'
+    }
+
     window.addEventListener('keydown', handleKeyDown)
 
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    // Cleanup on unmount or when isFullScreen changes
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = 'auto'
+    }
   }, [isFullScreen])
 
   // Handle gallery select
@@ -134,9 +160,8 @@ const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کن
 
   return (
     <div
-      className={classnames({
-        'fixed inset-0 z-50 bg-white': isFullScreen,
-        'flex flex-col': true
+      className={classnames('flex flex-col', {
+        'fixed inset-0 z-[1400] bg-white': isFullScreen
       })}
     >
       {label && !isFullScreen && <Typography className='mbe-2'>{label}</Typography>}
@@ -146,20 +171,20 @@ const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کن
         })}
       >
         <CardContent
-          className={classnames('p-0', {
-            'flex-1 flex flex-col': isFullScreen
+          className={classnames('p-0 flex flex-col', {
+            'h-full': isFullScreen
           })}
         >
           <EditorToolbar editor={editor} openLinkDialog={handleLinkDialog} toggleFullScreen={toggleFullScreen} isFullScreen={isFullScreen} onSelectImages={handleSelect} />
           <Divider className='mli-6' />
-          <EditorContent
-            editor={editor}
-            className={classnames('overflow-y-auto flex', {
-              'flex-1': isFullScreen,
+          <div
+            className={classnames('flex-1 overflow-y-auto', {
               'min-h-[250px]': !isFullScreen
             })}
-            style={{ height: isFullScreen ? 'auto' : height }}
-          />
+            style={{ height: isFullScreen ? '100%' : height }}
+          >
+            <EditorContent editor={editor} className='h-full prose max-w-none' />
+          </div>
         </CardContent>
       </Card>
       <Dialog open={open} onClose={handleClose}>

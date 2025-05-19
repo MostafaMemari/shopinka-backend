@@ -19,7 +19,6 @@ const EditorToolbar = ({ editor, openLinkDialog, toggleFullScreen, isFullScreen,
 
   const handleSelect = (items: GalleryItem | GalleryItem[]) => {
     const images = Array.isArray(items) ? items : [items]
-
     setSelectedImages(images)
     onSelectImages(images)
   }
@@ -60,7 +59,41 @@ const EditorToolbar = ({ editor, openLinkDialog, toggleFullScreen, isFullScreen,
           />
         </CustomIconButton>
       ))}
-
+      {/* New Heading Buttons */}
+      {[
+        ['heading1', 'tabler-h-1', { level: 1 }],
+        ['heading2', 'tabler-h-2', { level: 2 }],
+        ['heading3', 'tabler-h-3', { level: 3 }]
+      ].map(([type, icon, attrs]) => (
+        <CustomIconButton
+          key={type}
+          {...(editor.isActive('heading', { level: attrs.level }) && { color: 'primary' })}
+          variant='tonal'
+          size='small'
+          onClick={() => editor.chain().focus().toggleHeading({ level: attrs.level }).run()}
+        >
+          <i
+            className={classnames(icon, {
+              'text-textSecondary': !editor.isActive('heading', { level: attrs.level })
+            })}
+          />
+        </CustomIconButton>
+      ))}
+      {/* New List Buttons */}
+      {[
+        ['bulletList', 'tabler-list'],
+        ['orderedList', 'tabler-list-numbers']
+      ].map(([type, icon]) => (
+        <CustomIconButton
+          key={type}
+          {...(editor.isActive(type) && { color: 'primary' })}
+          variant='tonal'
+          size='small'
+          onClick={() => (editor.chain().focus() as any)[`toggle${type.charAt(0).toUpperCase() + type.slice(1)}`]().run()}
+        >
+          <i className={classnames(icon, { 'text-textSecondary': !editor.isActive(type) })} />
+        </CustomIconButton>
+      ))}
       <ModalGallery btnLabel='انتخاب تصاویر' multi initialSelected={selectedImages} onSelect={handleSelect}>
         <CustomIconButton variant='tonal' size='small'>
           <i className={classnames('tabler-photo', 'text-textSecondary')} />

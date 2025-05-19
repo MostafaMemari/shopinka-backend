@@ -7,3 +7,72 @@ i[class*='tabler-'] {
   font-size: 20px;
   display: inline-block;
 }
+
+/* RichTextEditor Styles */
+.ProseMirror {
+  padding: 16px;
+  outline: none;
+  min-height: 100%;
+}
+
+.ProseMirror p {
+  margin: 0.5em 0;
+}
+
+.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+/* Ensure full-screen mode covers entire viewport */
+.fixed.inset-0 {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* Ensure scrollable content in full-screen */
+.overflow-y-auto {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ProseMirror in full-screen */
+.prose {
+  max-width: none; /* Allow content to use full width */
+}
+
+/* List styles */
+.ProseMirror ul {
+  list-style-type: disc;
+  padding-inline-start: 24px;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+  padding-inline-start: 24px;
+}
+
+/* Heading styles */
+.ProseMirror h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0.67em 0;
+}
+
+.ProseMirror h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0.83em 0;
+}
+
+.ProseMirror h3 {
+  font-size: 1.17em;
+  font-weight: bold;
+  margin: 1em 0;
+}
