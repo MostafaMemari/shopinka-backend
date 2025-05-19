@@ -2,6 +2,9 @@
 
 import { ofetch } from 'ofetch'
 import { getAccessToken } from '../getToken'
+import { cookies } from 'next/headers'
+
+import { COOKIE_NAMES } from '@/libs/constants'
 
 export const serverApiFetch = async (
   path: string,
@@ -12,14 +15,28 @@ export const serverApiFetch = async (
     headers?: HeadersInit
   } = {}
 ) => {
-  const token = await getAccessToken()
+  let token: string
+
+  try {
+    token = await getAccessToken()
+  } catch (tokenError) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Token Error:', tokenError)
+    }
+
+    return {
+      status: 401,
+      data: { message: 'خطا در دریافت توکن احراز هویت' }
+    }
+  }
+
   const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData
 
   try {
     const data = await ofetch(path, {
       baseURL: process.env.API_BASE_URL,
       method: options.method || 'GET',
-      body: isFormData ? options.body : JSON.stringify(options.body),
+      body: isFormData ? options.body : options.body ? JSON.stringify(options.body) : undefined,
       query: options.query,
       headers: {
         Authorization: `Bearer ${token}`,
@@ -34,18 +51,36 @@ export const serverApiFetch = async (
       data
     }
   } catch (error: any) {
-    const statusCode = error?.response?.status || error?.status || 500
-    const message = error?.data?.message || 'خطای ناشناخته'
+    let statusCode = 500
+    let message = 'خطای ناشناخته'
+    let errorData = {}
 
-    // if (process.env.NODE_ENV === 'development') {
-    //   console.error('API Error:', { statusCode, message, error })
-    // }
+    if (error?.response) {
+      statusCode = error.response.status || 500
+      errorData = error.data || {}
+      message = error.data?.message || message
+    } else if (error?.request) {
+      message = 'خطای شبکه یا عدم دسترسی به سرور'
+    } else {
+      message = error.message || message
+    }
+
+    if (statusCode === 404 && message === 'User not found') {
+      const cookieStore = await cookies()
+
+      cookieStore.delete(COOKIE_NAMES.ACCESS_TOKEN)
+      cookieStore.delete(COOKIE_NAMES.REFRESH_TOKEN)
+    }
+
+    if (process.env.NODE_ENV === 'development') {
+      console.error('API Error:', { error, statusCode, message, errorData })
+    }
 
     return {
       status: statusCode,
       data: {
         message,
-        ...(error?.data || {})
+        ...errorData
       }
     }
   }
