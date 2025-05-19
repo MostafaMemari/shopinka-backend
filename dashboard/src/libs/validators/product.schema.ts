@@ -6,13 +6,15 @@ const productStatusValues = Object.values(ProductStatus)
 const productTypeValues = Object.values(ProductType)
 
 export const productSchema = yup.object().shape({
-  sku: yup.string().required('کد محصول الزامی است').max(30, 'حداکثر 30 کاراکتر'),
   name: yup.string().required('نام محصول الزامی است').max(100, 'حداکثر 100 کاراکتر'),
+  sku: yup.string().notRequired().max(30, 'حداکثر 30 کاراکتر'),
   slug: yup
     .string()
-    .required('نامک الزامی است')
-    .max(120, 'حداکثر 120 کاراکتر')
+    .notRequired()
+    .transform((value, originalValue) => (originalValue === '' ? null : value))
+    .max(350, 'نامک نمی‌تواند بیشتر از 350 کاراکتر باشد')
     .matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'فرمت slug معتبر نیست'),
+
   description: yup.string().notRequired().default(null),
   shortDescription: yup.string().notRequired().max(300, 'حداکثر 300 کاراکتر').default(null),
   quantity: yup
@@ -134,10 +136,3 @@ export const productSchema = yup.object().shape({
 })
 
 export const productFormSchema = productSchema.concat(seoSchema)
-
-export type ProductForm = yup.InferType<typeof productFormSchema>
-
-// attributeValuesIds: yup
-//   .array()
-//   .of(yup.array().of(yup.number().positive('شناسه ویژگی باید عددی مثبت باشد')).min(1, 'هر ترکیب باید حداقل یک مقدار داشته باشد'))
-//   .notRequired(),

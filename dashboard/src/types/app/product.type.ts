@@ -4,6 +4,8 @@ import { Attribute } from './productAttributes.type'
 import { ProductVariant } from './productVariant.type'
 import { Seo } from './seo.type'
 import { Tag } from './tag.type'
+import * as yup from 'yup'
+import { productSchema } from '@/libs/validators/product.schema'
 
 export enum ProductStatus {
   DRAFT = 'DRAFT',
@@ -44,3 +46,5 @@ export type Product = {
   variants: ProductVariant[] | undefined
   tags: Tag[] | undefined
 }
+
+export type ProductForm = yup.InferType<typeof productSchema>

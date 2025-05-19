@@ -11,9 +11,8 @@ export class CreateTagDto {
     @IsOptional()
     @IsString()
     @IsNotEmpty()
-    @MaxLength(120)
-    @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
-    @ApiProperty({ type: "string", required: false, nullable: true, maxLength: 120 })
+    @MaxLength(350)
+    @ApiProperty({ type: "string", required: false, nullable: true, maxLength: 350 })
     slug?: string
 
     @IsOptional()

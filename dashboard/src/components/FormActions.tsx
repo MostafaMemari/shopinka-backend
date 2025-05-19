@@ -16,14 +16,8 @@ const FormActions = ({ onCancel, onSubmit, isLoading = false, cancelText = 'ان
       <Button onClick={onCancel} color='secondary'>
         {cancelText}
       </Button>
-      <Button
-        onClick={onSubmit}
-        variant='contained'
-        color={submitColor}
-        disabled={isLoading || disabled}
-        startIcon={isLoading ? <CircularProgress size={20} color='inherit' /> : null}
-      >
-        {isLoading ? `در حال ${submitText}...` : submitText}
+      <Button onClick={onSubmit} variant='contained' color={submitColor} disabled={isLoading || disabled}>
+        {isLoading ? <CircularProgress size={20} color='inherit' /> : submitText}
       </Button>
     </>
   )

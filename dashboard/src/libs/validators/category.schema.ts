@@ -7,12 +7,13 @@ export const categorySchema = yup
     name: yup.string().required('نام الزامی است'),
     slug: yup
       .string()
+      .notRequired()
+      .transform((value, originalValue) => (originalValue === '' ? null : value))
+      .max(350, 'نامک نمی‌تواند بیشتر از 350 کاراکتر باشد')
       .matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
         message: 'نامک باید فقط شامل حروف کوچک، اعداد و خط تیره باشد',
         excludeEmptyString: true
-      })
-      .required('نامک الزامی است')
-      .max(120, 'نامک نمی‌تواند بیشتر از 120 کاراکتر باشد'),
+      }),
 
     parentId: yup.number().notRequired().positive().default(null),
 

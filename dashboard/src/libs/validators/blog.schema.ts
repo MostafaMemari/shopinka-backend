@@ -8,9 +8,13 @@ export const blogSchema = yup.object().shape({
   title: yup.string().required('نام محصول الزامی است').max(100, 'حداکثر 100 کاراکتر'),
   slug: yup
     .string()
-    .required('نامک الزامی است')
-    .max(120, 'حداکثر 120 کاراکتر')
-    .matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'فرمت slug معتبر نیست'),
+    .notRequired()
+    .transform((value, originalValue) => (originalValue === '' ? null : value))
+    .max(350, 'نامک نمی‌تواند بیشتر از 350 کاراکتر باشد')
+    .matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
+      message: 'نامک باید فقط شامل حروف کوچک، اعداد و خط تیره باشد',
+      excludeEmptyString: true
+    }),
   content: yup.string().notRequired().default(null),
   readingTime: yup
     .number()
