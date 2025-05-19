@@ -1,12 +1,13 @@
 'use client'
 
 import { Controller, useFormContext } from 'react-hook-form'
-import { Autocomplete, Typography } from '@mui/material'
+import { Autocomplete, Box, Typography } from '@mui/material'
 import Grid from '@mui/material/Grid2'
 import MenuItem from '@mui/material/MenuItem'
 import CustomTextField from '@core/components/mui/TextField'
 import useVariants from '@/hooks/useVariants'
 import { Attribute } from '@/types/app/productAttributes.type'
+import CreateAttributeModal from '../../attribute/CreateAttributeModal'
 
 const VariantsTab = () => {
   const {
@@ -100,6 +101,21 @@ const VariantsTab = () => {
           )}
         </Grid>
       )}
+
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          width: '100%'
+        }}
+      >
+        {' '}
+        <CreateAttributeModal>
+          <Typography variant='body2' color='primary' sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}>
+            ثبت ویژگی جدید
+          </Typography>
+        </CreateAttributeModal>
+      </Box>
     </Grid>
   )
 }

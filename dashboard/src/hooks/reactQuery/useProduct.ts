@@ -140,8 +140,8 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
 
       methods.setValue('galleryImageIds', initialData.galleryImages?.map(img => img.id) || [])
 
-      methods.setValue('categoryIds', initialData.categoryIds || [])
-      methods.setValue('attributeIds', initialData.attributeIds || [])
+      methods.setValue('categoryIds', initialData.categories?.map(category => category.id) || [])
+      methods.setValue('attributeIds', initialData.attributes?.map(attribute => attribute.id) || [])
       methods.setValue('tagIds', initialData.tags?.map(tag => tag.id) || [])
       setIsLoading(false)
     } else {
@@ -173,6 +173,7 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
           galleryImageIds: initialProduct.galleryImages?.map(img => img.id) || [],
           categoryIds: initialProduct.categories?.map(category => category.id) || [],
           attributeIds: initialProduct.attributes?.map(attribute => attribute.id) || [],
+          tagIds: initialProduct.tags?.map(tag => tag.id) || [],
           seo_canonicalUrl: initialProduct.seoMeta?.canonicalUrl,
           seo_description: initialProduct.seoMeta?.description,
           seo_keywords: initialProduct.seoMeta?.keywords,

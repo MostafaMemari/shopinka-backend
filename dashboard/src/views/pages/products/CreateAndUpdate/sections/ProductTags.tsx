@@ -59,7 +59,7 @@ const ProductTags = () => {
             setSelectedTags(newSelectedTags)
           }}
           disabled={isLoading || isFetching}
-          noOptionsText='برچسبی یافت نشد' // اضافه کردن متن فارسی برای حالت خالی
+          noOptionsText='برچسبی یافت نشد'
           renderInput={params => (
             <TextField {...params} label='برچسب‌ها' placeholder='جستجو و انتخاب برچسب' error={!!errors.tagIds} helperText={errors.tagIds?.message?.toString()} />
           )}

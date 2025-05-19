@@ -67,7 +67,6 @@ export function cleanObject<T extends Record<string, any>>(obj: T): T {
   return Object.fromEntries(
     Object.entries(obj)
       .map(([key, value]) => {
-        // برای رشته‌ها: trim کن اگر خالی نیست
         if (typeof value === 'string') {
           return [key, value.trim() || null]
         }
