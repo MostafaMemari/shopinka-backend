@@ -31,6 +31,7 @@ const SeoFormWithContext: React.FC = () => {
             render={({ field }) => (
               <CustomTextField
                 {...field}
+                value={field.value ?? ''}
                 fullWidth
                 multiline
                 rows={3}
@@ -52,6 +53,7 @@ const SeoFormWithContext: React.FC = () => {
             render={({ field }) => (
               <CustomTextField
                 {...field}
+                value={field.value ?? ''}
                 fullWidth
                 label='آدرس کانونیکال'
                 placeholder='https://example.com/slug'
@@ -68,6 +70,7 @@ const SeoFormWithContext: React.FC = () => {
             render={({ field }) => (
               <CustomTextField
                 {...field}
+                value={field.value ?? ''}
                 fullWidth
                 label='عنوان اوپن‌گراف'
                 placeholder='برای اشتراک در شبکه‌های اجتماعی'
@@ -84,6 +87,7 @@ const SeoFormWithContext: React.FC = () => {
             render={({ field }) => (
               <CustomTextField
                 {...field}
+                value={field.value ?? ''}
                 fullWidth
                 multiline
                 rows={3}

@@ -1,7 +1,7 @@
 'use client'
 
 import { createBlog, getBlogById, getBlogs, updateBlog } from '@/libs/api/blog.api'
-import { Blog, BlogStatus } from '@/types/app/blog.type'
+import { Blog, BlogForm, BlogStatus } from '@/types/app/blog.type'
 import { QueryKeys } from '@/types/enums/query-keys'
 import { QueryOptions } from '@/types/queryOptions'
 import { cleanObject } from '@/utils/getChangedFields'
@@ -10,11 +10,12 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
 import { useFormSubmit } from '../useFormSubmit'
 import { GalleryItem } from '@/types/app/gallery.type'
-import { type UseFormReturn } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { blogFormSchema } from '@/libs/validators/blog.schema'
-import { type InferType } from 'yup'
 import { errorBlogMessage } from '@/messages/blog.message'
 import { useRouter } from 'next/navigation'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { RobotsTag } from '@/types/enums/robotsTag'
 
 export function useBlogs({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchBlogs = () => getBlogs(params).then(res => res)
@@ -28,19 +29,38 @@ export function useBlogs({ enabled = true, params = {}, staleTime = 1 * 60 * 100
   })
 }
 
-type BlogFormType = InferType<typeof blogFormSchema>
-
 interface UseBlogFormProps {
   id?: number | null
   initialData?: Blog
-  methods: UseFormReturn<BlogFormType>
 }
 
-export const useBlogForm = ({ id, initialData, methods }: UseBlogFormProps) => {
+export const useBlogForm = ({ id, initialData }: UseBlogFormProps) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(!!id)
   const [initialBlog, setInitialBlog] = useState<Blog | null>(null)
   const isUpdate = !!id || !!initialData
+
+  const methods = useForm<BlogForm>({
+    resolver: yupResolver(blogFormSchema),
+    mode: 'onChange',
+    defaultValues: {
+      title: '',
+      slug: '',
+      content: null,
+      status: BlogStatus.DRAFT,
+      categoryIds: [],
+      readingTime: null,
+
+      seo_title: '',
+      seo_description: '',
+      seo_keywords: [],
+      seo_canonicalUrl: '',
+      seo_ogTitle: '',
+      seo_ogDescription: '',
+      seo_ogImage: null,
+      seo_robotsTag: RobotsTag.INDEX_FOLLOW
+    }
+  })
 
   useEffect(() => {
     if (id && !initialData) {
@@ -56,7 +76,7 @@ export const useBlogForm = ({ id, initialData, methods }: UseBlogFormProps) => {
           if (blog) {
             Object.entries(blog).forEach(([key, value]) => {
               if (key in methods.getValues() && typeof value !== 'object') {
-                methods.setValue(key as keyof BlogFormType, value ?? null)
+                methods.setValue(key as keyof BlogForm, value ?? null)
               }
             })
 
@@ -76,6 +96,7 @@ export const useBlogForm = ({ id, initialData, methods }: UseBlogFormProps) => {
             }
 
             methods.setValue('categoryIds', blog.categories?.map(category => category.id) || [])
+            methods.setValue('tagIds', blog.tags?.map(tag => tag.id) || [])
           }
         })
         .catch(() => {
@@ -86,7 +107,7 @@ export const useBlogForm = ({ id, initialData, methods }: UseBlogFormProps) => {
       setInitialBlog(initialData)
       Object.entries(initialData).forEach(([key, value]) => {
         if (key in methods.getValues() && typeof value !== 'object') {
-          methods.setValue(key as keyof BlogFormType, value ?? null)
+          methods.setValue(key as keyof BlogForm, value ?? null)
         }
       })
 
@@ -102,13 +123,13 @@ export const useBlogForm = ({ id, initialData, methods }: UseBlogFormProps) => {
     }
   }, [id, initialData, methods, router])
 
-  const { isLoading: submitLoading, onSubmit: submitForm } = useFormSubmit<BlogFormType & { id?: string }>({
-    createApi: async (formData: BlogFormType) => {
+  const { isLoading: submitLoading, onSubmit: submitForm } = useFormSubmit<BlogForm & { id?: string }>({
+    createApi: async (formData: BlogForm) => {
       const response = await createBlog(formData as unknown as Blog)
 
       return { status: response.status, data: { id: response.data?.blog?.id } }
     },
-    updateApi: async (blogId: string, formData: Partial<BlogFormType>) => {
+    updateApi: async (blogId: string, formData: Partial<BlogForm>) => {
       if (!id) throw new Error('Blog ID is required for update')
 
       return updateBlog(Number(blogId), formData as unknown as Partial<Blog>)
@@ -137,7 +158,7 @@ export const useBlogForm = ({ id, initialData, methods }: UseBlogFormProps) => {
       }
 
       await methods
-        .handleSubmit(async (data: BlogFormType) => {
+        .handleSubmit(async (data: BlogForm) => {
           setIsLoading(true)
           const status = type === 'publish' ? BlogStatus.PUBLISHED : BlogStatus.DRAFT
 
@@ -160,6 +181,7 @@ export const useBlogForm = ({ id, initialData, methods }: UseBlogFormProps) => {
   return {
     isLoading: isLoading || submitLoading,
     handleButtonClick,
-    isUpdate
+    isUpdate,
+    methods
   }
 }

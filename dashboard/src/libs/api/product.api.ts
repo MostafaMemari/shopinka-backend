@@ -37,8 +37,6 @@ export const updateProduct = async (id: number, data: Partial<ProductForm>): Pro
     body: { ...data }
   })
 
-  console.log(data)
-
   if (id) {
     await handleSeo(Number(id), data, true)
   } else {

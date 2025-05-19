@@ -16,17 +16,14 @@ interface UpdateAttributeModalProps {
 const UpdateAttributeModal = ({ children, initialData }: UpdateAttributeModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
 
-  const { control, errors, isLoading, onSubmit, handleClose } = useAttributeForm({
-    initialData,
-    isUpdate: true
-  })
-
   const handleOpen = useCallback(() => setOpen(true), [])
+  const handleClose = useCallback(() => setOpen(false), [])
 
-  const handleModalClose = useCallback(() => {
-    setOpen(false)
-    handleClose()
-  }, [handleClose])
+  const { control, errors, isLoading, onSubmit } = useAttributeForm({
+    initialData,
+    isUpdate: true,
+    handleModalClose: handleClose
+  })
 
   return (
     <div>
@@ -40,10 +37,10 @@ const UpdateAttributeModal = ({ children, initialData }: UpdateAttributeModalPro
 
       <CustomDialog
         open={open}
-        onClose={handleModalClose}
+        onClose={handleClose}
         title='بروزرسانی ویژگی'
         defaultMaxWidth='xs'
-        actions={<FormActions onCancel={handleModalClose} submitText='بروزرسانی' onSubmit={onSubmit} isLoading={isLoading} />}
+        actions={<FormActions onCancel={handleClose} submitText='بروزرسانی' onSubmit={onSubmit} isLoading={isLoading} />}
       >
         <AttributeForm control={control} errors={errors} isLoading={isLoading} />
       </CustomDialog>

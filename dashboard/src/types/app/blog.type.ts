@@ -1,6 +1,9 @@
+import { type InferType } from 'yup'
 import { Category } from './category.type'
 import { GalleryItem } from './gallery.type'
 import { Seo } from './seo.type'
+import { blogFormSchema } from '@/libs/validators/blog.schema'
+import { Tag } from './tag.type'
 
 export enum BlogStatus {
   DRAFT = 'DRAFT',
@@ -21,4 +24,7 @@ export type Blog = {
   seoMeta: Seo | undefined
   mainImage: GalleryItem | undefined
   categories: Category[] | undefined
+  tags: Tag[] | undefined
 }
+
+export type BlogForm = InferType<typeof blogFormSchema>

@@ -79,7 +79,7 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
       seo_ogDescription: '',
       seo_ogImage: null,
       seo_robotsTag: RobotsTag.INDEX_FOLLOW
-    } as any
+    }
   })
 
   useEffect(() => {

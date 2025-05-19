@@ -36,6 +36,7 @@ const SeoFormWithProps: React.FC<SeoFormProps> = ({ control, errors, setValue, i
             render={({ field }) => (
               <CustomTextField
                 {...field}
+                value={field.value ?? ''}
                 fullWidth
                 label='عنوان سئو'
                 placeholder='عنوان صفحه (60-70 کاراکتر)'
@@ -53,6 +54,7 @@ const SeoFormWithProps: React.FC<SeoFormProps> = ({ control, errors, setValue, i
             render={({ field }) => (
               <CustomTextField
                 {...field}
+                value={field.value ?? ''}
                 fullWidth
                 multiline
                 rows={4}
@@ -75,6 +77,7 @@ const SeoFormWithProps: React.FC<SeoFormProps> = ({ control, errors, setValue, i
             render={({ field }) => (
               <CustomTextField
                 {...field}
+                value={field.value ?? ''}
                 fullWidth
                 label='آدرس کانونیکال'
                 placeholder='https://example.com/slug'
@@ -92,6 +95,7 @@ const SeoFormWithProps: React.FC<SeoFormProps> = ({ control, errors, setValue, i
             render={({ field }) => (
               <CustomTextField
                 {...field}
+                value={field.value ?? ''}
                 fullWidth
                 label='عنوان اوپن‌گراف'
                 placeholder='عنوان برای شبکه‌های اجتماعی'
@@ -109,6 +113,7 @@ const SeoFormWithProps: React.FC<SeoFormProps> = ({ control, errors, setValue, i
             render={({ field }) => (
               <CustomTextField
                 {...field}
+                value={field.value ?? ''}
                 fullWidth
                 multiline
                 rows={4}

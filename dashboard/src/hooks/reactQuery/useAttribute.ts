@@ -25,9 +25,10 @@ export function useAttribute({ enabled = true, params = {}, staleTime = 1 * 60 *
 interface UseAttributeFormProps {
   initialData?: Attribute
   isUpdate?: boolean
+  handleModalClose?: () => void
 }
 
-export const useAttributeForm = ({ initialData, isUpdate = false }: UseAttributeFormProps) => {
+export const useAttributeForm = ({ initialData, isUpdate = false, handleModalClose }: UseAttributeFormProps) => {
   const defaultValues: AttributeFormType = {
     name: initialData?.name ?? '',
     slug: initialData?.slug ?? '',
@@ -47,7 +48,8 @@ export const useAttributeForm = ({ initialData, isUpdate = false }: UseAttribute
 
   const handleClose = useCallback(() => {
     reset()
-  }, [reset])
+    handleModalClose?.()
+  }, [reset, handleModalClose])
 
   const { isLoading, onSubmit } = useFormSubmit<AttributeFormType>({
     createApi: createAttribute,
@@ -75,7 +77,7 @@ export const useAttributeForm = ({ initialData, isUpdate = false }: UseAttribute
     control,
     errors,
     isLoading,
-    onSubmit: handleSubmit(data => onSubmit(data, handleClose)),
+    onSubmit: handleSubmit(data => onSubmit(data, handleModalClose ?? (() => {}))),
     handleClose
   }
 }

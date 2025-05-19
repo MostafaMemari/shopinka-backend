@@ -60,7 +60,8 @@ export const useCategoryForm = ({ initialData, isUpdate = false, handleModalClos
 
   const handleClose = useCallback(() => {
     reset()
-  }, [reset])
+    handleModalClose?.()
+  }, [reset, handleModalClose])
 
   const { isLoading, onSubmit } = useFormSubmit<CategoryForm>({
     createApi: createCategory,

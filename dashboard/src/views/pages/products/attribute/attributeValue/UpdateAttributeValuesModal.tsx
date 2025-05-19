@@ -16,19 +16,15 @@ interface UpdateAttributeValueModalProps {
 
 const UpdateAttributeValueModal = ({ attributeType, initialData, children }: UpdateAttributeValueModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
+  const handleOpen = useCallback(() => setOpen(true), [])
+  const handleClose = useCallback(() => setOpen(false), [])
 
-  const { control, errors, isLoading, onSubmit, handleClose } = useAttributeValueForm({
+  const { control, errors, isLoading, onSubmit } = useAttributeValueForm({
     initialData,
     attributeType,
-    isUpdate: true
+    isUpdate: true,
+    handleModalClose: handleClose
   })
-
-  const handleOpen = useCallback(() => setOpen(true), [])
-
-  const handleModalClose = useCallback(() => {
-    setOpen(false)
-    handleClose()
-  }, [handleClose])
 
   return (
     <div>
@@ -36,10 +32,10 @@ const UpdateAttributeValueModal = ({ attributeType, initialData, children }: Upd
 
       <CustomDialog
         open={open}
-        onClose={handleModalClose}
+        onClose={handleClose}
         title={`بروزرسانی ${initialData.name}`}
         defaultMaxWidth='xs'
-        actions={<FormActions onCancel={handleModalClose} submitText='بروزرسانی' onSubmit={onSubmit} isLoading={isLoading} />}
+        actions={<FormActions onCancel={handleClose} submitText='بروزرسانی' onSubmit={onSubmit} isLoading={isLoading} />}
       >
         <AttributeValueForm control={control} errors={errors} isLoading={isLoading} attributeType={attributeType} />
       </CustomDialog>

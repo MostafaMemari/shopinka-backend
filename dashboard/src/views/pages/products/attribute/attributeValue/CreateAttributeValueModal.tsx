@@ -17,18 +17,14 @@ interface CreateAttributeValueModalProps {
 
 const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType, children }: CreateAttributeValueModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
-
-  const { control, errors, isLoading, onSubmit, handleClose } = useAttributeValueForm({
-    attributeType,
-    attributeId
-  })
-
   const handleOpen = useCallback(() => setOpen(true), [])
+  const handleClose = useCallback(() => setOpen(false), [])
 
-  const handleModalClose = useCallback(() => {
-    setOpen(false)
-    handleClose()
-  }, [handleClose])
+  const { control, errors, isLoading, onSubmit } = useAttributeValueForm({
+    attributeType,
+    attributeId,
+    handleModalClose: handleClose
+  })
 
   return (
     <div>
@@ -42,10 +38,10 @@ const CreateAttributeValueModal = ({ attributeName, attributeId, attributeType, 
 
       <CustomDialog
         open={open}
-        onClose={handleModalClose}
+        onClose={handleClose}
         title={`ثبت متغیر ویژگی برای ${attributeName}`}
         defaultMaxWidth='xs'
-        actions={<FormActions onCancel={handleModalClose} onSubmit={onSubmit} isLoading={isLoading} />}
+        actions={<FormActions onCancel={handleClose} onSubmit={onSubmit} isLoading={isLoading} />}
       >
         <AttributeValueForm control={control} errors={errors} isLoading={isLoading} attributeType={attributeType} />
       </CustomDialog>

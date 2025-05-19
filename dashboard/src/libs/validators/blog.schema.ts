@@ -30,6 +30,15 @@ export const blogSchema = yup.object().shape({
     .test('unique', 'دسته‌ها تکراری هستند', value => {
       return value ? new Set(value).size === value.length : true
     })
+    .default(null),
+
+  tagIds: yup
+    .array()
+    .of(yup.number().defined().positive('شناسه برچسب باید عددی مثبت باشد'))
+    .notRequired()
+    .test('unique', 'دسته‌ها تکراری هستند', value => {
+      return value ? new Set(value).size === value.length : true
+    })
     .default(null)
 })
 

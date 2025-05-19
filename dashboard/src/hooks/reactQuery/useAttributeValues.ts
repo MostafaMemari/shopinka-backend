@@ -13,9 +13,10 @@ interface UseAttributeValueFormProps {
   attributeType: AttributeType
   attributeId?: number
   isUpdate?: boolean
+  handleModalClose?: () => void
 }
 
-export const useAttributeValueForm = ({ initialData, attributeType, attributeId, isUpdate = false }: UseAttributeValueFormProps) => {
+export const useAttributeValueForm = ({ initialData, attributeType, attributeId, isUpdate = false, handleModalClose }: UseAttributeValueFormProps) => {
   const defaultValues: AttributeValueForm = {
     name: initialData?.name ?? '',
     slug: initialData?.slug ?? '',
@@ -37,7 +38,8 @@ export const useAttributeValueForm = ({ initialData, attributeType, attributeId,
 
   const handleClose = useCallback(() => {
     reset()
-  }, [reset])
+    handleModalClose?.()
+  }, [reset, handleModalClose])
 
   const { isLoading, onSubmit } = useFormSubmit<AttributeValueForm>({
     createApi: createAttributeValues,
@@ -55,7 +57,7 @@ export const useAttributeValueForm = ({ initialData, attributeType, attributeId,
     control,
     errors,
     isLoading,
-    onSubmit: handleSubmit(data => onSubmit(data, handleClose)),
+    onSubmit: handleSubmit(data => onSubmit(data, handleModalClose ?? (() => {}))),
     handleClose
   }
 }

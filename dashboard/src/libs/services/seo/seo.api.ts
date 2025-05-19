@@ -9,6 +9,15 @@ export const saveSeoMeta = async (
   try {
     const targetIdKey = type === 'product' ? 'productId' : type === 'blog' ? 'blogId' : type === 'tag' ? 'tagId' : 'categoryId'
 
+    console.log({
+      ...data,
+      [targetIdKey]: id,
+      ...(targetIdKey !== 'productId' && { productId: undefined }),
+      ...(targetIdKey !== 'blogId' && { blogId: undefined }),
+      ...(targetIdKey !== 'tagId' && { tagId: undefined }),
+      ...(targetIdKey !== 'categoryId' && { categoryId: undefined })
+    })
+
     const res = await serverApiFetch('/seo', {
       method: 'PUT',
       body: {

@@ -13,14 +13,10 @@ interface CreateAttributeModalProps {
 
 const CreateAttributeModal = ({ children }: CreateAttributeModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
-  const { control, errors, isLoading, onSubmit, handleClose } = useAttributeForm({})
-
   const handleOpen = useCallback(() => setOpen(true), [])
+  const handleClose = useCallback(() => setOpen(false), [])
 
-  const handleModalClose = useCallback(() => {
-    setOpen(false)
-    handleClose()
-  }, [handleClose])
+  const { control, errors, isLoading, onSubmit } = useAttributeForm({ handleModalClose: handleClose })
 
   return (
     <div>
@@ -34,10 +30,10 @@ const CreateAttributeModal = ({ children }: CreateAttributeModalProps) => {
 
       <CustomDialog
         open={open}
-        onClose={handleModalClose}
+        onClose={handleClose}
         title='ثبت ویژگی جدید'
         defaultMaxWidth='xs'
-        actions={<FormActions submitText='ثبت' onCancel={handleModalClose} onSubmit={onSubmit} isLoading={isLoading} />}
+        actions={<FormActions submitText='ثبت' onCancel={handleClose} onSubmit={onSubmit} isLoading={isLoading} />}
       >
         <AttributeForm control={control} errors={errors} isLoading={isLoading} />
       </CustomDialog>
