@@ -1,14 +1,11 @@
-import { Product } from '@/types/app/product.type'
+import { Product, ProductForm } from '@/types/app/product.type'
 import { Response } from '@/types/response'
 import { serverApiFetch } from '@/utils/api/serverApiFetch'
 import { handleSeoSave } from '../services/seo/seo.service'
 import { showToast } from '@/utils/showToast'
 import { generateProductSeoDescription } from '@/hooks/reactQuery/seoDescriptionGenerators'
-import { productFormSchema } from '../validators/product.schema'
-import { type InferType } from 'yup'
-import { type SeoFormInput } from '@/types/app/seo.type'
 
-type ProductForm = InferType<typeof productFormSchema>
+import { type SeoFormInput } from '@/types/app/seo.type'
 
 export const getProducts = async (params?: Record<string, string>): Promise<Response<Product[]>> => {
   const res = await serverApiFetch('/product', {

@@ -5,6 +5,7 @@ import { getAccessToken } from '../getToken'
 import { cookies } from 'next/headers'
 
 import { COOKIE_NAMES } from '@/libs/constants'
+import { cleanObject } from '../formatters'
 
 export const serverApiFetch = async (
   path: string,
@@ -31,13 +32,14 @@ export const serverApiFetch = async (
   }
 
   const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData
+  const cleanedQuery = options.query ? cleanObject(options.query) : {}
 
   try {
     const data = await ofetch(path, {
       baseURL: process.env.API_BASE_URL,
       method: options.method || 'GET',
       body: isFormData ? options.body : options.body ? JSON.stringify(options.body) : undefined,
-      query: options.query,
+      query: cleanedQuery,
       headers: {
         Authorization: `Bearer ${token}`,
         ...(isFormData ? {} : { 'Content-Type': 'application/json' }),

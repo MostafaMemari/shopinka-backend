@@ -19,10 +19,23 @@ import { useGalleryItems } from '@/hooks/reactQuery/useGallery'
 import { GalleryItem } from '@/types/app/gallery.type'
 import { usePaginationParams } from '@/hooks/usePaginationParams'
 import ErrorState from '@/components/states/ErrorState'
-import EmptyGalleryItemsState from './EmptyGalleryItemState'
+import EmptyGalleryItemsState from './EmptyGalleryItemsState'
+import { useDebounce } from '@/hooks/useDebounce'
+import { useSearch } from '@/hooks/useSearchQuery'
+import CustomTextField from '@/@core/components/mui/TextField'
 
 const GalleryItemView = ({ galleryId }: { galleryId: string }) => {
   const { page, size, setPage, setSize } = usePaginationParams()
+
+  const { search, setSearch } = useSearch()
+
+  const [inputValue, setInputValue] = useState(search)
+  const debounceDelay = 500
+  const debouncedInputValue = useDebounce(inputValue, debounceDelay)
+
+  useMemo(() => {
+    setSearch(debouncedInputValue)
+  }, [debouncedInputValue, setSearch])
 
   const [selected, setSelected] = useState<string[]>([])
 
@@ -59,7 +72,6 @@ const GalleryItemView = ({ galleryId }: { galleryId: string }) => {
 
   if (isLoading || isFetching) return <LoadingSpinner />
   if (error) return <ErrorState onRetry={() => refetch()} />
-  if (galleryItems.length === 0) return <EmptyGalleryItemsState />
 
   // Main render
   return (
@@ -69,18 +81,23 @@ const GalleryItemView = ({ galleryId }: { galleryId: string }) => {
           <CreateMediaModal />
           {selected.length > 0 && <RemoveGalleryItemModal selectedImages={selected} onClearSelection={handleClearSelection} />}
         </Box>
-      </Box>
-      <DesktopMediaGallery data={galleryItems} selected={selected} handleCheckboxChange={handleCheckboxChange} />
 
-      <TablePaginationComponent
-        currentPage={page}
-        totalPages={paginationData.totalPages}
-        totalCount={paginationData.totalCount}
-        rowsPerPage={size}
-        onPageChange={setPage}
-        onRowsPerPageChange={setSize}
-        currentPageItemCount={galleryItems.length}
-      />
+        <CustomTextField id='form-props-search' placeholder='جستجوی محصول' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
+      </Box>
+
+      {galleryItems.length === 0 ? (
+        <EmptyGalleryItemsState isSearch={!!search} searchQuery={search} />
+      ) : (
+        <TablePaginationComponent
+          currentPage={page}
+          totalPages={paginationData.totalPages}
+          totalCount={paginationData.totalCount}
+          rowsPerPage={size}
+          onPageChange={setPage}
+          onRowsPerPageChange={setSize}
+          currentPageItemCount={galleryItems.length}
+        />
+      )}
     </Card>
   )
 }

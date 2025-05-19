@@ -1,5 +1,5 @@
 import { type InferType } from 'yup'
-import { productVariantSchema } from '@/libs/validators/productVariante.schema'
+import { productVariantSchema } from '@/libs/validators/productVariant.schema'
 import { GalleryItem } from './gallery.type'
 import { AttributeValue } from './productAttributes.type'
 

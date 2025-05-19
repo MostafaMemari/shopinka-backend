@@ -1,11 +1,10 @@
 import { Category } from './category.type'
 import { GalleryItem } from './gallery.type'
 import { Attribute } from './productAttributes.type'
-import { ProductVariant } from './productVariant.type'
 import { Seo } from './seo.type'
 import { Tag } from './tag.type'
 import * as yup from 'yup'
-import { productSchema } from '@/libs/validators/product.schema'
+import { productFormSchema } from '@/libs/validators/product.schema'
 
 export enum ProductStatus {
   DRAFT = 'DRAFT',
@@ -43,8 +42,7 @@ export type Product = {
   galleryImages: GalleryItem[] | undefined
   attributes: Attribute[] | undefined
   categories: Category[] | undefined
-  variants: ProductVariant[] | undefined
   tags: Tag[] | undefined
 }
 
-export type ProductForm = yup.InferType<typeof productSchema>
+export type ProductForm = yup.InferType<typeof productFormSchema>

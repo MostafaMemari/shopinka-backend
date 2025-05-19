@@ -39,7 +39,6 @@ const ProductTags = () => {
 
   const tags: Tag[] = useMemo(() => data?.data?.items || [], [data])
 
-  // به‌روزرسانی tagIds در فرم هنگام تغییر selectedTags
   useEffect(() => {
     setValue('tagIds', selectedTags, { shouldValidate: true })
   }, [selectedTags, setValue])
@@ -60,6 +59,7 @@ const ProductTags = () => {
             setSelectedTags(newSelectedTags)
           }}
           disabled={isLoading || isFetching}
+          noOptionsText='برچسبی یافت نشد' // اضافه کردن متن فارسی برای حالت خالی
           renderInput={params => (
             <TextField {...params} label='برچسب‌ها' placeholder='جستجو و انتخاب برچسب' error={!!errors.tagIds} helperText={errors.tagIds?.message?.toString()} />
           )}

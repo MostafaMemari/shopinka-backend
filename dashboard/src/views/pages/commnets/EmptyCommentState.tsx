@@ -1,16 +1,19 @@
 'use client'
 
-import { ChatBubbleOutline } from '@mui/icons-material'
+import { Comment } from '@mui/icons-material'
 import EmptyState from '@/components/states/EmptyState'
 
-const EmptyCommentState = () => {
-  return (
-    <EmptyState
-      title='هیچ نظری یافت نشد'
-      subtitle='به نظر می‌رسه هیچ نظری در این بخش وجود نداره. می‌تونید نظر جدید ایجاد کنید!'
-      icon={<ChatBubbleOutline color='action' sx={{ fontSize: 60, mb: 2, opacity: 0.7 }} />}
-    ></EmptyState>
-  )
+interface EmptyCommentStateProps {
+  isSearch?: boolean
+  searchQuery?: string
+}
+
+const EmptyCommentState = ({ isSearch = false, searchQuery = '' }: EmptyCommentStateProps) => {
+  const title = isSearch ? `نظری برای "${searchQuery}" یافت نشد` : 'هیچ نظری ثبت نشده است'
+
+  const subtitle = isSearch ? 'جستجو نتیجه‌ای نداشت. لطفاً عبارت دیگری را امتحان کنید یا نظرات جدید را بررسی کنید.' : 'در حال حاضر هیچ نظری ثبت نشده است.'
+
+  return <EmptyState title={title} subtitle={subtitle} icon={<Comment color='action' sx={{ fontSize: 60, mb: 2, opacity: 0.7 }} />} />
 }
 
 export default EmptyCommentState

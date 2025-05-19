@@ -1,8 +1,8 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import Card from '@mui/material/Card'
-import { Box, useMediaQuery, useTheme } from '@mui/material'
+import { Box, Button, useMediaQuery, useTheme } from '@mui/material'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
 import DesktopCategoryTable from './DesktopCategoryTable'
 import CreateCategoryModal from './CreateCategoryModal'
@@ -11,10 +11,22 @@ import { useCategories } from '@/hooks/reactQuery/useCategory'
 import { Category } from '@/types/app/category.type'
 import { usePaginationParams } from '@/hooks/usePaginationParams'
 import ErrorState from '@/components/states/ErrorState'
+import { useSearch } from '@/hooks/useSearchQuery'
+import { useDebounce } from '@/hooks/useDebounce'
+import CustomTextField from '@/@core/components/mui/TextField'
 import EmptyCategoryState from './EmptyCategoryState'
 
 const CategoryView = () => {
   const { page, size, setPage, setSize } = usePaginationParams()
+  const { search, setSearch } = useSearch()
+
+  const [inputValue, setInputValue] = useState(search)
+  const debounceDelay = 500
+  const debouncedInputValue = useDebounce(inputValue, debounceDelay)
+
+  useMemo(() => {
+    setSearch(debouncedInputValue)
+  }, [debouncedInputValue, setSearch])
 
   const { data, isLoading, isFetching, error, refetch } = useCategories({
     enabled: true,
@@ -38,24 +50,30 @@ const CategoryView = () => {
 
   if (isLoading || isFetching) return <LoadingSpinner />
   if (error) return <ErrorState onRetry={() => refetch()} />
-  if (categories.length === 0) return <EmptyCategoryState />
 
   return (
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
-        <CreateCategoryModal />
-      </Box>
-      {!isMobile && <DesktopCategoryTable categories={categories} />}
+        <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
+          ثبت دسته‌بندی جدید
+        </Button>
 
-      <TablePaginationComponent
-        currentPage={page}
-        totalPages={paginationData.totalPages}
-        totalCount={paginationData.totalCount}
-        rowsPerPage={size}
-        onPageChange={setPage}
-        onRowsPerPageChange={setSize}
-        currentPageItemCount={categories.length}
-      />
+        <CustomTextField id='form-props-search' placeholder='جستجوی محصول' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
+      </Box>
+
+      {categories.length === 0 ? (
+        <EmptyCategoryState isSearch={!!search} searchQuery={search} />
+      ) : (
+        <TablePaginationComponent
+          currentPage={page}
+          totalPages={paginationData.totalPages}
+          totalCount={paginationData.totalCount}
+          rowsPerPage={size}
+          onPageChange={setPage}
+          onRowsPerPageChange={setSize}
+          currentPageItemCount={categories.length}
+        />
+      )}
     </Card>
   )
 }

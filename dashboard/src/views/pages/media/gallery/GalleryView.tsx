@@ -1,33 +1,45 @@
 'use client'
 
-// React Imports
-import { useMemo } from 'react'
-
-// MUI Imports
+import { useMemo, useState } from 'react'
 import Card from '@mui/material/Card'
-import { Box, useMediaQuery, useTheme } from '@mui/material'
-
-// Component Imports
+import { Box, Button, useMediaQuery, useTheme } from '@mui/material'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
 import DesktopGalleryTable from './DesktopGalleryTable'
-import CreateGalleryModal from './CreateGalleryModal'
 import LoadingSpinner from '@/components/LoadingSpinner'
-
-// API Import
-import { useGallery } from '@/hooks/reactQuery/useGallery'
 import { usePaginationParams } from '@/hooks/usePaginationParams'
-import { Gallery } from '@/types/app/gallery.type'
+import { useDebounce } from '@/hooks/useDebounce'
 import ErrorState from '@/components/states/ErrorState'
+import { useGalleryItems } from '@/hooks/reactQuery/useGallery'
+import { useRouter } from 'next/navigation'
+import { useSearch } from '@/hooks/useSearchQuery'
+import CustomTextField from '@/@core/components/mui/TextField'
 import EmptyGalleryState from './EmptyGalleryState'
+import { Gallery } from '@/types/app/gallery.type'
 
-const GalleryView = () => {
+const GalleryListView = () => {
   const { page, size, setPage, setSize } = usePaginationParams()
+  const { search, setSearch } = useSearch()
+  const router = useRouter()
 
-  const { data, isLoading, isFetching, error, refetch } = useGallery({
+  const [inputValue, setInputValue] = useState(search)
+  const debounceDelay = 500
+  const debouncedInputValue = useDebounce(inputValue, debounceDelay)
+
+  useMemo(() => {
+    setSearch(debouncedInputValue)
+  }, [debouncedInputValue, setSearch])
+
+  const handleAddGallery = () => {
+    router.push('/galleries/add')
+  }
+
+  const { data, isLoading, isFetching, error, refetch } = useGalleryItems({
     enabled: true,
     params: {
       page,
-      take: size
+      take: size,
+      includeMainImage: true,
+      name: search ?? undefined
     },
     staleTime: 5 * 60 * 1000
   })
@@ -40,25 +52,34 @@ const GalleryView = () => {
 
   if (isLoading || isFetching) return <LoadingSpinner />
   if (error) return <ErrorState onRetry={() => refetch()} />
-  if (galleries.length === 0) return <EmptyGalleryState />
 
   return (
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
-        <CreateGalleryModal />
+        <Button onClick={handleAddGallery} variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
+          ثبت محصول جدید
+        </Button>
+
+        <CustomTextField id='form-props-search' placeholder='جستجوی محصول' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
       </Box>
-      {<DesktopGalleryTable data={galleries} />}
-      <TablePaginationComponent
-        currentPage={page}
-        totalPages={paginationData.totalPages}
-        totalCount={paginationData.totalCount}
-        rowsPerPage={size}
-        onPageChange={setPage}
-        onRowsPerPageChange={setSize}
-        currentPageItemCount={galleries.length}
-      />
+      {galleries.length === 0 ? (
+        <EmptyGalleryState isSearch={!!search} searchQuery={search} />
+      ) : (
+        <>
+          {!isMobile && <DesktopGalleryTable data={galleries} />}
+          <TablePaginationComponent
+            currentPage={page}
+            totalPages={paginationData.totalPages}
+            totalCount={paginationData.totalCount}
+            rowsPerPage={size}
+            onPageChange={setPage}
+            onRowsPerPageChange={setSize}
+            currentPageItemCount={galleries.length}
+          />
+        </>
+      )}
     </Card>
   )
 }
 
-export default GalleryView
+export default GalleryListView

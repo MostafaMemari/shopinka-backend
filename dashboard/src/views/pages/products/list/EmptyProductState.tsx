@@ -1,28 +1,21 @@
 'use client'
 
-import { Button } from '@mui/material'
 import { Inventory2 } from '@mui/icons-material'
-import { useRouter } from 'next/navigation'
 import EmptyState from '@/components/states/EmptyState'
 
-const EmptyProductState = () => {
-  const router = useRouter()
+interface EmptyProductStateProps {
+  isSearch?: boolean
+  searchQuery?: string
+}
 
-  const handleAddProduct = () => {
-    router.push('/products/add')
-  }
+const EmptyProductState = ({ isSearch = false, searchQuery = '' }: EmptyProductStateProps) => {
+  const title = isSearch ? `محصولی برای "${searchQuery}" یافت نشد` : 'هیچ محصولی یافت نشد'
 
-  return (
-    <EmptyState
-      title='هیچ محصولی یافت نشد'
-      subtitle='به نظر می‌رسه هنوز هیچ محصولی ثبت نشده. می‌تونید محصول جدیدی اضافه کنید!'
-      icon={<Inventory2 color='action' sx={{ fontSize: 60, mb: 2, opacity: 0.7 }} />}
-    >
-      <Button variant='contained' startIcon={<i className='tabler-plus' />} onClick={handleAddProduct}>
-        ثبت محصول جدید
-      </Button>
-    </EmptyState>
-  )
+  const subtitle = isSearch
+    ? 'جستجوی شما نتیجه‌ای نداشت. لطفاً عبارت دیگری را امتحان کنید یا محصول جدیدی اضافه کنید.'
+    : 'به نظر می‌رسه هنوز هیچ محصولی ثبت نشده. می‌تونید محصول جدیدی اضافه کنید!'
+
+  return <EmptyState title={title} subtitle={subtitle} icon={<Inventory2 color='action' sx={{ fontSize: 60, mb: 2, opacity: 0.7 }} />} />
 }
 
 export default EmptyProductState

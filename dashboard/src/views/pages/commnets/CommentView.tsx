@@ -1,28 +1,33 @@
 'use client'
 
-// React Imports
-import { useMemo } from 'react'
-
-// MUI Imports
+import { useMemo, useState } from 'react'
 import Card from '@mui/material/Card'
-import { Box, useMediaQuery, useTheme } from '@mui/material'
-
-// Component Imports
+import { Box, Button, useMediaQuery, useTheme } from '@mui/material'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
-import DesktopCommentTable from './DesktopCommentTable'
 import LoadingSpinner from '@/components/LoadingSpinner'
-
-// API Import
+import { usePaginationParams } from '@/hooks/usePaginationParams'
+import { useDebounce } from '@/hooks/useDebounce'
+import ErrorState from '@/components/states/ErrorState'
+import { useRouter } from 'next/navigation'
+import { useSearch } from '@/hooks/useSearchQuery'
+import CustomTextField from '@/@core/components/mui/TextField'
+import DesktopCommentTable from './DesktopCommentTable'
 import { useComments } from '@/hooks/reactQuery/useComment'
 import { Comment } from '@/types/app/comment.type'
-
-// Hook Import
-import { usePaginationParams } from '@/hooks/usePaginationParams'
-import ErrorState from '@/components/states/ErrorState'
 import EmptyCommentState from './EmptyCommentState'
 
 const CommentView = () => {
   const { page, size, setPage, setSize } = usePaginationParams()
+  const { search, setSearch } = useSearch()
+  const router = useRouter()
+
+  const [inputValue, setInputValue] = useState(search)
+  const debounceDelay = 500
+  const debouncedInputValue = useDebounce(inputValue, debounceDelay)
+
+  useMemo(() => {
+    setSearch(debouncedInputValue)
+  }, [debouncedInputValue, setSearch])
 
   const { data, isLoading, isFetching, error, refetch } = useComments({
     enabled: true,
@@ -35,7 +40,6 @@ const CommentView = () => {
     staleTime: 5 * 60 * 1000
   })
 
-  // Hooks
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -44,24 +48,32 @@ const CommentView = () => {
 
   if (isLoading || isFetching) return <LoadingSpinner />
   if (error) return <ErrorState onRetry={() => refetch()} />
-  if (comments.length === 0) return <EmptyCommentState />
-
-  console.log(comments)
 
   return (
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>{/* <CreateCommentModal /> */}</Box>
-      {!isMobile && <DesktopCommentTable comments={comments} />}
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
+        <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
+          ثبت تگ جدید
+        </Button>
 
-      <TablePaginationComponent
-        currentPage={page}
-        totalPages={paginationData.totalPages}
-        totalCount={paginationData.totalCount}
-        rowsPerPage={size}
-        onPageChange={setPage}
-        onRowsPerPageChange={setSize}
-        currentPageItemCount={comments.length}
-      />
+        <CustomTextField id='form-props-search' placeholder='جستجوی محصول' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
+      </Box>
+      {comments.length === 0 ? (
+        <EmptyCommentState isSearch={!!search} searchQuery={search} />
+      ) : (
+        <>
+          {!isMobile && <DesktopCommentTable comments={comments} />}
+          <TablePaginationComponent
+            currentPage={page}
+            totalPages={paginationData.totalPages}
+            totalCount={paginationData.totalCount}
+            rowsPerPage={size}
+            onPageChange={setPage}
+            onRowsPerPageChange={setSize}
+            currentPageItemCount={comments.length}
+          />
+        </>
+      )}
     </Card>
   )
 }

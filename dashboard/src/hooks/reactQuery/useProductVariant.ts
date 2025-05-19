@@ -10,7 +10,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { useFormSubmit } from '../useFormSubmit'
 import { useCallback } from 'react'
-import { productVariantSchema } from '@/libs/validators/productVariante.schema'
+import { productVariantSchema } from '@/libs/validators/productVariant.schema'
 
 export function useProductVariants({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchProductVariants = () => getProductVariants(params).then(res => res)

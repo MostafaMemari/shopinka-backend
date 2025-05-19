@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, Typography, useTheme } from '@mui/material'
+import { Box, Typography, useTheme } from '@mui/material'
 import { Inbox } from '@mui/icons-material'
 
 interface EmptyStateProps {
@@ -27,7 +27,7 @@ const EmptyState = ({
   const theme = useTheme()
 
   return (
-    <Card
+    <Box
       sx={{
         display: 'flex',
         flexDirection: 'column',
@@ -36,10 +36,11 @@ const EmptyState = ({
         width: '100%',
         maxWidth,
         minHeight,
-        borderColor: theme.palette.divider,
+        border: `1px solid ${theme.palette.divider}`,
         textAlign: 'center',
         p: 4,
         bgcolor: theme.palette.background.paper,
+        boxShadow: 'none',
         ...(enableAnimation && {
           animation: 'fadeIn 0.5s ease-out',
           '@keyframes fadeIn': {
@@ -64,7 +65,7 @@ const EmptyState = ({
         {subtitle}
       </Typography>
       {children}
-    </Card>
+    </Box>
   )
 }
 

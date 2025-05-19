@@ -4,21 +4,18 @@ import { QueryKeys } from '@/types/enums/query-keys'
 import { QueryOptions } from '@/types/queryOptions'
 import { useQuery } from '@tanstack/react-query'
 import { useState, useEffect, useCallback } from 'react'
-import { useForm, type UseFormReturn } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
-import { productFormSchema } from '@/libs/validators/product.schema'
-import { Product, ProductStatus, ProductType } from '@/types/app/product.type'
+import { Product, ProductForm, ProductStatus, ProductType } from '@/types/app/product.type'
 import { createProduct, getProductById, getProducts, updateProduct } from '@/libs/api/product.api'
 import { cleanObject } from '@/utils/formatters'
 import { showToast } from '@/utils/showToast'
-import { type InferType } from 'yup'
 import { GalleryItem } from '@/types/app/gallery.type'
 import { errorProductMessage } from '@/messages/product.message'
 import { useFormSubmit } from '../useFormSubmit'
-import { Attribute } from '@/types/app/productAttributes.type'
-import { ProductVariant } from '@/types/app/productVariant.type'
 import { RobotsTag } from '@/types/enums/robotsTag'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { productFormSchema } from '@/libs/validators/product.schema'
 
 export function useProducts({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchProducts = () => getProducts(params).then(res => res)
@@ -32,11 +29,6 @@ export function useProducts({ enabled = true, params = {}, staleTime = 1 * 60 * 
   })
 }
 
-type ProductFormType = InferType<typeof productFormSchema> & {
-  attributes?: Attribute[]
-  variants?: ProductVariant[]
-}
-
 interface UseProductFormProps {
   id?: number | null
   initialData?: Product
@@ -48,8 +40,8 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
   const [initialProduct, setInitialProduct] = useState<Product | null>(null)
   const isUpdate = !!id || !!initialData
 
-  const methods = useForm<ProductFormType>({
-    resolver: yupResolver(productFormSchema),
+  const methods = useForm<ProductForm>({
+    resolver: yupResolver<ProductForm, any, any>(productFormSchema),
     mode: 'onChange',
     defaultValues: {
       sku: '',
@@ -71,6 +63,7 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
       height: null,
       length: null,
       weight: null,
+
       seo_title: '',
       seo_description: '',
       seo_keywords: [],
@@ -94,7 +87,7 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
           if (product) {
             Object.entries(product).forEach(([key, value]) => {
               if (key in methods.getValues() && typeof value !== 'object') {
-                methods.setValue(key as keyof ProductFormType, value ?? null)
+                methods.setValue(key as keyof ProductForm, value ?? null)
               }
             })
 
@@ -119,9 +112,10 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
 
             methods.setValue('galleryImageIds', product.galleryImages?.map(img => img.id) || [])
             methods.setValue('categoryIds', product.categories?.map(category => category.id) || [])
-            methods.setValue('attributes', product.attributes || [])
             methods.setValue('attributeIds', product.attributes?.map(attribute => attribute.id) || [])
             methods.setValue('tagIds', product.tags?.map(tag => tag.id) || [])
+
+            // methods.setValue('attributes', product.attributes || [])
           }
         })
         .catch(() => {
@@ -132,7 +126,7 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
       setInitialProduct(initialData)
       Object.entries(initialData).forEach(([key, value]) => {
         if (key in methods.getValues() && typeof value !== 'object') {
-          methods.setValue(key as keyof ProductFormType, value ?? null)
+          methods.setValue(key as keyof ProductForm, value ?? null)
         }
       })
 
@@ -155,17 +149,17 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
     }
   }, [id, initialData, methods, router])
 
-  const { isLoading: submitLoading, onSubmit: submitForm } = useFormSubmit<ProductFormType & { id?: string }>({
-    createApi: async (formData: ProductFormType) => {
-      const response = await createProduct(formData as ProductFormType)
+  const { isLoading: submitLoading, onSubmit: submitForm } = useFormSubmit<ProductForm & { id?: string }>({
+    createApi: async (formData: ProductForm) => {
+      const response = await createProduct(formData as ProductForm)
 
       return { status: response.status, data: { id: response.data?.product?.id } }
     },
 
-    updateApi: async (productId: string, formData: Partial<ProductFormType>) => {
+    updateApi: async (productId: string, formData: Partial<ProductForm>) => {
       if (!id) throw new Error('Product ID is required for update')
 
-      return updateProduct(Number(productId), formData as Partial<ProductFormType>)
+      return updateProduct(Number(productId), formData as Partial<ProductForm>)
     },
 
     errorMessages: errorProductMessage,
@@ -203,7 +197,7 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
       }
 
       await methods
-        .handleSubmit(async (data: ProductFormType) => {
+        .handleSubmit(async (data: ProductForm) => {
           setIsLoading(true)
           const status = type === 'publish' ? ProductStatus.PUBLISHED : ProductStatus.DRAFT
 

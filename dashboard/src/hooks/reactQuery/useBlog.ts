@@ -41,7 +41,7 @@ export const useBlogForm = ({ id, initialData }: UseBlogFormProps) => {
   const isUpdate = !!id || !!initialData
 
   const methods = useForm<BlogForm>({
-    resolver: yupResolver(blogFormSchema),
+    resolver: yupResolver<BlogForm, any, any>(blogFormSchema),
     mode: 'onChange',
     defaultValues: {
       title: '',

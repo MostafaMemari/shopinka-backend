@@ -12,8 +12,7 @@ export const productSchema = yup.object().shape({
     .string()
     .notRequired()
     .transform((value, originalValue) => (originalValue === '' ? null : value))
-    .max(350, 'نامک نمی‌تواند بیشتر از 350 کاراکتر باشد')
-    .matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'فرمت slug معتبر نیست'),
+    .max(350, 'نامک نمی‌تواند بیشتر از 350 کاراکتر باشد'),
 
   description: yup.string().notRequired().default(null),
   shortDescription: yup.string().notRequired().max(300, 'حداکثر 300 کاراکتر').default(null),

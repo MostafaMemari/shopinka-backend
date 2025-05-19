@@ -1,34 +1,45 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import Card from '@mui/material/Card'
-import { Box, useMediaQuery, useTheme } from '@mui/material'
+import { Box, Button, useMediaQuery, useTheme } from '@mui/material'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
 import DesktopTagTable from './DesktopTagTable'
-import CreateTagModal from './CreateTagModal'
 import LoadingSpinner from '@/components/LoadingSpinner'
-import { useTags } from '@/hooks/reactQuery/useTag'
 import { usePaginationParams } from '@/hooks/usePaginationParams'
+import { useDebounce } from '@/hooks/useDebounce'
 import ErrorState from '@/components/states/ErrorState'
-import EmptyTagState from './EmptyTagState'
+import { useRouter } from 'next/navigation'
+import { useSearch } from '@/hooks/useSearchQuery'
+import CustomTextField from '@/@core/components/mui/TextField'
 import { Tag } from '@/types/app/tag.type'
+import { useTags } from '@/hooks/reactQuery/useTag'
+import EmptyTagState from './EmptyGalleryState'
 
-const TagsView = () => {
+const TagListView = () => {
   const { page, size, setPage, setSize } = usePaginationParams()
+  const { search, setSearch } = useSearch()
+  const router = useRouter()
+
+  const [inputValue, setInputValue] = useState(search)
+  const debounceDelay = 500
+  const debouncedInputValue = useDebounce(inputValue, debounceDelay)
+
+  useMemo(() => {
+    setSearch(debouncedInputValue)
+  }, [debouncedInputValue, setSearch])
 
   const { data, isLoading, isFetching, error, refetch } = useTags({
     enabled: true,
     params: {
       page,
       take: size,
-      includeThumbnailImage: true,
-      includeChildren: true,
-      childrenDepth: 6
+      includeMainImage: true,
+      name: search ?? undefined
     },
     staleTime: 5 * 60 * 1000
   })
 
-  // Hooks
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -37,26 +48,34 @@ const TagsView = () => {
 
   if (isLoading || isFetching) return <LoadingSpinner />
   if (error) return <ErrorState onRetry={() => refetch()} />
-  if (tags.length === 0) return <EmptyTagState />
 
   return (
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
-        <CreateTagModal />
-      </Box>
-      {!isMobile && <DesktopTagTable tags={tags} />}
+        <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
+          ثبت تگ جدید
+        </Button>
 
-      <TablePaginationComponent
-        currentPage={page}
-        totalPages={paginationData.totalPages}
-        totalCount={paginationData.totalCount}
-        rowsPerPage={size}
-        onPageChange={setPage}
-        onRowsPerPageChange={setSize}
-        currentPageItemCount={tags.length}
-      />
+        <CustomTextField id='form-props-search' placeholder='جستجوی محصول' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
+      </Box>
+      {tags.length === 0 ? (
+        <EmptyTagState isSearch={!!search} searchQuery={search} />
+      ) : (
+        <>
+          {!isMobile && <DesktopTagTable tags={tags} />}
+          <TablePaginationComponent
+            currentPage={page}
+            totalPages={paginationData.totalPages}
+            totalCount={paginationData.totalCount}
+            rowsPerPage={size}
+            onPageChange={setPage}
+            onRowsPerPageChange={setSize}
+            currentPageItemCount={tags.length}
+          />
+        </>
+      )}
     </Card>
   )
 }
 
-export default TagsView
+export default TagListView

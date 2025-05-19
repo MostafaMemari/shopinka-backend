@@ -1,20 +1,31 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import Card from '@mui/material/Card'
-import { Box, useMediaQuery, useTheme } from '@mui/material'
+import { Box, Button, useMediaQuery, useTheme } from '@mui/material'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
 import DesktopShippingTable from './DesktopShippingTable'
-import CreateShippingModal from './CreateShippingModal'
 import LoadingSpinner from '@/components/LoadingSpinner'
-import { usePaginationParams } from '@/hooks/usePaginationParams'
-import ErrorState from '@/components/states/ErrorState'
-import EmptyShippingState from './EmptyShippingState'
-import { useShippings } from '@/hooks/reactQuery/useShipping'
 import { Shipping } from '@/types/app/shipping.type'
+import { usePaginationParams } from '@/hooks/usePaginationParams'
+import { useDebounce } from '@/hooks/useDebounce'
+import ErrorState from '@/components/states/ErrorState'
+import { useShippings } from '@/hooks/reactQuery/useShipping'
+import { useSearch } from '@/hooks/useSearchQuery'
+import CustomTextField from '@/@core/components/mui/TextField'
+import EmptyShippingState from './EmptyShippingState'
 
 const ShippingView = () => {
   const { page, size, setPage, setSize } = usePaginationParams()
+  const { search, setSearch } = useSearch()
+
+  const [inputValue, setInputValue] = useState(search)
+  const debounceDelay = 500
+  const debouncedInputValue = useDebounce(inputValue, debounceDelay)
+
+  useMemo(() => {
+    setSearch(debouncedInputValue)
+  }, [debouncedInputValue, setSearch])
 
   const { data, isLoading, isFetching, error, refetch } = useShippings({
     enabled: true,
@@ -33,23 +44,32 @@ const ShippingView = () => {
 
   if (isLoading || isFetching) return <LoadingSpinner />
   if (error) return <ErrorState onRetry={() => refetch()} />
-  if (shippings.length === 0) return <EmptyShippingState />
 
   return (
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
-        <CreateShippingModal />
+        <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
+          ثبت محصول جدید
+        </Button>
+
+        <CustomTextField id='form-props-search' placeholder='جستجوی محصول' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
       </Box>
-      {<DesktopShippingTable data={shippings} />}
-      <TablePaginationComponent
-        currentPage={page}
-        totalPages={paginationData.totalPages}
-        totalCount={paginationData.totalCount}
-        rowsPerPage={size}
-        onPageChange={setPage}
-        onRowsPerPageChange={setSize}
-        currentPageItemCount={shippings.length}
-      />
+      {shippings.length === 0 ? (
+        <EmptyShippingState isSearch={!!search} searchQuery={search} />
+      ) : (
+        <>
+          {!isMobile && <DesktopShippingTable data={shippings} />}
+          <TablePaginationComponent
+            currentPage={page}
+            totalPages={paginationData.totalPages}
+            totalCount={paginationData.totalCount}
+            rowsPerPage={size}
+            onPageChange={setPage}
+            onRowsPerPageChange={setSize}
+            currentPageItemCount={shippings.length}
+          />
+        </>
+      )}
     </Card>
   )
 }
