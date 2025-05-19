@@ -39,14 +39,14 @@ export const useCategoryForm = ({ initialData, isUpdate = false }: UseCategoryFo
     parentId: initialData?.parentId || null,
     thumbnailImageId: null,
 
-    seo_title: '',
-    seo_description: '',
-    seo_keywords: [],
-    seo_canonicalUrl: '',
-    seo_ogTitle: '',
-    seo_ogDescription: '',
-    seo_ogImage: null,
-    seo_robotsTag: RobotsTag.INDEX_FOLLOW
+    seo_title: initialData?.seoMeta?.title ?? '',
+    seo_description: initialData?.seoMeta?.description ?? '',
+    seo_keywords: initialData?.seoMeta?.keywords ?? [],
+    seo_canonicalUrl: initialData?.seoMeta?.canonicalUrl ?? '',
+    seo_ogTitle: initialData?.seoMeta?.ogTitle ?? '',
+    seo_ogDescription: initialData?.seoMeta?.ogDescription ?? '',
+    seo_ogImage: initialData?.seoMeta?.ogImage ?? null,
+    seo_robotsTag: initialData?.seoMeta?.robotsTag ?? RobotsTag.INDEX_FOLLOW
   }
 
   const {
@@ -70,7 +70,20 @@ export const useCategoryForm = ({ initialData, isUpdate = false }: UseCategoryFo
     errorMessages: errorCategoryMessage,
     queryKey: QueryKeys.Categories,
     successMessage: isUpdate ? 'دسته‌بندی با موفقیت به‌روزرسانی شد' : 'دسته‌بندی با موفقیت ایجاد شد',
-    initialData: initialData ? { ...initialData, id: String(initialData.id) } : undefined,
+    initialData: initialData
+      ? {
+          ...initialData,
+          id: String(initialData.id),
+          seo_canonicalUrl: initialData.seoMeta?.canonicalUrl,
+          seo_description: initialData.seoMeta?.description,
+          seo_keywords: initialData.seoMeta?.keywords,
+          seo_ogDescription: initialData.seoMeta?.ogDescription,
+          seo_ogTitle: initialData.seoMeta?.ogTitle,
+          seo_ogImage: initialData.seoMeta?.ogImage,
+          seo_robotsTag: initialData.seoMeta?.robotsTag,
+          seo_title: initialData.seoMeta?.title
+        }
+      : undefined,
     isUpdate
   })
 

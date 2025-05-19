@@ -1,23 +1,14 @@
 'use client'
 
-// React Imports
 import { useMemo } from 'react'
-
-// MUI Imports
 import Card from '@mui/material/Card'
 import { Box, useMediaQuery, useTheme } from '@mui/material'
-
-// Component Imports
 import TablePaginationComponent from '@/components/TablePaginationComponent'
 import DesktopCategoryTable from './DesktopCategoryTable'
 import CreateCategoryModal from './CreateCategoryModal'
 import LoadingSpinner from '@/components/LoadingSpinner'
-
-// API Import
 import { useCategories } from '@/hooks/reactQuery/useCategory'
 import { Category } from '@/types/app/category.type'
-
-// Hook Import
 import { usePaginationParams } from '@/hooks/usePaginationParams'
 import ErrorState from '@/components/states/ErrorState'
 import EmptyCategoryState from './EmptyCategoryState'

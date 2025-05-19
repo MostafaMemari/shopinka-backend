@@ -24,6 +24,12 @@ export const updateCategory = async (id: string, data: Partial<CategoryForm>): P
     body: { ...data }
   })
 
+  if (id) {
+    await handleSeo(Number(id), data, true)
+  } else {
+    showToast({ type: 'error', message: 'خطا در دریافت آیدی دسته بندی' })
+  }
+
   return {
     ...res
   }
@@ -35,8 +41,13 @@ export const createCategory = async (data: CategoryForm): Promise<{ status: numb
     body: { ...data }
   })
 
+  if (res.status === 200 || res.status === 201) {
+    await handleSeo(res.data.category.id, data)
+  }
+
   return {
-    ...res
+    ...res,
+    status: 201
   }
 }
 
@@ -48,7 +59,7 @@ export const removeCategory = async (id: string): Promise<{ status: number; data
   }
 }
 
-const handleSeo = async (productId: number, data: Partial<CategoryForm>, isUpdate?: boolean) => {
+const handleSeo = async (categoryId: number, data: Partial<CategoryForm>, isUpdate?: boolean) => {
   const seoData = isUpdate
     ? {
         seo_title: data.seo_title,
@@ -81,7 +92,9 @@ const handleSeo = async (productId: number, data: Partial<CategoryForm>, isUpdat
         seo_robotsTag: data.seo_robotsTag
       }
 
-  const seoResponse = await handleSeoSave('category', productId, seoData as SeoFormInput)
+  const seoResponse = await handleSeoSave('category', categoryId, seoData as SeoFormInput)
+
+  console.log(seoResponse)
 
   if (seoResponse.status !== 200 && seoResponse.status !== 201) {
     showToast({ type: 'error', message: 'خطا در ذخیره SEO' })

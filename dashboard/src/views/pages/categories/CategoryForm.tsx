@@ -45,7 +45,6 @@ const CategoryForm = ({ control, errors, setValue, isLoading, initialData }: Cat
                 <Controller
                   name='name'
                   control={control}
-                  defaultValue={initialData?.name || ''}
                   render={({ field }) => (
                     <CustomTextField
                       {...field}
@@ -62,7 +61,6 @@ const CategoryForm = ({ control, errors, setValue, isLoading, initialData }: Cat
                 <Controller
                   name='slug'
                   control={control}
-                  defaultValue={initialData?.slug || ''}
                   render={({ field }) => (
                     <CustomTextField
                       {...field}
@@ -83,7 +81,6 @@ const CategoryForm = ({ control, errors, setValue, isLoading, initialData }: Cat
               <Controller
                 name='description'
                 control={control}
-                defaultValue={initialData?.description || ''}
                 render={({ field }) => <RichTextEditor label='توضیحات (اختیاری)' placeholder='توضیحات دسته‌بندی' value={field.value || ''} onChange={field.onChange} />}
               />
             </Grid>

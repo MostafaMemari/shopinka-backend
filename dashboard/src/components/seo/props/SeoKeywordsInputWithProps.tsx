@@ -18,7 +18,6 @@ const SeoKeywordsInputWithProps: React.FC<SeoKeywordsInputProps> = ({ control, e
     <Controller
       name='seo_keywords'
       control={control}
-      defaultValue={[]}
       render={({ field }) => (
         <Autocomplete
           multiple
@@ -51,11 +50,11 @@ const SeoKeywordsInputWithProps: React.FC<SeoKeywordsInputProps> = ({ control, e
 
                   if (Array.isArray(field.value) && !field.value.includes(newKeyword)) {
                     const updated = [...field.value, newKeyword]
-                    
+
                     setValue('seo_keywords', updated, { shouldValidate: true })
                     field.onChange(updated)
                   }
-                  
+
                   setInputValue('')
                 }
               }}
