@@ -79,6 +79,7 @@ model User {
   tags             Tag[]
   shippings        Shipping[]
   shippingInfos    ShippingInfo[]
+  seoMeta SeoMeta[]
   cart             Cart?            @relation("UserCart")
 }
 
@@ -359,6 +360,7 @@ model SeoMeta {
   blogId        Int?         @unique
   tagId         Int?         @unique
   categoryId    Int?         @unique
+  userId Int?
   ogImageId     Int?
   title         String?
   description   String?
@@ -375,6 +377,7 @@ model SeoMeta {
   blog     Blog?     @relation("SeoMetaBlog", fields: [blogId], references: [id], onDelete: Cascade)
   tag      Tag?      @relation("SeoMetaTag", fields: [tagId], references: [id], onDelete: Cascade)
   category Category? @relation("SeoMetaCategory", fields: [categoryId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId] , references: [id] , onDelete: SetNull)
 }
 
 model Blog {
