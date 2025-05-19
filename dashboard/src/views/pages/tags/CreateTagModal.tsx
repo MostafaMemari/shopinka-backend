@@ -36,7 +36,7 @@ const CreateTagModal = ({ children }: CreateTagModalProps) => {
         open={open}
         onClose={handleModalClose}
         title='ثبت برچسب جدید'
-        defaultMaxWidth='lg'
+        defaultMaxWidth='md'
         actions={<FormActions submitText='ثبت' onCancel={handleModalClose} onSubmit={onSubmit} isLoading={isLoading} />}
       >
         <TagForm control={control} errors={errors} setValue={setValue} isLoading={isLoading} />

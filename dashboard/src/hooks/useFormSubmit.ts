@@ -40,8 +40,7 @@ export const useFormSubmit = <T extends Record<string, any>>({
   errorMessage = 'خطای سیستمی رخ داد',
   initialData,
   isUpdate = false,
-  preprocessData,
-  onSuccess
+  preprocessData
 }: UseFormSubmitProps<T>): UseFormSubmitResult<T> => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { invalidate } = useInvalidateQuery()
@@ -77,7 +76,7 @@ export const useFormSubmit = <T extends Record<string, any>>({
           if (response.status === 200) {
             showToast({ type: 'success', message: successMessage })
             invalidate(queryKey)
-            onSuccess?.(response)
+            handleClose()
 
             return {
               status: 200,
@@ -98,7 +97,6 @@ export const useFormSubmit = <T extends Record<string, any>>({
             showToast({ type: 'success', message: successMessage })
             invalidate(queryKey)
             handleClose()
-            onSuccess?.(response)
 
             return {
               status: 201,
@@ -112,7 +110,7 @@ export const useFormSubmit = <T extends Record<string, any>>({
         setIsLoading(false)
       }
     },
-    [createApi, updateApi, errorMessages, queryKey, successMessage, noChangeMessage, errorMessage, initialData, isUpdate, invalidate, preprocessData, onSuccess]
+    [createApi, updateApi, errorMessages, queryKey, successMessage, noChangeMessage, errorMessage, initialData, isUpdate, invalidate, preprocessData]
   )
 
   return { isLoading, onSubmit }

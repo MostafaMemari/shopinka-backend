@@ -9,7 +9,6 @@ import { CategoryForm, categoryFormSchema } from '@/libs/validators/category.sch
 import { Category } from '@/types/app/category.type'
 import { useFormSubmit } from '../useFormSubmit'
 import { RobotsTag } from '@/types/enums/robotsTag'
-import { type InferType } from 'yup'
 import { errorCategoryMessage } from '@/messages/categoryMessages'
 
 export function useCategories({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
@@ -27,12 +26,11 @@ export function useCategories({ enabled = true, params = {}, staleTime = 1 * 60 
 interface UseCategoryFormProps {
   initialData?: Category
   isUpdate?: boolean
+  handleModalClose?: () => void
 }
 
-type CategoryFormType = InferType<typeof categoryFormSchema>
-
-export const useCategoryForm = ({ initialData, isUpdate = false }: UseCategoryFormProps) => {
-  const defaultValues: CategoryFormType = {
+export const useCategoryForm = ({ initialData, isUpdate = false, handleModalClose }: UseCategoryFormProps) => {
+  const defaultValues: CategoryForm = {
     name: initialData?.name ?? '',
     slug: initialData?.slug ?? '',
     description: initialData?.description ?? '',
@@ -55,7 +53,7 @@ export const useCategoryForm = ({ initialData, isUpdate = false }: UseCategoryFo
     reset,
     setValue,
     formState: { errors }
-  } = useForm<CategoryFormType>({
+  } = useForm<CategoryForm>({
     defaultValues,
     resolver: yupResolver(categoryFormSchema)
   })
@@ -92,7 +90,7 @@ export const useCategoryForm = ({ initialData, isUpdate = false }: UseCategoryFo
     errors,
     setValue,
     isLoading,
-    onSubmit: handleSubmit(data => onSubmit(data, handleClose)),
+    onSubmit: handleSubmit(data => onSubmit(data, handleModalClose ?? (() => {}))),
     handleClose
   }
 }

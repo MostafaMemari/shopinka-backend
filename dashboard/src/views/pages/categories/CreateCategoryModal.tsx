@@ -13,18 +13,15 @@ interface CreateCategoryModalProps {
 
 const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
-  const { control, errors, setValue, isLoading, onSubmit, handleClose } = useCategoryForm({})
 
   const handleOpen = useCallback(() => setOpen(true), [])
+  const handleClose = useCallback(() => setOpen(false), [])
 
-  const handleModalClose = useCallback(() => {
-    setOpen(false)
-    handleClose()
-  }, [handleClose])
+  const { control, errors, setValue, isLoading, onSubmit } = useCategoryForm({ handleModalClose: handleClose })
 
   return (
     <div>
-      <div onClick={handleOpen}>
+      <div onClick={handleOpen} style={{ cursor: 'pointer' }}>
         {children || (
           <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
             ثبت دسته‌بندی جدید
@@ -34,10 +31,10 @@ const CreateCategoryModal = ({ children }: CreateCategoryModalProps) => {
 
       <CustomDialog
         open={open}
-        onClose={handleModalClose}
+        onClose={handleClose}
         title='ثبت دسته‌بندی جدید'
-        defaultMaxWidth='lg'
-        actions={<FormActions submitText='ثبت' onCancel={handleModalClose} onSubmit={onSubmit} isLoading={isLoading} />}
+        defaultMaxWidth='md'
+        actions={<FormActions submitText='ثبت' onCancel={handleClose} onSubmit={onSubmit} isLoading={isLoading} />}
       >
         <CategoryForm control={control} errors={errors} setValue={setValue} isLoading={isLoading} />
       </CustomDialog>

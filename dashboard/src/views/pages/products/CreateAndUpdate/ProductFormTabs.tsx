@@ -14,6 +14,7 @@ import ProductCategories from '@/views/pages/products/CreateAndUpdate/sections/P
 import SeoTabContent from '@/views/pages/products/CreateAndUpdate/SeoTabContent'
 import VariableTabContent from '@/views/pages/products/CreateAndUpdate/variants/VariableTabContent'
 import { ProductType } from '@/types/app/product.type'
+import ProductTags from './sections/ProductTags'
 
 interface ProductFormTabsProps {
   productType: ProductType
@@ -62,6 +63,9 @@ const ProductFormTabs = ({ productType, id }: ProductFormTabsProps) => {
                 </Grid>
                 <Grid size={{ xs: 12 }}>
                   <ProductCategories />
+                </Grid>
+                <Grid size={{ xs: 12 }}>
+                  <ProductTags />
                 </Grid>
               </Grid>
             </Grid>
