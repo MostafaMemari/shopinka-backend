@@ -100,6 +100,21 @@ export class CreateProductDto {
 
     @IsOptional()
     @ApiProperty({
+        required: false,
+        nullable: true,
+        isArray: true,
+        type: 'array',
+        uniqueItems: true,
+        items: { type: 'number', nullable: false },
+    })
+    @Transform(({ value }) => transformNumberArray(value))
+    @IsArray()
+    @ArrayUnique()
+    @IsNotEmpty()
+    tagIds?: number[]
+
+    @IsOptional()
+    @ApiProperty({
         isArray: true,
         required: false,
         nullable: true,

@@ -17,6 +17,7 @@ import { FavoriteRepository } from '../repositories/favorite.repository';
 import { FavoriteMessages } from '../enums/favorite-messages.enum';
 import { CategoryRepository } from '../../category/category.repository';
 import { OrderItemRepository } from '../../order/repositories/order-item.repository';
+import { TagRepository } from 'src/modules/tag/tag.repository';
 
 @Injectable()
 export class ProductService {
@@ -29,11 +30,12 @@ export class ProductService {
     private readonly galleryItemRepository: GalleryItemRepository,
     private readonly attributeRepository: AttributeRepository,
     private readonly categoryRepository: CategoryRepository,
+    private readonly tagRepository: TagRepository,
     private readonly orderItemRepository: OrderItemRepository,
   ) { }
 
   async create(userId: number, createProductDto: CreateProductDto): Promise<{ message: string, product: Product }> {
-    const { categoryIds, galleryImageIds, mainImageId, name, slug, sku, basePrice, salePrice, attributeIds, type } = createProductDto
+    const { categoryIds, galleryImageIds, mainImageId, name, slug, sku, basePrice, salePrice, attributeIds, type, tagIds } = createProductDto
 
     if (salePrice > basePrice) throw new BadRequestException(ProductMessages.SalePriceTooHigh)
 
@@ -47,12 +49,14 @@ export class ProductService {
     const images = galleryImageIds && await this.galleryItemRepository.findAll({ where: { id: { in: galleryImageIds } } })
     const categories = categoryIds && await this.categoryRepository.findAll({ where: { id: { in: categoryIds } } })
     const attributes = attributeIds && await this.attributeRepository.findAll({ where: { id: { in: attributeIds } } })
+    const tags = tagIds && await this.tagRepository.findAll({ where: { id: { in: tagIds } } })
 
     const uniqueSlug = slug || await this.generateUniqueSlug(name)
 
     delete createProductDto.galleryImageIds
     delete createProductDto.attributeIds
     delete createProductDto.categoryIds
+    delete createProductDto.tagIds
 
     const newProduct = await this.productRepository.create({
       data: {
@@ -62,9 +66,9 @@ export class ProductService {
         mainImageId,
         galleryImages: galleryImageIds && { connect: images.map((image => ({ id: image.id }))) },
         attributes: type == ProductType.VARIABLE && attributeIds ? { connect: attributes.map(attribute => ({ id: attribute.id })) } : undefined,
-        categories: categoryIds && { connect: categories.map(cat => ({ id: cat.id })) }
-      },
-      include: { mainImage: true, galleryImages: true, attributes: true, categories: true }
+        categories: categoryIds && { connect: categories.map(cat => ({ id: cat.id })) },
+        tags: tagIds && { connect: tags.map(tag => ({ id: tag.id })) }
+      }
     })
 
     return { message: ProductMessages.CreatedProductSuccess, product: newProduct }
@@ -170,7 +174,7 @@ export class ProductService {
   }
 
   async update(userId: number, productId: number, updateProductDto: UpdateProductDto): Promise<{ message: string, product: Product }> {
-    const { status, categoryIds, galleryImageIds, mainImageId, slug, sku, basePrice, salePrice, attributeIds, type } = updateProductDto
+    const { status, categoryIds, galleryImageIds, mainImageId, slug, sku, basePrice, salePrice, attributeIds, type, tagIds } = updateProductDto
 
     const product = await this.productRepository.findOneOrThrow({ where: { id: productId, userId }, include: { variants: true } })
 
@@ -201,17 +205,17 @@ export class ProductService {
       throw new ForbiddenException(ProductMessages.CannotDraftProductWithPendingOrders);
     }
 
-    const categories = categoryIds ? await this.categoryRepository.findAll({ where: { id: { in: categoryIds } } }) : []
-
-    const images = galleryImageIds ? await this.galleryItemRepository.findAll({ where: { id: { in: galleryImageIds } } }) : undefined
-
-    const attributes = attributeIds ? await this.attributeRepository.findAll({ where: { id: { in: attributeIds } } }) : undefined
+    const categories = categoryIds && await this.categoryRepository.findAll({ where: { id: { in: categoryIds } } })
+    const images = galleryImageIds && await this.galleryItemRepository.findAll({ where: { id: { in: galleryImageIds } } })
+    const attributes = attributeIds && await this.attributeRepository.findAll({ where: { id: { in: attributeIds } } })
+    const tags = tagIds && await this.tagRepository.findAll({ where: { id: { in: tagIds } } })
 
     const isAllowedProductType = attributeIds && (product.type == ProductType.VARIABLE || type && type == ProductType.VARIABLE)
 
     delete updateProductDto.attributeIds
     delete updateProductDto.galleryImageIds
     delete updateProductDto.categoryIds
+    delete updateProductDto.tagIds
 
     const updatedProduct = await this.productRepository.update({
       where: { id: productId },
@@ -219,13 +223,13 @@ export class ProductService {
         ...updateProductDto,
         galleryImages: images ? { set: images.map(image => ({ id: image.id })) } : undefined,
         attributes: isAllowedProductType ? { set: attributes.map(attribute => ({ id: attribute.id })) } : undefined,
+        tags: tags && { connect: tags.map(tag => ({ id: tag.id })) },
         categories: categoryIds && { set: categories.map(cat => ({ id: cat.id })) },
         variants: type && type == ProductType.SIMPLE ? { deleteMany: { productId } } : undefined,
         orderItems: status && status == ProductStatus.DRAFT ? { deleteMany: { productId } } : undefined,
         cartItems: status && status == ProductStatus.DRAFT ? { deleteMany: { productId } } : undefined,
         favorites: status && status == ProductStatus.DRAFT ? { deleteMany: { productId } } : undefined
-      },
-      include: { attributes: true, galleryImages: true, mainImage: true }
+      }
     })
 
     return { message: ProductMessages.UpdatedProductSuccess, product: updatedProduct }
