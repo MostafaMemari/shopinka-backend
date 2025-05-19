@@ -11,9 +11,7 @@ import ProductFormTabs from './ProductFormTabs'
 const ProductForm = () => {
   const searchParams = useSearchParams()
   const id = searchParams.get('id') ? Number(searchParams.get('id')) : null
-
   const { isLoading, handleButtonClick, isUpdate, methods } = useProductForm({ id })
-
   const productType = methods.watch('type')
 
   if (isLoading) return <LoadingSpinner />

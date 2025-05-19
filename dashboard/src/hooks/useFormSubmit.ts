@@ -53,6 +53,8 @@ export const useFormSubmit = <T extends Record<string, any>>({
         const processedData = preprocessData ? preprocessData(formData) : formData
         const cleanedData = cleanObject(processedData)
 
+        console.log(formData)
+
         if (isUpdate && initialData?.id && updateApi) {
           const changedData = getChangedFields(initialData as unknown as T, cleanedData, ['mainImageId', 'thumbnailImageId'])
 

@@ -3,6 +3,7 @@ import { GalleryItem } from './gallery.type'
 import { Attribute } from './productAttributes.type'
 import { ProductVariant } from './productVariant.type'
 import { Seo } from './seo.type'
+import { Tag } from './tag.type'
 
 export enum ProductStatus {
   DRAFT = 'DRAFT',
@@ -29,6 +30,7 @@ export type Product = {
   galleryImageIds: number[] | []
   categoryIds: number[] | []
   attributeIds: number[] | []
+  tagIds: number[] | []
   width: number | null
   height: number | null
   length: number | null
@@ -40,4 +42,5 @@ export type Product = {
   attributes: Attribute[] | undefined
   categories: Category[] | undefined
   variants: ProductVariant[] | undefined
+  tags: Tag[] | undefined
 }

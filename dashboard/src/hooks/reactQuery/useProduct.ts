@@ -66,6 +66,7 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
       galleryImageIds: [],
       categoryIds: [],
       attributeIds: [],
+      tagIds: [],
       width: null,
       height: null,
       length: null,
@@ -120,6 +121,7 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
             methods.setValue('categoryIds', product.categories?.map(category => category.id) || [])
             methods.setValue('attributes', product.attributes || [])
             methods.setValue('attributeIds', product.attributes?.map(attribute => attribute.id) || [])
+            methods.setValue('tagIds', product.tags?.map(tag => tag.id) || [])
           }
         })
         .catch(() => {
@@ -146,6 +148,7 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
 
       methods.setValue('categoryIds', initialData.categoryIds || [])
       methods.setValue('attributeIds', initialData.attributeIds || [])
+      methods.setValue('tagIds', initialData.tags?.map(tag => tag.id) || [])
       setIsLoading(false)
     } else {
       setIsLoading(false)
@@ -228,23 +231,3 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
     methods
   }
 }
-
-// const handleProductVariants = useCallback(async (productId: number, data: Partial<ProductFormType>) => {
-//   if (data?.attributeValuesIds?.length) {
-//     data.attributeValuesIds.forEach(async value => {
-//       console.log(value)
-
-//       if (value) {
-//         await createProductVariants({
-//           productId,
-//           attributeValueIds: value.filter((id): id is number => id !== undefined),
-//           sku: generateRandomSKU(6)
-//         })
-//       }
-//     })
-
-//     return true
-//   }
-// }, [])
-
-// await handleProductVariants(Number(productId), cleanedData)

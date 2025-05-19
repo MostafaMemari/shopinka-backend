@@ -96,6 +96,17 @@ export const productSchema = yup.object().shape({
     })
     .default(null),
 
+  tagIds: yup
+    .array()
+    .of(yup.number().defined().positive('شناسه تگ باید عددی مثبت باشد'))
+    .notRequired()
+    .test('unique', 'تگ‌ها تکراری هستند', value => {
+      if (!value) return true
+
+      return new Set(value).size === value.length
+    })
+    .default(null),
+
   width: yup
     .number()
     .transform((value, originalValue) => (originalValue === '' ? null : value))
