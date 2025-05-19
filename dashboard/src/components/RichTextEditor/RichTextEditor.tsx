@@ -25,6 +25,8 @@ import { BulletList } from '@tiptap/extension-bullet-list'
 import { OrderedList } from '@tiptap/extension-ordered-list'
 import { ListItem } from '@tiptap/extension-list-item'
 import { Heading } from '@tiptap/extension-heading'
+import { TextStyle } from '@tiptap/extension-text-style'
+import { CodeBlock } from '@tiptap/extension-code-block'
 import { useEffect, useState } from 'react'
 
 // Components Imports
@@ -42,7 +44,16 @@ const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کن
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        bulletList: {
+          keepMarks: true,
+          keepAttributes: false
+        },
+        orderedList: {
+          keepMarks: true,
+          keepAttributes: false
+        }
+      }),
       Placeholder.configure({ placeholder }),
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       Underline,
@@ -73,7 +84,14 @@ const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کن
       }),
       ListItem,
       Heading.configure({
-        levels: [1, 2, 3]
+        levels: [1, 2, 3, 4, 5, 6]
+      }),
+
+      TextStyle,
+      CodeBlock.configure({
+        HTMLAttributes: {
+          class: 'bg-gray-100 p-4 rounded'
+        }
       })
     ],
     immediatelyRender: false,
@@ -96,6 +114,7 @@ const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کن
   const handleLinkDialog = () => {
     if (editor) {
       const previousUrl = editor.getAttributes('link').href || ''
+
       setLinkUrl(previousUrl)
       setOpen(true)
     }
@@ -108,6 +127,7 @@ const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کن
       } else {
         editor.chain().focus().unsetLink().run()
       }
+
       setOpen(false)
       setLinkUrl('')
     }
