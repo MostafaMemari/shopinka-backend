@@ -30,7 +30,7 @@ export class SeoService {
 
         if (definedCount !== 1) throw new BadRequestException(SeoMetaMessages.OnlyOneTargetAllowed)
 
-        if (ogImageId !== null) await this.galleryItemRepository.findOneOrThrow({ where: { id: ogImageId } })
+        if (ogImageId !== undefined && ogImageId !== null) await this.galleryItemRepository.findOneOrThrow({ where: { id: ogImageId } })
         if (productId) await this.productRepository.findOneOrThrow({ where: { id: productId } })
         if (blogId) await this.blogRepository.findOneOrThrow({ where: { id: blogId } })
         if (tagId) await this.tagRepository.findOneOrThrow({ where: { id: tagId } })
@@ -38,21 +38,16 @@ export class SeoService {
 
         const existingSeo = await this.seoMetaRepository.findOne({
             where: {
-                OR: [
-                    { productId, product: { userId } },
-                    { blogId, blog: { userId } },
-                    { tagId, tag: { userId } },
-                    { categoryId, category: { userId } }
-                ]
+                OR: [{ productId, userId }, { blogId, userId }, { tagId, userId }, { categoryId, userId }]
             }
         })
 
         if (existingSeo) {
-            const updatedSeo = await this.seoMetaRepository.update({ where: { id: existingSeo.id }, data: seoMetaDto })
+            const updatedSeo = await this.seoMetaRepository.update({ where: { id: existingSeo.id, userId }, data: seoMetaDto })
             return { message: SeoMetaMessages.UpdatedSeoMetaSuccess, seoMeta: updatedSeo }
         }
 
-        const seoMeta = await this.seoMetaRepository.create({ data: { ...seoMetaDto, productId, robotsTag: robotsTag ?? RobotsMetaTag.IndexFollow } })
+        const seoMeta = await this.seoMetaRepository.create({ data: { userId, ...seoMetaDto, productId, robotsTag: robotsTag ?? RobotsMetaTag.IndexFollow } })
 
         return { message: SeoMetaMessages.CreatedSeoMetaSuccess, seoMeta }
     }

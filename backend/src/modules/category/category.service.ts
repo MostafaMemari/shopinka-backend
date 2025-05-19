@@ -135,7 +135,7 @@ export class CategoryService {
 
     if (parentId) await this.categoryRepository.findOneOrThrow({ where: { id: parentId } })
 
-    if (thumbnailImageId) await this.galleryItemRepository.findOneOrThrow({ where: { id: thumbnailImageId } })
+    if (thumbnailImageId !== null) await this.galleryItemRepository.findOneOrThrow({ where: { id: thumbnailImageId } })
 
     const updatedCategory = await this.categoryRepository.update({
       where: { id: categoryId }, data: updateCategoryDto,
