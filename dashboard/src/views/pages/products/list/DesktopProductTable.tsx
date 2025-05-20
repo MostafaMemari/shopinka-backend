@@ -20,7 +20,6 @@ const DesktopProductTable = ({ products }: { products: Product[] }) => {
           <tr>
             <th>تصویر</th>
             <th>نام محصول</th>
-            <th>نامک</th>
             <th>وضعیت</th>
             <th>قیمت پایه</th>
             <th>قیمت فروش</th>
@@ -54,11 +53,7 @@ const DesktopProductTable = ({ products }: { products: Product[] }) => {
                     {product.name || '-'}
                   </Typography>
                 </td>
-                <td>
-                  <Typography className='font-medium' color='text.primary'>
-                    {product.slug || '-'}
-                  </Typography>
-                </td>
+
                 <td>
                   {product.status ? (
                     <Chip label={product.status === 'PUBLISHED' ? 'منتشر شده' : 'پیش‌نویس'} color={product.status === 'PUBLISHED' ? 'success' : 'warning'} size='small' />

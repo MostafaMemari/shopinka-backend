@@ -92,7 +92,7 @@ const handleSeo = async (productId: number, data: Partial<ProductForm>, isUpdate
             description: data.shortDescription ?? ''
           }),
         seo_keywords: data.seo_keywords,
-        seo_canonicalUrl: data.seo_canonicalUrl,
+        seo_canonicalUrl: data.seo_canonicalUrl || data.slug,
         seo_ogTitle: data.seo_ogTitle || data.name,
         seo_ogDescription:
           data.seo_ogDescription ||
