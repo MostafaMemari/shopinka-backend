@@ -14,6 +14,7 @@ import { useShippings } from '@/hooks/reactQuery/useShipping'
 import { useSearch } from '@/hooks/useSearchQuery'
 import CustomTextField from '@/@core/components/mui/TextField'
 import EmptyShippingState from './EmptyShippingState'
+import CreateShippingModal from './CreateShippingModal'
 
 const ShippingView = () => {
   const { page, size, setPage, setSize } = usePaginationParams()
@@ -48,11 +49,13 @@ const ShippingView = () => {
   return (
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
-        <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
-          ثبت محصول جدید
-        </Button>
+        <CreateShippingModal>
+          <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
+            ثبت حمل و نقل جدید
+          </Button>
+        </CreateShippingModal>
 
-        <CustomTextField id='form-props-search' placeholder='جستجوی محصول' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
+        <CustomTextField id='form-props-search' placeholder='جستجوی حمل و نقل' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
       </Box>
       {shippings.length === 0 ? (
         <EmptyShippingState isSearch={!!search} searchQuery={search} />

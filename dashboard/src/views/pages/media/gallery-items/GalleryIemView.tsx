@@ -1,43 +1,43 @@
 'use client'
 
-// React Imports
 import { useState, useEffect, useMemo } from 'react'
-
-// MUI Imports
 import Card from '@mui/material/Card'
-import { Box, Button } from '@mui/material'
-
-// Component Imports
+import { Box, Button, useMediaQuery, useTheme } from '@mui/material'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
 import DesktopMediaGallery from './DesktopMediaGallery'
 import CreateMediaModal from './CreateMediaModal'
 import RemoveGalleryItemModal from './RemoveMediaModal'
 import LoadingSpinner from '@/components/LoadingSpinner'
-
-// API Import
 import { useGalleryItems } from '@/hooks/reactQuery/useGallery'
 import { GalleryItem } from '@/types/app/gallery.type'
 import { usePaginationParams } from '@/hooks/usePaginationParams'
 import ErrorState from '@/components/states/ErrorState'
 import EmptyGalleryItemsState from './EmptyGalleryItemsState'
-import { useDebounce } from '@/hooks/useDebounce'
 import { useSearch } from '@/hooks/useSearchQuery'
+import { useDebounce } from 'react-use'
 import CustomTextField from '@/@core/components/mui/TextField'
 
 const GalleryItemView = ({ galleryId }: { galleryId: string }) => {
   const { page, size, setPage, setSize } = usePaginationParams()
-
   const { search, setSearch } = useSearch()
+
+  const [selected, setSelected] = useState<string[]>([])
 
   const [inputValue, setInputValue] = useState(search)
   const debounceDelay = 500
-  const debouncedInputValue = useDebounce(inputValue, debounceDelay)
+  const [debouncedValue, setDebouncedValue] = useState(inputValue)
 
-  useMemo(() => {
-    setSearch(debouncedInputValue)
-  }, [debouncedInputValue, setSearch])
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(inputValue)
+    }, debounceDelay)
 
-  const [selected, setSelected] = useState<string[]>([])
+    return () => clearTimeout(timer)
+  }, [inputValue, debounceDelay])
+
+  useEffect(() => {
+    setSearch(debouncedValue)
+  }, [debouncedValue, setSearch])
 
   const { data, isLoading, isFetching, error, refetch } = useGalleryItems({
     params: {
@@ -48,6 +48,9 @@ const GalleryItemView = ({ galleryId }: { galleryId: string }) => {
     enabled: !!galleryId,
     staleTime: 5 * 60 * 1000
   })
+
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   const galleryItems: GalleryItem[] = useMemo(() => data?.data?.items || [], [data])
   const paginationData = useMemo(() => data?.data?.pager || { currentPage: 1, totalPages: 1, totalCount: 0 }, [data])
@@ -73,30 +76,36 @@ const GalleryItemView = ({ galleryId }: { galleryId: string }) => {
   if (isLoading || isFetching) return <LoadingSpinner />
   if (error) return <ErrorState onRetry={() => refetch()} />
 
-  // Main render
   return (
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
         <Box sx={{ display: 'flex', gap: 2 }}>
-          <CreateMediaModal />
+          <CreateMediaModal>
+            <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
+              ثبت رسانه جدید
+            </Button>
+          </CreateMediaModal>
           {selected.length > 0 && <RemoveGalleryItemModal selectedImages={selected} onClearSelection={handleClearSelection} />}
         </Box>
-
-        <CustomTextField id='form-props-search' placeholder='جستجوی محصول' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
+        <CustomTextField id='form-props-search' placeholder='جستجوی رسانه' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
       </Box>
 
       {galleryItems.length === 0 ? (
         <EmptyGalleryItemsState isSearch={!!search} searchQuery={search} />
       ) : (
-        <TablePaginationComponent
-          currentPage={page}
-          totalPages={paginationData.totalPages}
-          totalCount={paginationData.totalCount}
-          rowsPerPage={size}
-          onPageChange={setPage}
-          onRowsPerPageChange={setSize}
-          currentPageItemCount={galleryItems.length}
-        />
+        <>
+          <DesktopMediaGallery data={galleryItems} selected={selected} handleCheckboxChange={handleCheckboxChange} />
+
+          <TablePaginationComponent
+            currentPage={page}
+            totalPages={paginationData.totalPages}
+            totalCount={paginationData.totalCount}
+            rowsPerPage={size}
+            onPageChange={setPage}
+            onRowsPerPageChange={setSize}
+            currentPageItemCount={galleryItems.length}
+          />
+        </>
       )}
     </Card>
   )

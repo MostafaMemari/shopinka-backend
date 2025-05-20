@@ -54,7 +54,7 @@ const ProductAttributeView = () => {
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
         <CreateAttributeModal />
 
-        <CustomTextField id='form-props-search' placeholder='جستجوی محصول' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
+        <CustomTextField id='form-props-search' placeholder='جستجوی ویژگی' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
       </Box>
 
       {attributes.length === 0 ? (

@@ -15,6 +15,7 @@ import CustomTextField from '@/@core/components/mui/TextField'
 import { Tag } from '@/types/app/tag.type'
 import { useTags } from '@/hooks/reactQuery/useTag'
 import EmptyTagState from './EmptyGalleryState'
+import CreateTagModal from './CreateTagModal'
 
 const TagListView = () => {
   const { page, size, setPage, setSize } = usePaginationParams()
@@ -52,11 +53,13 @@ const TagListView = () => {
   return (
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
-        <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
-          ثبت تگ جدید
-        </Button>
+        <CreateTagModal>
+          <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
+            ثبت تگ جدید
+          </Button>
+        </CreateTagModal>
 
-        <CustomTextField id='form-props-search' placeholder='جستجوی محصول' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
+        <CustomTextField id='form-props-search' placeholder='جستجوی تگ' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
       </Box>
       {tags.length === 0 ? (
         <EmptyTagState isSearch={!!search} searchQuery={search} />

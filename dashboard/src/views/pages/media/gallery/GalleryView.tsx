@@ -9,17 +9,16 @@ import LoadingSpinner from '@/components/LoadingSpinner'
 import { usePaginationParams } from '@/hooks/usePaginationParams'
 import { useDebounce } from '@/hooks/useDebounce'
 import ErrorState from '@/components/states/ErrorState'
-import { useGalleryItems } from '@/hooks/reactQuery/useGallery'
-import { useRouter } from 'next/navigation'
+import { useGallery } from '@/hooks/reactQuery/useGallery'
 import { useSearch } from '@/hooks/useSearchQuery'
 import CustomTextField from '@/@core/components/mui/TextField'
 import EmptyGalleryState from './EmptyGalleryState'
 import { Gallery } from '@/types/app/gallery.type'
+import CreateGalleryModal from './CreateGalleryModal'
 
 const GalleryListView = () => {
   const { page, size, setPage, setSize } = usePaginationParams()
   const { search, setSearch } = useSearch()
-  const router = useRouter()
 
   const [inputValue, setInputValue] = useState(search)
   const debounceDelay = 500
@@ -29,16 +28,11 @@ const GalleryListView = () => {
     setSearch(debouncedInputValue)
   }, [debouncedInputValue, setSearch])
 
-  const handleAddGallery = () => {
-    router.push('/galleries/add')
-  }
-
-  const { data, isLoading, isFetching, error, refetch } = useGalleryItems({
+  const { data, isLoading, isFetching, error, refetch } = useGallery({
     enabled: true,
     params: {
       page,
       take: size,
-      includeMainImage: true,
       name: search ?? undefined
     },
     staleTime: 5 * 60 * 1000
@@ -56,11 +50,13 @@ const GalleryListView = () => {
   return (
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
-        <Button onClick={handleAddGallery} variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
-          ثبت محصول جدید
-        </Button>
+        <CreateGalleryModal>
+          <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
+            ثبت گالری جدید
+          </Button>
+        </CreateGalleryModal>
 
-        <CustomTextField id='form-props-search' placeholder='جستجوی محصول' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
+        <CustomTextField id='form-props-search' placeholder='جستجوی گالری' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
       </Box>
       {galleries.length === 0 ? (
         <EmptyGalleryState isSearch={!!search} searchQuery={search} />

@@ -54,25 +54,31 @@ const CategoryView = () => {
   return (
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
-        <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
-          ثبت دسته‌بندی جدید
-        </Button>
+        <CreateCategoryModal>
+          <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
+            ثبت دسته‌بندی جدید
+          </Button>
+        </CreateCategoryModal>
 
-        <CustomTextField id='form-props-search' placeholder='جستجوی محصول' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
+        <CustomTextField id='form-props-search' placeholder='جستجوی دسته‌بندی' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
       </Box>
 
       {categories.length === 0 ? (
         <EmptyCategoryState isSearch={!!search} searchQuery={search} />
       ) : (
-        <TablePaginationComponent
-          currentPage={page}
-          totalPages={paginationData.totalPages}
-          totalCount={paginationData.totalCount}
-          rowsPerPage={size}
-          onPageChange={setPage}
-          onRowsPerPageChange={setSize}
-          currentPageItemCount={categories.length}
-        />
+        <>
+          {!isMobile && <DesktopCategoryTable categories={categories} />}
+
+          <TablePaginationComponent
+            currentPage={page}
+            totalPages={paginationData.totalPages}
+            totalCount={paginationData.totalCount}
+            rowsPerPage={size}
+            onPageChange={setPage}
+            onRowsPerPageChange={setSize}
+            currentPageItemCount={categories.length}
+          />
+        </>
       )}
     </Card>
   )

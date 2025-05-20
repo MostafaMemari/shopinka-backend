@@ -52,11 +52,9 @@ const CommentView = () => {
   return (
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
-        <Button variant='contained' className='max-sm:w-full' startIcon={<i className='tabler-plus' />}>
-          ثبت تگ جدید
-        </Button>
+        <div></div>
 
-        <CustomTextField id='form-props-search' placeholder='جستجوی محصول' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
+        <CustomTextField id='form-props-search' placeholder='جستجوی کامنت' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
       </Box>
       {comments.length === 0 ? (
         <EmptyCommentState isSearch={!!search} searchQuery={search} />
