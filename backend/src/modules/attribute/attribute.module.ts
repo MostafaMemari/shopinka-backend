@@ -18,7 +18,7 @@ import { AttributeValueRepository } from './repositories/attribute-value.reposit
     UserRepository,
     AttributeRepository,
     AttributeValueService,
-    AttributeValueRepository
+    AttributeValueRepository,
   ],
 })
-export class AttributeModule { }
+export class AttributeModule {}

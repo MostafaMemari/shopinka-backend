@@ -1,9 +1,9 @@
 export interface IGenerateTokens {
-    accessToken: string;
-    refreshToken: string;
+  accessToken: string;
+  refreshToken: string;
 }
 
 export interface IRefreshToken {
-    message?: string
-    accessToken: string
+  message?: string;
+  accessToken: string;
 }

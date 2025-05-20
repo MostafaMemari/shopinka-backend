@@ -16,7 +16,7 @@ import { QueryAdminCommentDto } from './dto/query-admin-comment.dto';
 @ApiTags('comment')
 @AuthDecorator()
 export class CommentController {
-  constructor(private readonly commentService: CommentService) { }
+  constructor(private readonly commentService: CommentService) {}
 
   @Post()
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
@@ -45,7 +45,7 @@ export class CommentController {
   @Patch('toggle-active/:id')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   toggleActive(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
-    return this.commentService.toggleActive(user.id, id)
+    return this.commentService.toggleActive(user.id, id);
   }
 
   @Patch(':id')

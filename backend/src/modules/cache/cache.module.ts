@@ -7,4 +7,4 @@ import { CacheService } from './cache.service';
   providers: [CacheService],
   exports: [CacheService, CacheModule],
 })
-export class CacheModule { }
+export class CacheModule {}

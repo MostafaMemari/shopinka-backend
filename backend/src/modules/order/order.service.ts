@@ -21,8 +21,8 @@ import { UpdateOrderStatusDto } from './dto/update-status-order.dto';
 
 @Injectable()
 export class OrderService {
-  private readonly CACHE_EXPIRE_TIME: number = 600 //* 5 minutes
-  private readonly logger: Logger = new Logger(OrderService.name)
+  private readonly CACHE_EXPIRE_TIME: number = 600; //* 5 minutes
+  private readonly logger: Logger = new Logger(OrderService.name);
 
   constructor(
     private readonly orderRepository: OrderRepository,
@@ -33,8 +33,8 @@ export class OrderService {
     private readonly productVariantRepository: ProductVariantRepository,
     private readonly cartItemRepository: CartItemRepository,
     private readonly shippingRepository: ShippingRepository,
-    private readonly cacheService: CacheService
-  ) { }
+    private readonly cacheService: CacheService,
+  ) {}
 
   @Cron(CronExpression.EVERY_30_MINUTES)
   async handleExpiredPendingOrders() {
@@ -49,7 +49,7 @@ export class OrderService {
           status: OrderStatus.PENDING,
           createdAt: { lt: expirationTime },
         },
-        include: { items: true }
+        include: { items: true },
       });
 
       for (const order of expiredOrders) {
@@ -74,7 +74,9 @@ export class OrderService {
   }
 
   private generateOrderNumber(): string {
-    const number = Math.floor(Math.random() * 1_000_000_000).toString().padStart(9, '0');
+    const number = Math.floor(Math.random() * 1_000_000_000)
+      .toString()
+      .padStart(9, '0');
     return number.match(/.{1,3}/g)?.join('-') || '';
   }
 
@@ -119,11 +121,11 @@ export class OrderService {
     let { cartItems, finalPrice } = cart;
 
     if (!cartItems.length) {
-      throw new BadRequestException("Your cart list is empty.");
+      throw new BadRequestException('Your cart list is empty.');
     }
 
-    const shipping = await this.shippingRepository.findOneOrThrow({ where: { id: shippingId } })
-    finalPrice += shipping.price
+    const shipping = await this.shippingRepository.findOneOrThrow({ where: { id: shippingId } });
+    finalPrice += shipping.price;
 
     await this.addressRepository.findOneOrThrow({ where: { userId, id: addressId } });
 
@@ -146,9 +148,9 @@ export class OrderService {
 
     await this.cartItemRepository.deleteMany({ where: { cart: { userId } } });
 
-    await this.decreaseCartItemsStock(userId)
+    await this.decreaseCartItemsStock(userId);
 
-    return newOrder
+    return newOrder;
   }
 
   async findAllForAdmin(userId: number, { page, take, ...queryOrderDto }: QueryOrderDto): Promise<unknown> {
@@ -164,7 +166,7 @@ export class OrderService {
       maxPrice,
       minPrice,
       quantity,
-      includeTransaction
+      includeTransaction,
     } = queryOrderDto;
 
     const sortedDto = sortObject(queryOrderDto);
@@ -173,21 +175,18 @@ export class OrderService {
 
     const cachedOrders = await this.cacheService.get<null | Order[]>(cacheKey);
 
-    if (cachedOrders) return { ...pagination(paginationDto, cachedOrders) }
+    if (cachedOrders) return { ...pagination(paginationDto, cachedOrders) };
 
     const filters: Prisma.OrderWhereInput = {
-      OR: [
-        { user: { products: { some: { userId } } } },
-        { user: { productVariants: { some: { userId } } } }
-      ]
+      OR: [{ user: { products: { some: { userId } } } }, { user: { productVariants: { some: { userId } } } }],
     };
 
-    if (addressId) filters.addressId = addressId
-    if (quantity) filters.quantity = quantity
+    if (addressId) filters.addressId = addressId;
+    if (quantity) filters.quantity = quantity;
     if (maxPrice || minPrice) {
       filters.totalPrice = {};
-      if (maxPrice) filters.totalPrice.gte = maxPrice
-      if (minPrice) filters.totalPrice.lte = minPrice
+      if (maxPrice) filters.totalPrice.gte = maxPrice;
+      if (minPrice) filters.totalPrice.lte = minPrice;
     }
     if (startDate || endDate) {
       filters.createdAt = {};
@@ -198,70 +197,68 @@ export class OrderService {
     const orders = await this.orderRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { items: includeItems, address: includeAddress, transaction: includeTransaction }
+      include: { items: includeItems, address: includeAddress, transaction: includeTransaction },
     });
 
     await this.cacheService.set(cacheKey, orders, this.CACHE_EXPIRE_TIME);
 
-    return { ...pagination(paginationDto, orders) }
+    return { ...pagination(paginationDto, orders) };
   }
 
   async findAllForUser(userId: number, paginationDto: PaginationDto): Promise<unknown> {
     const orders = await this.orderRepository.findAll({
       where: { userId },
-      orderBy: { createdAt: "desc" },
-      include: { address: true, items: true, shippingInfo: true, shipping: true }
-    })
+      orderBy: { createdAt: 'desc' },
+      include: { address: true, items: true, shippingInfo: true, shipping: true },
+    });
 
-    return pagination(paginationDto, orders)
+    return pagination(paginationDto, orders);
   }
 
   async findAllItemsForUser(userId: number, paginationDto: PaginationDto): Promise<unknown> {
-    const orderItems = await this.orderItemRepository.findAll(
-      {
-        where: { order: { userId } },
-        include: { order: true, product: true, productVariant: true },
-        orderBy: { createdAt: 'desc' }
-      })
+    const orderItems = await this.orderItemRepository.findAll({
+      where: { order: { userId } },
+      include: { order: true, product: true, productVariant: true },
+      orderBy: { createdAt: 'desc' },
+    });
 
-    return pagination(paginationDto, orderItems)
+    return pagination(paginationDto, orderItems);
   }
 
   async findAllItemsForAdmin(userId: number, paginationDto: PaginationDto): Promise<unknown> {
-    const orderItems = await this.orderItemRepository.findAll(
-      {
-        where: { order: { OR: [{ items: { some: { product: { userId } } } }, { items: { some: { productVariant: { userId } } } }] } },
-        include: { order: true, product: true, productVariant: true },
-        orderBy: { createdAt: 'desc' }
-      })
+    const orderItems = await this.orderItemRepository.findAll({
+      where: { order: { OR: [{ items: { some: { product: { userId } } } }, { items: { some: { productVariant: { userId } } } }] } },
+      include: { order: true, product: true, productVariant: true },
+      orderBy: { createdAt: 'desc' },
+    });
 
-    return pagination(paginationDto, orderItems)
+    return pagination(paginationDto, orderItems);
   }
 
   findOneForAdmin(userId: number, orderId: number): Promise<Order> {
     return this.orderRepository.findOneOrThrow({
       where: { id: orderId, OR: [{ items: { some: { product: { userId } } } }, { items: { some: { productVariant: { userId } } } }] },
-      include: { items: true, address: true, shipping: true, shippingInfo: true, transaction: true, user: true }
-    })
+      include: { items: true, address: true, shipping: true, shippingInfo: true, transaction: true, user: true },
+    });
   }
 
   findOneForUser(userId: number, orderId: number): Promise<Order> {
     return this.orderRepository.findOneOrThrow({
       where: { userId, id: orderId },
-      include: { address: true, items: true, shipping: true, shippingInfo: true, transaction: true }
-    })
+      include: { address: true, items: true, shipping: true, shippingInfo: true, transaction: true },
+    });
   }
 
-  async updateStatus(userId: number, orderId: number, { status }: UpdateOrderStatusDto): Promise<{ message: string, order: Order }> {
+  async updateStatus(userId: number, orderId: number, { status }: UpdateOrderStatusDto): Promise<{ message: string; order: Order }> {
     await this.orderRepository.findOneOrThrow({
       where: {
         id: orderId,
-        OR: [{ items: { some: { product: { userId } } } }, { items: { some: { productVariant: { userId } } } }]
-      }
-    })
+        OR: [{ items: { some: { product: { userId } } } }, { items: { some: { productVariant: { userId } } } }],
+      },
+    });
 
-    const updatedOrder = await this.orderRepository.update({ where: { id: orderId }, data: { status } })
+    const updatedOrder = await this.orderRepository.update({ where: { id: orderId }, data: { status } });
 
-    return { message: "Updated order status successfully.", order: updatedOrder }
+    return { message: 'Updated order status successfully.', order: updatedOrder };
   }
 }

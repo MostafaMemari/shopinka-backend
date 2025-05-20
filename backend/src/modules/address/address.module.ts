@@ -10,4 +10,4 @@ import { CacheService } from '../cache/cache.service';
   controllers: [AddressController],
   providers: [AddressService, AuthService, AddressRepository, UserRepository, CacheService],
 })
-export class AddressModule { }
+export class AddressModule {}

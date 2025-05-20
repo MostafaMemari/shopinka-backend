@@ -11,4 +11,4 @@ import { CacheService } from '../cache/cache.service';
   controllers: [CommentController],
   providers: [CommentService, AuthService, UserRepository, CommentRepository, ProductRepository, CacheService],
 })
-export class CommentModule { }
+export class CommentModule {}

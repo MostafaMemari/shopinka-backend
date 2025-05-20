@@ -1,4 +1,4 @@
 export enum AddressSortBy {
-    CreatedAt = "createdAt",
-    UpdatedAt = "updatedAt",
+  CreatedAt = 'createdAt',
+  UpdatedAt = 'updatedAt',
 }

@@ -1,83 +1,83 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable } from "@nestjs/common";
-import { UpdateUserDto } from "./dto/update-user.dto";
-import { UserRepository } from "./user.repository";
-import { QueryUsersDto } from "./dto/users-query.dto";
-import { pagination } from "../../common/utils/pagination.utils";
-import { CacheService } from "../cache/cache.service";
-import { Prisma, User } from "generated/prisma";
-import { sortObject } from "../../common/utils/functions.utils";
-import { CacheKeys } from "../../common/enums/cache.enum";
-import { AuthService } from "../auth/auth.service";
-import { UserMessages } from "./enums/user.messages";
-import { ChangeRoleDto } from "./dto/change-role.dto";
-import { FavoriteRepository } from "../product/repositories/favorite.repository";
-import { PaginationDto } from "../../common/dtos/pagination.dto";
+import { BadRequestException, ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserRepository } from './user.repository';
+import { QueryUsersDto } from './dto/users-query.dto';
+import { pagination } from '../../common/utils/pagination.utils';
+import { CacheService } from '../cache/cache.service';
+import { Prisma, User } from 'generated/prisma';
+import { sortObject } from '../../common/utils/functions.utils';
+import { CacheKeys } from '../../common/enums/cache.enum';
+import { AuthService } from '../auth/auth.service';
+import { UserMessages } from './enums/user.messages';
+import { ChangeRoleDto } from './dto/change-role.dto';
+import { FavoriteRepository } from '../product/repositories/favorite.repository';
+import { PaginationDto } from '../../common/dtos/pagination.dto';
 
 @Injectable()
 export class UserService {
-  private readonly CACHE_EXPIRE_TIME: number = 600 //* 5 minutes
+  private readonly CACHE_EXPIRE_TIME: number = 600; //* 5 minutes
 
   constructor(
     private readonly favoriteRepository: FavoriteRepository,
     private readonly userRepository: UserRepository,
     private readonly cacheService: CacheService,
-    private readonly authService: AuthService
-  ) { }
+    private readonly authService: AuthService,
+  ) {}
 
   async findAll({ page, take, ...queryUsersDto }: QueryUsersDto) {
-    const paginationDto = { page, take }
-    const { endDate, fullName, isVerifiedMobile, lastMobileChange, mobile, role, sortBy, sortDirection, startDate } = queryUsersDto
+    const paginationDto = { page, take };
+    const { endDate, fullName, isVerifiedMobile, lastMobileChange, mobile, role, sortBy, sortDirection, startDate } = queryUsersDto;
 
-    const sortedDto = sortObject(queryUsersDto)
+    const sortedDto = sortObject(queryUsersDto);
 
-    const cacheKey = `${CacheKeys.Users}_${JSON.stringify(sortedDto)}`
+    const cacheKey = `${CacheKeys.Users}_${JSON.stringify(sortedDto)}`;
 
-    const usersCache = await this.cacheService.get<User[] | null>(cacheKey)
+    const usersCache = await this.cacheService.get<User[] | null>(cacheKey);
 
-    if (usersCache) return { ...pagination(paginationDto, usersCache) }
+    if (usersCache) return { ...pagination(paginationDto, usersCache) };
 
-    const filters: Prisma.UserWhereInput = {}
+    const filters: Prisma.UserWhereInput = {};
 
-    if (isVerifiedMobile !== undefined) filters.isVerifiedMobile = isVerifiedMobile
-    if (fullName) filters.fullName = { contains: fullName, mode: "insensitive" }
-    if (mobile) filters.mobile = { contains: mobile, mode: 'insensitive' }
-    if (role) filters.role = role
-    if (lastMobileChange) filters.lastMobileChange = lastMobileChange
+    if (isVerifiedMobile !== undefined) filters.isVerifiedMobile = isVerifiedMobile;
+    if (fullName) filters.fullName = { contains: fullName, mode: 'insensitive' };
+    if (mobile) filters.mobile = { contains: mobile, mode: 'insensitive' };
+    if (role) filters.role = role;
+    if (lastMobileChange) filters.lastMobileChange = lastMobileChange;
     if (startDate || endDate) {
-      filters.createdAt = {}
-      if (startDate) filters.createdAt.gte = new Date(startDate)
-      if (endDate) filters.createdAt.lte = new Date(endDate)
+      filters.createdAt = {};
+      if (startDate) filters.createdAt.gte = new Date(startDate);
+      if (endDate) filters.createdAt.lte = new Date(endDate);
     }
 
     const users = await this.userRepository.findAll({
       where: filters,
-      orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' }
-    })
+      orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
+    });
 
-    await this.cacheService.set(cacheKey, users, this.CACHE_EXPIRE_TIME)
+    await this.cacheService.set(cacheKey, users, this.CACHE_EXPIRE_TIME);
 
-    return { ...pagination(paginationDto, users) }
+    return { ...pagination(paginationDto, users) };
   }
 
   async findAllFavorites(userId: number, paginationDto: PaginationDto): Promise<unknown> {
-    const favorites = await this.favoriteRepository.findAll({ where: { userId }, include: { product: true } })
-    return pagination(paginationDto, favorites)
+    const favorites = await this.favoriteRepository.findAll({ where: { userId }, include: { product: true } });
+    return pagination(paginationDto, favorites);
   }
 
   findOne(id: number): Promise<User | never> {
-    return this.userRepository.findOneOrThrow({ where: { id } })
+    return this.userRepository.findOneOrThrow({ where: { id } });
   }
 
-  async update(id: number, { fullName, mobile }: UpdateUserDto): Promise<{ message: string, user: User }> {
-    const existingUser = await this.userRepository.findOne({ where: { OR: [{ mobile }], NOT: { id } } })
+  async update(id: number, { fullName, mobile }: UpdateUserDto): Promise<{ message: string; user: User }> {
+    const existingUser = await this.userRepository.findOne({ where: { OR: [{ mobile }], NOT: { id } } });
 
     if (existingUser) {
-      throw new ConflictException(UserMessages.AlreadyExistsUser)
+      throw new ConflictException(UserMessages.AlreadyExistsUser);
     }
 
-    const currentUser = await this.userRepository.findOneOrThrow({ where: { id } })
+    const currentUser = await this.userRepository.findOneOrThrow({ where: { id } });
 
-    const isMobileChanged = mobile && mobile !== currentUser.mobile
+    const isMobileChanged = mobile && mobile !== currentUser.mobile;
 
     const HOURS_LIMIT = 24;
     const timeSinceLastMobileChange = Date.now() - new Date(currentUser.lastMobileChange).getTime();
@@ -89,27 +89,32 @@ export class UserService {
       }
     }
 
-    if (isMobileChanged) await this.authService.sendOtp({ mobile })
+    if (isMobileChanged) await this.authService.sendOtp({ mobile });
 
     const updatedUser = await this.userRepository.update({
       where: { id },
-      data: { fullName, mobile, isVerifiedMobile: !isMobileChanged, perviousMobile: isMobileChanged ? currentUser.mobile : undefined, updatedAt: new Date() }
-    })
+      data: {
+        fullName,
+        mobile,
+        isVerifiedMobile: !isMobileChanged,
+        perviousMobile: isMobileChanged ? currentUser.mobile : undefined,
+        updatedAt: new Date(),
+      },
+    });
 
-    return { message: UserMessages.UpdatedUserSuccess, user: updatedUser }
+    return { message: UserMessages.UpdatedUserSuccess, user: updatedUser };
   }
 
-  async remove(id: number): Promise<{ message: string, user: User }> {
-    await this.userRepository.findOneOrThrow({ where: { id } })
+  async remove(id: number): Promise<{ message: string; user: User }> {
+    await this.userRepository.findOneOrThrow({ where: { id } });
 
-    const removedUser = await this.userRepository.delete({ where: { id } })
+    const removedUser = await this.userRepository.delete({ where: { id } });
 
-    return { message: UserMessages.RemovedUserSuccess, user: removedUser }
+    return { message: UserMessages.RemovedUserSuccess, user: removedUser };
   }
 
   async revertMobile(user: User): Promise<{ message: string }> {
-    if (user.isVerifiedMobile && !user.perviousMobile)
-      throw new BadRequestException(UserMessages.MobileVerifiedOrPrevNotFound)
+    if (user.isVerifiedMobile && !user.perviousMobile) throw new BadRequestException(UserMessages.MobileVerifiedOrPrevNotFound);
 
     await this.userRepository.update({
       where: { id: user.id },
@@ -118,20 +123,20 @@ export class UserService {
         perviousMobile: null,
         lastMobileChange: null,
         mobile: user.perviousMobile,
-        updatedAt: new Date()
-      }
-    })
+        updatedAt: new Date(),
+      },
+    });
 
-    return { message: UserMessages.RevertedMobileSuccess }
+    return { message: UserMessages.RevertedMobileSuccess };
   }
 
   async changeRole({ role, userId }: ChangeRoleDto) {
-    const user = await this.userRepository.findOneOrThrow({ where: { id: userId } })
+    const user = await this.userRepository.findOneOrThrow({ where: { id: userId } });
 
-    if (user.role == role) throw new ConflictException(UserMessages.RoleAlreadyExistsInUser)
+    if (user.role == role) throw new ConflictException(UserMessages.RoleAlreadyExistsInUser);
 
-    const updatedUser = await this.userRepository.update({ where: { id: userId }, data: { updatedAt: new Date(), role } })
+    const updatedUser = await this.userRepository.update({ where: { id: userId }, data: { updatedAt: new Date(), role } });
 
-    return { message: UserMessages.ChangedRoleSuccess, user: updatedUser }
+    return { message: UserMessages.ChangedRoleSuccess, user: updatedUser };
   }
 }

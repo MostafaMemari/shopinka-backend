@@ -32,7 +32,7 @@ import { TagRepository } from '../tag/tag.repository';
     CategoryRepository,
     AttributeValueRepository,
     OrderItemRepository,
-    TagRepository
+    TagRepository,
   ],
 })
-export class ProductModule { }
+export class ProductModule {}

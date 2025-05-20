@@ -13,22 +13,24 @@ import { GalleryItemService } from './gallery-item.service';
 
 @Injectable()
 export class GalleryService {
-  private readonly CACHE_EXPIRE_TIME: number = 600 //* minutes
+  private readonly CACHE_EXPIRE_TIME: number = 600; //* minutes
 
   constructor(
     private readonly cacheService: CacheService,
     private readonly galleryRepository: GalleryRepository,
     private readonly galleryItemService: GalleryItemService,
-  ) { }
+  ) {}
 
-  async create(userId: number, createGalleryDto: CreateGalleryDto): Promise<{ message: string, gallery: Gallery }> {
-    const existingGallery = await this.galleryRepository.findOne({ where: { title: { equals: createGalleryDto.title, mode: "insensitive" } } })
+  async create(userId: number, createGalleryDto: CreateGalleryDto): Promise<{ message: string; gallery: Gallery }> {
+    const existingGallery = await this.galleryRepository.findOne({
+      where: { title: { equals: createGalleryDto.title, mode: 'insensitive' } },
+    });
 
-    if (existingGallery) throw new ConflictException(GalleryMessages.AlreadyExistsGallery)
+    if (existingGallery) throw new ConflictException(GalleryMessages.AlreadyExistsGallery);
 
-    const gallery = await this.galleryRepository.create({ data: { ...createGalleryDto, userId } })
+    const gallery = await this.galleryRepository.create({ data: { ...createGalleryDto, userId } });
 
-    return { message: GalleryMessages.CreatedGallerySuccess, gallery }
+    return { message: GalleryMessages.CreatedGallerySuccess, gallery };
   }
 
   async findAll(userId: number, { page, take, ...galleriesFiltersDto }: QueryGalleriesDto) {
@@ -41,12 +43,12 @@ export class GalleryService {
 
     const cachedGalleries = await this.cacheService.get<null | Gallery[]>(cacheKey);
 
-    if (cachedGalleries) return { ...pagination(paginationDto, cachedGalleries) }
+    if (cachedGalleries) return { ...pagination(paginationDto, cachedGalleries) };
 
     const filters: Prisma.GalleryWhereInput = { userId };
 
-    if (description) filters.description = { contains: description, mode: "insensitive" };
-    if (title) filters.title = { contains: title, mode: "insensitive" };
+    if (description) filters.description = { contains: description, mode: 'insensitive' };
+    if (title) filters.title = { contains: title, mode: 'insensitive' };
     if (startDate || endDate) {
       filters.createdAt = {};
       if (startDate) filters.createdAt.gte = new Date(startDate);
@@ -56,47 +58,47 @@ export class GalleryService {
     const galleries = await this.galleryRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { items: includeItems }
+      include: { items: includeItems },
     });
 
     await this.cacheService.set(cacheKey, galleries, this.CACHE_EXPIRE_TIME);
 
-    return { ...pagination(paginationDto, galleries) }
+    return { ...pagination(paginationDto, galleries) };
   }
 
   findOne(galleryId: number, userId: number): Promise<never | Gallery> {
-    return this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId }, include: { items: true } })
+    return this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId }, include: { items: true } });
   }
 
-  async update(galleryId: number, userId: number, updateGalleryDto: UpdateGalleryDto): Promise<{ message: string, gallery: Gallery }> {
+  async update(galleryId: number, userId: number, updateGalleryDto: UpdateGalleryDto): Promise<{ message: string; gallery: Gallery }> {
     const existingGallery = await this.galleryRepository.findOne({
       where: {
         title: {
-          equals: updateGalleryDto.title, mode: "insensitive"
+          equals: updateGalleryDto.title,
+          mode: 'insensitive',
         },
         NOT: { id: galleryId },
-        userId
-      }
-    })
+        userId,
+      },
+    });
 
-    if (existingGallery) throw new ConflictException(GalleryMessages.AlreadyExistsGallery)
-
+    if (existingGallery) throw new ConflictException(GalleryMessages.AlreadyExistsGallery);
 
     const updatedGallery = await this.galleryRepository.update({
       where: { id: galleryId, userId },
-      data: { ...updateGalleryDto, updatedAt: new Date() }
-    })
+      data: { ...updateGalleryDto, updatedAt: new Date() },
+    });
 
-    return { message: GalleryMessages.UpdatedGallerySuccess, gallery: updatedGallery }
+    return { message: GalleryMessages.UpdatedGallerySuccess, gallery: updatedGallery };
   }
 
-  async remove(galleryId: number, userId: number): Promise<{ message: string, gallery: Gallery }> {
-    const gallery = await this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId }, include: { items: true } })
+  async remove(galleryId: number, userId: number): Promise<{ message: string; gallery: Gallery }> {
+    const gallery = await this.galleryRepository.findOneOrThrow({ where: { id: galleryId, userId }, include: { items: true } });
 
-    await this.galleryItemService.remove(userId, { isForce: true, galleryItemIds: gallery['items'].map(i => i.id) })
+    await this.galleryItemService.remove(userId, { isForce: true, galleryItemIds: gallery['items'].map((i) => i.id) });
 
-    const removedGallery = await this.galleryRepository.delete({ where: { id: galleryId, userId } })
+    const removedGallery = await this.galleryRepository.delete({ where: { id: galleryId, userId } });
 
-    return { message: GalleryMessages.RemovedGallerySuccess, gallery: removedGallery }
+    return { message: GalleryMessages.RemovedGallerySuccess, gallery: removedGallery };
   }
 }

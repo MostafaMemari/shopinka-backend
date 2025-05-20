@@ -1,3 +1,3 @@
-import { RefreshTokenDto } from "./refreshToken.dto";
+import { RefreshTokenDto } from './refreshToken.dto';
 
 export class SignoutDto extends RefreshTokenDto {}

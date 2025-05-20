@@ -14,7 +14,7 @@ import { CreateAttributeValueDto } from '../dto/create-attribute-value.dto';
 @ApiTags('attribute-value')
 @AuthDecorator()
 export class AttributeValueController {
-  constructor(private readonly attributeValueService: AttributeValueService) { }
+  constructor(private readonly attributeValueService: AttributeValueService) {}
 
   @Post()
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)

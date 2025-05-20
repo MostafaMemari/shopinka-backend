@@ -29,7 +29,7 @@ import { ShippingRepository } from '../shipping/repositories/shipping.repository
     ProductRepository,
     ProductVariantRepository,
     CartItemRepository,
-    ShippingRepository
+    ShippingRepository,
   ],
 })
-export class OrderModule { }
+export class OrderModule {}

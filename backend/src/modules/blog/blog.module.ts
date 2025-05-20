@@ -19,7 +19,7 @@ import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repo
     CategoryRepository,
     CacheService,
     TagRepository,
-    GalleryItemRepository
+    GalleryItemRepository,
   ],
 })
-export class BlogModule { }
+export class BlogModule {}

@@ -21,7 +21,7 @@ import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repo
     BlogRepository,
     TagRepository,
     CategoryRepository,
-    GalleryItemRepository
+    GalleryItemRepository,
   ],
 })
-export class SeoModule { }
+export class SeoModule {}

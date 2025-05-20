@@ -14,7 +14,7 @@ import { QueryAttributeDto } from '../dto/query-attribute.dto';
 @ApiTags('attribute')
 @AuthDecorator()
 export class AttributeController {
-  constructor(private readonly attributeService: AttributeService) { }
+  constructor(private readonly attributeService: AttributeService) {}
 
   @Post()
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)

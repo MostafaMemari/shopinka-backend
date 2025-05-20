@@ -9,7 +9,7 @@ import { GalleryItemService } from './services/gallery-item.service';
 import { GalleryItemController } from './controllers/gallery-item.controller';
 import { GalleryItemRepository } from './repositories/gallery-item.repository';
 import { AwsService } from '../s3AWS/s3AWS.service';
-import { ScheduleModule } from "@nestjs/schedule"
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [ScheduleModule.forRoot()],
@@ -22,7 +22,7 @@ import { ScheduleModule } from "@nestjs/schedule"
     CacheService,
     GalleryItemService,
     GalleryItemRepository,
-    AwsService
+    AwsService,
   ],
 })
-export class GalleryModule { }
+export class GalleryModule {}

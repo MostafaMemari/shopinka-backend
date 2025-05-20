@@ -13,10 +13,10 @@ import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { QueryBlogDto } from './dto/query-blog.dto';
 
 @Controller('blog')
-@ApiTags("blog")
+@ApiTags('blog')
 @AuthDecorator()
 export class BlogController {
-  constructor(private readonly blogService: BlogService) { }
+  constructor(private readonly blogService: BlogService) {}
 
   @Post()
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)

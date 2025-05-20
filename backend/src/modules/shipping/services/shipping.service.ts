@@ -12,22 +12,34 @@ import { pagination } from '../../../common/utils/pagination.utils';
 
 @Injectable()
 export class ShippingService {
-  private readonly CACHE_EXPIRE_TIME: number = 600 //* 5 minutes
+  private readonly CACHE_EXPIRE_TIME: number = 600; //* 5 minutes
 
   constructor(
     private readonly shippingRepository: ShippingRepository,
-    private readonly cacheService: CacheService
-  ) { }
+    private readonly cacheService: CacheService,
+  ) {}
 
-  async create(userId: number, createShippingDto: CreateShippingDto): Promise<{ message: string, shipping: Shipping }> {
-    const newShipping = await this.shippingRepository.create({ data: { ...createShippingDto, userId } })
+  async create(userId: number, createShippingDto: CreateShippingDto): Promise<{ message: string; shipping: Shipping }> {
+    const newShipping = await this.shippingRepository.create({ data: { ...createShippingDto, userId } });
 
-    return { message: ShippingMessages.CreatedShippingSuccess, shipping: newShipping }
+    return { message: ShippingMessages.CreatedShippingSuccess, shipping: newShipping };
   }
 
   async findAll({ page, take, ...queryShippingDto }: QueryShippingDto): Promise<unknown> {
     const paginationDto = { page, take };
-    const { endDate, sortBy, sortDirection, startDate, estimatedDays, isActive, maxPrice, minPrice, name, includeOrders, includeShippingInfos } = queryShippingDto;
+    const {
+      endDate,
+      sortBy,
+      sortDirection,
+      startDate,
+      estimatedDays,
+      isActive,
+      maxPrice,
+      minPrice,
+      name,
+      includeOrders,
+      includeShippingInfos,
+    } = queryShippingDto;
 
     const sortedDto = sortObject(queryShippingDto);
 
@@ -35,13 +47,13 @@ export class ShippingService {
 
     const cachedShippings = await this.cacheService.get<null | Shipping[]>(cacheKey);
 
-    if (cachedShippings) return { ...pagination(paginationDto, cachedShippings) }
+    if (cachedShippings) return { ...pagination(paginationDto, cachedShippings) };
 
     const filters: Prisma.ShippingWhereInput = {};
 
-    if (name) filters.name = { contains: name, mode: "insensitive" };
-    if (estimatedDays) filters.estimatedDays = estimatedDays
-    if (isActive !== undefined) filters.isActive = isActive
+    if (name) filters.name = { contains: name, mode: 'insensitive' };
+    if (estimatedDays) filters.estimatedDays = estimatedDays;
+    if (isActive !== undefined) filters.isActive = isActive;
     if (startDate || endDate) {
       filters.createdAt = {};
       if (startDate) filters.createdAt.gte = new Date(startDate);
@@ -56,31 +68,34 @@ export class ShippingService {
     const shippings = await this.shippingRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { orders: includeOrders, shippingInfos: includeShippingInfos, user: { select: { id: true, fullName: true } } }
+      include: { orders: includeOrders, shippingInfos: includeShippingInfos, user: { select: { id: true, fullName: true } } },
     });
 
     await this.cacheService.set(cacheKey, shippings, this.CACHE_EXPIRE_TIME);
 
-    return { ...pagination(paginationDto, shippings) }
+    return { ...pagination(paginationDto, shippings) };
   }
 
   async findOne(id: number): Promise<Shipping> {
-    return this.shippingRepository.findOneOrThrow({ where: { id }, include: { orders: true, shippingInfos: true, user: { select: { id: true, fullName: true } } } })
+    return this.shippingRepository.findOneOrThrow({
+      where: { id },
+      include: { orders: true, shippingInfos: true, user: { select: { id: true, fullName: true } } },
+    });
   }
 
-  async update(userId: number, shippingId: number, updateShippingDto: UpdateShippingDto): Promise<{ message: string, shipping: Shipping }> {
-    await this.shippingRepository.findOneOrThrow({ where: { id: shippingId, userId } })
+  async update(userId: number, shippingId: number, updateShippingDto: UpdateShippingDto): Promise<{ message: string; shipping: Shipping }> {
+    await this.shippingRepository.findOneOrThrow({ where: { id: shippingId, userId } });
 
-    const updatedShipping = await this.shippingRepository.update({ where: { id: shippingId }, data: updateShippingDto })
+    const updatedShipping = await this.shippingRepository.update({ where: { id: shippingId }, data: updateShippingDto });
 
-    return { message: ShippingMessages.UpdatedShippingSuccess, shipping: updatedShipping }
+    return { message: ShippingMessages.UpdatedShippingSuccess, shipping: updatedShipping };
   }
 
-  async remove(userId: number, shippingId: number): Promise<{ message: string, shipping: Shipping }> {
-    await this.shippingRepository.findOneOrThrow({ where: { id: shippingId, userId } })
+  async remove(userId: number, shippingId: number): Promise<{ message: string; shipping: Shipping }> {
+    await this.shippingRepository.findOneOrThrow({ where: { id: shippingId, userId } });
 
-    const removedShipping = await this.shippingRepository.delete({ where: { id: shippingId } })
+    const removedShipping = await this.shippingRepository.delete({ where: { id: shippingId } });
 
-    return { message: ShippingMessages.RemovedShippingSuccess, shipping: removedShipping }
+    return { message: ShippingMessages.RemovedShippingSuccess, shipping: removedShipping };
   }
 }

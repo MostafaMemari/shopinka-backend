@@ -14,7 +14,7 @@ import { QueryGalleriesDto } from '../dto/gallery-query.dto';
 @ApiTags('gallery')
 @AuthDecorator()
 export class GalleryController {
-  constructor(private readonly galleryService: GalleryService) { }
+  constructor(private readonly galleryService: GalleryService) {}
 
   @Post()
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)

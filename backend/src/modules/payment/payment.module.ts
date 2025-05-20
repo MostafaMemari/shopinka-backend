@@ -35,7 +35,7 @@ import { ShippingRepository } from '../shipping/repositories/shipping.repository
     AddressRepository,
     OrderRepository,
     OrderItemRepository,
-    ShippingRepository
+    ShippingRepository,
   ],
 })
-export class PaymentModule { }
+export class PaymentModule {}

@@ -1,49 +1,49 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { GalleryItem, Prisma } from "generated/prisma";
-import { PrismaService } from "../../../modules/prisma/prisma.service";
-import { GalleryItemMessages } from "../enums/gallery-item-messages.enum";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { GalleryItem, Prisma } from 'generated/prisma';
+import { PrismaService } from '../../../modules/prisma/prisma.service';
+import { GalleryItemMessages } from '../enums/gallery-item-messages.enum';
 
 @Injectable()
 export class GalleryItemRepository {
-    constructor(private readonly prismaService: PrismaService) { }
+  constructor(private readonly prismaService: PrismaService) {}
 
-    create(args: Prisma.GalleryItemCreateArgs): Promise<GalleryItem> {
-        return this.prismaService.galleryItem.create(args)
-    }
+  create(args: Prisma.GalleryItemCreateArgs): Promise<GalleryItem> {
+    return this.prismaService.galleryItem.create(args);
+  }
 
-    createMany(args: Prisma.GalleryItemCreateManyAndReturnArgs): Promise<GalleryItem[]> {
-        return this.prismaService.galleryItem.createManyAndReturn(args)
-    }
+  createMany(args: Prisma.GalleryItemCreateManyAndReturnArgs): Promise<GalleryItem[]> {
+    return this.prismaService.galleryItem.createManyAndReturn(args);
+  }
 
-    findOne(args: Prisma.GalleryItemFindFirstArgs): Promise<null | GalleryItem> {
-        return this.prismaService.galleryItem.findFirst(args)
-    }
+  findOne(args: Prisma.GalleryItemFindFirstArgs): Promise<null | GalleryItem> {
+    return this.prismaService.galleryItem.findFirst(args);
+  }
 
-    findAll(args: Prisma.GalleryItemFindManyArgs): Promise<GalleryItem[]> {
-        return this.prismaService.galleryItem.findMany(args)
-    }
+  findAll(args: Prisma.GalleryItemFindManyArgs): Promise<GalleryItem[]> {
+    return this.prismaService.galleryItem.findMany(args);
+  }
 
-    update(args: Prisma.GalleryItemUpdateArgs): Promise<GalleryItem> {
-        return this.prismaService.galleryItem.update(args)
-    }
+  update(args: Prisma.GalleryItemUpdateArgs): Promise<GalleryItem> {
+    return this.prismaService.galleryItem.update(args);
+  }
 
-    updateMany(args: Prisma.GalleryItemUpdateManyAndReturnArgs): Promise<GalleryItem[]> {
-        return this.prismaService.galleryItem.updateManyAndReturn(args)
-    }
+  updateMany(args: Prisma.GalleryItemUpdateManyAndReturnArgs): Promise<GalleryItem[]> {
+    return this.prismaService.galleryItem.updateManyAndReturn(args);
+  }
 
-    delete(args: Prisma.GalleryItemDeleteArgs): Promise<GalleryItem> {
-        return this.prismaService.galleryItem.delete(args)
-    }
+  delete(args: Prisma.GalleryItemDeleteArgs): Promise<GalleryItem> {
+    return this.prismaService.galleryItem.delete(args);
+  }
 
-    deleteMany(args: Prisma.GalleryItemDeleteManyArgs): Promise<{ count: number }> {
-        return this.prismaService.galleryItem.deleteMany(args)
-    }
+  deleteMany(args: Prisma.GalleryItemDeleteManyArgs): Promise<{ count: number }> {
+    return this.prismaService.galleryItem.deleteMany(args);
+  }
 
-    async findOneOrThrow(args: Prisma.GalleryItemFindFirstArgs): Promise<never | GalleryItem> {
-        const galleryItem = await this.findOne(args)
+  async findOneOrThrow(args: Prisma.GalleryItemFindFirstArgs): Promise<never | GalleryItem> {
+    const galleryItem = await this.findOne(args);
 
-        if (!galleryItem) throw new NotFoundException(GalleryItemMessages.NotFoundGalleryItem)
+    if (!galleryItem) throw new NotFoundException(GalleryItemMessages.NotFoundGalleryItem);
 
-        return galleryItem
-    }
+    return galleryItem;
+  }
 }

@@ -39,15 +39,12 @@ const ProductInformation = () => {
 
         <Grid container spacing={6}>
           <Grid size={{ xs: 12 }}>
-            <Typography className='mbe-2'>توضیحات کوتاه (اختیاری)</Typography>
-            <CustomTextField
-              fullWidth
-              multiline
-              rows={2}
-              placeholder='توضیحات کوتاه محصول'
-              {...register('shortDescription')}
-              error={!!errors.shortDescription}
-              helperText={errors.shortDescription?.message?.toString()}
+            <Controller
+              name='shortDescription'
+              control={control}
+              render={({ field }) => (
+                <RichTextEditor label='توضیحات کوتاه (اختیاری)' placeholder='توضیحات کوتاه محصول' value={field.value || ''} onChange={field.onChange} height='50px' />
+              )}
             />
           </Grid>
           <Grid size={{ xs: 12 }}>

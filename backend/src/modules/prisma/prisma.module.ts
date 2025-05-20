@@ -4,9 +4,9 @@ import { CacheModule } from '../cache/cache.module';
 
 @Global()
 @Module({
-    imports: [CacheModule],
-    controllers: [],
-    providers: [PrismaService],
-    exports: [PrismaService]
+  imports: [CacheModule],
+  controllers: [],
+  providers: [PrismaService],
+  exports: [PrismaService],
 })
-export class PrismaModule { }
+export class PrismaModule {}

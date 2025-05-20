@@ -13,4 +13,4 @@ import { ZarinpalService } from './zarinpal.service';
   providers: [ZarinpalService],
   exports: [ZarinpalService],
 })
-export class HttpApiModule { }
+export class HttpApiModule {}

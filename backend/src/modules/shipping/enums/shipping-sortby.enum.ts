@@ -1,4 +1,4 @@
 export enum ShippingSortBy {
-    CreatedAt = "createdAt",
-    UpdatedAt = "updatedAt",
+  CreatedAt = 'createdAt',
+  UpdatedAt = 'updatedAt',
 }

@@ -16,7 +16,7 @@ import { PaginationDto } from '../../../common/dtos/pagination.dto';
 @ApiTags('product')
 @AuthDecorator()
 export class ProductController {
-  constructor(private readonly productService: ProductService) { }
+  constructor(private readonly productService: ProductService) {}
 
   @Post()
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
@@ -48,9 +48,9 @@ export class ProductController {
     return this.productService.findOneDraft(user.id, id);
   }
 
-  @Patch("favorite-toggle/:id")
+  @Patch('favorite-toggle/:id')
   favoriteToggle(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
-    return this.productService.favoriteToggle(user.id, id)
+    return this.productService.favoriteToggle(user.id, id);
   }
 
   @Patch(':id')

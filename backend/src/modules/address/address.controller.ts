@@ -13,7 +13,7 @@ import { QueryAddressDto } from './dto/query-address.dto';
 @ApiTags('address')
 @AuthDecorator()
 export class AddressController {
-  constructor(private readonly addressService: AddressService) { }
+  constructor(private readonly addressService: AddressService) {}
 
   @Post()
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)

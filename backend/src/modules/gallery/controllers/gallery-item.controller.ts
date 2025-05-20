@@ -1,10 +1,24 @@
-import { HttpCode, Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, ParseIntPipe, Query, UploadedFiles, HttpStatus } from '@nestjs/common';
+import {
+  HttpCode,
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseInterceptors,
+  ParseIntPipe,
+  Query,
+  UploadedFiles,
+  HttpStatus,
+} from '@nestjs/common';
 import { GalleryItemService } from '../services/gallery-item.service';
 import { CreateGalleryItemDto } from '../dto/create-gallery-item.dto';
 import { UpdateGalleryItemDto } from '../dto/update-gallery-item.dto';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { FilesInterceptor } from "@nestjs/platform-express"
-import { memoryStorage } from 'multer'
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 import { FileValidatorPipe } from '../../../common/pipes/file-validator.pipe';
 import { SwaggerConsumes } from '../../../common/enums/swagger-consumes.enum';
 import { GetUser } from '../../../common/decorators/get-user.decorator';
@@ -21,14 +35,18 @@ import { RestoreGalleryItemDto } from '../dto/restore-gallery-item.dto';
 @ApiTags('gallery-item')
 @AuthDecorator()
 export class GalleryItemController {
-  constructor(private readonly galleryItemService: GalleryItemService) { }
+  constructor(private readonly galleryItemService: GalleryItemService) {}
 
   @Post()
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FilesInterceptor('image', 5, { storage: memoryStorage(), limits: { files: 5 } }))
   @ApiConsumes(SwaggerConsumes.MultipartData)
-  create(@UploadedFiles(FileValidatorPipe) files: Express.Multer.File[], @Body() createGalleryItemDto: CreateGalleryItemDto, @GetUser() user: User) {
+  create(
+    @UploadedFiles(FileValidatorPipe) files: Express.Multer.File[],
+    @Body() createGalleryItemDto: CreateGalleryItemDto,
+    @GetUser() user: User,
+  ) {
     return this.galleryItemService.create(user.id, files, createGalleryItemDto);
   }
 
@@ -48,21 +66,21 @@ export class GalleryItemController {
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   move(@Body() moveGalleryItemDto: MoveGalleryItemDto, @GetUser() user: User) {
-    return this.galleryItemService.move(user.id, moveGalleryItemDto)
+    return this.galleryItemService.move(user.id, moveGalleryItemDto);
   }
 
   @Patch('duplicate')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   duplicate(@Body() duplicateGalleryItemDto: DuplicateGalleryItemDto, @GetUser() user: User) {
-    return this.galleryItemService.duplicate(user.id, duplicateGalleryItemDto)
+    return this.galleryItemService.duplicate(user.id, duplicateGalleryItemDto);
   }
 
   @Patch('restore')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   restore(@Body() restoreGalleryItemDto: RestoreGalleryItemDto, @GetUser() user: User) {
-    return this.galleryItemService.restore(user.id, restoreGalleryItemDto)
+    return this.galleryItemService.restore(user.id, restoreGalleryItemDto);
   }
 
   @Patch(':id')

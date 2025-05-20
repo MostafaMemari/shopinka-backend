@@ -11,4 +11,4 @@ import { CacheService } from '../cache/cache.service';
   controllers: [CategoryController],
   providers: [CategoryService, AuthService, UserRepository, CategoryRepository, GalleryItemRepository, CacheService],
 })
-export class CategoryModule { }
+export class CategoryModule {}

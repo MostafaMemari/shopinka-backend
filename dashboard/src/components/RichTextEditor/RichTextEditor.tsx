@@ -199,7 +199,7 @@ const RichTextEditor = ({ label, placeholder = 'متن خود را وارد کن
           <Divider className='mli-6' />
           <div
             className={classnames('flex-1 overflow-y-auto', {
-              'min-h-[250px]': !isFullScreen
+              'h-[250px]': !isFullScreen
             })}
             style={{ height: isFullScreen ? '100%' : height }}
           >

@@ -24,7 +24,7 @@ import { ProductVariantRepository } from '../product/repositories/product-varian
     ShippingInfoService,
     CacheService,
     ProductRepository,
-    ProductVariantRepository
+    ProductVariantRepository,
   ],
 })
-export class ShippingModule { }
+export class ShippingModule {}

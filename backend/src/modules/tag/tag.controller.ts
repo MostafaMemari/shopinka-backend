@@ -15,7 +15,7 @@ import { QueryTagDto } from './dto/query-tag.dto';
 @ApiTags('tag')
 @AuthDecorator()
 export class TagController {
-  constructor(private readonly tagService: TagService) { }
+  constructor(private readonly tagService: TagService) {}
 
   @Post()
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)

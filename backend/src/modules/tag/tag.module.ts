@@ -11,4 +11,4 @@ import { CacheService } from '../cache/cache.service';
   controllers: [TagController],
   providers: [TagService, AuthService, UserRepository, TagRepository, GalleryItemRepository, CacheService],
 })
-export class TagModule { }
+export class TagModule {}

@@ -1,5 +1,5 @@
 export interface IUploadSingleFile {
-    key: string
-    url: string
-    isPublic: boolean
+  key: string;
+  url: string;
+  isPublic: boolean;
 }

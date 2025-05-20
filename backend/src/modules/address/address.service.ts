@@ -12,23 +12,27 @@ import { AddressMessages } from './enums/address-messages.enum';
 
 @Injectable()
 export class AddressService {
-  private readonly CACHE_EXPIRE_TIME: number = 600 //* 5 minutes
+  private readonly CACHE_EXPIRE_TIME: number = 600; //* 5 minutes
 
-  constructor(private readonly cacheService: CacheService, private readonly addressRepository: AddressRepository) { }
+  constructor(
+    private readonly cacheService: CacheService,
+    private readonly addressRepository: AddressRepository,
+  ) {}
 
   async create(userId: number, createAddressDto: CreateAddressDto) {
-    const address = await this.addressRepository.findOne({ where: { postalCode: createAddressDto.postalCode } })
+    const address = await this.addressRepository.findOne({ where: { postalCode: createAddressDto.postalCode } });
 
-    if (address) throw new ConflictException(AddressMessages.AlreadyExistsAddress)
+    if (address) throw new ConflictException(AddressMessages.AlreadyExistsAddress);
 
-    const newAddress = await this.addressRepository.create({ data: { ...createAddressDto, userId } })
+    const newAddress = await this.addressRepository.create({ data: { ...createAddressDto, userId } });
 
-    return { message: AddressMessages.CreatedAddressSuccess, address: newAddress }
+    return { message: AddressMessages.CreatedAddressSuccess, address: newAddress };
   }
 
   async findAll(userId: number, { page, take, ...queryAddressDto }: QueryAddressDto): Promise<unknown> {
     const paginationDto = { page, take };
-    const { includeOrders, address, city, description, endDate, postalCode, province, receiverMobile, sortBy, sortDirection, startDate } = queryAddressDto;
+    const { includeOrders, address, city, description, endDate, postalCode, province, receiverMobile, sortBy, sortDirection, startDate } =
+      queryAddressDto;
 
     const sortedDto = sortObject(queryAddressDto);
 
@@ -36,16 +40,16 @@ export class AddressService {
 
     const cachedAddresses = await this.cacheService.get<null | Address[]>(cacheKey);
 
-    if (cachedAddresses) return { ...pagination(paginationDto, cachedAddresses) }
+    if (cachedAddresses) return { ...pagination(paginationDto, cachedAddresses) };
 
     const filters: Prisma.AddressWhereInput = { userId };
 
-    if (address) filters.address = { contains: address, mode: 'insensitive' }
-    if (city) filters.city = { contains: city, mode: 'insensitive' }
-    if (receiverMobile) filters.receiverMobile = { contains: receiverMobile, mode: 'insensitive' }
-    if (province) filters.province = { contains: province, mode: 'insensitive' }
-    if (postalCode) filters.postalCode = { contains: postalCode, mode: 'insensitive' }
-    if (description) filters.description = { contains: description, mode: 'insensitive' }
+    if (address) filters.address = { contains: address, mode: 'insensitive' };
+    if (city) filters.city = { contains: city, mode: 'insensitive' };
+    if (receiverMobile) filters.receiverMobile = { contains: receiverMobile, mode: 'insensitive' };
+    if (province) filters.province = { contains: province, mode: 'insensitive' };
+    if (postalCode) filters.postalCode = { contains: postalCode, mode: 'insensitive' };
+    if (description) filters.description = { contains: description, mode: 'insensitive' };
     if (startDate || endDate) {
       filters.createdAt = {};
       if (startDate) filters.createdAt.gte = new Date(startDate);
@@ -55,33 +59,33 @@ export class AddressService {
     const addresses = await this.addressRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { orders: includeOrders }
+      include: { orders: includeOrders },
     });
 
     await this.cacheService.set(cacheKey, addresses, this.CACHE_EXPIRE_TIME);
 
-    return { ...pagination(paginationDto, addresses) }
+    return { ...pagination(paginationDto, addresses) };
   }
 
   findOne(userId: number, id: number): Promise<never | Address> {
-    return this.addressRepository.findOneOrThrow({ where: { id, userId }, include: { orders: true } })
+    return this.addressRepository.findOneOrThrow({ where: { id, userId }, include: { orders: true } });
   }
 
-  async update(userId: number, id: number, updateAddressDto: UpdateAddressDto): Promise<{ message: string, address: Address }> {
-    const address = await this.addressRepository.findOne({ where: { userId: { not: userId }, postalCode: updateAddressDto.postalCode } })
+  async update(userId: number, id: number, updateAddressDto: UpdateAddressDto): Promise<{ message: string; address: Address }> {
+    const address = await this.addressRepository.findOne({ where: { userId: { not: userId }, postalCode: updateAddressDto.postalCode } });
 
-    if (address) throw new ConflictException(AddressMessages.AlreadyExistsAddress)
+    if (address) throw new ConflictException(AddressMessages.AlreadyExistsAddress);
 
-    const updatedAddress = await this.addressRepository.update({ where: { userId, id }, data: updateAddressDto })
+    const updatedAddress = await this.addressRepository.update({ where: { userId, id }, data: updateAddressDto });
 
-    return { message: AddressMessages.UpdatedAddressSuccess, address: updatedAddress }
+    return { message: AddressMessages.UpdatedAddressSuccess, address: updatedAddress };
   }
 
-  async remove(userId: number, id: number): Promise<{ message: string, address: Address }> {
-    await this.addressRepository.findOneOrThrow({ where: { id, userId } })
+  async remove(userId: number, id: number): Promise<{ message: string; address: Address }> {
+    await this.addressRepository.findOneOrThrow({ where: { id, userId } });
 
-    const removedAddress = await this.addressRepository.delete({ where: { id, userId } })
+    const removedAddress = await this.addressRepository.delete({ where: { id, userId } });
 
-    return { message: AddressMessages.RemovedAddressSuccess, address: removedAddress }
+    return { message: AddressMessages.RemovedAddressSuccess, address: removedAddress };
   }
 }

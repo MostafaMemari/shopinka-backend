@@ -15,41 +15,41 @@ import { QueryTransactionsDto } from './dto/transactions-query.dto';
 @ApiTags('payment')
 @AuthDecorator()
 export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) { }
+  constructor(private readonly paymentService: PaymentService) {}
 
   @Post()
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   gatewayUrl(@Body() paymentDto: PaymentDto, @GetUser() user: User) {
-    return this.paymentService.getGatewayUrl(user.id, paymentDto)
+    return this.paymentService.getGatewayUrl(user.id, paymentDto);
   }
 
   @Get('verify')
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   verifyPayment(@Query('Authority') authority: string, @Query('Status') status: string) {
-    return this.paymentService.verify({ authority, status })
+    return this.paymentService.verify({ authority, status });
   }
 
   @Post('refund/:transactionId')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   refundPayment(@Param('transactionId', ParseIntPipe) transactionId: number, @Body() refundPaymentDto: RefundPaymentDto) {
-    return this.paymentService.refund(transactionId, refundPaymentDto)
+    return this.paymentService.refund(transactionId, refundPaymentDto);
   }
 
   @Get('my/transactions')
   getMyTransactions(@GetUser() user: User, @Query() transactionsFilters: QueryMyTransactionsDto) {
-    return this.paymentService.findUserTransactions(user.id, transactionsFilters)
+    return this.paymentService.findUserTransactions(user.id, transactionsFilters);
   }
 
   @Get('transactions')
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   getTransactions(@Query() transactionsFilters: QueryTransactionsDto) {
-    return this.paymentService.findTransactions(transactionsFilters)
+    return this.paymentService.findTransactions(transactionsFilters);
   }
 
-  @Get(":id")
+  @Get(':id')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   getOneTransaction(@Param('id', ParseIntPipe) id: number) {
-    return this.paymentService.findOneTransaction(id)
+    return this.paymentService.findOneTransaction(id);
   }
 }

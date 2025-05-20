@@ -15,7 +15,7 @@ import { Roles } from '../../common/decorators/role.decorator';
 @ApiTags('category')
 @AuthDecorator()
 export class CategoryController {
-  constructor(private readonly categoryService: CategoryService) { }
+  constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)

@@ -1,6 +1,6 @@
 export enum UserSortBy {
-    UpdatedAt = "updatedAt",
-    CreatedAt = "createdAt",
-    FullName = "fullName",
-    IsVerifiedMobile = "isVerifiedMobile"
+  UpdatedAt = 'updatedAt',
+  CreatedAt = 'createdAt',
+  FullName = 'fullName',
+  IsVerifiedMobile = 'isVerifiedMobile',
 }

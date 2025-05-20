@@ -10,14 +10,6 @@ import { ProductVariantRepository } from '../product/repositories/product-varian
 
 @Module({
   controllers: [CartController],
-  providers: [
-    CartService,
-    UserRepository,
-    AuthService,
-    CartRepository,
-    CartItemRepository,
-    ProductRepository,
-    ProductVariantRepository,
-  ],
+  providers: [CartService, UserRepository, AuthService, CartRepository, CartItemRepository, ProductRepository, ProductVariantRepository],
 })
-export class CartModule { }
+export class CartModule {}

@@ -1,6 +1,6 @@
 export enum GalleryItemSortBy {
-    CreatedAt = 'createdAt',
-    UpdatedAt = 'updatedAt',
-    Title = 'title',
-    Size = 'size'
+  CreatedAt = 'createdAt',
+  UpdatedAt = 'updatedAt',
+  Title = 'title',
+  Size = 'size',
 }

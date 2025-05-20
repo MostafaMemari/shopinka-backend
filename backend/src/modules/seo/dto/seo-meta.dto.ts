@@ -1,102 +1,102 @@
-import { ApiProperty } from "@nestjs/swagger"
-import { Transform, Type } from "class-transformer"
-import { ArrayUnique, IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from "class-validator"
-import { RobotsMetaTag } from "../enums/seo-meta.enum"
+import { ApiProperty } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
+import { ArrayUnique, IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
+import { RobotsMetaTag } from '../enums/seo-meta.enum';
 
 export class SeoMetaDto {
-    @IsOptional()
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty({ type: 'string', required: false, nullable: true })
-    title?: string
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ type: 'string', required: false, nullable: true })
+  title?: string;
 
-    @IsOptional()
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty({ type: 'string', required: false, nullable: true })
-    description?: string
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ type: 'string', required: false, nullable: true })
+  description?: string;
 
-    @IsOptional()
-    @IsArray()
-    @ArrayUnique()
-    @Type(() => String)
-    @IsNotEmpty()
-    @ApiProperty({ type: 'array', isArray: true, items: { type: 'string', nullable: false }, required: false, nullable: true })
-    keywords?: string[]
+  @IsOptional()
+  @IsArray()
+  @ArrayUnique()
+  @Type(() => String)
+  @IsNotEmpty()
+  @ApiProperty({ type: 'array', isArray: true, items: { type: 'string', nullable: false }, required: false, nullable: true })
+  keywords?: string[];
 
-    @IsOptional()
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty({ type: 'string', required: false, nullable: true })
-    canonicalUrl?: string
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ type: 'string', required: false, nullable: true })
+  canonicalUrl?: string;
 
-    @IsOptional()
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty({ type: 'string', required: false, nullable: true })
-    ogTitle?: string
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ type: 'string', required: false, nullable: true })
+  ogTitle?: string;
 
-    @IsOptional()
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty({ type: 'string', required: false, nullable: true })
-    ogDescription?: string
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ type: 'string', required: false, nullable: true })
+  ogDescription?: string;
 
-    @IsOptional()
-    @IsEnum(RobotsMetaTag)
-    @IsNotEmpty()
-    @ApiProperty({ enum: RobotsMetaTag, type: 'string', required: false, nullable: true })
-    robotsTag?: RobotsMetaTag
+  @IsOptional()
+  @IsEnum(RobotsMetaTag)
+  @IsNotEmpty()
+  @ApiProperty({ enum: RobotsMetaTag, type: 'string', required: false, nullable: true })
+  robotsTag?: RobotsMetaTag;
 
-    @IsOptional()
-    @Transform(({ value }) => {
-        if (value === 'null' || value === null) return null;
-        return Number.parseInt(String(value)) || 0
-    })
-    @ApiProperty({ required: false, nullable: true })
-    ogImageId?: number | null
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (value === 'null' || value === null) return null;
+    return Number.parseInt(String(value)) || 0;
+  })
+  @ApiProperty({ required: false, nullable: true })
+  ogImageId?: number | null;
 
-    @IsOptional()
-    @IsNumber()
-    @IsPositive()
-    @Transform(({ value }) => +value)
-    @ApiProperty({
-        type: 'number',
-        nullable: true,
-        required: false,
-    })
-    productId?: number
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  @Transform(({ value }) => +value)
+  @ApiProperty({
+    type: 'number',
+    nullable: true,
+    required: false,
+  })
+  productId?: number;
 
-    @IsOptional()
-    @IsNumber()
-    @IsPositive()
-    @Transform(({ value }) => +value)
-    @ApiProperty({
-        type: 'number',
-        nullable: true,
-        required: false,
-    })
-    blogId?: number
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  @Transform(({ value }) => +value)
+  @ApiProperty({
+    type: 'number',
+    nullable: true,
+    required: false,
+  })
+  blogId?: number;
 
-    @IsOptional()
-    @IsNumber()
-    @IsPositive()
-    @Transform(({ value }) => +value)
-    @ApiProperty({
-        type: 'number',
-        nullable: true,
-        required: false,
-    })
-    tagId?: number
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  @Transform(({ value }) => +value)
+  @ApiProperty({
+    type: 'number',
+    nullable: true,
+    required: false,
+  })
+  tagId?: number;
 
-    @IsOptional()
-    @IsNumber()
-    @IsPositive()
-    @Transform(({ value }) => +value)
-    @ApiProperty({
-        type: 'number',
-        nullable: true,
-        required: false,
-    })
-    categoryId?: number
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  @Transform(({ value }) => +value)
+  @ApiProperty({
+    type: 'number',
+    nullable: true,
+    required: false,
+  })
+  categoryId?: number;
 }

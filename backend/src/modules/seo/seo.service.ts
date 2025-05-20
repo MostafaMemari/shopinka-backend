@@ -12,43 +12,50 @@ import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repo
 
 @Injectable()
 export class SeoService {
-    constructor(
-        private readonly seoMetaRepository: SeoMetaRepository,
-        private readonly productRepository: ProductRepository,
-        private readonly blogRepository: BlogRepository,
-        private readonly tagRepository: TagRepository,
-        private readonly categoryRepository: CategoryRepository,
-        private readonly galleryItemRepository: GalleryItemRepository,
-    ) { }
+  constructor(
+    private readonly seoMetaRepository: SeoMetaRepository,
+    private readonly productRepository: ProductRepository,
+    private readonly blogRepository: BlogRepository,
+    private readonly tagRepository: TagRepository,
+    private readonly categoryRepository: CategoryRepository,
+    private readonly galleryItemRepository: GalleryItemRepository,
+  ) {}
 
-    async upsertSeoMeta(userId: number, seoMetaDto: SeoMetaDto): Promise<{ message: string, seoMeta: SeoMeta }> {
-        const { blogId, productId, tagId, categoryId, robotsTag, ogImageId } = seoMetaDto
+  async upsertSeoMeta(userId: number, seoMetaDto: SeoMetaDto): Promise<{ message: string; seoMeta: SeoMeta }> {
+    const { blogId, productId, tagId, categoryId, robotsTag, ogImageId } = seoMetaDto;
 
-        const values = [blogId, productId, tagId, categoryId]
+    const values = [blogId, productId, tagId, categoryId];
 
-        const definedCount = values.filter(v => v !== undefined && v !== null).length
+    const definedCount = values.filter((v) => v !== undefined && v !== null).length;
 
-        if (definedCount !== 1) throw new BadRequestException(SeoMetaMessages.OnlyOneTargetAllowed)
+    if (definedCount !== 1) throw new BadRequestException(SeoMetaMessages.OnlyOneTargetAllowed);
 
-        if (ogImageId !== undefined && ogImageId !== null) await this.galleryItemRepository.findOneOrThrow({ where: { id: ogImageId } })
-        if (productId) await this.productRepository.findOneOrThrow({ where: { id: productId } })
-        if (blogId) await this.blogRepository.findOneOrThrow({ where: { id: blogId } })
-        if (tagId) await this.tagRepository.findOneOrThrow({ where: { id: tagId } })
-        if (categoryId) await this.categoryRepository.findOneOrThrow({ where: { id: categoryId } })
+    if (ogImageId !== undefined && ogImageId !== null) await this.galleryItemRepository.findOneOrThrow({ where: { id: ogImageId } });
+    if (productId) await this.productRepository.findOneOrThrow({ where: { id: productId } });
+    if (blogId) await this.blogRepository.findOneOrThrow({ where: { id: blogId } });
+    if (tagId) await this.tagRepository.findOneOrThrow({ where: { id: tagId } });
+    if (categoryId) await this.categoryRepository.findOneOrThrow({ where: { id: categoryId } });
 
-        const existingSeo = await this.seoMetaRepository.findOne({
-            where: {
-                OR: [{ productId, userId }, { blogId, userId }, { tagId, userId }, { categoryId, userId }]
-            }
-        })
+    const existingSeo = await this.seoMetaRepository.findOne({
+      where: {
+        OR: [
+          { productId, userId },
+          { blogId, userId },
+          { tagId, userId },
+          { categoryId, userId },
+        ],
+      },
+    });
 
-        if (existingSeo) {
-            const updatedSeo = await this.seoMetaRepository.update({ where: { id: existingSeo.id, userId }, data: seoMetaDto })
-            return { message: SeoMetaMessages.UpdatedSeoMetaSuccess, seoMeta: updatedSeo }
-        }
-
-        const seoMeta = await this.seoMetaRepository.create({ data: { userId, ...seoMetaDto, productId, robotsTag: robotsTag ?? RobotsMetaTag.IndexFollow } })
-
-        return { message: SeoMetaMessages.CreatedSeoMetaSuccess, seoMeta }
+    if (existingSeo) {
+      const updatedSeo = await this.seoMetaRepository.update({ where: { id: existingSeo.id, userId }, data: seoMetaDto });
+      return { message: SeoMetaMessages.UpdatedSeoMetaSuccess, seoMeta: updatedSeo };
     }
+
+    const seoMeta = await this.seoMetaRepository.create({
+      data: { userId, ...seoMetaDto, productId, robotsTag: robotsTag ?? RobotsMetaTag.IndexFollow },
+    });
+
+    return { message: SeoMetaMessages.CreatedSeoMetaSuccess, seoMeta };
+  }
 }
