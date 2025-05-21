@@ -119,7 +119,7 @@ export class BlogService {
   findOne(id: number): Promise<Blog> {
     return this.blogRepository.findOneOrThrow({
       where: { id, status: BlogStatus.PUBLISHED },
-      include: { mainImage: true, categories: true, tags: true, user: { select: { id: true, fullName: true } } },
+      include: { mainImage: true, categories: true, tags: true, user: { select: { id: true, fullName: true } }, seoMeta: true },
     });
   }
 

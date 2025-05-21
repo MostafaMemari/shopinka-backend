@@ -118,6 +118,7 @@ export class CategoryService {
         parent: true,
         thumbnailImage: true,
         products: true,
+        seoMeta: true,
       },
       Infinity,
     );

@@ -278,7 +278,7 @@ model Category {
   blogs    Blog[]
 
   thumbnailImage GalleryItem? @relation(fields: [thumbnailImageId], references: [id], onDelete: SetNull)
-  SeoMeta        SeoMeta?
+  seoMeta        SeoMeta?
 }
 
 model Comment {
@@ -406,7 +406,7 @@ model Blog {
   comments   Comment[]
   categories Category[]
   tags       Tag[]
-  SeoMeta    SeoMeta?
+  seoMeta    SeoMeta?
 }
 
 model Tag {
@@ -423,7 +423,7 @@ model Tag {
   blogs          Blog[]
   user           User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
   thumbnailImage GalleryItem? @relation(fields: [thumbnailImageId], references: [id], onDelete: SetNull)
-  SeoMeta        SeoMeta?
+  seoMeta        SeoMeta?
 }
 
 model Shipping {

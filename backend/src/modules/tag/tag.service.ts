@@ -75,7 +75,7 @@ export class TagService {
   findOne(id: number): Promise<Tag> {
     return this.tagRepository.findOneOrThrow({
       where: { id },
-      include: { blogs: true, products: true, thumbnailImage: true, user: { select: { id: true, fullName: true } } },
+      include: { blogs: true, products: true, thumbnailImage: true, user: { select: { id: true, fullName: true } }, seoMeta: true },
     });
   }
 
