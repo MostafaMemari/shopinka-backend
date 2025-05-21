@@ -17,9 +17,9 @@ export enum ProductType {
 
 export type Product = {
   id: number
-  sku: string
   name: string
-  slug: string
+  sku: string | null
+  slug: string | null
   description: string | null
   shortDescription: string | null
   quantity: number | null

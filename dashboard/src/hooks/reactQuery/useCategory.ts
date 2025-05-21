@@ -35,7 +35,7 @@ export const useCategoryForm = ({ initialData, isUpdate = false, handleModalClos
     slug: initialData?.slug ?? '',
     description: initialData?.description ?? '',
     parentId: initialData?.parentId || null,
-    thumbnailImageId: null,
+    thumbnailImageId: initialData?.thumbnailImageId ?? null,
 
     seo_title: initialData?.seoMeta?.title ?? '',
     seo_description: initialData?.seoMeta?.description ?? '',

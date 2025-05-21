@@ -41,7 +41,7 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
   const isUpdate = !!id || !!initialData
 
   const methods = useForm<ProductForm>({
-    resolver: yupResolver<ProductForm, any, any>(productFormSchema),
+    resolver: yupResolver(productFormSchema),
     mode: 'onChange',
     defaultValues: {
       sku: '',

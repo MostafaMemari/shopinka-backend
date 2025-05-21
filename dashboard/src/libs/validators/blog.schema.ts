@@ -10,11 +10,13 @@ export const blogSchema = yup.object().shape({
     .string()
     .notRequired()
     .transform((value, originalValue) => (originalValue === '' ? null : value))
-    .max(350, 'نامک نمی‌تواند بیشتر از 350 کاراکتر باشد')
     .matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
       message: 'نامک باید فقط شامل حروف کوچک، اعداد و خط تیره باشد',
       excludeEmptyString: true
-    }),
+    })
+    .min(3, 'نامک باید حداقل 3 کاراکتر باشد')
+    .max(50, 'نامک نمی‌تواند بیشتر از 50 کاراکتر باشد')
+    .default(null),
   content: yup.string().notRequired().default(null),
   readingTime: yup
     .number()

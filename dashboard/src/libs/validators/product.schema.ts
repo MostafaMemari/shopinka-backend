@@ -6,13 +6,19 @@ const productStatusValues = Object.values(ProductStatus)
 const productTypeValues = Object.values(ProductType)
 
 export const productSchema = yup.object().shape({
-  name: yup.string().required('نام محصول الزامی است').max(100, 'حداکثر 100 کاراکتر'),
-  sku: yup.string().notRequired().max(30, 'حداکثر 30 کاراکتر'),
+  name: yup.string().required('نام محصول الزامی است').max(100, 'حداکثر 100 کاراکتر').default(null),
+  sku: yup.string().notRequired().max(30, 'حداکثر 30 کاراکتر').default(null),
   slug: yup
     .string()
     .notRequired()
     .transform((value, originalValue) => (originalValue === '' ? null : value))
-    .max(350, 'نامک نمی‌تواند بیشتر از 350 کاراکتر باشد'),
+    .matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
+      message: 'نامک باید فقط شامل حروف کوچک، اعداد و خط تیره باشد',
+      excludeEmptyString: true
+    })
+    .min(3, 'نامک باید حداقل 3 کاراکتر باشد')
+    .max(50, 'نامک نمی‌تواند بیشتر از 50 کاراکتر باشد')
+    .default(null),
 
   description: yup.string().notRequired().default(null),
   shortDescription: yup.string().notRequired().max(300, 'حداکثر 300 کاراکتر').default(null),

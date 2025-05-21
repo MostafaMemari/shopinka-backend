@@ -1,7 +1,11 @@
+import * as yup from 'yup'
+import { tagFormSchema } from '@/libs/validators/tag.schema'
+import { Seo } from './seo.type'
+
 export type Tag = {
   id: number
   name: string
-  slug: string
+  slug: string | null
   description: string | null
   userId: number
   thumbnailImageId: number | null
@@ -11,11 +15,7 @@ export type Tag = {
     fileUrl: string
     thumbnailUrl: string
   }
+  seoMeta?: Seo | null
 }
 
-export type TagForm = {
-  name: string
-  slug: string
-  description: string | null
-  thumbnailImageId: number | null
-}
+export type TagForm = yup.InferType<typeof tagFormSchema>

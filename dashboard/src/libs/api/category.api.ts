@@ -4,8 +4,8 @@ import { Response } from '@/types/response'
 import { serverApiFetch } from '@/utils/api/serverApiFetch'
 import { handleSeoSave } from '../services/seo/seo.service'
 import { showToast } from '@/utils/showToast'
-import { SeoFormInput } from '@/types/app/seo.type'
 import { CategoryForm } from '../validators/category.schema'
+import { SeoForm, SeoMetaTargetType } from '@/types/app/seo.type'
 
 export const getCategories = async (params?: Record<string, string>): Promise<Response<Category[]>> => {
   const res = await serverApiFetch('/category', {
@@ -92,9 +92,7 @@ const handleSeo = async (categoryId: number, data: Partial<CategoryForm>, isUpda
         seo_robotsTag: data.seo_robotsTag
       }
 
-  const seoResponse = await handleSeoSave('category', categoryId, seoData as SeoFormInput)
-
-  console.log(seoResponse)
+  const seoResponse = await handleSeoSave(SeoMetaTargetType.category, categoryId, seoData as SeoForm)
 
   if (seoResponse.status !== 200 && seoResponse.status !== 201) {
     showToast({ type: 'error', message: 'خطا در ذخیره SEO' })
