@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { SeoService } from './seo.service';
 import { SeoController } from './seo.controller';
 import { AuthService } from '../auth/auth.service';
 import { UserRepository } from '../user/user.repository';
@@ -9,6 +8,7 @@ import { BlogRepository } from '../blog/blog.repository';
 import { TagRepository } from '../tag/tag.repository';
 import { CategoryRepository } from '../category/category.repository';
 import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
+import { SeoService } from './seo.service';
 
 @Module({
   controllers: [SeoController],

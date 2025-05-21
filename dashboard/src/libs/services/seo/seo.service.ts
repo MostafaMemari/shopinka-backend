@@ -5,8 +5,11 @@ import { cleanObject } from '@/utils/getChangedFields'
 
 export const handleSeoSave = async (type: SeoMetaTargetType, entityId: number, data: SeoForm) => {
   const seoPayload: SeoMetaForm = {
-    targetId: entityId,
-    targetType: type,
+    productId: type === 'product' ? entityId : null,
+    blogId: type === 'blog' ? entityId : null,
+    categoryId: type === 'category' ? entityId : null,
+    tagUd: type === 'tag' ? entityId : null,
+    entityType: type,
     title: data.seo_title ?? null,
     description: data.seo_description ?? null,
     keywords: data.seo_keywords ?? null,

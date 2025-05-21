@@ -1,71 +1,82 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { SeoMetaRepository } from './seo-meta.repository';
 import { SeoMetaDto } from './dto/seo-meta.dto';
-import { RobotsMetaTag, SeoMetaTargetType } from './enums/seo-meta.enum';
-import { PrismaService } from '../prisma/prisma.service';
+import { SeoMeta } from 'generated/prisma';
 import { SeoMetaMessages } from './enums/seo-meta-messages.enum';
+import { BlogRepository } from '../blog/blog.repository';
+import { ProductRepository } from '../product/repositories/product.repository';
+import { TagRepository } from '../tag/tag.repository';
+import { CategoryRepository } from '../category/category.repository';
+import { EntityType, RobotsMetaTag } from './enums/seo-meta.enum';
+import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
 
 @Injectable()
 export class SeoService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly seoMetaRepository: SeoMetaRepository,
+    private readonly productRepository: ProductRepository,
+    private readonly blogRepository: BlogRepository,
+    private readonly tagRepository: TagRepository,
+    private readonly categoryRepository: CategoryRepository,
+    private readonly galleryItemRepository: GalleryItemRepository,
+  ) {}
 
-  async upsertSeoMeta(userId: number, seoMetaDto: SeoMetaDto) {
-    const { targetId, targetType, ogImageId, robotsTag } = seoMetaDto;
+  async upsertSeoMeta(userId: number, seoMetaDto: SeoMetaDto): Promise<{ message: string; seoMeta: SeoMeta }> {
+    const { blogId, productId, tagId, categoryId, ogImageId, entityType } = seoMetaDto;
 
-    if (!targetId || !targetType) {
-      throw new BadRequestException('Target ID and type are required');
+    const values = [blogId, productId, tagId, categoryId];
+    const definedCount = values.filter((v) => v !== undefined && v !== null).length;
+    if (definedCount !== 1) {
+      throw new BadRequestException(SeoMetaMessages.OnlyOneTargetAllowed);
     }
-
-    await this.validateTargetExistence(targetId, targetType);
 
     if (ogImageId) {
-      await this.prisma.galleryItem.findUniqueOrThrow({ where: { id: ogImageId } });
+      await this.galleryItemRepository.findOneOrThrow({ where: { id: ogImageId } });
+    }
+    if (productId && entityType === EntityType.PRODUCT) {
+      await this.productRepository.findOneOrThrow({ where: { id: productId } });
+    }
+    if (blogId && entityType === EntityType.BLOG) {
+      await this.blogRepository.findOneOrThrow({ where: { id: blogId } });
+    }
+    if (tagId && entityType === EntityType.TAG) {
+      await this.tagRepository.findOneOrThrow({ where: { id: tagId } });
+    }
+    if (categoryId && entityType === EntityType.CATEGORY) {
+      await this.categoryRepository.findOneOrThrow({ where: { id: categoryId } });
     }
 
-    const existingSeo = await this.prisma.seoMeta.findFirst({
+    const existingSeo = await this.seoMetaRepository.findOne({
       where: {
-        targetId,
-        targetType,
+        userId,
+        entityType,
+        OR: [
+          { productId: entityType === EntityType.PRODUCT ? productId : undefined },
+          { blogId: entityType === EntityType.BLOG ? blogId : undefined },
+          { tagId: entityType === EntityType.TAG ? tagId : undefined },
+          { categoryId: entityType === EntityType.CATEGORY ? categoryId : undefined },
+        ],
       },
     });
 
     if (existingSeo) {
-      const updatedSeo = await this.prisma.seoMeta.update({
-        where: { id: existingSeo.id },
-        data: {
-          ...seoMetaDto,
-        },
+      const updatedSeo = await this.seoMetaRepository.update({
+        where: { id: existingSeo.id, userId },
+        data: { ...seoMetaDto, entityType },
       });
-
       return { message: SeoMetaMessages.UpdatedSeoMetaSuccess, seoMeta: updatedSeo };
     }
 
-    const newSeo = await this.prisma.seoMeta.create({
+    // ایجاد سئوی جدید
+    const seoMeta = await this.seoMetaRepository.create({
       data: {
         userId,
         ...seoMetaDto,
-        robotsTag: robotsTag ?? RobotsMetaTag.IndexFollow,
+        entityType,
+        robotsTag: seoMetaDto.robotsTag ?? RobotsMetaTag.IndexFollow,
       },
     });
 
-    return { message: SeoMetaMessages.CreatedSeoMetaSuccess, seoMeta: newSeo };
-  }
-
-  private async validateTargetExistence(targetId: number, targetType: SeoMetaTargetType) {
-    switch (targetType) {
-      case SeoMetaTargetType.product:
-        await this.prisma.product.findUniqueOrThrow({ where: { id: targetId } });
-        break;
-      case SeoMetaTargetType.blog:
-        await this.prisma.blog.findUniqueOrThrow({ where: { id: targetId } });
-        break;
-      case SeoMetaTargetType.category:
-        await this.prisma.category.findUniqueOrThrow({ where: { id: targetId } });
-        break;
-      case SeoMetaTargetType.tag:
-        await this.prisma.tag.findUniqueOrThrow({ where: { id: targetId } });
-        break;
-      default:
-        throw new BadRequestException('Invalid target type');
-    }
+    return { message: SeoMetaMessages.CreatedSeoMetaSuccess, seoMeta };
   }
 }

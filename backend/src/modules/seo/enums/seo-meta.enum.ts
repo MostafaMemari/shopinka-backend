@@ -5,9 +5,9 @@ export enum RobotsMetaTag {
   NoIndexNoFollow = 'noindex, nofollow',
 }
 
-export enum SeoMetaTargetType {
-  product = 'product',
-  blog = 'blog',
-  category = 'category',
-  tag = 'tag',
+export enum EntityType {
+  PRODUCT = 'product',
+  BLOG = 'blog',
+  TAG = 'tag',
+  CATEGORY = 'category',
 }

@@ -169,6 +169,7 @@ export class ProductService {
         tags: true,
         categories: true,
         attributes: { include: { values: true } },
+        seoMeta: true,
       },
     });
   }

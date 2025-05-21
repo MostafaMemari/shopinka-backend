@@ -27,8 +27,11 @@ export enum SeoMetaTargetType {
 }
 
 export type SeoMetaForm = {
-  targetId: number
-  targetType: SeoMetaTargetType
+  entityType: SeoMetaTargetType
+  productId: number | null
+  blogId: number | null
+  categoryId: number | null
+  tagUd: number | null
 
   title: string | null
   description: string | null
