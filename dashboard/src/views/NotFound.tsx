@@ -51,19 +51,9 @@ const NotFound = ({ mode }: { mode: SystemMode }) => {
         <Button href='/' component={Link} variant='contained'>
           Back To Home
         </Button>
-        <img
-          alt='error-404-illustration'
-          src='/images/illustrations/characters/1.png'
-          className='object-cover bs-[400px] md:bs-[450px] lg:bs-[500px] mbs-10 md:mbs-14 lg:mbs-20'
-        />
+        <img alt='error-404-illustration' src='/images/illustrations/characters/1.png' className='object-cover bs-[400px] md:bs-[450px] lg:bs-[500px] mbs-10 md:mbs-14 lg:mbs-20' />
       </div>
-      {!hidden && (
-        <MaskImg
-          alt='mask'
-          src={miscBackground}
-          className={classnames({ 'scale-x-[-1]': theme.direction === 'rtl' })}
-        />
-      )}
+      {!hidden && <MaskImg alt='mask' src={miscBackground} className={classnames({ 'scale-x-[-1]': theme.direction === 'rtl' })} />}
     </div>
   )
 }

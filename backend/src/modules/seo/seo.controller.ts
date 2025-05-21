@@ -12,12 +12,12 @@ import { Roles } from '../../common/decorators/role.decorator';
 @ApiTags('seo')
 @AuthDecorator()
 export class SeoController {
-  constructor(private readonly seoService: SeoService) {}
+  constructor(private readonly seoMetaService: SeoService) {}
 
   @Put()
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   upsertSeo(@Body() seoMetaDto: SeoMetaDto, @GetUser() user: User) {
-    return this.seoService.upsertSeoMeta(user.id, seoMetaDto);
+    return this.seoMetaService.upsertSeoMeta(user.id, seoMetaDto);
   }
 }

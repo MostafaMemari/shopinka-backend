@@ -4,3 +4,10 @@ export enum RobotsMetaTag {
   IndexNoFollow = 'index, nofollow',
   NoIndexNoFollow = 'noindex, nofollow',
 }
+
+export enum SeoMetaTargetType {
+  product = 'product',
+  blog = 'blog',
+  category = 'category',
+  tag = 'tag',
+}

@@ -102,7 +102,6 @@ export class ProductService {
       weight,
       width,
       includeVariants,
-      includeSeoMeta,
       includeTags,
       includeSeoCategories,
       includeAttributeValues,
@@ -147,7 +146,6 @@ export class ProductService {
       include: {
         categories: includeSeoCategories,
         tags: includeTags,
-        seoMeta: includeSeoMeta,
         attributes: includeAttributes && { include: { values: includeAttributeValues } },
         galleryImages: includeGalleryImages,
         mainImage: includeMainImage,
@@ -169,7 +167,6 @@ export class ProductService {
         mainImage: true,
         user: true,
         tags: true,
-        seoMeta: true,
         categories: true,
         attributes: { include: { values: true } },
       },

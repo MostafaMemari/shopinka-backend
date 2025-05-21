@@ -60,7 +60,6 @@ export class CategoryService {
       childrenDepth,
       includeBlogs,
       includeProducts,
-      includeSeoMeta,
     } = queryCategoryDto;
 
     const sortedDto = sortObject(queryCategoryDto);
@@ -89,7 +88,6 @@ export class CategoryService {
       blogs: includeBlogs,
       children: includeChildren,
       products: includeProducts,
-      seoMeta: includeSeoMeta,
     };
 
     const categories = await this.categoryRepository.findAll({
@@ -114,7 +112,6 @@ export class CategoryService {
     return this.loadChildren(
       id,
       {
-        seoMeta: true,
         children: true,
         user: { select: { id: true, fullName: true } },
         blogs: true,

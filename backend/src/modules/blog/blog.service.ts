@@ -97,7 +97,6 @@ export class BlogService {
       include: {
         mainImage: includeMainImage,
         categories: includeCategories,
-        seoMeta: includeSeoMeta,
         tags: includeTags,
         user: includeUser && { select: { id: true, fullName: true } },
       },
@@ -111,7 +110,7 @@ export class BlogService {
   async findAllDrafts(userId: number, paginationDto: PaginationDto): Promise<unknown> {
     const blogs = await this.blogRepository.findAll({
       where: { userId, status: BlogStatus.DRAFT },
-      include: { mainImage: true, categories: true, seoMeta: true, tags: true },
+      include: { mainImage: true, categories: true, tags: true },
     });
 
     return pagination(paginationDto, blogs);
@@ -120,7 +119,7 @@ export class BlogService {
   findOne(id: number): Promise<Blog> {
     return this.blogRepository.findOneOrThrow({
       where: { id, status: BlogStatus.PUBLISHED },
-      include: { mainImage: true, categories: true, seoMeta: true, tags: true, user: { select: { id: true, fullName: true } } },
+      include: { mainImage: true, categories: true, tags: true, user: { select: { id: true, fullName: true } } },
     });
   }
 

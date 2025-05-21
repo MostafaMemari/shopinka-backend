@@ -1,4 +1,6 @@
+import { seoSchema } from '@/libs/validators/seo.schema'
 import { RobotsTag } from '../enums/robotsTag'
+import * as yup from 'yup'
 
 export type Seo = {
   title: string | null
@@ -15,13 +17,25 @@ export type Seo = {
   categoryId: number | null
 }
 
-export interface SeoFormInput {
-  seo_title?: string | null
-  seo_description?: string | null
-  seo_keywords?: string[] | null
-  seo_canonicalUrl?: string | null
-  seo_ogTitle?: string | null
-  seo_ogDescription?: string | null
-  seo_ogImage?: number | null
-  seo_robotsTag?: RobotsTag | null
+export type SeoForm = yup.InferType<typeof seoSchema>
+
+export enum SeoMetaTargetType {
+  product = 'product',
+  blog = 'blog',
+  category = 'category',
+  tag = 'tag'
+}
+
+export type SeoMetaForm = {
+  targetId: number
+  targetType: SeoMetaTargetType
+
+  title: string | null
+  description: string | null
+  keywords: string[] | null
+  canonicalUrl: string | null
+  ogTitle: string | null
+  ogDescription: string | null
+  ogImage: number | null
+  robotsTag: RobotsTag | RobotsTag.INDEX_FOLLOW
 }

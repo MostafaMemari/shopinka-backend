@@ -1,10 +1,12 @@
 import { RobotsTag } from '@/types/enums/robotsTag'
 import { saveSeoMeta } from './seo.api'
-import { Seo, SeoFormInput } from '@/types/app/seo.type'
+import { SeoMetaTargetType, SeoForm, SeoMetaForm } from '@/types/app/seo.type'
 import { cleanObject } from '@/utils/getChangedFields'
 
-export const handleSeoSave = async (type: 'product' | 'blog' | 'tag' | 'category', entityId: number, data: SeoFormInput) => {
-  const seoPayload: Omit<Seo, 'productId' | 'blogId' | 'tagId' | 'categoryId'> = {
+export const handleSeoSave = async (type: SeoMetaTargetType, entityId: number, data: SeoForm) => {
+  const seoPayload: SeoMetaForm = {
+    targetId: entityId,
+    targetType: type,
     title: data.seo_title ?? null,
     description: data.seo_description ?? null,
     keywords: data.seo_keywords ?? null,

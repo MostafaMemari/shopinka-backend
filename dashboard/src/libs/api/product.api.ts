@@ -5,7 +5,7 @@ import { handleSeoSave } from '../services/seo/seo.service'
 import { showToast } from '@/utils/showToast'
 import { generateProductSeoDescription } from '@/hooks/reactQuery/seoDescriptionGenerators'
 
-import { type SeoFormInput } from '@/types/app/seo.type'
+import { SeoMetaTargetType, type SeoForm } from '@/types/app/seo.type'
 
 export const getProducts = async (params?: Record<string, string>): Promise<Response<Product[]>> => {
   const res = await serverApiFetch('/product', {
@@ -104,7 +104,7 @@ const handleSeo = async (productId: number, data: Partial<ProductForm>, isUpdate
         seo_robotsTag: data.seo_robotsTag
       }
 
-  const seoResponse = await handleSeoSave('product', productId, seoData as SeoFormInput)
+  const seoResponse = await handleSeoSave(SeoMetaTargetType.product, productId, seoData as SeoForm)
 
   if (seoResponse.status !== 200 && seoResponse.status !== 201) {
     showToast({ type: 'error', message: 'خطا در ذخیره SEO' })

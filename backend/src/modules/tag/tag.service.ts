@@ -36,18 +36,8 @@ export class TagService {
 
   async findAll({ take, page, ...queryTagDto }: QueryTagDto): Promise<unknown> {
     const paginationDto = { take, page };
-    const {
-      endDate,
-      sortBy,
-      sortDirection,
-      startDate,
-      includeSeoMeta,
-      includeUser,
-      includeBlogs,
-      includeProducts,
-      includeThumbnailImage,
-      name,
-    } = queryTagDto;
+    const { endDate, sortBy, sortDirection, startDate, includeUser, includeBlogs, includeProducts, includeThumbnailImage, name } =
+      queryTagDto;
 
     const sortedDto = sortObject(queryTagDto);
 
@@ -72,7 +62,6 @@ export class TagService {
       include: {
         blogs: includeBlogs,
         products: includeProducts,
-        seoMeta: includeSeoMeta,
         thumbnailImage: includeThumbnailImage,
         user: includeUser && { select: { id: true, fullName: true } },
       },
@@ -86,7 +75,7 @@ export class TagService {
   findOne(id: number): Promise<Tag> {
     return this.tagRepository.findOneOrThrow({
       where: { id },
-      include: { blogs: true, products: true, seoMeta: true, thumbnailImage: true, user: { select: { id: true, fullName: true } } },
+      include: { blogs: true, products: true, thumbnailImage: true, user: { select: { id: true, fullName: true } } },
     });
   }
 
