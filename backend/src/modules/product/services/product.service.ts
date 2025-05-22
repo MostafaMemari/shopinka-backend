@@ -18,6 +18,7 @@ import { FavoriteMessages } from '../enums/favorite-messages.enum';
 import { CategoryRepository } from '../../category/category.repository';
 import { OrderItemRepository } from '../../order/repositories/order-item.repository';
 import { TagRepository } from 'src/modules/tag/tag.repository';
+import { QueryPublicProductDto } from '../dto/query-public-product.dto';
 
 @Injectable()
 export class ProductService {
@@ -76,7 +77,121 @@ export class ProductService {
     return { message: ProductMessages.CreatedProductSuccess, product: newProduct };
   }
 
-  async findAll({ page, take, ...queryProductDto }: QueryProductDto): Promise<unknown> {
+  async findAllPublic({ page, take, ...query }: QueryPublicProductDto): Promise<unknown> {
+    const paginationDto = { page, take };
+
+    const {
+      hasDiscount,
+      categoryIds,
+      attributeValueIds,
+      minPrice,
+      maxPrice,
+      stockStatus,
+      search,
+      includeMainImage,
+      includeVariants,
+      sortBy,
+    } = query;
+
+    console.log(categoryIds);
+
+    const sortedDto = sortObject(query);
+    const cacheKey = `${CacheKeys.Products}_${JSON.stringify(sortedDto)}`;
+
+    const cachedProducts = await this.cacheService.get<null | Product[]>(cacheKey);
+    if (cachedProducts) return pagination(paginationDto, cachedProducts);
+
+    const filters: Prisma.ProductWhereInput = {
+      status: ProductStatus.PUBLISHED,
+    };
+
+    if (search) {
+      filters.name = { contains: search, mode: 'insensitive' };
+    }
+
+    if (hasDiscount) {
+      filters.salePrice = { not: null };
+    }
+
+    if (categoryIds?.length) {
+      filters.categories = {
+        some: { id: { in: categoryIds } },
+      };
+    }
+
+    if (attributeValueIds?.length) {
+      filters.attributes = {
+        some: {
+          values: {
+            some: { id: { in: attributeValueIds } },
+          },
+        },
+      };
+    }
+
+    if (minPrice || maxPrice) {
+      filters.OR = [];
+
+      if (minPrice && maxPrice) {
+        filters.OR.push({
+          salePrice: { gte: minPrice, lte: maxPrice },
+        });
+        filters.OR.push({
+          salePrice: null,
+          basePrice: { gte: minPrice, lte: maxPrice },
+        });
+      } else if (minPrice) {
+        filters.OR.push({
+          salePrice: { gte: minPrice },
+        });
+        filters.OR.push({
+          salePrice: null,
+          basePrice: { gte: minPrice },
+        });
+      } else if (maxPrice) {
+        filters.OR.push({
+          salePrice: { lte: maxPrice },
+        });
+        filters.OR.push({
+          salePrice: null,
+          basePrice: { lte: maxPrice },
+        });
+      }
+    }
+
+    if (stockStatus === 'instock') {
+      filters.quantity = { gt: 0 };
+    }
+
+    const orderBy: Prisma.ProductOrderByWithRelationInput = (() => {
+      switch (sortBy) {
+        case 'price_asc':
+          return { basePrice: 'asc' as Prisma.SortOrder };
+        case 'price_desc':
+          return { basePrice: 'desc' as Prisma.SortOrder };
+        case 'newest':
+        default:
+          return { createdAt: 'desc' as Prisma.SortOrder };
+      }
+    })();
+
+    const products = await this.productRepository.findAll({
+      where: filters,
+      orderBy,
+      include: {
+        mainImage: includeMainImage,
+        variants: includeVariants && {
+          include: { mainImage: true, attributeValues: true },
+        },
+      },
+    });
+
+    await this.cacheService.set(cacheKey, products, this.CACHE_EXPIRE_TIME);
+
+    return pagination(paginationDto, products);
+  }
+
+  async findAllAdmin({ page, take, ...queryProductDto }: QueryProductDto): Promise<unknown> {
     const paginationDto = { page, take };
     const {
       description,

@@ -11,6 +11,7 @@ import { Roles } from '../../../common/decorators/role.decorator';
 import { SkipAuth } from '../../../common/decorators/skip-auth.decorator';
 import { QueryProductDto } from '../dto/query-product.dto';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
+import { QueryPublicProductDto } from '../dto/query-public-product.dto';
 
 @Controller('product')
 @ApiTags('product')
@@ -27,8 +28,13 @@ export class ProductController {
 
   @Get()
   @SkipAuth()
-  findAll(@Query() queryProductDto: QueryProductDto) {
-    return this.productService.findAll(queryProductDto);
+  findAllPublic(@Query() queryPublicProductDto: QueryPublicProductDto) {
+    return this.productService.findAllPublic(queryPublicProductDto);
+  }
+
+  @Get('admin')
+  findAllAdmin(@Query() queryProductDto: QueryProductDto) {
+    return this.productService.findAllAdmin(queryProductDto);
   }
 
   @Get('drafts')
