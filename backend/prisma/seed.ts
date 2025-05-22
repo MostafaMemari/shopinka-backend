@@ -9,6 +9,7 @@ async function main() {
       fullName: 'MostafaMemari',
       role: 'SUPER_ADMIN',
       mobile: '09388366510',
+      isVerifiedMobile: true,
     },
   });
 
