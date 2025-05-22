@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { categoryCirclesBanners } from "@/mock/categories";
-import Image from "next/image";
-import Link from "next/link";
+import { categoryCirclesBanners } from '@/mock/categories';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export default function CategoryCircles() {
   return (
@@ -12,7 +12,7 @@ export default function CategoryCircles() {
           background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
         }
         .border-gradient::before {
-          content: "";
+          content: '';
           position: absolute;
           top: -1px;
           left: -1px;

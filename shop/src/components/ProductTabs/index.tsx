@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import ProductDescription from "./ProductDescription";
-import { IComment } from "@/lib/types/comments";
-import ProductSpecifications from "./ProductSpecifications";
-import ProductComments from "@/components/productDetails/Comment/ProductComments";
+import React, { useState } from 'react';
+import ProductDescription from './ProductDescription';
+import { IComment } from '@/lib/types/comments';
+import ProductSpecifications from './ProductSpecifications';
+import ProductComments from '@/components/productDetails/Comment/ProductComments';
 
 interface Tab {
   id: string;
@@ -23,20 +23,20 @@ interface Props {
 
 export default function ProductTabs({ description, specifications, comments }: Props) {
   const tabs: Tab[] = [
-    { id: "description", title: "معرفی" },
-    { id: "specs", title: "مشخصات" },
-    { id: "comments", title: "دیدگاه ها", count: comments?.length || 0 },
+    { id: 'description', title: 'معرفی' },
+    { id: 'specs', title: 'مشخصات' },
+    { id: 'comments', title: 'دیدگاه ها', count: comments?.length || 0 },
   ];
 
   const [activeTab, setActiveTab] = useState(tabs[0].id);
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case "description":
+      case 'description':
         return <ProductDescription description={description} />;
-      case "specs":
+      case 'specs':
         return <ProductSpecifications specifications={specifications} />;
-      case "comments":
+      case 'comments':
         return <ProductComments comments={comments} />;
       default:
         return null;
@@ -54,8 +54,8 @@ export default function ProductTabs({ description, specifications, comments }: P
                   onClick={() => setActiveTab(tab.id)}
                   className={`relative cursor-pointer inline-block rounded-t-lg border-b-2 px-2 pb-2 transition-colors ${
                     activeTab === tab.id
-                      ? "border-primary text-primary dark:border-emerald-400 dark:text-emerald-400"
-                      : "border-transparent hover:text-text/90 dark:hover:text-zinc-300"
+                      ? 'border-primary text-primary dark:border-emerald-400 dark:text-emerald-400'
+                      : 'border-transparent hover:text-text/90 dark:hover:text-zinc-300'
                   }`}
                 >
                   {tab.title}

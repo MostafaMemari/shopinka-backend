@@ -16,7 +16,7 @@ const OrderCostDetails: React.FC<OrderCostDetailsProps> = ({ costs, shipping }) 
         {costs.map((item, index) => (
           <div key={index} className="flex justify-between gap-x-2 lg:justify-start">
             <div className="text-sm text-text/60 md:text-base">{item.label}</div>
-            <div className={item.color || "text-primary"}>
+            <div className={item.color || 'text-primary'}>
               <span className="font-bold md:text-lg">{item.value}</span>
               <span className="text-sm md:text-base">تومان</span>
             </div>
@@ -27,7 +27,7 @@ const OrderCostDetails: React.FC<OrderCostDetailsProps> = ({ costs, shipping }) 
         {shipping.map((item, index) => (
           <div key={index} className="flex justify-between gap-x-2 lg:justify-start">
             <div className="text-sm text-text/60 md:text-base">{item.label}</div>
-            <div className={item.color || "text-sm text-text/90 md:text-base"}>{item.value}</div>
+            <div className={item.color || 'text-sm text-text/90 md:text-base'}>{item.value}</div>
           </div>
         ))}
       </div>

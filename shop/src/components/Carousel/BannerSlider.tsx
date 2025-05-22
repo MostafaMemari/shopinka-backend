@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import Image from "next/image";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import { mainSliderBanners, sideBanners } from "@/mock/bannerData";
+import Link from 'next/link';
+import Image from 'next/image';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { mainSliderBanners, sideBanners } from '@/mock/bannerData';
 
 // Import Swiper styles
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 export default function BannerSlider() {
   return (
@@ -21,11 +21,11 @@ export default function BannerSlider() {
             loop={true}
             autoplay={{ delay: 3000 }}
             navigation={{
-              nextEl: ".swiper-button-next",
-              prevEl: ".swiper-button-prev",
+              nextEl: '.swiper-button-next',
+              prevEl: '.swiper-button-prev',
             }}
             pagination={{
-              el: ".main-banner-pagination",
+              el: '.main-banner-pagination',
               clickable: true,
               dynamicBullets: true,
             }}

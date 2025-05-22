@@ -1,4 +1,4 @@
-import { IColor } from "@/lib/types/colors";
+import { IColor } from '@/lib/types/colors';
 
 interface Props {
   colors: IColor[];
@@ -7,12 +7,7 @@ interface Props {
   label?: string;
 }
 
-export default function ColorSelector({
-  colors,
-  selectedColor,
-  onColorChange,
-  label,
-}: Props) {
+export default function ColorSelector({ colors, selectedColor, onColorChange, label }: Props) {
   if (!colors || colors.length === 0) return null;
 
   return (

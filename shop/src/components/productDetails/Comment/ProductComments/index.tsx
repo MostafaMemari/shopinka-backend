@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import MobileCommentsSwiper from "./MobileCommentsSwiper";
-import { IComment } from "@/lib/types/comments";
-import SuggestionRadio from "@/components/productDetails/Comment/ProductComments/SuggestionRadio";
-import Pagination from "@/components/ui/Pagination";
-import DesktopComments from "./DesktopComments";
+import React, { useState } from 'react';
+import MobileCommentsSwiper from './MobileCommentsSwiper';
+import { IComment } from '@/lib/types/comments';
+import SuggestionRadio from '@/components/productDetails/Comment/ProductComments/SuggestionRadio';
+import Pagination from '@/components/ui/Pagination';
+import DesktopComments from './DesktopComments';
 
 interface Props {
   comments: IComment[];

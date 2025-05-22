@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 // فرض می‌کنیم این اینترفیس‌ها و توابع از جای دیگری وارد شده‌اند
 interface IOrder {
@@ -64,11 +64,11 @@ const DeliveredOrdersTab: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const { orders: fetchedOrders, total } = await fetchOrdersByTab("delivered", currentPage, itemsPerPage);
+        const { orders: fetchedOrders, total } = await fetchOrdersByTab('delivered', currentPage, itemsPerPage);
         setOrders(fetchedOrders);
         setTotalItems(total);
       } catch (err) {
-        setError("خطا در بارگذاری سفارش‌ها");
+        setError('خطا در بارگذاری سفارش‌ها');
       } finally {
         setLoading(false);
       }

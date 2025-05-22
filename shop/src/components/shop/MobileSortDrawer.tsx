@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { FC, useEffect, useRef, useState } from "react";
-import { FiX } from "react-icons/fi";
+import { FC, useEffect, useRef, useState } from 'react';
+import { FiX } from 'react-icons/fi';
 
 interface MobileSortDrawerProps {
   isOpen: boolean;
@@ -11,13 +11,13 @@ interface MobileSortDrawerProps {
 
 const MobileSortDrawer: FC<MobileSortDrawerProps> = ({ isOpen, onClose, onSortChange }) => {
   const drawerRef = useRef<HTMLDivElement>(null);
-  const [selectedSort, setSelectedSort] = useState("جدید ترین");
+  const [selectedSort, setSelectedSort] = useState('جدید ترین');
 
   const sortOptions = [
-    { id: "sort-new", label: "جدید ترین", value: "new" },
-    { id: "sort-sale", label: "پرفروش ترین", value: "sale" },
-    { id: "sort-expensive", label: "گران ترین", value: "expensive" },
-    { id: "sort-chip", label: "ارزان ترین", value: "cheap" },
+    { id: 'sort-new', label: 'جدید ترین', value: 'new' },
+    { id: 'sort-sale', label: 'پرفروش ترین', value: 'sale' },
+    { id: 'sort-expensive', label: 'گران ترین', value: 'expensive' },
+    { id: 'sort-chip', label: 'ارزان ترین', value: 'cheap' },
   ];
 
   useEffect(() => {
@@ -27,9 +27,9 @@ const MobileSortDrawer: FC<MobileSortDrawerProps> = ({ isOpen, onClose, onSortCh
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen, onClose]);
 
@@ -45,7 +45,7 @@ const MobileSortDrawer: FC<MobileSortDrawerProps> = ({ isOpen, onClose, onSortCh
     <div
       ref={drawerRef}
       className={`fixed bottom-0 left-0 right-0 z-40 h-auto w-full rounded-t-3xl bg-muted transition-transform duration-300 ${
-        isOpen ? "translate-y-0" : "translate-y-full"
+        isOpen ? 'translate-y-0' : 'translate-y-full'
       }`}
       aria-labelledby="shop-sort-drawer-navigation-label"
       tabIndex={-1}

@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -70,9 +70,9 @@
     background: oklch(62.68% 0 0 / 26.67%);
   }
 
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"] {
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number'] {
     -webkit-appearance: none;
     margin: 0;
     -moz-appearance: textfield !important;
@@ -129,7 +129,9 @@
   }
 
   .accordion-content {
-    transition: max-height 0.3s ease-out, padding 0.3s ease;
+    transition:
+      max-height 0.3s ease-out,
+      padding 0.3s ease;
   }
 
   /* Border Color Effect Styles */
@@ -167,7 +169,9 @@
 }
 
 @utility accordion-content {
-  transition: max-height 0.3s ease-out, padding 0.3s ease;
+  transition:
+    max-height 0.3s ease-out,
+    padding 0.3s ease;
 }
 
 @utility mega-menu-active {

@@ -1,4 +1,4 @@
-import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
+import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 
 interface Props {
   currentPage: number;
@@ -23,7 +23,7 @@ const Pagination: React.FC<Props> = ({ currentPage, totalPages, onPageChange }) 
           <button
             key={page}
             className={`flex h-8 w-8 items-center justify-center rounded-full text-sm transition-all duration-200 cursor-pointer ${
-              currentPage === page ? "bg-primary text-white" : "bg-muted hover:bg-primary hover:text-white"
+              currentPage === page ? 'bg-primary text-white' : 'bg-muted hover:bg-primary hover:text-white'
             }`}
             onClick={() => onPageChange(page)}
           >

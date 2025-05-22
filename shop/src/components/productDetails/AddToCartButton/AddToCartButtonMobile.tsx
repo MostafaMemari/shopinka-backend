@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { FC } from "react";
-import PriceDisplay from "../PriceDisplay";
+import { FC } from 'react';
+import PriceDisplay from '../PriceDisplay';
 
 interface Props {
   newPrice?: number;

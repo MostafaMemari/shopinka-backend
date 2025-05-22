@@ -1,12 +1,12 @@
-import ProfileEditActions from "@/components/profile/ProfileEditActions";
+import ProfileEditActions from '@/components/profile/ProfileEditActions';
 
 const profileData = {
-  fullName: "تایماز اکبری",
-  nationalCode: "",
-  phoneNumber: "09000000000",
-  email: "rotikala@gmail.com",
-  password: "password",
-  birthDate: "11/08/1380",
+  fullName: 'تایماز اکبری',
+  nationalCode: '',
+  phoneNumber: '09000000000',
+  email: 'rotikala@gmail.com',
+  password: 'password',
+  birthDate: '11/08/1380',
 };
 
 export default function Page() {

@@ -1,4 +1,4 @@
-import { FaBoxOpen } from "react-icons/fa";
+import { FaBoxOpen } from 'react-icons/fa';
 
 const EmptyState: React.FC = () => {
   return (

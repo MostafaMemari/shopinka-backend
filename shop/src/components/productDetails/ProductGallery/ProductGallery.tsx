@@ -1,20 +1,17 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import MainImage from "./MainImage";
-import GalleryImage from "./GalleryImage";
-import GalleryModal from "./GalleryModal";
-import { IProductThumbnail } from "@/lib/types/products";
+import { useState } from 'react';
+import MainImage from './MainImage';
+import GalleryImage from './GalleryImage';
+import GalleryModal from './GalleryModal';
+import { IProductThumbnail } from '@/lib/types/products';
 
 type ProductGalleryProps = {
   images: IProductThumbnail[];
   title?: string;
 };
 
-export default function ProductGallery({
-  images,
-  title = "تصاویر محصول",
-}: ProductGalleryProps) {
+export default function ProductGallery({ images, title = 'تصاویر محصول' }: ProductGalleryProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const displayedImages = images.slice(0, 3);
@@ -36,22 +33,13 @@ export default function ProductGallery({
           ))}
           {blurredImage && (
             <div onClick={() => setIsModalOpen(true)} className="shrink-0">
-              <GalleryImage
-                src={blurredImage.src}
-                alt={blurredImage.alt}
-                isBlurred={true}
-              />
+              <GalleryImage src={blurredImage.src} alt={blurredImage.alt} isBlurred={true} />
             </div>
           )}
         </div>
       </div>
 
-      <GalleryModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        images={images}
-        title={title}
-      />
+      <GalleryModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} images={images} title={title} />
     </>
   );
 }

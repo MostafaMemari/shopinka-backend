@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { FaTimes } from "react-icons/fa";
+import { FaTimes } from 'react-icons/fa';
 
 interface AddressDeleteModalProps {
   isOpen: boolean;

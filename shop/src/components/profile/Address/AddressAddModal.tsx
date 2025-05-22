@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { FaPlus, FaTimes } from "react-icons/fa";
-import { useState } from "react";
+import { FaPlus, FaTimes } from 'react-icons/fa';
+import { useState } from 'react';
 
 interface AddressAddModalProps {
   isOpen: boolean;
@@ -22,31 +22,31 @@ interface AddressAddModalProps {
 
 const AddressAddModal: React.FC<AddressAddModalProps> = ({ isOpen, onClose, onAdd }) => {
   const [formData, setFormData] = useState({
-    name: "",
-    family: "",
-    phoneNumber: "",
-    nationalCode: "",
-    address: "",
-    city: "",
-    province: "",
-    buildingNumber: "",
-    buildingUnit: "",
-    postalCode: "",
+    name: '',
+    family: '',
+    phoneNumber: '',
+    nationalCode: '',
+    address: '',
+    city: '',
+    province: '',
+    buildingNumber: '',
+    buildingUnit: '',
+    postalCode: '',
   });
 
   const handleSubmit = () => {
     onAdd(formData);
     setFormData({
-      name: "",
-      family: "",
-      phoneNumber: "",
-      nationalCode: "",
-      address: "",
-      city: "",
-      province: "",
-      buildingNumber: "",
-      buildingUnit: "",
-      postalCode: "",
+      name: '',
+      family: '',
+      phoneNumber: '',
+      nationalCode: '',
+      address: '',
+      city: '',
+      province: '',
+      buildingNumber: '',
+      buildingUnit: '',
+      postalCode: '',
     });
     onClose();
   };

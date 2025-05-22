@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { FC } from "react";
-import SizeSelector from "./SizeSelector";
-import { IProductDetails } from "@/lib/types/products";
-import ColorSelector from "./ColorSelector";
-import QuantitySelector from "../ui/QuantitySelector";
-import ProductGuarantees from "./ProductGuarantees";
-import { useProductSelection } from "@/hooks/useProductSelection";
-import AddToCartButtonMobile from "./AddToCartButton/AddToCartButtonMobile";
-import { mockProductDetails } from "@/mock/productCarousels";
+import { FC } from 'react';
+import SizeSelector from './SizeSelector';
+import { IProductDetails } from '@/lib/types/products';
+import ColorSelector from './ColorSelector';
+import QuantitySelector from '../ui/QuantitySelector';
+import ProductGuarantees from './ProductGuarantees';
+import { useProductSelection } from '@/hooks/useProductSelection';
+import AddToCartButtonMobile from './AddToCartButton/AddToCartButtonMobile';
+import { mockProductDetails } from '@/mock/productCarousels';
 
 interface Props {
   product: IProductDetails;

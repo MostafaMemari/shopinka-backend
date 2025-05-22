@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import Drawer from "../ui/Drawer";
+import React, { useState } from 'react';
+import Drawer from '../ui/Drawer';
 
 interface Props {
   description: string;

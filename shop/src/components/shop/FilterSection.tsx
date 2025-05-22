@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { FC } from "react";
-import { FiChevronLeft } from "react-icons/fi";
-import Accordion from "./Accordion";
+import { FC } from 'react';
+import { FiChevronLeft } from 'react-icons/fi';
+import Accordion from './Accordion';
 
 interface FilterConfig {
   categories: string[];

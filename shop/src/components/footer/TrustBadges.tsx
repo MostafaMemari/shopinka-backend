@@ -1,6 +1,6 @@
-import { FC } from "react";
-import Image from "next/image";
-import { TrustBadge } from "@/lib/types/footer";
+import { FC } from 'react';
+import Image from 'next/image';
+import { TrustBadge } from '@/lib/types/footer';
 
 interface Props {
   trustBadges: TrustBadge[];

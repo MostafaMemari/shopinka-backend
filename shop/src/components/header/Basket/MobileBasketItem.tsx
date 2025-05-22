@@ -1,7 +1,7 @@
-import { ICartItem } from "@/lib/types/cart";
-import Image from "next/image";
-import Link from "next/link";
-import { HiOutlineMinus, HiOutlinePlus, HiOutlineX } from "react-icons/hi";
+import { ICartItem } from '@/lib/types/cart';
+import Image from 'next/image';
+import Link from 'next/link';
+import { HiOutlineMinus, HiOutlinePlus, HiOutlineX } from 'react-icons/hi';
 
 interface MobileBasketItemProp {
   item: ICartItem;

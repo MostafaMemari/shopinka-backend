@@ -3,10 +3,7 @@ interface ProductPropertiesProps {
   properties?: { [key: string]: string }[];
 }
 
-export default function ProductProperties({
-  title = "ویژگی های محصول",
-  properties,
-}: ProductPropertiesProps) {
+export default function ProductProperties({ title = 'ویژگی های محصول', properties }: ProductPropertiesProps) {
   if (!properties || properties.length === 0) return null;
 
   return (

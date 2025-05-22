@@ -1,6 +1,6 @@
-import { FC } from "react";
-import Link from "next/link";
-import { MenuLink } from "@/lib/types/footer";
+import { FC } from 'react';
+import Link from 'next/link';
+import { MenuLink } from '@/lib/types/footer';
 
 interface Props {
   menuLinks1: MenuLink[];

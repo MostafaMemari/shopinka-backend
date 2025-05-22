@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { IProduct } from "@/lib/types/products";
-import { FC } from "react";
-import ProductCard from "../ProductCard";
+import { IProduct } from '@/lib/types/products';
+import { FC } from 'react';
+import ProductCard from '../ProductCard';
 
 interface ProductGridProps {
   products: IProduct[];

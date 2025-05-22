@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import FilterSection from "@/components/shop/FilterSection";
-import MobileSort from "@/components/shop/MobileFilter";
-import MobileFilter from "@/components/shop/MobileFilter";
-import MobileFilterDrawer from "@/components/shop/MobileFilterDrawer";
-import MobileOptions from "@/components/shop/MobileOptions";
-import MobileSortDrawer from "@/components/shop/MobileSortDrawer";
-import ProductGrid from "@/components/shop/ProductGrid";
-import SortBar from "@/components/shop/SortBar";
-import Pagination from "@/components/ui/Pagination";
-import { latestProducts, specialOfferProducts } from "@/mock/productCarousels";
-import { FC, useState } from "react";
+import FilterSection from '@/components/shop/FilterSection';
+import MobileSort from '@/components/shop/MobileFilter';
+import MobileFilter from '@/components/shop/MobileFilter';
+import MobileFilterDrawer from '@/components/shop/MobileFilterDrawer';
+import MobileOptions from '@/components/shop/MobileOptions';
+import MobileSortDrawer from '@/components/shop/MobileSortDrawer';
+import ProductGrid from '@/components/shop/ProductGrid';
+import SortBar from '@/components/shop/SortBar';
+import Pagination from '@/components/ui/Pagination';
+import { latestProducts, specialOfferProducts } from '@/mock/productCarousels';
+import { FC, useState } from 'react';
 
 interface FilterConfig {
   categories: string[];
@@ -20,18 +20,18 @@ interface FilterConfig {
 
 const ShopPage: FC = () => {
   const filterConfig: FilterConfig = {
-    categories: ["دسته بندی 1", "دسته بندی 2", "دسته بندی 3"],
+    categories: ['دسته بندی 1', 'دسته بندی 2', 'دسته بندی 3'],
     brands: [
-      { id: "brand-nike", label: "نایک", value: "Nike" },
-      { id: "brand-adidas", label: "آدیداس", value: "adidas" },
+      { id: 'brand-nike', label: 'نایک', value: 'Nike' },
+      { id: 'brand-adidas', label: 'آدیداس', value: 'adidas' },
     ],
     colors: [
-      { id: "color-red", label: "قرمز", color: "red" },
-      { id: "color-blue", label: "آبی", color: "blue" },
+      { id: 'color-red', label: 'قرمز', color: 'red' },
+      { id: 'color-blue', label: 'آبی', color: 'blue' },
     ],
   };
 
-  const [sortOption, setSortOption] = useState("جدید ترین");
+  const [sortOption, setSortOption] = useState('جدید ترین');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -42,7 +42,7 @@ const ShopPage: FC = () => {
   };
 
   const handleFilterChange = (filters: any) => {
-    console.log("فیلترها:", filters);
+    console.log('فیلترها:', filters);
   };
 
   const handlePageChange = (page: number) => {

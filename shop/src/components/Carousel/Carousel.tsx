@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { FC, ReactNode, useMemo } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, FreeMode } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/free-mode";
+import { FC, ReactNode, useMemo } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, FreeMode } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/free-mode';
 
 interface CarouselProps {
   items: ReactNode[];
@@ -24,7 +24,7 @@ const Carousel: FC<CarouselProps> = ({
   breakpoints,
   navigation = true,
   freeMode = false,
-  className = "",
+  className = '',
 }) => {
   const modules = useMemo(() => {
     const mods = [];
@@ -38,7 +38,7 @@ const Carousel: FC<CarouselProps> = ({
       slidesPerView={slidesPerView}
       spaceBetween={spaceBetween}
       breakpoints={breakpoints}
-      navigation={navigation ? { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" } : undefined}
+      navigation={navigation ? { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } : undefined}
       freeMode={freeMode}
       modules={modules}
       className={className}

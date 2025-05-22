@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import { HiOutlineChevronLeft, HiOutlineMenu } from "react-icons/hi";
-import { ICategory } from "@/lib/types/categories";
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { HiOutlineChevronLeft, HiOutlineMenu } from 'react-icons/hi';
+import { ICategory } from '@/lib/types/categories';
 
 interface DesktopNavbarProps {
   categories: ICategory[];
@@ -20,28 +20,28 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   {
     id: 1,
-    name: "فروش ویژه",
-    href: "./special-sale.html",
-    color: { light: "#ef4444", dark: "#f87171" },
+    name: 'فروش ویژه',
+    href: './special-sale.html',
+    color: { light: '#ef4444', dark: '#f87171' },
   },
   {
     id: 2,
-    name: "چرا روتی کالا",
-    href: "./why-us.html",
+    name: 'چرا روتی کالا',
+    href: './why-us.html',
   },
   {
     id: 3,
-    name: "راهنمای خرید",
-    href: "./how-to-buy.html",
+    name: 'راهنمای خرید',
+    href: './how-to-buy.html',
   },
   {
     id: 4,
-    name: "سایر",
-    href: "#",
+    name: 'سایر',
+    href: '#',
     subItems: [
-      { id: 1, name: "تماس با ما", href: "./contact.html" },
-      { id: 2, name: "درباره ما", href: "./about.html" },
-      { id: 3, name: "سوالات متداول", href: "./faq.html" },
+      { id: 1, name: 'تماس با ما', href: './contact.html' },
+      { id: 2, name: 'درباره ما', href: './about.html' },
+      { id: 3, name: 'سوالات متداول', href: './faq.html' },
     ],
   },
 ];
@@ -64,16 +64,16 @@ const MenuItems = () => {
               href={menu.href}
               className="flex cursor-pointer items-center gap-x-2 p-2 text-sm text-neutral-600 dark:text-white hover:text-primary"
               style={
-                menu.color ? ({ "--color-light": menu.color.light, "--color-dark": menu.color.dark } as React.CSSProperties) : undefined
+                menu.color ? ({ '--color-light': menu.color.light, '--color-dark': menu.color.dark } as React.CSSProperties) : undefined
               }
             >
               {menu.name}
-              {menu.name === "سایر" && <span className="text-primary">...</span>}
+              {menu.name === 'سایر' && <span className="text-primary">...</span>}
             </Link>
             <span
               className={`
                 absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-500
-                ${hoveredMenuId === menu.id ? "w-full" : "w-0"}
+                ${hoveredMenuId === menu.id ? 'w-full' : 'w-0'}
               `}
             />
           </div>
@@ -122,8 +122,8 @@ const DesktopNavbar = ({ categories }: DesktopNavbarProps) => {
       setLastScrollY(currentScrollY);
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
   return (
@@ -131,7 +131,7 @@ const DesktopNavbar = ({ categories }: DesktopNavbarProps) => {
       className={`
         sticky top-0 z-30 bg-white dark:bg-neutral-950 border-b shadow-sm max-lg:hidden
         transition-all duration-700 px-4
-        ${isVisible ? "translate-y-0" : "-translate-y-full"}
+        ${isVisible ? 'translate-y-0' : '-translate-y-full'}
       `}
     >
       <div className="container relative flex max-w-[1680px] items-center gap-x-2">
@@ -146,7 +146,7 @@ const DesktopNavbar = ({ categories }: DesktopNavbarProps) => {
             <span
               className={`
                 absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-500
-                ${selectedCategoryId ? "w-full" : "w-0"}
+                ${selectedCategoryId ? 'w-full' : 'w-0'}
               `}
             />
           </div>
@@ -155,7 +155,7 @@ const DesktopNavbar = ({ categories }: DesktopNavbarProps) => {
             className={`
               absolute right-0 top-full z-20 bg-muted shadow-base rounded-b-lg
               w-[800px] transition-all duration-300
-              ${selectedCategoryId ? "block" : "hidden group-hover:block"}
+              ${selectedCategoryId ? 'block' : 'hidden group-hover:block'}
             `}
           >
             <div className="flex h-[450px] max-h-[450px] w-full overflow-hidden rounded-b-lg pt-0.5">
@@ -168,8 +168,8 @@ const DesktopNavbar = ({ categories }: DesktopNavbarProps) => {
                           flex py-4 pr-4 text-sm
                           ${
                             category.id === selectedCategoryId
-                              ? "text-primary font-bold bg-white dark:bg-neutral-900"
-                              : "text-neutral-600 dark:text-neutral-100 hover:text-primary hover:bg-white dark:hover:bg-neutral-900"
+                              ? 'text-primary font-bold bg-white dark:bg-neutral-900'
+                              : 'text-neutral-600 dark:text-neutral-100 hover:text-primary hover:bg-white dark:hover:bg-neutral-900'
                           }
                         `}
                         href={category.href}

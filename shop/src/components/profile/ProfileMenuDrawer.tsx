@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React from "react";
-import { useState } from "react";
-import { FaTimes, FaHome, FaShoppingCart, FaHeart, FaEye, FaBell, FaMapMarkerAlt, FaUserEdit, FaSignOutAlt } from "react-icons/fa";
-import Link from "next/link";
+import React from 'react';
+import { useState } from 'react';
+import { FaTimes, FaHome, FaShoppingCart, FaHeart, FaEye, FaBell, FaMapMarkerAlt, FaUserEdit, FaSignOutAlt } from 'react-icons/fa';
+import Link from 'next/link';
 
 interface ProfileMenuItem {
   id: string;
@@ -21,34 +21,34 @@ interface ProfileMenuDrawerProps {
 
 const ProfileMenuDrawer: React.FC<ProfileMenuDrawerProps> = ({ isOpen, onClose }) => {
   const menuItems: ProfileMenuItem[] = [
-    { id: "dashboard", title: "پیشخوان", link: "/profile", icon: <FaHome className="h-6 w-6" /> },
-    { id: "orders", title: "سفارش ها", link: "/profile/orders", icon: <FaShoppingCart className="h-6 w-6" /> },
-    { id: "favorites", title: "علاقه‌مندی ها", link: "/profile/favorites", icon: <FaHeart className="h-6 w-6" /> },
-    { id: "recent", title: "بازدید های اخیر", link: "/profile/recent", icon: <FaEye className="h-6 w-6" /> },
+    { id: 'dashboard', title: 'پیشخوان', link: '/profile', icon: <FaHome className="h-6 w-6" /> },
+    { id: 'orders', title: 'سفارش ها', link: '/profile/orders', icon: <FaShoppingCart className="h-6 w-6" /> },
+    { id: 'favorites', title: 'علاقه‌مندی ها', link: '/profile/favorites', icon: <FaHeart className="h-6 w-6" /> },
+    { id: 'recent', title: 'بازدید های اخیر', link: '/profile/recent', icon: <FaEye className="h-6 w-6" /> },
     {
-      id: "notifications",
-      title: "پیام ها",
-      link: "/profile/notifications",
+      id: 'notifications',
+      title: 'پیام ها',
+      link: '/profile/notifications',
       icon: <FaBell className="h-6 w-6" />,
       badge: 10,
     },
     {
-      id: "addresses",
-      title: "آدرس ها",
-      link: "/profile/addresses",
+      id: 'addresses',
+      title: 'آدرس ها',
+      link: '/profile/addresses',
       icon: <FaMapMarkerAlt className="h-6 w-6" />,
       isActive: true,
     },
     {
-      id: "profile-edit",
-      title: "اطلاعات حساب کاربری",
-      link: "/profile/edit",
+      id: 'profile-edit',
+      title: 'اطلاعات حساب کاربری',
+      link: '/profile/edit',
       icon: <FaUserEdit className="h-6 w-6" />,
     },
     {
-      id: "logout",
-      title: "خروج",
-      link: "#",
+      id: 'logout',
+      title: 'خروج',
+      link: '#',
       icon: <FaSignOutAlt className="h-6 w-6" />,
     },
   ];
@@ -75,10 +75,10 @@ const ProfileMenuDrawer: React.FC<ProfileMenuDrawerProps> = ({ isOpen, onClose }
                 href={item.link}
                 className={`profile-menu flex items-center justify-between rounded-lg px-2 py-4 xl:px-4 ${
                   item.isActive
-                    ? "profile-menu-active"
-                    : item.id === "logout"
-                      ? "text-red-500 hover:bg-warning/10 dark:text-red-400 dark:hover:bg-red-400/10"
-                      : ""
+                    ? 'profile-menu-active'
+                    : item.id === 'logout'
+                      ? 'text-red-500 hover:bg-warning/10 dark:text-red-400 dark:hover:bg-red-400/10'
+                      : ''
                 }`}
               >
                 <div className="flex items-center gap-x-4">

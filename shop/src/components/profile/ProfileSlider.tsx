@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { usePathname } from "next/navigation";
+import { usePathname } from 'next/navigation';
 
-import Image from "next/image";
-import Link from "next/link";
-import { FaRegEdit } from "react-icons/fa";
-import { menuItems } from "@/data/data";
-import { BiExit } from "react-icons/bi";
+import Image from 'next/image';
+import Link from 'next/link';
+import { FaRegEdit } from 'react-icons/fa';
+import { menuItems } from '@/data/data';
+import { BiExit } from 'react-icons/bi';
 
 interface ProfileSidebarProps {
   fullName: string;
@@ -25,7 +25,7 @@ export default function ProfileSidebar({ fullName, phoneNumber, profileImage, no
           <div className="mb-2 flex items-center justify-between border-b border-gray-200 pb-6 dark:border-white/10">
             <div className="flex items-center gap-x-4">
               <div>
-                <Image src={profileImage || "/images/user.png"} className="h-12 w-12 rounded-full" alt="Profile" width={100} height={100} />
+                <Image src={profileImage || '/images/user.png'} className="h-12 w-12 rounded-full" alt="Profile" width={100} height={100} />
               </div>
               <div className="flex flex-col">
                 <div className="line-clamp-1">{fullName}</div>
@@ -43,7 +43,7 @@ export default function ProfileSidebar({ fullName, phoneNumber, profileImage, no
                 <Link
                   href={item.href}
                   className={`profile-menu flex items-center justify-between rounded-lg px-2 py-4 xl:px-4 ${
-                    pathname === item.href ? "profile-menu-active" : ""
+                    pathname === item.href ? 'profile-menu-active' : ''
                   }`}
                 >
                   <div className="flex items-center gap-x-4">

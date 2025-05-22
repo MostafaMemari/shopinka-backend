@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { FaChevronLeft } from "react-icons/fa";
-import Link from "next/link";
-import DashboardHeader from "../DashboardHeader";
-import OrderCard from "./OrderCard";
-import OrderCostDetails from "./OrderCostDetails";
-import DeliveryAddress from "../Address/DeliveryAddress";
-import OrderItems from "./OrderItems";
+import { FaChevronLeft } from 'react-icons/fa';
+import Link from 'next/link';
+import DashboardHeader from '../DashboardHeader';
+import OrderCard from './OrderCard';
+import OrderCostDetails from './OrderCostDetails';
+import DeliveryAddress from '../Address/DeliveryAddress';
+import OrderItems from './OrderItems';
 
 interface Product {
   id: string;
@@ -28,7 +28,7 @@ interface OrderItem {
 
 interface Order {
   id: string;
-  status: "pending" | "paid";
+  status: 'pending' | 'paid';
   remainingTime?: string;
   orderNumber: string;
   totalAmount: string;

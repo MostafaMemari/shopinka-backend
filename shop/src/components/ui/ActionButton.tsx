@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { FC, ReactNode } from "react";
+import { FC, ReactNode } from 'react';
 
 interface Props {
   icon: ReactNode;
@@ -10,9 +10,9 @@ interface Props {
   showTooltip?: boolean;
 }
 
-const ActionButton: FC<Props> = ({ icon, onClick, label, hoverColor = "text-gray-700", showTooltip = false }) => {
+const ActionButton: FC<Props> = ({ icon, onClick, label, hoverColor = 'text-gray-700', showTooltip = false }) => {
   return (
-    <div className={`relative ${showTooltip ? "group" : ""}`}>
+    <div className={`relative ${showTooltip ? 'group' : ''}`}>
       <button
         type="button"
         onClick={onClick}

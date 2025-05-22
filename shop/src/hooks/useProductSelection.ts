@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 interface ProductSelection {
   quantity: number;
@@ -11,7 +11,7 @@ interface ProductSelection {
   handleDecrement: () => void;
 }
 
-export const useProductSelection = (defaultColor = "color-1", defaultSize = "size-1", defaultQuantity = 1): ProductSelection => {
+export const useProductSelection = (defaultColor = 'color-1', defaultSize = 'size-1', defaultQuantity = 1): ProductSelection => {
   const [quantity, setQuantity] = useState<number>(defaultQuantity);
   const [selectedColor, setSelectedColor] = useState<string>(defaultColor);
   const [selectedSize, setSelectedSize] = useState<string>(defaultSize);

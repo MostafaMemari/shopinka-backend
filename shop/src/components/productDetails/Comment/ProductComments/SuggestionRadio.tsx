@@ -1,4 +1,4 @@
-import { AiOutlineLike, AiOutlineDislike } from "react-icons/ai";
+import { AiOutlineLike, AiOutlineDislike } from 'react-icons/ai';
 
 interface Props {
   name?: string;
@@ -6,7 +6,7 @@ interface Props {
   selected?: string;
 }
 
-export default function SuggestionRadio({ name = "suggest", selected, onChange }: Props) {
+export default function SuggestionRadio({ name = 'suggest', selected, onChange }: Props) {
   return (
     <fieldset className="flex items-center gap-4">
       <div className="w-full">
@@ -16,8 +16,8 @@ export default function SuggestionRadio({ name = "suggest", selected, onChange }
           value="suggest-like"
           id="suggest-like"
           className="peer hidden"
-          checked={selected === "suggest-like"}
-          onChange={() => onChange?.("suggest-like")}
+          checked={selected === 'suggest-like'}
+          onChange={() => onChange?.('suggest-like')}
         />
         <label
           htmlFor="suggest-like"
@@ -37,8 +37,8 @@ export default function SuggestionRadio({ name = "suggest", selected, onChange }
           value="suggest-dislike"
           id="suggest-dislike"
           className="peer hidden"
-          checked={selected === "suggest-dislike"}
-          onChange={() => onChange?.("suggest-dislike")}
+          checked={selected === 'suggest-dislike'}
+          onChange={() => onChange?.('suggest-dislike')}
         />
         <label
           htmlFor="suggest-dislike"

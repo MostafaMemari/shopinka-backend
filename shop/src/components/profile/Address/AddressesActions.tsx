@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { FaPlus } from "react-icons/fa";
-import DashboardHeader from "../DashboardHeader";
-import AddressItem from "./AddressItem";
-import AddressAddModal from "./AddressAddModal";
-import AddressEditModal from "./AddressEditModal";
-import AddressDeleteModal from "./AddressDeleteModal";
-import { IAddress } from "@/lib/types/address";
+import { useState } from 'react';
+import { FaPlus } from 'react-icons/fa';
+import DashboardHeader from '../DashboardHeader';
+import AddressItem from './AddressItem';
+import AddressAddModal from './AddressAddModal';
+import AddressEditModal from './AddressEditModal';
+import AddressDeleteModal from './AddressDeleteModal';
+import { IAddress } from '@/lib/types/address';
 
 interface AddressesActionsProps {
   addresses: IAddress[];
@@ -58,7 +58,7 @@ const AddressesActions: React.FC<AddressesActionsProps> = ({ addresses: initialA
       buildingNumber: string;
       buildingUnit: string;
       postalCode: string;
-    }
+    },
   ) => {
     setAddresses(
       addresses.map((addr) =>
@@ -69,8 +69,8 @@ const AddressesActions: React.FC<AddressesActionsProps> = ({ addresses: initialA
               fullAddress: `${address.province}، ${address.city}، ${address.address}`,
               receiverName: `${address.name} ${address.family}`,
             }
-          : addr
-      )
+          : addr,
+      ),
     );
   };
 

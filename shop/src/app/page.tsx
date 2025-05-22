@@ -1,12 +1,12 @@
-import CategoryBanners from "@/components/CategoryBanners";
-import CategoryCircles from "@/components/CategoryCircles";
-import Header from "@/components/header";
-import { latestProducts, popularProducts, specialOfferProducts } from "@/mock/productCarousels";
-import { latestBlogs } from "@/mock/blogCarousels";
-import CarouselBlog from "@/components/Carousel/CarouselBlog";
-import BannerSlider from "@/components/Carousel/BannerSlider";
-import CarouselProduct from "@/components/Carousel/CarouselProduct";
-import Footer from "@/components/footer";
+import CategoryBanners from '@/components/CategoryBanners';
+import CategoryCircles from '@/components/CategoryCircles';
+import Header from '@/components/header';
+import { latestProducts, popularProducts, specialOfferProducts } from '@/mock/productCarousels';
+import { latestBlogs } from '@/mock/blogCarousels';
+import CarouselBlog from '@/components/Carousel/CarouselBlog';
+import BannerSlider from '@/components/Carousel/BannerSlider';
+import CarouselProduct from '@/components/Carousel/CarouselProduct';
+import Footer from '@/components/footer';
 
 export default function Home() {
   return (

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import UserAccountSection from "./Profile/UserAccountSection";
-import OrderStatusSection from "./Profile/OrderStatusSection";
-import DashboardHeader from "./DashboardHeader";
+import UserAccountSection from './Profile/UserAccountSection';
+import OrderStatusSection from './Profile/OrderStatusSection';
+import DashboardHeader from './DashboardHeader';
 
 interface DashboardProps {
   favoriteCount: number;

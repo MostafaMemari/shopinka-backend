@@ -1,4 +1,4 @@
-import { FaEdit } from "react-icons/fa";
+import { FaEdit } from 'react-icons/fa';
 
 interface DeliveryAddressProps {
   address: string;

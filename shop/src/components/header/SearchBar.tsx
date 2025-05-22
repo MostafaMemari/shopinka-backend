@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { HiOutlineClock, HiOutlineSearch, HiOutlineSparkles } from "react-icons/hi";
-import { useEffect, useRef, useState } from "react";
-import CarouselSearchBar from "@/components/Carousel/CarouselSearchBar";
+import { HiOutlineClock, HiOutlineSearch, HiOutlineSparkles } from 'react-icons/hi';
+import { useEffect, useRef, useState } from 'react';
+import CarouselSearchBar from '@/components/Carousel/CarouselSearchBar';
 
 interface SearchItem {
   id: string;
@@ -28,21 +28,21 @@ const SearchBar = ({ isMobile = false, productItems, recentSearchItems }: Search
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("touchstart", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("touchstart", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
     };
   }, []);
 
   return (
-    <div ref={wrapperRef} className={`relative ${isMobile ? "" : "max-w-xl flex-1"}`} id="desktopHeaderSearchBase">
+    <div ref={wrapperRef} className={`relative ${isMobile ? '' : 'max-w-xl flex-1'}`} id="desktopHeaderSearchBase">
       <div
         className={`flex items-center justify-between rounded-t-lg px-2 transition-all duration-200
-        ${isMobile ? "bg-background" : "border-b-transparent bg-background dark:border-white/10"}
-        ${isMobile && isOpen ? "border border-b-0 border-border bg-white" : ""}
+        ${isMobile ? 'bg-background' : 'border-b-transparent bg-background dark:border-white/10'}
+        ${isMobile && isOpen ? 'border border-b-0 border-border bg-white' : ''}
         `}
       >
         <div>
@@ -52,7 +52,7 @@ const SearchBar = ({ isMobile = false, productItems, recentSearchItems }: Search
         <input
           id="desktopHeaderSearch"
           className={`flex grow rounded-lg border-none px-2 py-3 outline-hidden placeholder:text-sm placeholder:text-text/60 focus:ring-0
-          ${isMobile ? "bg-red" : "bg-background text-text/90"}
+          ${isMobile ? 'bg-red' : 'bg-background text-text/90'}
           `}
           placeholder="جستجو کنید ..."
           type="text"

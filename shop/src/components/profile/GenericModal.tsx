@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { FaTimes } from "react-icons/fa";
-import { useState } from "react";
+import { FaTimes } from 'react-icons/fa';
+import { useState } from 'react';
 
 interface FormField {
   id: string;
   label: string;
-  type: "text" | "select";
+  type: 'text' | 'select';
   placeholder?: string;
   value?: string;
   options?: { value: string; label: string }[];
@@ -24,12 +24,12 @@ interface GenericModalProps {
 
 const GenericModal: React.FC<GenericModalProps> = ({ isOpen, onClose, title, fields = [], buttonText, onSubmit, customForm }) => {
   const [formData, setFormData] = useState<Record<string, string>>(
-    fields.reduce((acc, field) => ({ ...acc, [field.id]: field.value || "" }), {})
+    fields.reduce((acc, field) => ({ ...acc, [field.id]: field.value || '' }), {}),
   );
 
   const handleSubmit = () => {
     onSubmit(formData);
-    setFormData(fields.reduce((acc, field) => ({ ...acc, [field.id]: field.value || "" }), {}));
+    setFormData(fields.reduce((acc, field) => ({ ...acc, [field.id]: field.value || '' }), {}));
     onClose();
   };
 
@@ -57,10 +57,10 @@ const GenericModal: React.FC<GenericModalProps> = ({ isOpen, onClose, title, fie
                   <div
                     key={field.id}
                     className={
-                      field.type === "select" ? "col-span-2 flex items-center justify-between gap-x-6" : "col-span-2 sm:col-span-1"
+                      field.type === 'select' ? 'col-span-2 flex items-center justify-between gap-x-6' : 'col-span-2 sm:col-span-1'
                     }
                   >
-                    {field.type === "text" ? (
+                    {field.type === 'text' ? (
                       <label className="relative block rounded-lg border shadow-base w-full">
                         <input
                           type="text"
@@ -83,18 +83,18 @@ const GenericModal: React.FC<GenericModalProps> = ({ isOpen, onClose, title, fie
                           <select
                             id={`${field.id}-${index}`}
                             className="mb-6 block w-full rounded-lg border bg-muted p-2 text-text/90 outline-hidden focus:ring-0 dark:placeholder-zinc-400"
-                            value={formData[field.id]?.split("-")[index] || ""}
+                            value={formData[field.id]?.split('-')[index] || ''}
                             onChange={(e) => {
-                              const newValue = formData[field.id] ? formData[field.id].split("-") : ["", "", ""];
+                              const newValue = formData[field.id] ? formData[field.id].split('-') : ['', '', ''];
                               newValue[index] = e.target.value;
                               setFormData({
                                 ...formData,
-                                [field.id]: newValue.join("-"),
+                                [field.id]: newValue.join('-'),
                               });
                             }}
                           >
                             <option value="">{optionGroup.label}</option>
-                            {optionGroup.value.split(",").map((opt) => (
+                            {optionGroup.value.split(',').map((opt) => (
                               <option key={opt} value={opt}>
                                 {opt}
                               </option>

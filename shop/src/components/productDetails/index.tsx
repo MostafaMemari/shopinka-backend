@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { FC } from "react";
+import { FC } from 'react';
 
-import { IProduct } from "@/lib/types/products";
-import ProductActions from "./ActionButtons";
-import ProductGuarantees from "./ProductGuarantees";
-import ProductImageSwiper from "./ProductImageSwiper";
-import MobileDetails from "./MobileDetails";
-import ProductGallery from "./ProductGallery/ProductGallery";
-import DesktopDetails from "./DesktopDetails";
-import BreadcrumbContainer from "./BreadcrumbContainer";
-import { CompactBreadcrumb } from "../ui/breadcrumb";
+import { IProduct } from '@/lib/types/products';
+import ProductActions from './ActionButtons';
+import ProductGuarantees from './ProductGuarantees';
+import ProductImageSwiper from './ProductImageSwiper';
+import MobileDetails from './MobileDetails';
+import ProductGallery from './ProductGallery/ProductGallery';
+import DesktopDetails from './DesktopDetails';
+import BreadcrumbContainer from './BreadcrumbContainer';
+import { CompactBreadcrumb } from '../ui/breadcrumb';
 
 interface Props {
   product: IProduct;
@@ -18,9 +18,9 @@ interface Props {
 
 const ProductDetails: FC<Props> = ({ product }) => {
   const breadcrumbItems = [
-    { label: "روتی کالا", href: "/" },
-    { label: "مردانه", href: "/men" },
-    { label: "کتونی مردانه", href: product.productLink },
+    { label: 'روتی کالا', href: '/' },
+    { label: 'مردانه', href: '/men' },
+    { label: 'کتونی مردانه', href: product.productLink },
   ];
 
   const galleryImages = [{ src: product.imageSrc, alt: product.title }];

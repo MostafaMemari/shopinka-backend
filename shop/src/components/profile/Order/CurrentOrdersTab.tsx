@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { IOrder } from "@/lib/types/orders";
-import React, { useState, useEffect } from "react";
-import Pagination from "../Pagination";
+import { IOrder } from '@/lib/types/orders';
+import React, { useState, useEffect } from 'react';
+import Pagination from '../Pagination';
 
 interface FetchOrdersResponse {
   orders: IOrder[];
@@ -37,11 +37,11 @@ const CurrentOrdersTab: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const { orders: fetchedOrders, total } = await fetchOrdersByTab("current", currentPage, itemsPerPage);
+        const { orders: fetchedOrders, total } = await fetchOrdersByTab('current', currentPage, itemsPerPage);
         setOrders(fetchedOrders);
         setTotalItems(total);
       } catch (err) {
-        setError("خطا در بارگذاری سفارش‌ها");
+        setError('خطا در بارگذاری سفارش‌ها');
       } finally {
         setLoading(false);
       }

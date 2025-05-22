@@ -1,4 +1,4 @@
-import { IColor } from "./colors";
+import { IColor } from './colors';
 
 export interface IProduct {
   id: string;

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { FC } from "react";
-import { FiFilter } from "react-icons/fi";
-import { BsSortDown } from "react-icons/bs";
+import { FC } from 'react';
+import { FiFilter } from 'react-icons/fi';
+import { BsSortDown } from 'react-icons/bs';
 
 interface MobileOptionsProps {
   onFilterClick: () => void;

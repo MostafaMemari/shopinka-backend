@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { FC } from "react";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FC } from 'react';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 interface PaginationProps {
   currentPage: number;
@@ -21,7 +21,7 @@ const Pagination: FC<PaginationProps> = ({ currentPage, totalPages, onPageChange
   } else {
     pages.push(1);
     if (currentPage > 3) {
-      pages.push("...");
+      pages.push('...');
     }
     const startPage = Math.max(2, currentPage - 1);
     const endPage = Math.min(totalPages - 1, currentPage + 1);
@@ -29,7 +29,7 @@ const Pagination: FC<PaginationProps> = ({ currentPage, totalPages, onPageChange
       pages.push(i);
     }
     if (currentPage < totalPages - 2) {
-      pages.push("...");
+      pages.push('...');
     }
     pages.push(totalPages);
   }
@@ -39,7 +39,7 @@ const Pagination: FC<PaginationProps> = ({ currentPage, totalPages, onPageChange
       {/* دکمه صفحه قبلی */}
       <a
         className={`flex h-8 w-8 items-center justify-center rounded-full bg-muted transition-all duration-200 ${
-          currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-primary hover:text-white hover:dark:bg-emerald-600"
+          currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary hover:text-white hover:dark:bg-emerald-600'
         }`}
         href="#"
         onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
@@ -49,26 +49,26 @@ const Pagination: FC<PaginationProps> = ({ currentPage, totalPages, onPageChange
       {/* صفحات */}
       <div className="flex items-center gap-x-2">
         {pages.map((page, index) =>
-          typeof page === "string" ? (
+          typeof page === 'string' ? (
             <p key={index} className="text-sm text-text/60">
               {page}
             </p>
           ) : (
             <a
               key={page}
-              className={`pagination-button ${page === currentPage ? "pagination-button-active" : ""}`}
+              className={`pagination-button ${page === currentPage ? 'pagination-button-active' : ''}`}
               href="#"
               onClick={() => onPageChange(page)}
             >
               {page}
             </a>
-          )
+          ),
         )}
       </div>
       {/* دکمه صفحه بعدی */}
       <a
         className={`flex h-8 w-8 items-center justify-center rounded-full bg-muted transition-all duration-200 ${
-          currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-primary hover:text-white hover:dark:bg-emerald-600"
+          currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary hover:text-white hover:dark:bg-emerald-600'
         }`}
         href="#"
         onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}

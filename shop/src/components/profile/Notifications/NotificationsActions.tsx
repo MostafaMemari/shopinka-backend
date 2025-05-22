@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { FaChevronLeft, FaChevronRight, FaBellSlash } from "react-icons/fa";
-import DashboardHeader from "../DashboardHeader";
-import NotificationItem from "./NotificationItem";
+import { useState } from 'react';
+import { FaChevronLeft, FaChevronRight, FaBellSlash } from 'react-icons/fa';
+import DashboardHeader from '../DashboardHeader';
+import NotificationItem from './NotificationItem';
 
 interface Product {
   id: string;
@@ -14,7 +14,7 @@ interface Product {
 
 interface Notification {
   id: string;
-  type: "order" | "delivery";
+  type: 'order' | 'delivery';
   title: string;
   message: string;
   orderNumber?: string;

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { FC, useEffect, useRef } from "react";
-import { FiX, FiChevronLeft } from "react-icons/fi";
-import Accordion from "./Accordion";
+import { FC, useEffect, useRef } from 'react';
+import { FiX, FiChevronLeft } from 'react-icons/fi';
+import Accordion from './Accordion';
 
 interface FilterConfig {
   categories: string[];
@@ -22,13 +22,13 @@ const MobileFilterDrawer: FC<MobileFilterDrawerProps> = ({ isOpen, onClose, onFi
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     }
 
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     };
   }, [isOpen]);
 
@@ -39,9 +39,9 @@ const MobileFilterDrawer: FC<MobileFilterDrawerProps> = ({ isOpen, onClose, onFi
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen, onClose]);
 
@@ -56,7 +56,7 @@ const MobileFilterDrawer: FC<MobileFilterDrawerProps> = ({ isOpen, onClose, onFi
     <div
       ref={drawerRef}
       className={`fixed bottom-0 left-0 right-0 z-40 h-full w-full bg-muted transition-transform duration-300 ${
-        isOpen ? "translate-y-0" : "translate-y-full"
+        isOpen ? 'translate-y-0' : 'translate-y-full'
       }`}
       aria-labelledby="shop-filter-drawer-navigation-label"
       tabIndex={-1}

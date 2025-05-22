@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import ProfileField from "./ProfileField";
-import GenericModal from "./GenericModal";
-import DashboardHeader from "./DashboardHeader";
+import { useState } from 'react';
+import ProfileField from './ProfileField';
+import GenericModal from './GenericModal';
+import DashboardHeader from './DashboardHeader';
 
 interface ProfileData {
   fullName: string;
@@ -21,7 +21,7 @@ interface ProfileEditActionsProps {
 interface ProfileField {
   label: string;
   value: string;
-  status?: "unverified" | "not-set" | "verified";
+  status?: 'unverified' | 'not-set' | 'verified';
   isPassword?: boolean;
   onEdit: () => void;
 }
@@ -35,62 +35,62 @@ const ProfileEditActions: React.FC<ProfileEditActionsProps> = ({ initialData }) 
 
   const fields: ProfileField[] = [
     {
-      label: "نام و نام خانوادگی",
+      label: 'نام و نام خانوادگی',
       value: profileData.fullName,
-      onEdit: () => setModalState({ type: "fullName", isOpen: true }),
+      onEdit: () => setModalState({ type: 'fullName', isOpen: true }),
     },
     {
-      label: "کد ملی",
-      value: profileData.nationalCode || "ثبت نشده",
-      status: profileData.nationalCode ? "unverified" : "not-set",
-      onEdit: () => setModalState({ type: "nationalCode", isOpen: true }),
+      label: 'کد ملی',
+      value: profileData.nationalCode || 'ثبت نشده',
+      status: profileData.nationalCode ? 'unverified' : 'not-set',
+      onEdit: () => setModalState({ type: 'nationalCode', isOpen: true }),
     },
     {
-      label: "شماره موبایل",
+      label: 'شماره موبایل',
       value: profileData.phoneNumber,
-      status: "verified",
-      onEdit: () => setModalState({ type: "phoneNumber", isOpen: true }),
+      status: 'verified',
+      onEdit: () => setModalState({ type: 'phoneNumber', isOpen: true }),
     },
     {
-      label: "ایمیل",
+      label: 'ایمیل',
       value: profileData.email,
-      status: "verified",
-      onEdit: () => setModalState({ type: "email", isOpen: true }),
+      status: 'verified',
+      onEdit: () => setModalState({ type: 'email', isOpen: true }),
     },
     {
-      label: "کلمه عبور",
+      label: 'کلمه عبور',
       value: profileData.password,
       isPassword: true,
-      onEdit: () => setModalState({ type: "password", isOpen: true }),
+      onEdit: () => setModalState({ type: 'password', isOpen: true }),
     },
     {
-      label: "تاریخ تولد",
+      label: 'تاریخ تولد',
       value: profileData.birthDate,
-      onEdit: () => setModalState({ type: "birthDate", isOpen: true }),
+      onEdit: () => setModalState({ type: 'birthDate', isOpen: true }),
     },
   ];
 
   const handleSubmit = (type: string, formData: Record<string, string>) => {
     switch (type) {
-      case "fullName":
+      case 'fullName':
         setProfileData({
           ...profileData,
           fullName: `${formData.name} ${formData.family}`,
         });
         break;
-      case "nationalCode":
+      case 'nationalCode':
         setProfileData({ ...profileData, nationalCode: formData.nationalCode });
         break;
-      case "phoneNumber":
+      case 'phoneNumber':
         setProfileData({ ...profileData, phoneNumber: formData.phoneNumber });
         break;
-      case "email":
+      case 'email':
         setProfileData({ ...profileData, email: formData.email });
         break;
-      case "password":
+      case 'password':
         setProfileData({ ...profileData, password: formData.password });
         break;
-      case "birthDate":
+      case 'birthDate':
         setProfileData({ ...profileData, birthDate: formData.birthDate });
         break;
     }
@@ -171,106 +171,106 @@ const ProfileEditActions: React.FC<ProfileEditActionsProps> = ({ initialData }) 
           />
         ))}
       </div>
-      {modalState.type === "fullName" && (
+      {modalState.type === 'fullName' && (
         <GenericModal
           isOpen={modalState.isOpen}
           onClose={() => setModalState({ type: null, isOpen: false })}
           title="تغییر نام و نام خانوادگی"
           fields={[
-            { id: "name", label: "نام", type: "text", placeholder: "نام" },
+            { id: 'name', label: 'نام', type: 'text', placeholder: 'نام' },
             {
-              id: "family",
-              label: "نام خانوادگی",
-              type: "text",
-              placeholder: "نام خانوادگی",
+              id: 'family',
+              label: 'نام خانوادگی',
+              type: 'text',
+              placeholder: 'نام خانوادگی',
             },
           ]}
           buttonText="ویرایش"
-          onSubmit={(formData) => handleSubmit("fullName", formData)}
+          onSubmit={(formData) => handleSubmit('fullName', formData)}
         />
       )}
-      {modalState.type === "nationalCode" && (
+      {modalState.type === 'nationalCode' && (
         <GenericModal
           isOpen={modalState.isOpen}
           onClose={() => setModalState({ type: null, isOpen: false })}
           title="ثبت کد ملی"
           fields={[
             {
-              id: "nationalCode",
-              label: "کد ملی",
-              type: "text",
-              placeholder: "کد ملی",
+              id: 'nationalCode',
+              label: 'کد ملی',
+              type: 'text',
+              placeholder: 'کد ملی',
             },
           ]}
           buttonText="ویرایش"
-          onSubmit={(formData) => handleSubmit("nationalCode", formData)}
+          onSubmit={(formData) => handleSubmit('nationalCode', formData)}
         />
       )}
-      {modalState.type === "phoneNumber" && (
+      {modalState.type === 'phoneNumber' && (
         <GenericModal
           isOpen={modalState.isOpen}
           onClose={() => setModalState({ type: null, isOpen: false })}
           title="تغییر شماره موبایل"
           fields={[
             {
-              id: "phoneNumber",
-              label: "شماره موبایل",
-              type: "text",
-              placeholder: "شماره موبایل",
+              id: 'phoneNumber',
+              label: 'شماره موبایل',
+              type: 'text',
+              placeholder: 'شماره موبایل',
             },
           ]}
           buttonText="ارسال کد تایید"
-          onSubmit={(formData) => handleSubmit("phoneNumber", formData)}
+          onSubmit={(formData) => handleSubmit('phoneNumber', formData)}
         />
       )}
-      {modalState.type === "email" && (
+      {modalState.type === 'email' && (
         <GenericModal
           isOpen={modalState.isOpen}
           onClose={() => setModalState({ type: null, isOpen: false })}
           title="تغییر ایمیل"
-          fields={[{ id: "email", label: "ایمیل", type: "text", placeholder: "ایمیل" }]}
+          fields={[{ id: 'email', label: 'ایمیل', type: 'text', placeholder: 'ایمیل' }]}
           buttonText="ارسال کد تایید"
-          onSubmit={(formData) => handleSubmit("email", formData)}
+          onSubmit={(formData) => handleSubmit('email', formData)}
         />
       )}
-      {modalState.type === "password" && (
+      {modalState.type === 'password' && (
         <GenericModal
           isOpen={modalState.isOpen}
           onClose={() => setModalState({ type: null, isOpen: false })}
           title="تغییر کلمه عبور"
           buttonText="تغییر کلمه عبور"
           customForm={passwordForm}
-          onSubmit={(formData) => handleSubmit("password", formData)}
+          onSubmit={(formData) => handleSubmit('password', formData)}
         />
       )}
-      {modalState.type === "birthDate" && (
+      {modalState.type === 'birthDate' && (
         <GenericModal
           isOpen={modalState.isOpen}
           onClose={() => setModalState({ type: null, isOpen: false })}
           title="تغییر تاریخ تولد"
           fields={[
             {
-              id: "birthDate",
-              label: "تاریخ تولد",
-              type: "select",
+              id: 'birthDate',
+              label: 'تاریخ تولد',
+              type: 'select',
               options: [
                 {
-                  label: "سال",
-                  value: "1380,1381,1382,1383,1384,1385",
+                  label: 'سال',
+                  value: '1380,1381,1382,1383,1384,1385',
                 },
                 {
-                  label: "ماه",
-                  value: "شهریور,آذر,دی,خرداد,آبان,مرداد",
+                  label: 'ماه',
+                  value: 'شهریور,آذر,دی,خرداد,آبان,مرداد',
                 },
                 {
-                  label: "روز",
-                  value: "1,2,3,4,5,6",
+                  label: 'روز',
+                  value: '1,2,3,4,5,6',
                 },
               ],
             },
           ]}
           buttonText="ویرایش"
-          onSubmit={(formData) => handleSubmit("birthDate", formData)}
+          onSubmit={(formData) => handleSubmit('birthDate', formData)}
         />
       )}
     </>

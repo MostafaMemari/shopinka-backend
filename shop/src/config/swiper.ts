@@ -1,10 +1,10 @@
-import { Navigation, FreeMode } from "swiper/modules";
+import { Navigation, FreeMode } from 'swiper/modules';
 
 export const defaultSwiperConfig = {
   freeMode: true,
   navigation: {
-    nextEl: ".swiper-button-next",
-    prevEl: ".swiper-button-prev",
+    nextEl: '.swiper-button-next',
+    prevEl: '.swiper-button-prev',
   },
   modules: [Navigation, FreeMode],
 };

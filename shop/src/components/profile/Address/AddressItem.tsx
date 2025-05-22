@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { FaEllipsisV, FaEdit, FaTrash } from "react-icons/fa";
+import { useState } from 'react';
+import { FaEllipsisV, FaEdit, FaTrash } from 'react-icons/fa';
 
 interface Address {
   id: string;

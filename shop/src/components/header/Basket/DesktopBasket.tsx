@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { HiOutlineChevronLeft } from "react-icons/hi";
-import DesktopBasketItem from "./DesktopBasketItem";
+import Link from 'next/link';
+import { HiOutlineChevronLeft } from 'react-icons/hi';
+import DesktopBasketItem from './DesktopBasketItem';
 
 interface DesktopBasketDropdownProps {
   cartItems: {

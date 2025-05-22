@@ -1,6 +1,6 @@
-import Image from "next/image";
-import Link from "next/link";
-import { HiOutlineMinus, HiOutlinePlus, HiOutlineX } from "react-icons/hi";
+import Image from 'next/image';
+import Link from 'next/link';
+import { HiOutlineMinus, HiOutlinePlus, HiOutlineX } from 'react-icons/hi';
 
 export interface ItemCardBasketProp {
   item: {
@@ -41,7 +41,7 @@ export default function DesktopBasketItem({ item }: ItemCardBasketProp) {
 
         <div className="flex items-center justify-between gap-x-2">
           <div className="text-primary">
-            <span className="text-lg font-bold">{item?.price.toLocaleString("fa-IR")}</span>
+            <span className="text-lg font-bold">{item?.price.toLocaleString('fa-IR')}</span>
             <span className="text-sm"> تومان</span>
           </div>
 

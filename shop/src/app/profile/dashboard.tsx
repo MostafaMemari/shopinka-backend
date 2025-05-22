@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   FaUserEdit,
@@ -13,8 +13,8 @@ import {
   FaCheckCircle,
   FaClock,
   FaChevronLeft,
-} from "react-icons/fa";
-import Link from "next/link";
+} from 'react-icons/fa';
+import Link from 'next/link';
 
 interface DashboardHeaderProps {
   title: string;
@@ -154,7 +154,7 @@ const OrderStatusSection: React.FC<OrderStatusSectionProps> = ({ currentOrders, 
 
 interface Order {
   id: string;
-  status: "pending" | "paid";
+  status: 'pending' | 'paid';
   remainingTime?: string;
   orderNumber: string;
   totalAmount: string;
@@ -171,14 +171,14 @@ interface OrderCardProps {
 
 const OrderCard: React.FC<OrderCardProps> = ({ order }) => (
   <div className="rounded-lg border shadow-base">
-    <Link href={order.status === "pending" ? "/profile-orders-detail-pending" : "/profile-orders-detail"}>
+    <Link href={order.status === 'pending' ? '/profile-orders-detail-pending' : '/profile-orders-detail'}>
       <div className="p-4">
         <div className="flex items-center justify-between pb-6">
           <div
-            className={`flex items-center gap-x-2 ${order.status === "pending" ? "text-yellow-500 dark:text-yellow-400" : "text-primary"}`}
+            className={`flex items-center gap-x-2 ${order.status === 'pending' ? 'text-yellow-500 dark:text-yellow-400' : 'text-primary'}`}
           >
-            {order.status === "pending" ? <FaExclamationTriangle className="h-6 w-6" /> : <FaCheckCircle className="h-6 w-6" />}
-            <p className="font-medium md:text-lg">{order.status === "pending" ? "در انتظار پرداخت" : "پرداخت شده"}</p>
+            {order.status === 'pending' ? <FaExclamationTriangle className="h-6 w-6" /> : <FaCheckCircle className="h-6 w-6" />}
+            <p className="font-medium md:text-lg">{order.status === 'pending' ? 'در انتظار پرداخت' : 'پرداخت شده'}</p>
           </div>
           <FaChevronLeft className="h-6 w-6" />
         </div>

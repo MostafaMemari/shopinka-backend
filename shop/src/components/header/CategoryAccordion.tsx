@@ -1,8 +1,8 @@
-import { ICategory } from "@/lib/types/categories";
-import { cn } from "@/utils/utils";
-import Link from "next/link";
-import { useState } from "react";
-import { FiChevronRight } from "react-icons/fi";
+import { ICategory } from '@/lib/types/categories';
+import { cn } from '@/utils/utils';
+import Link from 'next/link';
+import { useState } from 'react';
+import { FiChevronRight } from 'react-icons/fi';
 
 interface AccordionState {
   [key: string]: boolean;
@@ -35,8 +35,8 @@ const CategoryAccordion = ({ categories, onItemClick }: CategoryAccordionProps) 
             {category.subCategories?.length ? (
               <FiChevronRight
                 className={cn(
-                  "h-5 w-5 shrink-0 transition-transform duration-300",
-                  accordionState[`category-${category.id}`] && "rotate-90"
+                  'h-5 w-5 shrink-0 transition-transform duration-300',
+                  accordionState[`category-${category.id}`] && 'rotate-90',
                 )}
               />
             ) : null}
@@ -45,8 +45,8 @@ const CategoryAccordion = ({ categories, onItemClick }: CategoryAccordionProps) 
           {category.subCategories?.length ? (
             <div
               className={cn(
-                "relative overflow-hidden transition-all duration-300 pr-2",
-                accordionState[`category-${category.id}`] ? "max-h-[500px]" : "max-h-0"
+                'relative overflow-hidden transition-all duration-300 pr-2',
+                accordionState[`category-${category.id}`] ? 'max-h-[500px]' : 'max-h-0',
               )}
             >
               <ul className="pt-2 pr-2">
@@ -61,15 +61,15 @@ const CategoryAccordion = ({ categories, onItemClick }: CategoryAccordionProps) 
                           <span className="line-clamp-1">{subCategory.name}</span>
                           <FiChevronRight
                             className={cn(
-                              "h-5 w-5 shrink-0 transition-transform duration-300",
-                              accordionState[`subcategory-${subCategory.id}`] && "rotate-90"
+                              'h-5 w-5 shrink-0 transition-transform duration-300',
+                              accordionState[`subcategory-${subCategory.id}`] && 'rotate-90',
                             )}
                           />
                         </div>
                         <div
                           className={cn(
-                            "relative overflow-hidden transition-all duration-300 pr-2",
-                            accordionState[`subcategory-${subCategory.id}`] ? "max-h-[500px]" : "max-h-0"
+                            'relative overflow-hidden transition-all duration-300 pr-2',
+                            accordionState[`subcategory-${subCategory.id}`] ? 'max-h-[500px]' : 'max-h-0',
                           )}
                         >
                           <ul className="pt-2 pr-2">

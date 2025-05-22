@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { IOrder } from "@/lib/types/orders";
-import { fetchOrdersByTab } from "@/mock/orders";
-import LoadingState from "../LoadingState";
-import EmptyState from "../EmptyState";
-import ErrorState from "../ErrorState";
-import Pagination from "../Pagination";
-import OrderList from "./OrderList";
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { IOrder } from '@/lib/types/orders';
+import { fetchOrdersByTab } from '@/mock/orders';
+import LoadingState from '../LoadingState';
+import EmptyState from '../EmptyState';
+import ErrorState from '../ErrorState';
+import Pagination from '../Pagination';
+import OrderList from './OrderList';
 
 interface TabContentProps {
-  tabId: "current" | "delivered" | "canceled";
+  tabId: 'current' | 'delivered' | 'canceled';
 }
 
-const useOrders = (tabId: TabContentProps["tabId"], currentPage: number, itemsPerPage: number) => {
+const useOrders = (tabId: TabContentProps['tabId'], currentPage: number, itemsPerPage: number) => {
   const [orders, setOrders] = useState<IOrder[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -27,7 +27,7 @@ const useOrders = (tabId: TabContentProps["tabId"], currentPage: number, itemsPe
       setOrders(fetchedOrders);
       setTotalItems(total);
     } catch (err) {
-      setError("خطا در بارگذاری سفارش‌ها");
+      setError('خطا در بارگذاری سفارش‌ها');
     } finally {
       setLoading(false);
     }
@@ -46,7 +46,7 @@ const TabContent: React.FC<TabContentProps> = ({ tabId }) => {
 
   const { orders, totalItems, loading, error } = useOrders(tabId, currentPage, itemsPerPage);
 
-  const displayOrders = useMemo(() => (tabId === "current" ? [...orders] : orders), [tabId, orders]);
+  const displayOrders = useMemo(() => (tabId === 'current' ? [...orders] : orders), [tabId, orders]);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
@@ -62,7 +62,7 @@ const TabContent: React.FC<TabContentProps> = ({ tabId }) => {
         ) : displayOrders.length === 0 ? (
           <EmptyState />
         ) : (
-          <OrderList orders={displayOrders} retryPayment={tabId === "current"} />
+          <OrderList orders={displayOrders} retryPayment={tabId === 'current'} />
         )}
       </div>
       <Pagination totalItems={totalItems} itemsPerPage={itemsPerPage} currentPage={currentPage} onPageChange={handlePageChange} />

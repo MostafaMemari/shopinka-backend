@@ -1,5 +1,5 @@
-import Footer from "@/components/footer";
-import Header from "@/components/header";
+import Footer from '@/components/footer';
+import Header from '@/components/header';
 // import CarouselProduct from "@/components/Carousel/CarouselProduct";
 // import ProductTabs from "@/components/ProductTabs";
 // import { mockProductDetails, popularProducts } from "@/mock/productCarousels";

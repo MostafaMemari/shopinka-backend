@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { FC } from "react";
-import Copyright from "./Copyright";
-import { MenuLink, SocialLink, TrustBadge } from "@/lib/types/footer";
-import SupportInfo from "./SupportInfo";
-import ScrollTopButton from "./ScrollTopButton";
-import SubscribeForm from "./SubscribeForm";
-import SocialLinks from "./SocialLinks";
-import MenuLinks from "./MenuLinks";
-import TrustBadges from "./TrustBadges";
+import { FC } from 'react';
+import Copyright from './Copyright';
+import { MenuLink, SocialLink, TrustBadge } from '@/lib/types/footer';
+import SupportInfo from './SupportInfo';
+import ScrollTopButton from './ScrollTopButton';
+import SubscribeForm from './SubscribeForm';
+import SocialLinks from './SocialLinks';
+import MenuLinks from './MenuLinks';
+import TrustBadges from './TrustBadges';
 
 interface Props {
   supportPhone?: string;
@@ -23,32 +23,32 @@ interface Props {
 }
 
 const Footer: FC<Props> = ({
-  supportPhone = "021-0000000",
-  supportText = "۷ روز هفته، ۲۴ ساعته پاسخگوی شما هستیم",
-  subscribeText = "از جدیدترین تخفیف ها با خبر شوید",
+  supportPhone = '021-0000000',
+  supportText = '۷ روز هفته، ۲۴ ساعته پاسخگوی شما هستیم',
+  subscribeText = 'از جدیدترین تخفیف ها با خبر شوید',
   menuLinks1 = [
-    { id: "1", label: "شرایط مرجوعی", href: "/return-terms" },
-    { id: "2", label: "راهنمای خرید", href: "/how-to-buy" },
-    { id: "3", label: "قوانین و مقررات", href: "/rules-and-terms" },
-    { id: "4", label: "چرا روتی کالا", href: "/why-us" },
+    { id: '1', label: 'شرایط مرجوعی', href: '/return-terms' },
+    { id: '2', label: 'راهنمای خرید', href: '/how-to-buy' },
+    { id: '3', label: 'قوانین و مقررات', href: '/rules-and-terms' },
+    { id: '4', label: 'چرا روتی کالا', href: '/why-us' },
   ],
   menuLinks2 = [
-    { id: "1", label: "پیگیری سفارشات", href: "/profile-orders" },
-    { id: "2", label: "تماس با ما", href: "/contact" },
-    { id: "3", label: "سوالات متداول", href: "/faq" },
-    { id: "4", label: "درباره ما", href: "/about" },
+    { id: '1', label: 'پیگیری سفارشات', href: '/profile-orders' },
+    { id: '2', label: 'تماس با ما', href: '/contact' },
+    { id: '3', label: 'سوالات متداول', href: '/faq' },
+    { id: '4', label: 'درباره ما', href: '/about' },
   ],
   socialLinks = [
-    { id: "1", name: "instagram", href: "#", icon: "instagram" },
-    { id: "2", name: "twitter", href: "#", icon: "twitter" },
-    { id: "3", name: "aparat", href: "#", icon: "aparat" },
+    { id: '1', name: 'instagram', href: '#', icon: 'instagram' },
+    { id: '2', name: 'twitter', href: '#', icon: 'twitter' },
+    { id: '3', name: 'aparat', href: '#', icon: 'aparat' },
   ],
   trustBadges = [
-    { id: "1", name: "namad", imageSrc: "/images/namad.png", href: "#", isTest: true },
-    { id: "2", name: "samandehi", imageSrc: "/images/samandehi.png", href: "#", isTest: true },
+    { id: '1', name: 'namad', imageSrc: '/images/namad.png', href: '#', isTest: true },
+    { id: '2', name: 'samandehi', imageSrc: '/images/samandehi.png', href: '#', isTest: true },
   ],
   copyright = true,
-  copyrightText = "کلیه حقوق این سایت متعلق به فروشگاه روتی کالا می‌باشد.",
+  copyrightText = 'کلیه حقوق این سایت متعلق به فروشگاه روتی کالا می‌باشد.',
 }) => {
   return (
     <footer className="relative border-t bg-muted">

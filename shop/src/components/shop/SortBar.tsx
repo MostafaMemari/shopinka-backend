@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { FC, useState } from "react";
-import { BsSortDown } from "react-icons/bs";
+import { FC, useState } from 'react';
+import { BsSortDown } from 'react-icons/bs';
 
 interface SortBarProps {
   onSortChange?: (sortOption: string) => void;
 }
 
 const SortBar: FC<SortBarProps> = ({ onSortChange }) => {
-  const [activeSort, setActiveSort] = useState("جدید ترین");
-  const sortOptions = ["جدید ترین", "پرفروش ترین", "گران ترین", "ارزان ترین"];
+  const [activeSort, setActiveSort] = useState('جدید ترین');
+  const sortOptions = ['جدید ترین', 'پرفروش ترین', 'گران ترین', 'ارزان ترین'];
 
   const handleSortClick = (option: string) => {
     setActiveSort(option);
@@ -28,7 +28,7 @@ const SortBar: FC<SortBarProps> = ({ onSortChange }) => {
         {sortOptions.map((option) => (
           <button
             key={option}
-            className={`rounded-lg px-1 py-2 text-sm hover:bg-background lg:px-4 ${activeSort === option ? "sort-button-active" : ""}`}
+            className={`rounded-lg px-1 py-2 text-sm hover:bg-background lg:px-4 ${activeSort === option ? 'sort-button-active' : ''}`}
             onClick={() => handleSortClick(option)}
           >
             {option}

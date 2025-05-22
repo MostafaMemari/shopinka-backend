@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { FaEdit, FaPlus } from "react-icons/fa";
+import { FaEdit, FaPlus } from 'react-icons/fa';
 
 interface ProfileFieldProps {
   label: string;
   value: string;
-  status?: "verified" | "unverified" | "not-set";
+  status?: 'verified' | 'unverified' | 'not-set';
   isPassword?: boolean;
   onEdit: () => void;
 }
@@ -18,10 +18,10 @@ const ProfileField: React.FC<ProfileFieldProps> = ({ label, value, status, isPas
           {status && (
             <div
               className={`absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium ${
-                status === "verified" ? "text-primary" : status === "unverified" ? "text-red-500 dark:text-red-400" : "text-text/60"
+                status === 'verified' ? 'text-primary' : status === 'unverified' ? 'text-red-500 dark:text-red-400' : 'text-text/60'
               }`}
             >
-              {status === "verified" ? "تایید شده" : status === "unverified" ? "تایید نشده" : "ثبت نشده"}
+              {status === 'verified' ? 'تایید شده' : status === 'unverified' ? 'تایید نشده' : 'ثبت نشده'}
             </div>
           )}
           <div className="flex justify-between">
@@ -33,7 +33,7 @@ const ProfileField: React.FC<ProfileFieldProps> = ({ label, value, status, isPas
                 <div className="mr-2 text-text/60">{value}</div>
               )}
             </div>
-            {status === "not-set" ? <FaPlus className="h-6 w-6 text-primary" /> : <FaEdit className="h-6 w-6 text-primary" />}
+            {status === 'not-set' ? <FaPlus className="h-6 w-6 text-primary" /> : <FaEdit className="h-6 w-6 text-primary" />}
           </div>
         </div>
       </button>

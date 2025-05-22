@@ -1,4 +1,4 @@
-import DesktopLogo from "@/components/ui/Logo/DesktopLogo";
+import DesktopLogo from '@/components/ui/Logo/DesktopLogo';
 
 export default function Page() {
   return (
@@ -7,8 +7,8 @@ export default function Page() {
         <div className="container">
           <div className="mx-auto max-w-[450px] rounded-xl bg-muted p-5 shadow-base md:p-10">
             <div className="mx-auto mb-10 w-40">
-              {" "}
-              <DesktopLogo />{" "}
+              {' '}
+              <DesktopLogo />{' '}
             </div>
 
             <h1 className="mb-10 text-center text-lg">ورود | ثبت نام</h1>

@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { FaTrash } from "react-icons/fa";
+import Link from 'next/link';
+import { FaTrash } from 'react-icons/fa';
 
 interface Favorite {
   id: string;
@@ -28,8 +28,8 @@ const PreviewCard: React.FC<PreviewCardProps> = ({ favorite, onDelete }) => (
         </Link>
       </div>
       <div className="flex items-center justify-between">
-        <div className={`text-sm font-medium xs:text-base ${favorite.isAvailable ? "text-primary" : "text-red-500 dark:text-red-400"}`}>
-          {favorite.isAvailable ? "موجود" : "ناموجود"}
+        <div className={`text-sm font-medium xs:text-base ${favorite.isAvailable ? 'text-primary' : 'text-red-500 dark:text-red-400'}`}>
+          {favorite.isAvailable ? 'موجود' : 'ناموجود'}
         </div>
         <button
           type="button"

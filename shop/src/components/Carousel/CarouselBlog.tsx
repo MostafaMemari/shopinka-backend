@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { FC, useMemo } from "react";
-import Link from "next/link";
-import { blogSwiperConfig } from "@/config/swiper";
-import { IBlog } from "@/lib/types/blogs";
-import BlogCard from "../Blog";
-import Carousel from "./Carousel";
+import { FC, useMemo } from 'react';
+import Link from 'next/link';
+import { blogSwiperConfig } from '@/config/swiper';
+import { IBlog } from '@/lib/types/blogs';
+import BlogCard from '../Blog';
+import Carousel from './Carousel';
 
 interface Props {
   sectionTitle: string;
@@ -14,7 +14,7 @@ interface Props {
   blogs: IBlog[];
 }
 
-const CarouselBlog: FC<Props> = ({ sectionTitle, viewAllLink, viewAllText = "مشاهده همه", blogs }) => {
+const CarouselBlog: FC<Props> = ({ sectionTitle, viewAllLink, viewAllText = 'مشاهده همه', blogs }) => {
   const blogItems = useMemo(() => blogs.map((blog) => <BlogCard key={blog.id} blog={blog} />), [blogs]);
 
   return (

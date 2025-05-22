@@ -1,7 +1,7 @@
-import DashboardHeader from "@/components/profile/DashboardHeader";
-import TabContent from "@/components/profile/Order/TabContent";
-import { cn } from "@/utils/utils";
-import Link from "next/link";
+import DashboardHeader from '@/components/profile/DashboardHeader';
+import TabContent from '@/components/profile/Order/TabContent';
+import { cn } from '@/utils/utils';
+import Link from 'next/link';
 
 interface Props {
   searchParams?: { [key: string]: string | string[] | undefined };
@@ -9,17 +9,17 @@ interface Props {
 
 const OrderTabs = async ({ searchParams }: Props) => {
   const tabs = [
-    { id: "current", label: "فعلی", count: 5 },
-    { id: "delivered", label: "تحویل شده", count: 10 },
-    { id: "canceled", label: "لغو شده", count: 15 },
+    { id: 'current', label: 'فعلی', count: 5 },
+    { id: 'delivered', label: 'تحویل شده', count: 10 },
+    { id: 'canceled', label: 'لغو شده', count: 15 },
   ];
 
   const tabsIds = tabs.map((tab) => tab.id);
   const activeTab = searchParams?.activeTab;
-  const tabId = (typeof activeTab === "string" && tabsIds.includes(activeTab) ? activeTab : "current") as
-    | "current"
-    | "delivered"
-    | "canceled";
+  const tabId = (typeof activeTab === 'string' && tabsIds.includes(activeTab) ? activeTab : 'current') as
+    | 'current'
+    | 'delivered'
+    | 'canceled';
 
   return (
     <div>
@@ -30,8 +30,8 @@ const OrderTabs = async ({ searchParams }: Props) => {
           <li key={tab.id} role="presentation">
             <Link
               className={cn(
-                "flex items-center gap-x-2 rounded-t-lg border-b-2 px-2 pb-2 hover:text-text/90 dark:hover:text-zinc-300",
-                tabId === tab.id ? "border-primary text-text/90" : "border-transparent"
+                'flex items-center gap-x-2 rounded-t-lg border-b-2 px-2 pb-2 hover:text-text/90 dark:hover:text-zinc-300',
+                tabId === tab.id ? 'border-primary text-text/90' : 'border-transparent',
               )}
               href={`?activeTab=${tab.id}`}
             >

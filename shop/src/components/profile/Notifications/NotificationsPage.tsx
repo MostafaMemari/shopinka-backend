@@ -1,4 +1,4 @@
-import NotificationsActions from "../NotificationsActions";
+import NotificationsActions from '../NotificationsActions';
 
 interface Product {
   id: string;
@@ -9,7 +9,7 @@ interface Product {
 
 interface Notification {
   id: string;
-  type: "order" | "delivery";
+  type: 'order' | 'delivery';
   title: string;
   message: string;
   orderNumber?: string;

@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { FaHeartBroken } from "react-icons/fa";
-import DashboardHeader from "../DashboardHeader";
-import PreviewCard from "../PreviewCard";
-import Pagination from "../Pagination";
+import { useState } from 'react';
+import { FaHeartBroken } from 'react-icons/fa';
+import DashboardHeader from '../DashboardHeader';
+import PreviewCard from '../PreviewCard';
+import Pagination from '../Pagination';
 
 interface Favorite {
   id: string;
@@ -56,7 +56,7 @@ const FavoriteActions: React.FC<FavoriteActionsProps> = ({ favorites: initialFav
           <Pagination
             currentPage={1}
             onPageChange={() => {
-              console.log("change pagination");
+              console.log('change pagination');
             }}
             itemsPerPage={5}
             totalItems={10}

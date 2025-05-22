@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { HiOutlineX } from "react-icons/hi";
-import MobileBasketItem from "./MobileBasketItem";
+import Link from 'next/link';
+import { HiOutlineX } from 'react-icons/hi';
+import MobileBasketItem from './MobileBasketItem';
 
 interface MobileBasketDrawerProps {
   isOpen: boolean;
@@ -27,7 +27,7 @@ export default function MobileBasketDrawer({ isOpen, onClose, cartItems = [] }: 
       <div
         aria-labelledby="user-basket-drawer-navigation-label"
         className={`fixed left-0 top-0 z-40 h-full w-80 bg-muted transition-transform duration-300 ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         id="user-basket-drawer-navigation"
         tabIndex={-1}
@@ -52,7 +52,7 @@ export default function MobileBasketDrawer({ isOpen, onClose, cartItems = [] }: 
           <ul className="main-scroll h-full space-y-2 divide-y overflow-y-auto p-4">
             {cartItems.map((item) => (
               <li key={item.id}>
-                <MobileBasketItem item={item} onRemove={() => console.log("remove item", item.id)} />
+                <MobileBasketItem item={item} onRemove={() => console.log('remove item', item.id)} />
               </li>
             ))}
           </ul>

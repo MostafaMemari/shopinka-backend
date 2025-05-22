@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { FaChevronLeft, FaChevronRight, FaEyeSlash } from "react-icons/fa";
-import DashboardHeader from "../DashboardHeader";
-import PreviewCard from "../PreviewCard";
-import Pagination from "../Pagination";
+import { useState } from 'react';
+import { FaChevronLeft, FaChevronRight, FaEyeSlash } from 'react-icons/fa';
+import DashboardHeader from '../DashboardHeader';
+import PreviewCard from '../PreviewCard';
+import Pagination from '../Pagination';
 
 interface Recent {
   id: string;
@@ -57,7 +57,7 @@ const RecentActions: React.FC<RecentActionsProps> = ({ recent: initialRecent }) 
             <Pagination
               currentPage={1}
               onPageChange={() => {
-                console.log("change pagination");
+                console.log('change pagination');
               }}
               itemsPerPage={5}
               totalItems={10}

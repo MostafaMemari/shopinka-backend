@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { FC, useMemo } from "react";
-import Link from "next/link";
-import { HiChevronLeft } from "react-icons/hi";
-import ProductCard from "@/components/ProductCard";
-import { IProduct } from "@/lib/types/products";
-import { productSwiperConfig } from "@/config/swiper";
-import Carousel from "./Carousel";
+import { FC, useMemo } from 'react';
+import Link from 'next/link';
+import { HiChevronLeft } from 'react-icons/hi';
+import ProductCard from '@/components/ProductCard';
+import { IProduct } from '@/lib/types/products';
+import { productSwiperConfig } from '@/config/swiper';
+import Carousel from './Carousel';
 
 interface Props {
   title: string;
@@ -15,7 +15,7 @@ interface Props {
   products: IProduct[];
 }
 
-const CarouselProduct: FC<Props> = ({ title, viewAllLink, viewAllText = "مشاهده همه", products }) => {
+const CarouselProduct: FC<Props> = ({ title, viewAllLink, viewAllText = 'مشاهده همه', products }) => {
   const productItems = useMemo(() => products.map((product) => <ProductCard key={product.id} product={product} />), [products]);
   return (
     <section className="mb-8">

@@ -1,15 +1,7 @@
-import Image from "next/image";
-import {
-  HiOutlineCreditCard,
-  HiOutlineCheck,
-  HiDotsVertical,
-} from "react-icons/hi";
-import {
-  MdOutlineAddLocationAlt,
-  MdOutlineEditLocation,
-  MdOutlineWrongLocation,
-} from "react-icons/md";
-import { TbTruckDelivery } from "react-icons/tb";
+import Image from 'next/image';
+import { HiOutlineCreditCard, HiOutlineCheck, HiDotsVertical } from 'react-icons/hi';
+import { MdOutlineAddLocationAlt, MdOutlineEditLocation, MdOutlineWrongLocation } from 'react-icons/md';
+import { TbTruckDelivery } from 'react-icons/tb';
 
 export default function Page() {
   return (
@@ -44,9 +36,7 @@ export default function Page() {
 
                 <div className="mb-6">
                   <div className="flex items-center justify-between gap-x-2 pb-4">
-                    <h1 className="flex items-center gap-x-4 text-sm xs:text-base md:text-lg">
-                      آدرس تحویل سفارش
-                    </h1>
+                    <h1 className="flex items-center gap-x-4 text-sm xs:text-base md:text-lg">آدرس تحویل سفارش</h1>
                     <button
                       data-modal-target="address-add-modal"
                       data-modal-toggle="address-add-modal"
@@ -63,13 +53,7 @@ export default function Page() {
                     <legend className="sr-only">Address</legend>
 
                     <div>
-                      <input
-                        type="radio"
-                        name="address"
-                        value="address-1"
-                        id="address-1"
-                        className="peer hidden"
-                      />
+                      <input type="radio" name="address" value="address-1" id="address-1" className="peer hidden" />
 
                       <label
                         htmlFor="address-1"
@@ -77,8 +61,7 @@ export default function Page() {
                       >
                         <div className="mb-4 flex items-center justify-between gap-x-2 sm:mb-2">
                           <p className="line-clamp-2 h-10 text-sm text-text/90 xs:text-base sm:line-clamp-1 sm:h-6">
-                            استان تهران شهر تهران - خیابان گاندی جنوبی - نبش
-                            خیابان ۲۱ - پلاک ۲۸
+                            استان تهران شهر تهران - خیابان گاندی جنوبی - نبش خیابان ۲۱ - پلاک ۲۸
                           </p>
 
                           <div className="hidden md:block">
@@ -91,10 +74,7 @@ export default function Page() {
                               <HiDotsVertical className="h-6 w-6" />
                             </button>
                             {/* <!-- Dropdown menu --> */}
-                            <div
-                              className="z-10 ml-5! hidden w-50 overflow-hidden rounded-lg border bg-muted"
-                              id="address-option-1"
-                            >
+                            <div className="z-10 ml-5! hidden w-50 overflow-hidden rounded-lg border bg-muted" id="address-option-1">
                               <ul className="space-y-2 p-2">
                                 <li>
                                   <button
@@ -129,9 +109,7 @@ export default function Page() {
                         </div>
 
                         <div className="flex items-center justify-between gap-x-2">
-                          <p className="line-clamp-1 text-sm text-text/60">
-                            تایماز اکبری
-                          </p>
+                          <p className="line-clamp-1 text-sm text-text/60">تایماز اکبری</p>
                           <div className="flex items-center gap-x-2 md:hidden">
                             <button
                               data-modal-target="address-delete-modal-1"
@@ -157,38 +135,22 @@ export default function Page() {
 
                 <div>
                   <div className="flex items-center justify-between gap-x-2 pb-4">
-                    <h2 className="flex items-center gap-x-4 text-sm xs:text-base md:text-lg">
-                      شیوه ارسال
-                    </h2>
+                    <h2 className="flex items-center gap-x-4 text-sm xs:text-base md:text-lg">شیوه ارسال</h2>
                   </div>
 
                   <fieldset className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     <legend className="sr-only">Delivery</legend>
 
                     <div>
-                      <input
-                        type="radio"
-                        name="delivery"
-                        value="delivery-1"
-                        id="delivery-1"
-                        className="peer hidden"
-                      />
+                      <input type="radio" name="delivery" value="delivery-1" id="delivery-1" className="peer hidden" />
 
                       <label
                         htmlFor="delivery-1"
                         className="relative block h-[116px] cursor-pointer rounded-lg border p-4 shadow-base peer-checked:border-emerald-500 hover:border-border/50 dark:peer-checked:border-emerald-400 dark:hover:border-white/10"
                       >
                         <div className="mb-4 flex items-center justify-between gap-x-2 sm:mb-2">
-                          <p className="line-clamp-1 text-sm text-text/90 xs:text-base">
-                            تیپاکس
-                          </p>
-                          <Image
-                            src="/images/others/tipax.png"
-                            alt="تیپاکس"
-                            className="w-25"
-                            width={100}
-                            height={100}
-                          />
+                          <p className="line-clamp-1 text-sm text-text/90 xs:text-base">تیپاکس</p>
+                          <Image src="/images/others/tipax.png" alt="تیپاکس" className="w-25" width={100} height={100} />
                         </div>
 
                         <div className="mb-1 text-primary">
@@ -203,29 +165,15 @@ export default function Page() {
                     </div>
 
                     <div>
-                      <input
-                        type="radio"
-                        name="delivery"
-                        value="delivery-2"
-                        id="delivery-2"
-                        className="peer hidden"
-                      />
+                      <input type="radio" name="delivery" value="delivery-2" id="delivery-2" className="peer hidden" />
 
                       <label
                         htmlFor="delivery-2"
                         className="relative block h-[116px] cursor-pointer rounded-lg border p-4 shadow-base peer-checked:border-emerald-500 hover:border-border/50 dark:peer-checked:border-emerald-400 dark:hover:border-white/10"
                       >
                         <div className="mb-4 flex items-center justify-between gap-x-2 sm:mb-2">
-                          <p className="line-clamp-1 text-sm text-text/90 xs:text-base">
-                            تیپاکس
-                          </p>
-                          <Image
-                            src="/images/others/tipax.png"
-                            alt="تیپاکس"
-                            className="w-25"
-                            width={100}
-                            height={100}
-                          />
+                          <p className="line-clamp-1 text-sm text-text/90 xs:text-base">تیپاکس</p>
+                          <Image src="/images/others/tipax.png" alt="تیپاکس" className="w-25" width={100} height={100} />
                         </div>
 
                         <div className="text-primary">
@@ -244,9 +192,7 @@ export default function Page() {
                 <div className="mb-2 divide-y">
                   {/* <!-- cart items price before discount - coupon --> */}
                   <div className="flex items-center justify-between gap-x-2 py-6">
-                    <div className="text-sm text-text/90 lg:text-base">
-                      قیمت کالا ها (2)
-                    </div>
+                    <div className="text-sm text-text/90 lg:text-base">قیمت کالا ها (2)</div>
 
                     <div className="text-sm text-primary lg:text-base">
                       <span className="font-bold">2,400,000</span>
@@ -255,9 +201,7 @@ export default function Page() {
                   </div>
                   {/* <!-- Discount --> */}
                   <div className="flex items-center justify-between gap-x-2 py-6">
-                    <div className="text-sm text-text/90 lg:text-base">
-                      تخفیف
-                    </div>
+                    <div className="text-sm text-text/90 lg:text-base">تخفیف</div>
 
                     <div className="text-sm font-medium text-red-500 dark:text-red-400 lg:text-base">
                       <span className="font-bold">1,220,000</span>
@@ -266,9 +210,7 @@ export default function Page() {
                   </div>
                   {/* <!-- delivery price --> */}
                   <div className="flex items-center justify-between gap-x-2 py-6">
-                    <div className="text-sm text-text/90 lg:text-base">
-                      هزینه ارسال
-                    </div>
+                    <div className="text-sm text-text/90 lg:text-base">هزینه ارسال</div>
 
                     {/* <!-- <div className="text-sky-500 dark:text-sky-400  text-sm lg:text-base">
                     <span className="font-bold">60,000</span>
@@ -288,9 +230,7 @@ export default function Page() {
                   {/* <!-- Order final price --> */}
 
                   <div className="flex items-center justify-between gap-x-2 py-6">
-                    <div className="text-sm text-text/90 lg:text-base">
-                      مبلغ قابل پرداخت
-                    </div>
+                    <div className="text-sm text-text/90 lg:text-base">مبلغ قابل پرداخت</div>
 
                     <div className="text-sm text-primary lg:text-base">
                       <span className="font-bold">2,400,000</span>
@@ -299,20 +239,14 @@ export default function Page() {
                   </div>
                 </div>
                 <div>
-                  <a
-                    href="./checkout-payment.html"
-                    className="btn-primary py-3"
-                  >
+                  <a href="./checkout-payment.html" className="btn-primary py-3">
                     ادامه فرایند خرید
                   </a>
                 </div>
               </div>
               {/* <!-- Mobile --> */}
               <div className="fixed inset-x-0 bottom-0 flex items-center gap-x-6 rounded-t-2xl bg-muted p-4 md:hidden">
-                <a
-                  className="btn-primary grow py-3"
-                  href="./checkout-payment.html"
-                >
+                <a className="btn-primary grow py-3" href="./checkout-payment.html">
                   ادامه فرایند خرید
                 </a>
                 <div className="flex flex-col items-center gap-y-1">

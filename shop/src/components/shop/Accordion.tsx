@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { FC, useState } from "react";
-import { FiChevronLeft } from "react-icons/fi";
+import { FC, useState } from 'react';
+import { FiChevronLeft } from 'react-icons/fi';
 
 interface AccordionProps {
   title: string;
@@ -17,11 +17,11 @@ const Accordion: FC<AccordionProps> = ({ title, children }) => {
         <div className="flex items-center justify-between gap-2 text-sm md:text-base">
           <span>{title}</span>
           <div className="min-w-fit">
-            <FiChevronLeft className={`h-5 w-5 duration-300 ${isOpen ? "rotate-90" : ""}`} />
+            <FiChevronLeft className={`h-5 w-5 duration-300 ${isOpen ? 'rotate-90' : ''}`} />
           </div>
         </div>
       </div>
-      <div className={`relative overflow-hidden transition-all duration-300 ${isOpen ? "max-h-60" : "max-h-0"}`} data-accordion-content>
+      <div className={`relative overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-60' : 'max-h-0'}`} data-accordion-content>
         <div className="mt-4 max-h-60 overflow-y-auto pl-1">{children}</div>
       </div>
     </li>

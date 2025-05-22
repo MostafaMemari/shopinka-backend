@@ -1,4 +1,4 @@
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 interface PaginationProps {
   totalItems: number;
@@ -18,11 +18,11 @@ const Pagination: React.FC<PaginationProps> = ({ totalItems, itemsPerPage, curre
     for (let i = 1; i <= totalPages; i++) pages.push(i);
   } else {
     pages.push(1);
-    if (currentPage > 3) pages.push("...");
+    if (currentPage > 3) pages.push('...');
     const startPage = Math.max(2, currentPage - 1);
     const endPage = Math.min(totalPages - 1, currentPage + 1);
     for (let i = startPage; i <= endPage; i++) pages.push(i);
-    if (currentPage < totalPages - 2) pages.push("...");
+    if (currentPage < totalPages - 2) pages.push('...');
     pages.push(totalPages);
   }
 
@@ -38,21 +38,21 @@ const Pagination: React.FC<PaginationProps> = ({ totalItems, itemsPerPage, curre
       </button>
       <div className="flex items-center gap-x-2">
         {pages.map((page, index) =>
-          typeof page === "string" ? (
+          typeof page === 'string' ? (
             <p key={`ellipsis-${index}`} className="text-sm text-text/60">
               ...
             </p>
           ) : (
             <button
               key={page}
-              className={`pagination-button ${page === currentPage ? "pagination-button-active" : ""}`}
+              className={`pagination-button ${page === currentPage ? 'pagination-button-active' : ''}`}
               onClick={() => onPageChange(page)}
               aria-label={`صفحه ${page}`}
-              aria-current={page === currentPage ? "page" : undefined}
+              aria-current={page === currentPage ? 'page' : undefined}
             >
               {page}
             </button>
-          )
+          ),
         )}
       </div>
       <button

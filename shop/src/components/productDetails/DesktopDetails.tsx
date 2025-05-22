@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { FC } from "react";
-import { HiOutlineShieldCheck } from "react-icons/hi";
-import SizeSelector from "./SizeSelector";
+import { FC } from 'react';
+import { HiOutlineShieldCheck } from 'react-icons/hi';
+import SizeSelector from './SizeSelector';
 
-import { IProductDetails } from "@/lib/types/products";
-import ColorSelector from "./ColorSelector";
-import ProductProperties from "@/components/productDetails/ProductProperties";
-import QuantitySelector from "../ui/QuantitySelector";
-import { useProductSelection } from "@/hooks/useProductSelection";
-import AddToCartButtonDesktop from "./AddToCartButton/AddToCartButtonDesktop";
-import PriceDisplay from "./PriceDisplay";
+import { IProductDetails } from '@/lib/types/products';
+import ColorSelector from './ColorSelector';
+import ProductProperties from '@/components/productDetails/ProductProperties';
+import QuantitySelector from '../ui/QuantitySelector';
+import { useProductSelection } from '@/hooks/useProductSelection';
+import AddToCartButtonDesktop from './AddToCartButton/AddToCartButtonDesktop';
+import PriceDisplay from './PriceDisplay';
 
 interface Props {
   product: IProductDetails;

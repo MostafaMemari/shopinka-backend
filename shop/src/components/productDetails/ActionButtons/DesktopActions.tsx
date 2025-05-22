@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { FC } from "react";
-import { HiOutlineHeart, HiOutlineAdjustments, HiOutlineShare } from "react-icons/hi";
+import { FC } from 'react';
+import { HiOutlineHeart, HiOutlineAdjustments, HiOutlineShare } from 'react-icons/hi';
 
-import { useProductActions } from "@/hooks/useProductActions";
-import ActionButton from "../../ui/ActionButton";
+import { useProductActions } from '@/hooks/useProductActions';
+import ActionButton from '../../ui/ActionButton';
 
 interface Props {
   productId: string;

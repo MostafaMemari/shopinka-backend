@@ -1,5 +1,5 @@
-import ProductDetails from "@/components/productDetails";
-import { mockProductDetails } from "@/mock/productCarousels";
+import ProductDetails from '@/components/productDetails';
+import { mockProductDetails } from '@/mock/productCarousels';
 
 type Props = {
   params: Promise<{ id: string }>;

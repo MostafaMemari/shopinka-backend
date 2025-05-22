@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Thumbs } from "swiper/modules";
-import type { Swiper as SwiperType } from "swiper";
-import Image from "next/image";
-import { HiX } from "react-icons/hi";
-import { useState, useEffect } from "react";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/thumbs";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Thumbs } from 'swiper/modules';
+import type { Swiper as SwiperType } from 'swiper';
+import Image from 'next/image';
+import { HiX } from 'react-icons/hi';
+import { useState, useEffect } from 'react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/thumbs';
 
 interface Props {
   isOpen: boolean;
@@ -18,12 +18,7 @@ interface Props {
   title: string;
 }
 
-export default function GalleryModal({
-  isOpen,
-  onClose,
-  images,
-  title,
-}: Props) {
+export default function GalleryModal({ isOpen, onClose, images, title }: Props) {
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
   const [isClosing, setIsClosing] = useState(false);
 
@@ -49,18 +44,14 @@ export default function GalleryModal({
       onClick={(e) => e.target === e.currentTarget && handleClose()}
     >
       <div
-        className={`relative w-full max-w-[90%] max-h-[80%] sm:max-w-3xl md:max-w-4xl transform transition-all duration-200 ease-out          ${isClosing ? "animate-modalOut" : "animate-modalIn"}`}
+        className={`relative w-full max-w-[90%] max-h-[80%] sm:max-w-3xl md:max-w-4xl transform transition-all duration-200 ease-out          ${isClosing ? 'animate-modalOut' : 'animate-modalIn'}`}
       >
         <div className="divide-y overflow-hidden rounded-lg bg-muted shadow-sm ring-1 ring-gray-100 dark:ring-white/5">
           {/* Header */}
           <div className="px-4 py-3 sm:px-6">
             <div className="flex items-center justify-between">
               <h3 className="line-clamp-1 text-sm md:text-lg">{title}</h3>
-              <button
-                className="text-gray-500 hover:text-gray-700 transition-colors"
-                onClick={handleClose}
-                type="button"
-              >
+              <button className="text-gray-500 hover:text-gray-700 transition-colors" onClick={handleClose} type="button">
                 <HiX className="h-5 w-5" />
                 <span className="sr-only">بستن</span>
               </button>
@@ -73,15 +64,12 @@ export default function GalleryModal({
               <Swiper
                 modules={[Navigation, Pagination, Thumbs]}
                 navigation={{
-                  nextEl: ".swiper-button-next",
-                  prevEl: ".swiper-button-prev",
+                  nextEl: '.swiper-button-next',
+                  prevEl: '.swiper-button-prev',
                 }}
                 pagination={{ clickable: true }}
                 thumbs={{
-                  swiper:
-                    thumbsSwiper && !thumbsSwiper.destroyed
-                      ? thumbsSwiper
-                      : null,
+                  swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
                 }}
                 className="product-image-desktop-swiper"
               >
@@ -110,8 +98,8 @@ export default function GalleryModal({
                 modules={[Navigation, Thumbs]}
                 onSwiper={setThumbsSwiper}
                 navigation={{
-                  nextEl: ".swiper-button-next",
-                  prevEl: ".swiper-button-prev",
+                  nextEl: '.swiper-button-next',
+                  prevEl: '.swiper-button-prev',
                 }}
                 watchSlidesProgress
                 slidesPerView="auto"
@@ -125,13 +113,7 @@ export default function GalleryModal({
                   <SwiperSlide key={index}>
                     <div className="cursor-pointer flex justify-center items-center rounded-lg border p-2 transition-all hover:border-primary">
                       <div className="relative h-20 w-20 sm:h-24 sm:w-24">
-                        <Image
-                          src={image.src}
-                          alt={image.alt}
-                          fill
-                          className="object-contain"
-                          sizes="(max-width: 640px) 80px, 96px"
-                        />
+                        <Image src={image.src} alt={image.alt} fill className="object-contain" sizes="(max-width: 640px) 80px, 96px" />
                       </div>
                     </div>
                   </SwiperSlide>

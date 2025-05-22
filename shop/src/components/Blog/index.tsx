@@ -1,7 +1,7 @@
-import { FC } from "react";
-import Link from "next/link";
-import { IBlog } from "@/lib/types/blogs";
-import Image from "next/image";
+import { FC } from 'react';
+import Link from 'next/link';
+import { IBlog } from '@/lib/types/blogs';
+import Image from 'next/image';
 
 interface Props {
   blog: IBlog;

@@ -1,7 +1,7 @@
-import React from "react";
-import { AiOutlineLike, AiOutlineDislike, AiOutlineLeft } from "react-icons/ai";
-import { IComment } from "@/lib/types/comments";
-import Drawer from "@/components/ui/Drawer";
+import React from 'react';
+import { AiOutlineLike, AiOutlineDislike, AiOutlineLeft } from 'react-icons/ai';
+import { IComment } from '@/lib/types/comments';
+import Drawer from '@/components/ui/Drawer';
 
 interface Props {
   isOpen: boolean;
@@ -17,9 +17,9 @@ export default function CommentsDrawer({ isOpen, onClose, comments }: Props) {
           <li key={index}>
             <div className="flex h-64 flex-col rounded-lg border px-4 py-6">
               <div className="mb-4 flex items-center justify-between">
-                <div className={`flex items-center gap-x-2 ${comment.isRecommended ? "text-primary" : "text-red-500 dark:text-red-400"}`}>
+                <div className={`flex items-center gap-x-2 ${comment.isRecommended ? 'text-primary' : 'text-red-500 dark:text-red-400'}`}>
                   {comment.isRecommended ? <AiOutlineLike className="h-5 w-5" /> : <AiOutlineDislike className="h-5 w-5" />}
-                  {comment.isRecommended ? "پیشنهاد میکنم" : "پیشنهاد نمیکنم"}
+                  {comment.isRecommended ? 'پیشنهاد میکنم' : 'پیشنهاد نمیکنم'}
                 </div>
                 <button type="button" className="btn-secondary-nobg">
                   پاسخ
@@ -44,7 +44,7 @@ export default function CommentsDrawer({ isOpen, onClose, comments }: Props) {
                 <div className="flex items-center gap-x-2">
                   <div className="text-xs text-text/60">{comment.date}</div>
                   <span className="h-3 w-px rounded-full bg-background dark:bg-muted/10"></span>
-                  <div className="text-xs text-text/60">{comment.isBuyer ? "خریدار" : ""}</div>
+                  <div className="text-xs text-text/60">{comment.isBuyer ? 'خریدار' : ''}</div>
                 </div>
               </div>
             </div>

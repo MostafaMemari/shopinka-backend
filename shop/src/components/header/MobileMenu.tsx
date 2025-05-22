@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { FiHelpCircle, FiInfo, FiMail, FiMoon, FiShoppingBag, FiSun } from "react-icons/fi";
-import { useState, useEffect, useRef } from "react";
-import MobileLogo from "../ui/Logo/MobileLogo";
-import CategoryAccordion from "./CategoryAccordion";
-import { ICategory } from "@/lib/types/categories";
-import { HiOutlineMenu } from "react-icons/hi";
-import { HiOutlineXMark } from "react-icons/hi2";
+import Link from 'next/link';
+import { FiHelpCircle, FiInfo, FiMail, FiMoon, FiShoppingBag, FiSun } from 'react-icons/fi';
+import { useState, useEffect, useRef } from 'react';
+import MobileLogo from '../ui/Logo/MobileLogo';
+import CategoryAccordion from './CategoryAccordion';
+import { ICategory } from '@/lib/types/categories';
+import { HiOutlineMenu } from 'react-icons/hi';
+import { HiOutlineXMark } from 'react-icons/hi2';
 
 interface MobileMenuProps {
   categories: ICategory[];
@@ -23,7 +23,7 @@ const MobileMenu = ({ categories }: MobileMenuProps) => {
   };
 
   const toggleTheme = () => {
-    document.documentElement.classList.toggle("dark");
+    document.documentElement.classList.toggle('dark');
     setIsDarkMode(!isDarkMode);
   };
 
@@ -35,24 +35,24 @@ const MobileMenu = ({ categories }: MobileMenuProps) => {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("touchstart", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("touchstart", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
     };
   }, []);
 
   // قفل کردن اسکرول بدنه وقتی منو بازه
   useEffect(() => {
     if (isMenuOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     }
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     };
   }, [isMenuOpen]);
 
@@ -67,7 +67,7 @@ const MobileMenu = ({ categories }: MobileMenuProps) => {
       <div
         id="mobile-menu-drawer-navigation"
         className={`fixed top-0 right-0 h-full w-64 bg-background z-50 transform transition-transform duration-300 ${
-          isMenuOpen ? "translate-x-0" : "translate-x-full"
+          isMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         ref={menuRef}
       >
@@ -92,7 +92,7 @@ const MobileMenu = ({ categories }: MobileMenuProps) => {
                 </div>
 
                 <div className="flex items-center justify-between" id="themeText">
-                  <span>{isDarkMode ? "روشن" : "تاریک"}</span>
+                  <span>{isDarkMode ? 'روشن' : 'تاریک'}</span>
                 </div>
               </div>
             </div>

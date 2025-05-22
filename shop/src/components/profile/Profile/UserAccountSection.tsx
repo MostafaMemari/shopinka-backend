@@ -1,5 +1,5 @@
-import { FaUserEdit, FaLock, FaHeart, FaBell } from "react-icons/fa";
-import Link from "next/link";
+import { FaUserEdit, FaLock, FaHeart, FaBell } from 'react-icons/fa';
+import Link from 'next/link';
 
 interface UserAccountSectionProps {
   favoriteCount: number;

@@ -1,5 +1,5 @@
-import { IOrder } from "@/lib/types/orders";
-import OrderCard from "./OrderCard";
+import { IOrder } from '@/lib/types/orders';
+import OrderCard from './OrderCard';
 
 interface OrderListProps {
   orders: IOrder[];

@@ -5,12 +5,7 @@ interface Props {
   label?: string;
 }
 
-export default function SizeSelector({
-  sizes,
-  selectedSize,
-  onSizeChange,
-  label,
-}: Props) {
+export default function SizeSelector({ sizes, selectedSize, onSizeChange, label }: Props) {
   if (!sizes || sizes.length === 0) return null;
 
   return (
@@ -35,9 +30,7 @@ export default function SizeSelector({
                 htmlFor={value}
                 className="relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border-2 p-1 shadow-base peer-checked:border-emerald-500 hover:border-border/50 dark:peer-checked:border-emerald-400 dark:hover:border-white/10"
               >
-                <p className="text-sm font-bold text-text/90 md:text-base">
-                  {size}
-                </p>
+                <p className="text-sm font-bold text-text/90 md:text-base">{size}</p>
               </label>
             </div>
           );

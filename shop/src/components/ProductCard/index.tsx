@@ -1,10 +1,10 @@
-import { FC } from "react";
+import { FC } from 'react';
 
-import { IProduct } from "@/lib/types/products";
+import { IProduct } from '@/lib/types/products';
 
-import ProductPrice from "./ProductPrice";
-import Link from "next/link";
-import Image from "next/image";
+import ProductPrice from './ProductPrice';
+import Link from 'next/link';
+import Image from 'next/image';
 
 interface Props {
   product: IProduct;

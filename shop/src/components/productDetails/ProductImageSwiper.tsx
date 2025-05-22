@@ -1,10 +1,10 @@
-"use client";
-import React from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
-import Image from "next/image";
+'use client';
+import React from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import Image from 'next/image';
 
 interface Props {
   images: {
@@ -16,7 +16,7 @@ interface Props {
 export default function ProductImageSwiper({ images }: Props) {
   return (
     <div className="swiper product-image-mobile-swiper">
-      <Swiper modules={[Pagination]} pagination={{ el: ".swiper-pagination" }} spaceBetween={0} slidesPerView={1} className="w-full">
+      <Swiper modules={[Pagination]} pagination={{ el: '.swiper-pagination' }} spaceBetween={0} slidesPerView={1} className="w-full">
         {images?.length &&
           images.map((image, index) => (
             <SwiperSlide key={index}>

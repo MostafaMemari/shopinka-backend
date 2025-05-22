@@ -1,5 +1,5 @@
-import { IProduct } from "@/lib/types/products";
-import { FC } from "react";
+import { IProduct } from '@/lib/types/products';
+import { FC } from 'react';
 
 interface Props {
   oldPrice?: number;
@@ -15,14 +15,14 @@ const ProductPrice: FC<Props> = ({ oldPrice, discount, newPrice }) => {
       {hasDiscount ? (
         <>
           <div className="h-5 text-left">
-            <del className="text-sm text-text/60 decoration-warning md:text-base">{oldPrice && oldPrice?.toLocaleString("fa-IR")}</del>
+            <del className="text-sm text-text/60 decoration-warning md:text-base">{oldPrice && oldPrice?.toLocaleString('fa-IR')}</del>
           </div>
           <div className="flex items-center justify-between">
             <div>
               <p className="w-9 rounded-full bg-warning py-px text-center text-sm text-white">{discount && `${discount}%`}</p>
             </div>
             <div className="text-sm font-bold text-primary md:text-base">
-              {newPrice && newPrice?.toLocaleString("fa-IR")}
+              {newPrice && newPrice?.toLocaleString('fa-IR')}
               <span className="text-xs font-light md:text-sm"> تومان</span>
             </div>
           </div>
@@ -33,7 +33,7 @@ const ProductPrice: FC<Props> = ({ oldPrice, discount, newPrice }) => {
           <div className="flex items-center justify-between">
             <div></div>
             <div className="text-sm font-bold text-primary md:text-base">
-              {newPrice && newPrice.toLocaleString("fa-IR")}
+              {newPrice && newPrice.toLocaleString('fa-IR')}
               <span className="text-xs font-light md:text-sm"> تومان</span>
             </div>
           </div>

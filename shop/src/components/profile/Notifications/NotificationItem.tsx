@@ -1,6 +1,6 @@
-import { FaShoppingCart, FaTruck, FaChevronLeft } from "react-icons/fa";
-import Link from "next/link";
-import ProductSlider from "../ProductSlider";
+import { FaShoppingCart, FaTruck, FaChevronLeft } from 'react-icons/fa';
+import Link from 'next/link';
+import ProductSlider from '../ProductSlider';
 
 interface Product {
   id: string;
@@ -11,7 +11,7 @@ interface Product {
 
 interface Notification {
   id: string;
-  type: "order" | "delivery";
+  type: 'order' | 'delivery';
   title: string;
   message: string;
   orderNumber?: string;
@@ -25,8 +25,8 @@ interface NotificationItemProps {
 }
 
 const NotificationItem: React.FC<NotificationItemProps> = ({ notification }) => {
-  const icon = notification.type === "order" ? <FaShoppingCart className="h-6 w-6" /> : <FaTruck className="h-6 w-6" />;
-  const titleColor = notification.type === "order" ? "text-sky-500 dark:text-sky-400" : "text-primary";
+  const icon = notification.type === 'order' ? <FaShoppingCart className="h-6 w-6" /> : <FaTruck className="h-6 w-6" />;
+  const titleColor = notification.type === 'order' ? 'text-sky-500 dark:text-sky-400' : 'text-primary';
 
   return (
     <div className="py-6">
@@ -36,7 +36,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification }) => 
       </div>
       <p className="mb-4 text-sm text-text/90 md:text-base">
         {notification.message}
-        {notification.orderNumber && <span className="font-bold text-primary">{" #" + notification.orderNumber}</span>}
+        {notification.orderNumber && <span className="font-bold text-primary">{' #' + notification.orderNumber}</span>}
       </p>
       <ProductSlider products={notification.products} />
       <div className="flex justify-end">

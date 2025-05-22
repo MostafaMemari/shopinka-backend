@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { FC, useEffect } from "react";
+import { FC, useEffect } from 'react';
 
 const ScrollTopButton: FC = () => {
   useEffect(() => {
-    const scrollTopButton = document.getElementById("scroll-top-button-footer");
+    const scrollTopButton = document.getElementById('scroll-top-button-footer');
     if (scrollTopButton) {
-      scrollTopButton.addEventListener("click", () => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
+      scrollTopButton.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     }
     return () => {
       if (scrollTopButton) {
-        scrollTopButton.removeEventListener("click", () => {});
+        scrollTopButton.removeEventListener('click', () => {});
       }
     };
   }, []);

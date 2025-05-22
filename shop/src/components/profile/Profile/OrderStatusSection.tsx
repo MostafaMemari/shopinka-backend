@@ -1,5 +1,5 @@
-import { FaShoppingBag, FaTruck, FaTimesCircle, FaUndo, FaChevronLeft } from "react-icons/fa";
-import Link from "next/link";
+import { FaShoppingBag, FaTruck, FaTimesCircle, FaUndo, FaChevronLeft } from 'react-icons/fa';
+import Link from 'next/link';
 
 interface OrderStatusSectionProps {
   currentOrders: number;

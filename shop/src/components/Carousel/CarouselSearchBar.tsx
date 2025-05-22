@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { FC, useMemo } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { HiOutlineChevronLeft } from "react-icons/hi";
-import { searchBarSwiperConfig } from "@/config/swiper";
-import Carousel from "./Carousel";
+import { FC, useMemo } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { HiOutlineChevronLeft } from 'react-icons/hi';
+import { searchBarSwiperConfig } from '@/config/swiper';
+import Carousel from './Carousel';
 
 interface Item {
   id: string;
@@ -19,15 +19,15 @@ interface Props {
   viewAllLink?: string;
   viewAllText?: string;
   items: Item[];
-  variant: "product" | "search";
+  variant: 'product' | 'search';
 }
 
-const CarouselSearchBar: FC<Props> = ({ sectionTitle, viewAllLink, viewAllText = "مشاهده همه", items, variant }) => {
+const CarouselSearchBar: FC<Props> = ({ sectionTitle, viewAllLink, viewAllText = 'مشاهده همه', items, variant }) => {
   const renderItems = useMemo(
     () =>
       items.map((item) => (
-        <div key={item.id} className={`search-result-desktop ${variant === "search" ? "h-14" : ""}`}>
-          {variant === "product" ? (
+        <div key={item.id} className={`search-result-desktop ${variant === 'search' ? 'h-14' : ''}`}>
+          {variant === 'product' ? (
             <Link href={item.href} className="flex items-center gap-x-2 rounded-xl border px-4 py-2 text-text/60 hover:border-border/50">
               {item.image && <Image src={item.image} alt={item.title} width={64} height={64} className="w-16" />}
               <p className="line-clamp-2">{item.title}</p>
@@ -43,7 +43,7 @@ const CarouselSearchBar: FC<Props> = ({ sectionTitle, viewAllLink, viewAllText =
           )}
         </div>
       )),
-    [items, variant]
+    [items, variant],
   );
 
   return (

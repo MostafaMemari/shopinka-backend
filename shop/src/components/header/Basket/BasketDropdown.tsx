@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { HiOutlineShoppingCart } from "react-icons/hi";
-import DesktopBasketDropdown from "./DesktopBasket";
-import MobileBasketDrawer from "./MobileBasket";
-import { mockCartItems } from "@/mock/cart";
+import { useState } from 'react';
+import { HiOutlineShoppingCart } from 'react-icons/hi';
+import DesktopBasketDropdown from './DesktopBasket';
+import MobileBasketDrawer from './MobileBasket';
+import { mockCartItems } from '@/mock/cart';
 
 export default function BasketDropdown() {
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);

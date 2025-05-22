@@ -1,23 +1,23 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import "./tailwind.css";
-import Header from "@/components/header";
-import Footer from "@/components/layout/Footer/Footer";
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+import './globals.css';
+import './tailwind.css';
+import Header from '@/components/header';
+import Footer from '@/components/layout/Footer/Footer';
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "صفجه اصلی | فروشگاه اینترنتی شاپینکا",
-  description: "مرجع فروش انواع برچسب های ماشین",
+  title: 'صفجه اصلی | فروشگاه اینترنتی شاپینکا',
+  description: 'مرجع فروش انواع برچسب های ماشین',
 };
 
 export default function RootLayout({

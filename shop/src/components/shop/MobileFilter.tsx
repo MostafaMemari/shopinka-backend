@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { FC, useState } from "react";
-import { FiChevronLeft, FiFilter, FiX } from "react-icons/fi";
-import Accordion from "./Accordion";
+import { FC, useState } from 'react';
+import { FiChevronLeft, FiFilter, FiX } from 'react-icons/fi';
+import Accordion from './Accordion';
 
 interface MobileFilterProps {
   onFilterChange?: (filters: any) => void;
@@ -32,7 +32,7 @@ const MobileFilter: FC<MobileFilterProps> = ({ onFilterChange }) => {
 
       <div
         className={`fixed bottom-0 left-0 right-0 z-40 h-full w-full bg-muted transition-transform duration-300 ${
-          isOpen ? "translate-y-0" : "translate-y-full"
+          isOpen ? 'translate-y-0' : 'translate-y-full'
         }`}
         aria-labelledby="shop-filter-drawer-navigation-label"
         tabIndex={-1}
@@ -85,7 +85,7 @@ const MobileFilter: FC<MobileFilterProps> = ({ onFilterChange }) => {
             {/* دسته‌بندی‌ها */}
             <Accordion title="دسته بندی ها">
               <ul className="space-y-2 rounded-lg">
-                {["دسته بندی 1", "دسته بندی 2", "دسته بندی 3"].map((category, index) => (
+                {['دسته بندی 1', 'دسته بندی 2', 'دسته بندی 3'].map((category, index) => (
                   <li key={index}>
                     <a className="flex items-center gap-x-2 rounded-lg px-4 py-3" href="#">
                       <span>{category}</span>
@@ -108,8 +108,8 @@ const MobileFilter: FC<MobileFilterProps> = ({ onFilterChange }) => {
                   />
                 </li>
                 {[
-                  { id: "brand-nike-mobile", label: "نایک", value: "Nike" },
-                  { id: "brand-adidas-mobile", label: "آدیداس", value: "adidas" },
+                  { id: 'brand-nike-mobile', label: 'نایک', value: 'Nike' },
+                  { id: 'brand-adidas-mobile', label: 'آدیداس', value: 'adidas' },
                 ].map((brand) => (
                   <li key={brand.id}>
                     <div className="flex w-full items-center gap-x-2 pr-4">
@@ -144,8 +144,8 @@ const MobileFilter: FC<MobileFilterProps> = ({ onFilterChange }) => {
                   />
                 </li>
                 {[
-                  { id: "color-red-mobile", label: "قرمز", color: "red" },
-                  { id: "color-blue-mobile", label: "آبی", color: "blue" },
+                  { id: 'color-red-mobile', label: 'قرمز', color: 'red' },
+                  { id: 'color-blue-mobile', label: 'آبی', color: 'blue' },
                 ].map((color) => (
                   <li key={color.id}>
                     <div className="flex w-full items-center gap-x-2 pr-4">
