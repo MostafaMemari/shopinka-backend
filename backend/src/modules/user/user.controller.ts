@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Roles } from '..//../common/decorators/role.decorator';
-import { Role, User } from 'generated/prisma';
+import { Role, User } from '@prisma/client';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthDecorator } from '../../common/decorators/auth.decorator';
 import { QueryUsersDto } from './dto/users-query.dto';

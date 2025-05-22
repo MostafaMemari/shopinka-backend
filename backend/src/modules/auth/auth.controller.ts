@@ -9,7 +9,7 @@ import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 import { AuthDecorator } from '../../common/decorators/auth.decorator';
 import { SkipVerifyMobile } from '../../common/decorators/skip-verify-mobile.decorator';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
-import { User } from 'generated/prisma';
+import { User } from '@prisma/client';
 import { VerifyMobileDto } from './dto/verify-mobile.dto';
 
 @Controller('auth')

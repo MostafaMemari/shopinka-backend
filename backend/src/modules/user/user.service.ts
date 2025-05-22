@@ -4,7 +4,7 @@ import { UserRepository } from './user.repository';
 import { QueryUsersDto } from './dto/users-query.dto';
 import { pagination } from '../../common/utils/pagination.utils';
 import { CacheService } from '../cache/cache.service';
-import { Prisma, User } from 'generated/prisma';
+import { Prisma, User } from '@prisma/client';
 import { sortObject } from '../../common/utils/functions.utils';
 import { CacheKeys } from '../../common/enums/cache.enum';
 import { AuthService } from '../auth/auth.service';

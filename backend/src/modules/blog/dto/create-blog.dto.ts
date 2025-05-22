@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ArrayUnique, IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Matches, MaxLength } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { transformNumberArray } from '../../../common/utils/functions.utils';
-import { BlogStatus } from 'generated/prisma';
+import { BlogStatus } from '@prisma/client';
 
 export class CreateBlogDto {
   @IsOptional()

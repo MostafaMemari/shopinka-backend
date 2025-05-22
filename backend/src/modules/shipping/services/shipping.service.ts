@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateShippingDto } from '../dto/create-shipping.dto';
 import { UpdateShippingDto } from '../dto/update-shipping.dto';
 import { ShippingRepository } from '../repositories/shipping.repository';
-import { Prisma, Shipping } from 'generated/prisma';
+import { Prisma, Shipping } from '@prisma/client';
 import { ShippingMessages } from '../enums/shipping-messages.enum';
 import { QueryShippingDto } from '../dto/query-shipping.dto';
 import { sortObject } from '../../../common/utils/functions.utils';

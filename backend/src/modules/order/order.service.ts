@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { IGetCart } from '../cart/interfaces/cart.interface';
 import { PaymentDto } from '../payment/dto/payment.dto';
 import { AddressRepository } from '../address/address.repository';
-import { CartItem, Order, OrderItem, OrderStatus, Prisma } from 'generated/prisma';
+import { CartItem, Order, OrderItem, OrderStatus, Prisma } from '@prisma/client';
 import { OrderRepository } from './repositories/order.repository';
 import { QueryOrderDto } from './dto/query-order.dto';
 import { CacheService } from '../cache/cache.service';

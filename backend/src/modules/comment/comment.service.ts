@@ -3,7 +3,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { CommentRepository } from './comment.repository';
 import { ProductRepository } from '../product/repositories/product.repository';
-import { Comment, Prisma } from 'generated/prisma';
+import { Comment, Prisma } from '@prisma/client';
 import { CommentMessages } from './enums/comment-messages.enum';
 import { QueryCommentDto } from './dto/query-comment.dto';
 import { sortObject } from '../../common/utils/functions.utils';

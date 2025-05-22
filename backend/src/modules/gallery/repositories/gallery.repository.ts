@@ -1,4 +1,4 @@
-import { Gallery, Prisma } from 'generated/prisma';
+import { Gallery, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { GalleryMessages } from '../enums/gallery.messages';

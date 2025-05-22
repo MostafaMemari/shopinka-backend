@@ -3,7 +3,7 @@ import { CartService } from './cart.service';
 import { AuthDecorator } from '../../common/decorators/auth.decorator';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { GetUser } from '../../common/decorators/get-user.decorator';
-import { User } from 'generated/prisma';
+import { User } from '@prisma/client';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';

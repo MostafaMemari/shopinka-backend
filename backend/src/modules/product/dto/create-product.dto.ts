@@ -14,7 +14,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import { ProductStatus, ProductType } from 'generated/prisma';
+import { ProductStatus, ProductType } from '@prisma/client';
 import { transformNumberArray } from '../../../common/utils/functions.utils';
 
 export class CreateProductDto {

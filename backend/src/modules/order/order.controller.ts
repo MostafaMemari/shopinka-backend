@@ -3,7 +3,7 @@ import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { OrderService } from './order.service';
 import { AuthDecorator } from '../../common/decorators/auth.decorator';
 import { GetUser } from '../../common/decorators/get-user.decorator';
-import { Role, User } from 'generated/prisma';
+import { Role, User } from '@prisma/client';
 import { QueryOrderDto } from './dto/query-order.dto';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { Roles } from '../../common/decorators/role.decorator';

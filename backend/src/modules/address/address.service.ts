@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 import { AddressRepository } from './address.repository';
-import { Address, Prisma } from 'generated/prisma';
+import { Address, Prisma } from '@prisma/client';
 import { QueryAddressDto } from './dto/query-address.dto';
 import { sortObject } from '../../common/utils/functions.utils';
 import { CacheKeys } from '../../common/enums/cache.enum';

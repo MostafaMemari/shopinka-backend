@@ -2,7 +2,7 @@ import { BadRequestException, ConflictException, ForbiddenException, Injectable 
 import { CreateProductVariantDto } from '../dto/create-product-variant.dto';
 import { ProductVariantRepository } from '../repositories/product-variant.repository';
 import { ProductVariantMessages } from '../enums/product-variant-messages.enum';
-import { OrderStatus, Prisma, ProductVariant } from 'generated/prisma';
+import { OrderStatus, Prisma, ProductVariant } from '@prisma/client';
 import { ProductRepository } from '../repositories/product.repository';
 import { GalleryItemRepository } from '../../gallery/repositories/gallery-item.repository';
 import { UpdateProductVariantDto } from '../dto/update-product-variant.dto';

@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { BlogRepository } from './blog.repository';
-import { Blog, BlogStatus, Prisma } from 'generated/prisma';
+import { Blog, BlogStatus, Prisma } from '@prisma/client';
 import { BlogMessages } from './enums/blog-messages.enum';
 import { CategoryRepository } from '../category/category.repository';
 import { PaginationDto } from '../../common/dtos/pagination.dto';

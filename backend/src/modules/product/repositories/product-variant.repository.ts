@@ -1,4 +1,4 @@
-import { ProductVariant, Prisma } from 'generated/prisma';
+import { ProductVariant, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProductVariantMessages } from '../enums/product-variant-messages.enum';

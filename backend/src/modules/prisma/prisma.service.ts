@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from 'generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import { CacheKeys } from '../../common/enums/cache.enum';
 import { CacheService } from '../cache/cache.service';
 

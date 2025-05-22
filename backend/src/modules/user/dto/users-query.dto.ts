@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsBoolean, IsDate, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { Role } from 'generated/prisma';
+import { Role } from '@prisma/client';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
 import { UserSortBy } from '../enums/sort-by.enum';
 import { SortOrder } from '../../../common/enums/shared.enum';

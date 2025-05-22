@@ -1,4 +1,4 @@
-import { Address, Prisma } from 'generated/prisma';
+import { Address, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { AddressMessages } from './enums/address-messages.enum';

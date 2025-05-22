@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { GalleryItem, Prisma } from 'generated/prisma';
+import { GalleryItem, Prisma } from '@prisma/client';
 import { PrismaService } from '../../../modules/prisma/prisma.service';
 import { GalleryItemMessages } from '../enums/gallery-item-messages.enum';
 

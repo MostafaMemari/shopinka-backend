@@ -2,7 +2,7 @@ import { IsOptional, IsDate, IsString, IsEnum, IsNumber, IsPositive, IsNotEmpty,
 import { SortOrder } from '../../../common/enums/shared.enum';
 import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ProductType } from 'generated/prisma';
+import { ProductType } from '@prisma/client';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
 import { ProductSortBy } from '../enums/product-sortby.enum';
 

@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateGalleryDto } from '../dto/create-gallery.dto';
 import { UpdateGalleryDto } from '../dto/update-gallery.dto';
 import { GalleryRepository } from '../repositories/gallery.repository';
-import { Gallery, Prisma } from 'generated/prisma';
+import { Gallery, Prisma } from '@prisma/client';
 import { QueryGalleriesDto } from '../dto/gallery-query.dto';
 import { sortObject } from '../../../common/utils/functions.utils';
 import { CacheKeys } from '../../../common/enums/cache.enum';

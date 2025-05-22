@@ -5,7 +5,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthDecorator } from '../../common/decorators/auth.decorator';
 import { GetUser } from '../../common/decorators/get-user.decorator';
-import { Role, User } from 'generated/prisma';
+import { Role, User } from '@prisma/client';
 import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 import { SkipAuth } from '../../common/decorators/skip-auth.decorator';
 import { QueryCategoryDto } from './dto/query-category.dto';

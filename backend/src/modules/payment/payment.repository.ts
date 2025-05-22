@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, Transaction } from 'generated/prisma';
+import { Prisma, Transaction } from '@prisma/client';
 import { PaymentMessages } from './enums/payment.messages';
 
 @Injectable()

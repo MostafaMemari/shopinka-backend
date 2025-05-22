@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { Role, User } from 'generated/prisma';
+import { Role, User } from '@prisma/client';
 import { GetUser } from '../../common/decorators/get-user.decorator';
 import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 import { PaymentDto } from './dto/payment.dto';

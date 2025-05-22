@@ -19,7 +19,7 @@ import * as bcrypt from 'bcryptjs';
 import { Smsir } from 'sms-typescript/lib';
 import { SendOtpDto } from './dto/authenticate.dto';
 import { UserRepository } from '../user/user.repository';
-import { Role, User } from 'generated/prisma';
+import { Role, User } from '@prisma/client';
 import { VerifyMobileDto } from './dto/verify-mobile.dto';
 
 @Injectable()

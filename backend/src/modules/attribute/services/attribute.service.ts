@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateAttributeDto } from '../dto/create-attribute.dto';
 import { UpdateAttributeDto } from '../dto/update-attribute.dto';
 import { AttributeRepository } from '../repositories/attribute.repository';
-import { Attribute, Prisma } from 'generated/prisma';
+import { Attribute, Prisma } from '@prisma/client';
 import slugify from 'slugify';
 import { CacheService } from '../../../modules/cache/cache.service';
 import { QueryAttributeDto } from '../dto/query-attribute.dto';

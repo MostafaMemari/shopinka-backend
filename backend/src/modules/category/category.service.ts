@@ -3,7 +3,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryRepository } from './category.repository';
 import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
-import { Category, Prisma } from 'generated/prisma';
+import { Category, Prisma } from '@prisma/client';
 import { QueryCategoryDto } from './dto/query-category.dto';
 import { sortObject } from '../../common/utils/functions.utils';
 import { CacheKeys } from '../../common/enums/cache.enum';

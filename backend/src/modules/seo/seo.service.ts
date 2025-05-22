@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { SeoMetaRepository } from './seo-meta.repository';
 import { SeoMetaDto } from './dto/seo-meta.dto';
-import { SeoMeta } from 'generated/prisma';
+import { SeoMeta } from '@prisma/client';
 import { SeoMetaMessages } from './enums/seo-meta-messages.enum';
 import { BlogRepository } from '../blog/blog.repository';
 import { ProductRepository } from '../product/repositories/product.repository';

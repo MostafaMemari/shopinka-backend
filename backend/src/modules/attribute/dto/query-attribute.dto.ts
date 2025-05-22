@@ -4,7 +4,7 @@ import { SortOrder } from '../../../common/enums/shared.enum';
 import { AttributeSortOrder } from '../enums/attribute-sortby.dto';
 import { Transform } from 'class-transformer';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
-import { AttributeType } from 'generated/prisma';
+import { AttributeType } from '@prisma/client';
 
 export class QueryAttributeDto extends PaginationDto {
   @IsOptional()

@@ -22,7 +22,7 @@ import { memoryStorage } from 'multer';
 import { FileValidatorPipe } from '../../../common/pipes/file-validator.pipe';
 import { SwaggerConsumes } from '../../../common/enums/swagger-consumes.enum';
 import { GetUser } from '../../../common/decorators/get-user.decorator';
-import { Role, User } from 'generated/prisma';
+import { Role, User } from '@prisma/client';
 import { AuthDecorator } from '../../../common/decorators/auth.decorator';
 import { Roles } from '../../../common/decorators/role.decorator';
 import { GalleryItemQueryDto } from '../dto/gallery-item-query.dto';

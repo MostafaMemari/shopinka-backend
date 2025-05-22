@@ -4,7 +4,7 @@ import { UpdateAttributeValueDto } from '../dto/update-attribute-value.dto';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthDecorator } from '../../../common/decorators/auth.decorator';
 import { Roles } from '../../../common/decorators/role.decorator';
-import { Role, User } from 'generated/prisma';
+import { Role, User } from '@prisma/client';
 import { GetUser } from '../../../common/decorators/get-user.decorator';
 import { SwaggerConsumes } from '../../../common/enums/swagger-consumes.enum';
 import { QueryAttributeValueDto } from '../dto/query-attribute-value.dto';

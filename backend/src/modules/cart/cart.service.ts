@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { CartRepository } from './repositories/cart.repository';
-import { Cart, CartItem, ProductStatus } from 'generated/prisma';
+import { Cart, CartItem, ProductStatus } from '@prisma/client';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { CartItemRepository } from './repositories/cardItem.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';

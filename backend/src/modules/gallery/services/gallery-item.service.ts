@@ -5,7 +5,7 @@ import { GalleryItemRepository } from '../repositories/gallery-item.repository';
 import { AwsService } from '../../../modules/s3AWS/s3AWS.service';
 import { GalleryRepository } from '../repositories/gallery.repository';
 import { IUploadSingleFile } from '../../../common/interfaces/aws.interface';
-import { GalleryItem, Prisma } from 'generated/prisma';
+import { GalleryItem, Prisma } from '@prisma/client';
 import { GalleryItemQueryDto } from '../dto/gallery-item-query.dto';
 import { CacheService } from '../../../modules/cache/cache.service';
 import { resizeImageWithSharp, sortObject } from '../../../common/utils/functions.utils';

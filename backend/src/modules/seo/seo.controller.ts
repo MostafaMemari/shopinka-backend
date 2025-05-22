@@ -1,6 +1,6 @@
 import { Body, Controller, Put } from '@nestjs/common';
 import { SeoService } from './seo.service';
-import { Role, User } from 'generated/prisma';
+import { Role, User } from '@prisma/client';
 import { GetUser } from '../../common/decorators/get-user.decorator';
 import { SeoMetaDto } from './dto/seo-meta.dto';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';

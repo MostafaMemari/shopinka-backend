@@ -1,4 +1,4 @@
-import { Product, Prisma, Favorite } from 'generated/prisma';
+import { Product, Prisma, Favorite } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProductMessages } from '../enums/product-messages.enum';

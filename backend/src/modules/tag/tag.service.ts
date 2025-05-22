@@ -4,7 +4,7 @@ import { UpdateTagDto } from './dto/update-tag.dto';
 import { TagRepository } from './tag.repository';
 import { CacheService } from '../cache/cache.service';
 import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
-import { Prisma, Tag } from 'generated/prisma';
+import { Prisma, Tag } from '@prisma/client';
 import { TagMessages } from './enums/tag-messages.enum';
 import { QueryTagDto } from './dto/query-tag.dto';
 import { sortObject } from '../../common/utils/functions.utils';

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
-import { AttributeType } from 'generated/prisma';
+import { AttributeType } from '@prisma/client';
 
 export class CreateAttributeDto {
   @IsString()

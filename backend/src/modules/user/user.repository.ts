@@ -1,4 +1,4 @@
-import { Prisma, User } from 'generated/prisma';
+import { Prisma, User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserMessages } from './enums/user.messages';

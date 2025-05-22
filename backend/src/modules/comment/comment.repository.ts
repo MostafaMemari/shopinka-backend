@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Comment, Prisma } from 'generated/prisma';
+import { Comment, Prisma } from '@prisma/client';
 import { CommentMessages } from './enums/comment-messages.enum';
 
 @Injectable()

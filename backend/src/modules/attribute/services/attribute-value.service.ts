@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { CreateAttributeValueDto } from '../dto/create-attribute-value.dto';
 import { AttributeValueRepository } from '../repositories/attribute-value.repository';
-import { Attribute, AttributeType, AttributeValue, Prisma } from 'generated/prisma';
+import { Attribute, AttributeType, AttributeValue, Prisma } from '@prisma/client';
 import slugify from 'slugify';
 import { CacheService } from '../../../modules/cache/cache.service';
 import { QueryAttributeValueDto } from '../dto/query-attribute-value.dto';

@@ -2,7 +2,7 @@ import { BadRequestException, ConflictException, ForbiddenException, Injectable 
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductRepository } from '../repositories/product.repository';
-import { OrderStatus, Prisma, Product, ProductStatus, ProductType } from 'generated/prisma';
+import { OrderStatus, Prisma, Product, ProductStatus, ProductType } from '@prisma/client';
 import { CacheService } from '../../cache/cache.service';
 import { GalleryItemRepository } from '../../gallery/repositories/gallery-item.repository';
 import slugify from 'slugify';

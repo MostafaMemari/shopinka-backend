@@ -1,7 +1,7 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { ZarinpalService } from '../http/zarinpal.service';
 import { PaymentRepository } from './payment.repository';
-import { OrderItem, OrderStatus, Prisma, Transaction, TransactionStatus } from 'generated/prisma';
+import { OrderItem, OrderStatus, Prisma, Transaction, TransactionStatus } from '@prisma/client';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { IVerifyPayment } from '../../common/interfaces/payment.interface';
 import { PaymentMessages } from './enums/payment.messages';

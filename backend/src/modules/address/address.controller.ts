@@ -6,7 +6,7 @@ import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthDecorator } from '../../common/decorators/auth.decorator';
 import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 import { GetUser } from '../../common/decorators/get-user.decorator';
-import { User } from 'generated/prisma';
+import { User } from '@prisma/client';
 import { QueryAddressDto } from './dto/query-address.dto';
 
 @Controller('address')

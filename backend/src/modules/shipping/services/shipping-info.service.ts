@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { ShippingInfoRepository } from '../repositories/shipping-info.repository';
 import { CreateShippingInfoDto } from '../dto/create-shipping-info.dto';
-import { OrderStatus, ShippingInfo } from 'generated/prisma';
+import { OrderStatus, ShippingInfo } from '@prisma/client';
 import { ProductRepository } from '../../product/repositories/product.repository';
 import { ProductVariantRepository } from '../../product/repositories/product-variant.repository';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';

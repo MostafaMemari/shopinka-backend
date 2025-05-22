@@ -1,4 +1,4 @@
-import { AttributeValue, Prisma } from 'generated/prisma';
+import { AttributeValue, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { AttributeValueMessages } from '../enums/attribute-value-messages.enum';
