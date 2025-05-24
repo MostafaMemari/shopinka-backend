@@ -1,5 +1,6 @@
 'use client';
 
+import { formatPrice } from '@/utils/utils';
 import { FC } from 'react';
 
 interface Props {
@@ -19,7 +20,7 @@ const PriceDisplay: FC<Props> = ({ newPrice, oldPrice, discount, className = '' 
         <div className="flex items-center gap-x-2">
           {oldPrice && (
             <div>
-              <del className="text-sm text-text/60 decoration-warning md:text-base">{oldPrice.toLocaleString('fa-IR')}</del>
+              <del className="text-sm text-text/60 decoration-warning md:text-base">{formatPrice(oldPrice)}</del>
             </div>
           )}
           {discount && (
@@ -34,7 +35,7 @@ const PriceDisplay: FC<Props> = ({ newPrice, oldPrice, discount, className = '' 
           <span className="text-base font-semibold lg:text-xl lg:font-bold">رایگان</span>
         ) : newPrice ? (
           <>
-            <span className={`font-semibold lg:text-xl lg:font-bold"}`}>{newPrice.toLocaleString('fa-IR')}</span>
+            <span className={`font-semibold lg:text-xl lg:font-bold"}`}>{formatPrice(newPrice)}</span>
             <span className="text-sm font-light lg:text-base lg:font-medium"> تومان</span>
           </>
         ) : null}

@@ -35,37 +35,6 @@
   --ring: 240 4.9% 83.9%;
 }
 
-@font-face {
-  font-family: 'IRANYekan';
-  font-style: normal;
-  font-weight: 300;
-  src: url('/fonts/iranyekan/woff2/IRANYekanXFaNum-Light.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'IRANYekan';
-  font-style: normal;
-  font-weight: normal;
-  src: url('/fonts/iranyekan/woff2/IRANYekanXFaNum-Regular.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'IRANYekan';
-  font-style: normal;
-  font-weight: 500;
-  src: url('/fonts/iranyekan/woff2/IRANYekanXFaNum-Medium.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'IRANYekan';
-  font-style: normal;
-  font-weight: 600;
-  src: url('/fonts/iranyekan/woff2/IRANYekanXFaNum-DemiBold.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'IRANYekan';
-  font-style: normal;
-  font-weight: bold;
-  src: url('/fonts/iranyekan/woff2/IRANYekanXFaNum-Bold.woff2') format('woff2');
-}
 body {
   font-family: 'IRANYekan';
 }

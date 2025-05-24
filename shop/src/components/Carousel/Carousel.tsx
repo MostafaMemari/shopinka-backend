@@ -42,9 +42,16 @@ const Carousel: FC<CarouselProps> = ({
       freeMode={freeMode}
       modules={modules}
       className={className}
+      observer={true}
+      observeParents={true}
+      watchSlidesProgress={true}
+      preventInteractionOnTransition={true}
+      initialSlide={0}
     >
       {items.map((item, index) => (
-        <SwiperSlide key={index}>{item}</SwiperSlide>
+        <SwiperSlide key={index} className="!h-auto">
+          <div className="h-full">{item}</div>
+        </SwiperSlide>
       ))}
 
       {navigation && (

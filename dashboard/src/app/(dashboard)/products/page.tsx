@@ -1,4 +1,4 @@
-import ProductListView from '@/views/pages/products/list/ProductListView'
+import ProductListView from '../../../views/pages/products/list/ProductListView'
 
 const ProductList = () => {
   return <ProductListView />

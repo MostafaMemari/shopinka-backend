@@ -13,10 +13,23 @@ interface Props {
   viewAllLink: string;
   viewAllText?: string;
   products: IProduct[];
+  loading?: boolean;
 }
 
-const CarouselProduct: FC<Props> = ({ title, viewAllLink, viewAllText = 'مشاهده همه', products }) => {
-  const productItems = useMemo(() => products.map((product) => <ProductCard key={product.id} product={product} />), [products]);
+const CarouselProduct: FC<Props> = ({ title, viewAllLink, viewAllText = 'مشاهده همه', products, loading = false }) => {
+  const productItems = useMemo(() => {
+    if (loading) {
+      return Array(4)
+        .fill(null)
+        .map((_, index) => (
+          <div key={index} className="p-2">
+            {/* <Skeleton className="h-[200px] w-full rounded-lg" /> */}
+          </div>
+        ));
+    }
+    return products.map((product) => <ProductCard key={product.id} product={product} />);
+  }, [products, loading]);
+
   return (
     <section className="mb-8">
       <div className="container relative">

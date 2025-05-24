@@ -1,15 +1,18 @@
 'use client'
 
-import { Box, IconButton, Typography, Chip } from '@mui/material'
+import { Box, IconButton, Typography, Chip, CircularProgress } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import tableStyles from '@core/styles/table.module.css'
 import RemoveProductModal from './RemoveProductModal'
 import { Product } from '@/types/app/product.type'
+import { useState } from 'react'
 
 const DesktopProductTable = ({ products }: { products: Product[] }) => {
   const router = useRouter()
+  const [isNavigating, setIsNavigating] = useState<number | null>(null)
 
   const handleEditProduct = (id: number) => {
+    setIsNavigating(id) // فعال کردن لودینگ برای ردیف خاص
     router.push(`/products/edit?id=${id}`)
   }
 
@@ -53,7 +56,6 @@ const DesktopProductTable = ({ products }: { products: Product[] }) => {
                     {product.name || '-'}
                   </Typography>
                 </td>
-
                 <td>
                   {product.status ? (
                     <Chip label={product.status === 'PUBLISHED' ? 'منتشر شده' : 'پیش‌نویس'} color={product.status === 'PUBLISHED' ? 'success' : 'warning'} size='small' />
@@ -76,14 +78,14 @@ const DesktopProductTable = ({ products }: { products: Product[] }) => {
                 </td>
                 <td>
                   <Box display='flex' alignItems='center' gap={2}>
+                    <IconButton size='small' onClick={() => handleEditProduct(product.id)} disabled={isNavigating === product.id}>
+                      {isNavigating === product.id ? <CircularProgress size={20} /> : <i className='tabler-edit text-gray-500 text-lg' />}
+                    </IconButton>
                     <RemoveProductModal id={product.id}>
                       <IconButton size='small'>
                         <i className='tabler-trash text-gray-500 text-lg' />
                       </IconButton>
                     </RemoveProductModal>
-                    <IconButton size='small' onClick={() => handleEditProduct(product.id)}>
-                      <i className='tabler-edit text-gray-500 text-lg' />
-                    </IconButton>
                   </Box>
                 </td>
               </tr>

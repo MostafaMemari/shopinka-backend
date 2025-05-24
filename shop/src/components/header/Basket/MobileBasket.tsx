@@ -62,7 +62,7 @@ export default function MobileBasketDrawer({ isOpen, onClose, cartItems = [] }: 
           <div className="flex flex-col items-center gap-y-1">
             <div className="text-sm text-text/60">مبلغ قابل پرداخت</div>
             <div className="text-text/90">
-              <span className="font-bold">{totalPrice.toLocaleString()}</span>
+              <span className="font-bold">{totalPrice}</span>
               <span className="text-sm">تومان</span>
             </div>
           </div>

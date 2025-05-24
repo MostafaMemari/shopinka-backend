@@ -93,8 +93,6 @@ export class ProductService {
       sortBy,
     } = query;
 
-    console.log(categoryIds);
-
     const sortedDto = sortObject(query);
     const cacheKey = `${CacheKeys.Products}_${JSON.stringify(sortedDto)}`;
 
@@ -178,10 +176,20 @@ export class ProductService {
     const products = await this.productRepository.findAll({
       where: filters,
       orderBy,
-      include: {
-        mainImage: includeMainImage,
+      select: {
+        id: true,
+        name: true,
+        salePrice: true,
+        basePrice: true,
+        slug: true,
+        mainImage: includeMainImage && {
+          select: { fileUrl: true, id: true, title: true, description: true },
+        },
         variants: includeVariants && {
-          include: { mainImage: true, attributeValues: true },
+          select: {
+            id: true,
+            attributeValues: true,
+          },
         },
       },
     });

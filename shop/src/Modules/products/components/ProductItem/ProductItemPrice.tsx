@@ -7,7 +7,7 @@ interface Props {
   newPrice?: number;
 }
 
-const ProductPrice: FC<Props> = ({ oldPrice, discount, newPrice }) => {
+const ProductItemPrice: FC<Props> = ({ oldPrice, discount, newPrice }) => {
   const hasDiscount = !!oldPrice && !!discount;
 
   return (
@@ -43,4 +43,4 @@ const ProductPrice: FC<Props> = ({ oldPrice, discount, newPrice }) => {
   );
 };
 
-export default ProductPrice;
+export default ProductItemPrice;
