@@ -1,30 +1,19 @@
-'use client';
-import React from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/pagination';
+import { useState } from 'react';
 import Image from 'next/image';
 
-interface Props {
-  images: {
-    src: string;
-    alt: string;
-  }[];
-}
+const ProductImage = ({ src, alt }: { src: string; alt: string }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
 
-export default function ProductImageSwiper({ images }: Props) {
   return (
-    <div className="swiper product-image-mobile-swiper">
-      <Swiper modules={[Pagination]} pagination={{ el: '.swiper-pagination' }} spaceBetween={0} slidesPerView={1} className="w-full">
-        {images?.length &&
-          images.map((image, index) => (
-            <SwiperSlide key={index}>
-              <Image src={image.src} alt={image.alt} width={500} height={500} className="mx-auto" loading="lazy" />
-            </SwiperSlide>
-          ))}
-      </Swiper>
-      <div className="swiper-pagination text-left"></div>
+    <div className="relative h-[200px] w-full rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700">
+      {!isLoaded && <div className="absolute inset-0 animate-pulse bg-gray-300 dark:bg-gray-600 z-0" />}
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        className={`object-contain transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+        onLoad={() => setIsLoaded(true)}
+      />
     </div>
   );
-}
+};

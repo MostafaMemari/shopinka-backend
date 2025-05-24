@@ -39,6 +39,36 @@ body {
   font-family: 'IRANYekan';
 }
 
+.product-slider {
+  position: relative;
+  overflow: hidden;
+  padding: 0 10px;
+  min-height: 200px;
+}
+
+.product-slider .swiper-wrapper,
+.product-slider .flex {
+  display: flex;
+  align-items: stretch;
+}
+
+.product-slider .swiper-slide,
+.product-slider .flex .flex-none {
+  height: auto !important;
+  width: 216.333px !important;
+  margin-left: 10px;
+  display: flex;
+  align-items: stretch;
+  transition: transform 0.3s ease;
+}
+
+.product-slider:not(.swiper-initialized) .swiper-slide,
+.product-slider:not(.swiper-initialized) .flex .flex-none {
+  flex: 0 0 216.333px;
+  margin-left: 10px;
+  visibility: visible;
+}
+
 /* .Toastify__toast {
   font-family: "IRANYekan", sans-serif;
 } */

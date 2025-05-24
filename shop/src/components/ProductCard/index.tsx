@@ -5,6 +5,7 @@ import { IProduct } from '@/lib/types/products';
 import ProductPrice from './ProductPrice';
 import Link from 'next/link';
 import Image from 'next/image';
+import ProductImage from './ProductImage';
 
 interface Props {
   product: IProduct;
@@ -16,13 +17,7 @@ const ProductCard: FC<Props> = ({ product }) => {
       <div className="relative rounded-xl bg-muted p-2 shadow-base md:p-5">
         <div className="mb-2 md:mb-5" draggable={false}>
           <Link href="45345534">
-            <Image
-              src={product.mainImage.fileUrl}
-              alt={product.name}
-              width={200}
-              height={200}
-              className="mx-auto w-32 rounded-lg md:w-auto"
-            />
+            <ProductImage src={product.mainImage.fileUrl} alt={product.name} />
           </Link>
         </div>
         <div className="mb-2">

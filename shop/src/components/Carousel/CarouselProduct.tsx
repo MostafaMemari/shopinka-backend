@@ -21,11 +21,7 @@ const CarouselProduct: FC<Props> = ({ title, viewAllLink, viewAllText = 'مشا�
     if (loading) {
       return Array(4)
         .fill(null)
-        .map((_, index) => (
-          <div key={index} className="p-2">
-            {/* <Skeleton className="h-[200px] w-full rounded-lg" /> */}
-          </div>
-        ));
+        .map((_, index) => <div key={index} className="p-2"></div>);
     }
     return products.map((product) => <ProductCard key={product.id} product={product} />);
   }, [products, loading]);
