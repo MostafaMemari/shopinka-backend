@@ -24,7 +24,7 @@ const ProductPrice: FC<Props> = ({ oldPrice, newPrice }) => {
             </div>
             <div className="text-sm font-bold text-primary md:text-base">
               {newPrice && formatPrice(newPrice)}
-              <span className="text-xs font-light md:text-sm"> تومان</span>
+              {newPrice && <span className="text-xs font-light md:text-sm"> تومان</span>}
             </div>
           </div>
         </>
@@ -34,8 +34,14 @@ const ProductPrice: FC<Props> = ({ oldPrice, newPrice }) => {
           <div className="flex items-center justify-between">
             <div></div>
             <div className="text-sm font-bold text-primary md:text-base">
-              {newPrice && formatPrice(newPrice)}
-              <span className="text-xs font-light md:text-sm"> تومان</span>
+              {oldPrice ? (
+                <>
+                  {formatPrice(oldPrice)}
+                  <span className="text-xs font-light md:text-sm"> تومان</span>
+                </>
+              ) : (
+                <span className="text-xs font-light md:text-sm">ناموجود</span>
+              )}
             </div>
           </div>
         </div>

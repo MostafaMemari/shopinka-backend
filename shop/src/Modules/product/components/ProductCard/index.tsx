@@ -22,7 +22,7 @@ const ProductCard: FC<Props> = ({ product }) => {
             {product.name}
           </Link>
         </div>
-        <ProductPrice newPrice={product?.salePrice} oldPrice={product?.basePrice} />
+        <ProductPrice newPrice={Number(product?.salePrice)} oldPrice={Number(product?.basePrice)} />
       </div>
     </div>
   );
