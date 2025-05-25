@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { HiOutlineHeart, HiOutlineAdjustments, HiOutlineShare } from 'react-icons/hi';
 
 type Props = {
-  productId: string;
+  productId: number;
 };
 
 export default function ProductActions({ productId }: Props) {

@@ -1,6 +1,6 @@
 'use client';
 
-import { FC } from 'react';
+import { FC, useState } from 'react';
 
 import { IProduct } from '@/lib/types/products';
 import ProductActions from './ActionButtons';
@@ -10,20 +10,18 @@ import MobileDetails from './MobileDetails';
 import ProductGallery from './ProductGallery/ProductGallery';
 import DesktopDetails from './DesktopDetails';
 import BreadcrumbContainer from './BreadcrumbContainer';
-import { CompactBreadcrumb } from '../../../../shared/components/ui/breadcrumb';
+import { type ProductDetails } from '../../types/productType';
 
 interface Props {
-  product: IProduct;
+  product: ProductDetails;
 }
 
 const ProductDetails: FC<Props> = ({ product }) => {
   const breadcrumbItems = [
     { label: 'روتی کالا', href: '/' },
     { label: 'مردانه', href: '/men' },
-    { label: 'کتونی مردانه', href: product.productLink },
+    { label: 'کتونی مردانه', href: '/' },
   ];
-
-  const galleryImages = [{ src: product.imageSrc, alt: product.title }];
 
   return (
     <>
@@ -34,7 +32,7 @@ const ProductDetails: FC<Props> = ({ product }) => {
             <div className="mb-10 grid grow grid-cols-12 gap-4">
               <div className="col-span-4">
                 <ProductActions productId={product.id} />
-                <ProductGallery images={galleryImages} title={`تصاویر محصول ${product.title}`} />
+                <ProductGallery mainImage={product.mainImage ?? null} galleryImages={product.galleryImages} title="تصاویر محصول" />
               </div>
               <div className="col-span-8 flex min-h-full flex-col">
                 <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
@@ -48,16 +46,16 @@ const ProductDetails: FC<Props> = ({ product }) => {
         </div>
       </div>
 
-      <div className="lg:hidden">
+      {/* <div className="lg:hidden">
         <div className="mb-6 relative rounded-lg bg-muted p-4 shadow-base">
           <div className="mb-4">
-            <ProductImageSwiper images={galleryImages} />
+            <ProductImageSwiper src={product.galleryImages[0].fileUrl} alt={product.galleryImages[0].title} />
             <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
           </div>
           <ProductActions productId={product.id} />
           <MobileDetails product={product} />
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

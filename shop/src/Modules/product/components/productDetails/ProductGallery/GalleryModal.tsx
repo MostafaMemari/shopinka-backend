@@ -10,11 +10,12 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/thumbs';
+import { Image as ImageType } from '@/shared/types/imageType';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  images: Array<{ src: string; alt: string }>;
+  images: ImageType[];
   title: string;
 }
 
@@ -77,8 +78,8 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Props) 
                   <SwiperSlide key={index}>
                     <div className="relative h-[300px] sm:h-[400px] md:h-[500px] w-full">
                       <Image
-                        src={image.src}
-                        alt={image.alt}
+                        src={image.fileUrl}
+                        alt={image.title}
                         fill
                         className="object-contain transition-transform duration-300"
                         priority={index === 0}
@@ -113,7 +114,13 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Props) 
                   <SwiperSlide key={index}>
                     <div className="cursor-pointer flex justify-center items-center rounded-lg border p-2 transition-all hover:border-primary">
                       <div className="relative h-20 w-20 sm:h-24 sm:w-24">
-                        <Image src={image.src} alt={image.alt} fill className="object-contain" sizes="(max-width: 640px) 80px, 96px" />
+                        <Image
+                          src={image.fileUrl}
+                          alt={image.title}
+                          fill
+                          className="object-contain"
+                          sizes="(max-width: 640px) 80px, 96px"
+                        />
                       </div>
                     </div>
                   </SwiperSlide>

@@ -11,9 +11,10 @@ import QuantitySelector from '../../../../shared/components/ui/QuantitySelector'
 import { useProductSelection } from '@/Modules/product/hooks/useProductSelection';
 import AddToCartButtonDesktop from './AddToCartButton/AddToCartButtonDesktop';
 import PriceDisplay from './PriceDisplay';
+import { ProductDetails } from '../../types/productType';
 
 interface Props {
-  product: IProductDetails;
+  product: ProductDetails;
 }
 
 const DesktopDetails: FC<Props> = ({ product }) => {

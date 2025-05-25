@@ -8,17 +8,21 @@ interface MainImageProps {
   alt: string;
 }
 
+const fallbackSrc = '/images/no-image.webp';
+
 export default function MainImage({ src, alt }: MainImageProps) {
+  const [imgSrc, setImgSrc] = useState(src);
   const [isZoomed, setIsZoomed] = useState(false);
 
   return (
     <div className="relative overflow-hidden rounded-lg" onMouseEnter={() => setIsZoomed(true)} onMouseLeave={() => setIsZoomed(false)}>
       <Image
-        src={src}
+        src={imgSrc}
         alt={alt}
         width={600}
         height={600}
         className={`w-full transform transition-transform duration-300 ${isZoomed ? 'scale-110' : 'scale-100'}`}
+        onError={() => setImgSrc(fallbackSrc)}
         priority
       />
     </div>

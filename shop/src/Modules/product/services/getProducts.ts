@@ -23,3 +23,9 @@ export async function fetchDiscountedProducts() {
 
   return response.data;
 }
+
+export async function fetchProductBySlug(slug: string) {
+  const response = await shopApiFetch(`/product/by-slug/${slug}`);
+
+  return response.data;
+}

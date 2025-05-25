@@ -17,3 +17,5 @@ const ProductImage = ({ src, alt }: { src: string; alt: string }) => {
     </div>
   );
 };
+
+export default ProductImage;
