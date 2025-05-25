@@ -1,6 +1,6 @@
-import DashboardHeader from '@/components/profile/DashboardHeader';
-import TabContent from '@/components/profile/Order/TabContent';
-import { cn } from '@/utils/utils';
+import DashboardHeader from '@/shared/components/profile/DashboardHeader';
+import TabContent from '@/shared/components/profile/Order/TabContent';
+import { cn } from '@/shared/utils/utils';
 import Link from 'next/link';
 
 interface Props {

@@ -1,4 +1,4 @@
-import ProfileEditActions from '@/components/profile/ProfileEditActions';
+import ProfileEditActions from '@/shared/components/profile/ProfileEditActions';
 
 const profileData = {
   fullName: 'تایماز اکبری',

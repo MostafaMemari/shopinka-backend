@@ -1,4 +1,4 @@
-import RecentActions from '@/components/profile/Recent/RecentActions';
+import RecentActions from '@/shared/components/profile/Recent/RecentActions';
 
 interface Recent {
   id: string;

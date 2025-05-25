@@ -1,14 +1,14 @@
 'use client';
 
-import FilterSection from '@/components/shop/FilterSection';
-import MobileSort from '@/components/shop/MobileFilter';
-import MobileFilter from '@/components/shop/MobileFilter';
-import MobileFilterDrawer from '@/components/shop/MobileFilterDrawer';
-import MobileOptions from '@/components/shop/MobileOptions';
-import MobileSortDrawer from '@/components/shop/MobileSortDrawer';
-import ProductGrid from '@/components/shop/ProductGrid';
-import SortBar from '@/components/shop/SortBar';
-import Pagination from '@/components/ui/Pagination';
+import FilterSection from '@/shared/components/shop/FilterSection';
+import MobileSort from '@/shared/components/shop/MobileFilter';
+import MobileFilter from '@/shared/components/shop/MobileFilter';
+import MobileFilterDrawer from '@/shared/components/shop/MobileFilterDrawer';
+import MobileOptions from '@/shared/components/shop/MobileOptions';
+import MobileSortDrawer from '@/shared/components/shop/MobileSortDrawer';
+import ProductGrid from '@/shared/components/shop/ProductGrid';
+import SortBar from '@/shared/components/shop/SortBar';
+import Pagination from '@/shared/components/ui/Pagination';
 import { latestProducts, specialOfferProducts } from '@/mock/productCarousels';
 import { FC, useState } from 'react';
 

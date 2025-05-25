@@ -11,8 +11,8 @@
   --success-secondary: 160 84% 39%;
   --muted: 0 0% 100%;
   --border: 240 5.9% 90%;
-  --primary: 160 84% 39%;
-  --primary-btn: 160 84% 39%;
+  --primary: 0 68% 42%; /* updated */
+  --primary-btn: 0 68% 42%; /* updated */
   --secondary: 240 6% 90%;
   --ring: 240 10% 3.9%;
   --radius: 0.5rem;
@@ -29,8 +29,8 @@
   --success-secondary: 161 94% 30%;
   --muted: 270 4% 10%;
   --border: 240 3.7% 15.9%;
-  --primary: 158 64% 52%;
-  --primary-btn: 161 94% 30%;
+  --primary: 0 0% 7%; /* updated */
+  --primary-btn: 0 0% 7%; /* updated */
   --secondary: 240 4% 16%;
   --ring: 240 4.9% 83.9%;
 }

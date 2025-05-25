@@ -1,4 +1,4 @@
-import DesktopLogo from '@/components/ui/Logo/DesktopLogo';
+import DesktopLogo from '@/shared/components/ui/Logo/DesktopLogo';
 
 export default function Page() {
   return (

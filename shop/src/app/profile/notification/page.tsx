@@ -1,4 +1,4 @@
-import NotificationsActions from '@/components/profile/Notifications/NotificationsActions';
+import NotificationsActions from '@/shared/components/profile/Notifications/NotificationsActions';
 
 interface Notification {
   id: string;

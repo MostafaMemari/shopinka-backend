@@ -1,4 +1,4 @@
-import ProductDetails from '@/components/productDetails';
+import ProductDetails from '@/Modules/product/components/productDetails';
 import { mockProductDetails } from '@/mock/productCarousels';
 
 type Props = {

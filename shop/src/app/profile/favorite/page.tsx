@@ -1,4 +1,4 @@
-import FavoriteActions from '@/components/profile/Favorite/FavoriteActions';
+import FavoriteActions from '@/shared/components/profile/Favorite/FavoriteActions';
 
 interface Favorite {
   id: string;

@@ -1,4 +1,4 @@
-import AddressesActions from '@/components/profile/Address/AddressesActions';
+import AddressesActions from '@/shared/components/profile/Address/AddressesActions';
 import { mockAddresses } from '@/mock/addresses';
 
 export default function Page() {
