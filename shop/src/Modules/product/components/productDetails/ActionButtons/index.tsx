@@ -35,10 +35,8 @@ export default function ProductActions({ productId }: Props) {
 
   return (
     <>
-      {/* دسکتاپ */}
       <div className="hidden lg:block py-2">
         <div className="flex items-center gap-x-4">
-          {/* Favorite Button */}
           <div className="relative group">
             <button
               type="button"
@@ -53,7 +51,6 @@ export default function ProductActions({ productId }: Props) {
             </div>
           </div>
 
-          {/* Compare Button */}
           <div className="relative group">
             <button
               type="button"
@@ -68,7 +65,6 @@ export default function ProductActions({ productId }: Props) {
             </div>
           </div>
 
-          {/* Share Button */}
           <div className="relative group">
             <button
               type="button"
@@ -98,10 +94,8 @@ export default function ProductActions({ productId }: Props) {
         </div>
       </div>
 
-      {/* موبایل */}
-      <div className="lg:hidden absolute left-4 top-4 z-15">
+      <div className="lg:hidden absolute left-8 top-8 z-15">
         <div className="flex items-center gap-x-4">
-          {/* Favorite Button */}
           <div>
             <button
               type="button"
@@ -113,7 +107,6 @@ export default function ProductActions({ productId }: Props) {
             </button>
           </div>
 
-          {/* Compare Button */}
           <div>
             <button
               type="button"
@@ -125,7 +118,6 @@ export default function ProductActions({ productId }: Props) {
             </button>
           </div>
 
-          {/* Share Button */}
           <div className="relative">
             <button
               type="button"

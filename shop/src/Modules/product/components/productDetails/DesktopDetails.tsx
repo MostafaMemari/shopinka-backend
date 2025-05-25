@@ -23,26 +23,26 @@ const DesktopDetails: FC<Props> = ({ product }) => {
 
   return (
     <div className="col-span-8 flex min-h-full flex-col">
-      {product.title && <h1 className="text-lg font-semibold pb-2">{product.title}</h1>}
+      {product.name && <h1 className="text-lg font-semibold pb-2">{product.name}</h1>}
 
       <div className="grid grow grid-cols-2 gap-x-4">
         <div className="col-span-1">
-          {product.englishTitle && (
+          {/* {product.englishTitle && (
             <div className="mb-4 flex items-center gap-x-2">
               <h2 className="line-clamp-1 text-sm font-light text-text/60">{product.englishTitle}</h2>
               <span className="h-px grow bg-background dark:bg-muted/10"></span>
             </div>
-          )}
+          )} */}
 
           <div className="mb-4 flex items-center gap-x-4 text-sm font-light text-primary">
             {product.sku && (
               <div>
-                <a href="#">کد کالا {product.sku}#</a>
+                <a href="#">کد کالا {product.sku}</a>
               </div>
             )}
             <span className="h-4 w-px rounded-full bg-background dark:bg-muted/10"></span>
             <div>
-              <a href="#">{product.commentsCount || 0} دیدگاه</a>
+              <a href="#">{0} دیدگاه</a>
             </div>
           </div>
 
@@ -50,14 +50,14 @@ const DesktopDetails: FC<Props> = ({ product }) => {
             <svg className="h-4 w-4 text-primary">
               <use xlinkHref="#like" />
             </svg>
-            <p className="text-sm font-light text-text/60">{product.userSuggestion}</p>
+            <p className="text-sm font-light text-text/60">{product.shortDescription}</p>
           </div>
 
-          {product.properties && product.properties.length > 0 && <ProductProperties properties={product.properties} />}
+          {/* {product.properties && product.properties.length > 0 && <ProductProperties properties={product.properties} />} */}
         </div>
 
         <div className="col-span-1 flex flex-col">
-          <div className="mb-4">
+          {/* <div className="mb-4">
             {product.colors && (
               <div className="mb-3 space-y-6">
                 <ColorSelector label="انتخاب رنگ" colors={product.colors} selectedColor={selectedColor} onColorChange={setSelectedColor} />
@@ -68,7 +68,7 @@ const DesktopDetails: FC<Props> = ({ product }) => {
                 <SizeSelector label="انتخاب سایز" sizes={product.sizes} selectedSize={selectedSize} onSizeChange={setSelectedSize} />
               </div>
             )}
-          </div>
+          </div> */}
 
           <div className="mb-6 flex items-center gap-x-2 rounded-lg bg-primary/10 p-4 text-sm text-primary">
             <HiOutlineShieldCheck className="h-6 w-6" />

@@ -16,7 +16,7 @@ const ActionButton: FC<Props> = ({ icon, onClick, label, hoverColor = 'text-gray
       <button
         type="button"
         onClick={onClick}
-        className={`text-gray-700 hover:${hoverColor} dark:text-white transition-colors duration-200`}
+        className={`text-gray-700 hover:${hoverColor} dark:text-white transition-colors duration-200 `}
         aria-label={label}
       >
         {icon}

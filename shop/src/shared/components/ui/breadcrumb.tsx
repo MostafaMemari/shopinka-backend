@@ -26,7 +26,7 @@ const BoxedBreadcrumb = ({ items }: Props) => {
 };
 
 const CompactBreadcrumb = ({ items }: Props) => (
-  <div className="mb-4 flex flex-wrap items-center gap-2">
+  <div className="my-4 flex flex-wrap items-center gap-2">
     {items.map((item, index) => (
       <div key={index} className="flex items-center gap-x-1 text-sm font-light text-primary sm:text-base">
         <Link href={item.href}>{item.label}</Link>

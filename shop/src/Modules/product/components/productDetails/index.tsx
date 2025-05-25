@@ -5,12 +5,12 @@ import { FC, useState } from 'react';
 import { IProduct } from '@/lib/types/products';
 import ProductActions from './ActionButtons';
 import ProductGuarantees from './ProductGuarantees';
-import ProductImageSwiper from './ProductImageSwiper';
 import MobileDetails from './MobileDetails';
 import ProductGallery from './ProductGallery/ProductGallery';
 import DesktopDetails from './DesktopDetails';
 import BreadcrumbContainer from './BreadcrumbContainer';
 import { type ProductDetails } from '../../types/productType';
+import ProductImageSwiper from './ProductImageSwiper';
 
 interface Props {
   product: ProductDetails;
@@ -46,16 +46,16 @@ const ProductDetails: FC<Props> = ({ product }) => {
         </div>
       </div>
 
-      {/* <div className="lg:hidden">
+      <div className="lg:hidden">
         <div className="mb-6 relative rounded-lg bg-muted p-4 shadow-base">
           <div className="mb-4">
-            <ProductImageSwiper src={product.galleryImages[0].fileUrl} alt={product.galleryImages[0].title} />
+            <ProductImageSwiper images={product.mainImage ? [product.mainImage, ...product.galleryImages] : product.galleryImages} />
             <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
           </div>
           <ProductActions productId={product.id} />
           <MobileDetails product={product} />
         </div>
-      </div> */}
+      </div>
     </>
   );
 };
