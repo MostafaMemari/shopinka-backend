@@ -5,8 +5,6 @@ import { serverApiFetch } from '@/utils/api/serverApiFetch'
 export const getAttributes = async (params?: Record<string, string>): Promise<Response<Attribute[]>> => {
   const res = await serverApiFetch('/attribute?includeValues=true', { method: 'GET', query: { ...params } })
 
-  console.log(res)
-
   return {
     ...res
   }

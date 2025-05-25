@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import MobileCommentsSwiper from './MobileCommentsSwiper';
 import { IComment } from '@/lib/types/comments';
-import SuggestionRadio from '@/Modules/product/components/productDetails/Comment/ProductComments/SuggestionRadio';
+import SuggestionRadio from '@/Modules/productDetails/components/Comment/ProductComments/SuggestionRadio';
 import Pagination from '@/shared/components/ui/Pagination';
 import DesktopComments from './DesktopComments';
 

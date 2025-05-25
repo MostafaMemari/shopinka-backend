@@ -1,14 +1,14 @@
 'use client';
 
 import { FC } from 'react';
-import SizeSelector from './SizeSelector';
-import ColorSelector from './ColorSelector';
-import QuantitySelector from '../../../../shared/components/ui/QuantitySelector';
+import SizeSelector from './VariantSelector/ButtonSelector';
+import ColorSelector from './VariantSelector/ColorSelector';
+import QuantitySelector from '../../../shared/components/ui/QuantitySelector';
 import ProductGuarantees from './ProductGuarantees';
 import { useProductSelection } from '@/Modules/product/hooks/useProductSelection';
 import AddToCartButtonMobile from './AddToCartButton/AddToCartButtonMobile';
 import { mockProductDetails } from '@/mock/productCarousels';
-import { ProductDetails } from '../../types/productType';
+import { ProductDetails } from '../../product/types/productType';
 
 interface Props {
   product: ProductDetails;

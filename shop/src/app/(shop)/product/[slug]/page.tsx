@@ -1,4 +1,4 @@
-import ProductDetails from '@/Modules/product/components/productDetails';
+import ProductDetails from '@/Modules/productDetails/components';
 import { fetchProductBySlug } from '@/Modules/product/services/getProducts';
 
 type Props = {

@@ -9,26 +9,32 @@ import { useProductVariantForm } from '@/hooks/reactQuery/useProductVariant'
 import { Attribute } from '@/types/app/productAttributes.type'
 import { useFormContext } from 'react-hook-form'
 import { showToast } from '@/utils/showToast'
+import { useAttribute } from '@/hooks/reactQuery/useAttribute'
 
 interface CreateProductVariantModalProps {
   children?: ReactNode
   productId: string | number
-  attributes: Attribute[]
   existingAttributeCombinations: string[]
 }
 
-const CreateProductVariantModal = ({ children, productId, attributes, existingAttributeCombinations }: CreateProductVariantModalProps) => {
+const CreateProductVariantModal = ({ children, productId, existingAttributeCombinations }: CreateProductVariantModalProps) => {
   const [open, setOpen] = useState<boolean>(false)
-
   const { watch } = useFormContext()
 
-  const quantity: number = useMemo(() => watch('quantity') || null, [watch])
-  const basePrice: number = useMemo(() => watch('basePrice') || null, [watch])
-  const salePrice: number = useMemo(() => watch('salePrice') || null, [watch])
-  const width: number = useMemo(() => watch('width') || null, [watch])
-  const height: number = useMemo(() => watch('height') || null, [watch])
-  const length: number = useMemo(() => watch('length') || null, [watch])
-  const weight: number = useMemo(() => watch('weight') || null, [watch])
+  const attributeIds: number[] = watch('attributeIds') || []
+
+  const { data: attributeData } = useAttribute({
+    enabled: true,
+    params: {
+      take: 20,
+      includeThumbnailImage: true,
+      includeChildren: true,
+      childrenDepth: 6
+    },
+    staleTime: 5 * 60 * 1000
+  })
+
+  const attributes: Attribute[] = (attributeData?.data?.items || []).filter(attr => attributeIds.includes(attr.id))
 
   const [selectedValues, setSelectedValues] = useState<SelectedValue[]>(() =>
     attributes.map(attr => ({
@@ -38,22 +44,19 @@ const CreateProductVariantModal = ({ children, productId, attributes, existingAt
     }))
   )
 
-  const { control, errors, setValue, isLoading, onSubmit, handleClose } = useProductVariantForm({
+  const { isLoading, onSubmit, handleClose, setValue } = useProductVariantForm({
     productId: Number(productId)
   })
 
   useEffect(() => {
-    setValue('quantity', quantity)
-    setValue('basePrice', basePrice)
-    setValue('salePrice', salePrice)
-    setValue('width', width)
-    setValue('height', height)
-    setValue('length', length)
-    setValue('weight', weight)
-  }, [quantity, basePrice, salePrice, width, height, length, weight, setValue])
+    const fields = ['quantity', 'basePrice', 'salePrice', 'width', 'height', 'length', 'weight']
+    fields.forEach(field => setValue(field, watch(field) || null))
+  }, [watch, setValue])
 
   useEffect(() => {
     const newAttributeValueIds = selectedValues.map(item => item.valueId).filter((id): id is number => id !== null)
+
+    console.log(newAttributeValueIds)
 
     setValue('attributeValueIds', newAttributeValueIds, { shouldValidate: true })
   }, [selectedValues, setValue])
@@ -64,7 +67,6 @@ const CreateProductVariantModal = ({ children, productId, attributes, existingAt
       .filter((id): id is number => id !== null)
       .sort()
       .join(',')
-
     return existingAttributeCombinations.includes(currentCombination)
   }, [selectedValues, existingAttributeCombinations])
 
@@ -85,10 +87,8 @@ const CreateProductVariantModal = ({ children, productId, attributes, existingAt
   const handleSubmit = useCallback(() => {
     if (isDuplicate) {
       showToast({ type: 'error', message: 'این ترکیب ویژگی‌ها قبلاً وجود دارد!' })
-
       return
     }
-
     onSubmit()
   }, [isDuplicate, onSubmit])
 

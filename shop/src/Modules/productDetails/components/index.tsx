@@ -1,15 +1,14 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { FC } from 'react';
 
-import { IProduct } from '@/lib/types/products';
 import ProductActions from './ActionButtons';
 import ProductGuarantees from './ProductGuarantees';
 import MobileDetails from './MobileDetails';
 import ProductGallery from './ProductGallery/ProductGallery';
 import DesktopDetails from './DesktopDetails';
 import BreadcrumbContainer from './BreadcrumbContainer';
-import { type ProductDetails } from '../../types/productType';
+import { type ProductDetails } from '../../product/types/productType';
 import ProductImageSwiper from './ProductImageSwiper';
 
 interface Props {

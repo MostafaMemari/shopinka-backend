@@ -114,8 +114,6 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
             methods.setValue('categoryIds', product.categories?.map(category => category.id) || [])
             methods.setValue('attributeIds', product.attributes?.map(attribute => attribute.id) || [])
             methods.setValue('tagIds', product.tags?.map(tag => tag.id) || [])
-
-            // methods.setValue('attributes', product.attributes || [])
           }
         })
         .catch(() => {

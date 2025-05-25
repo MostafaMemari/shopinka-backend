@@ -2,24 +2,20 @@
 
 import { FC } from 'react';
 import { HiOutlineShieldCheck } from 'react-icons/hi';
-import SizeSelector from './SizeSelector';
 
-import { IProductDetails } from '@/lib/types/products';
-import ColorSelector from './ColorSelector';
-import ProductProperties from '@/Modules/product/components/productDetails/ProductProperties';
-import QuantitySelector from '../../../../shared/components/ui/QuantitySelector';
+import QuantitySelector from '../../../shared/components/ui/QuantitySelector';
 import { useProductSelection } from '@/Modules/product/hooks/useProductSelection';
 import AddToCartButtonDesktop from './AddToCartButton/AddToCartButtonDesktop';
 import PriceDisplay from './PriceDisplay';
-import { ProductDetails } from '../../types/productType';
+import { ProductDetails } from '../../product/types/productType';
+import ProductVariants from './VariantSelector';
 
 interface Props {
   product: ProductDetails;
 }
 
 const DesktopDetails: FC<Props> = ({ product }) => {
-  const { quantity, selectedColor, setSelectedColor, selectedSize, setSelectedSize, handleIncrement, handleDecrement } =
-    useProductSelection();
+  const { quantity, handleIncrement, handleDecrement } = useProductSelection();
 
   return (
     <div className="col-span-8 flex min-h-full flex-col">
@@ -57,18 +53,7 @@ const DesktopDetails: FC<Props> = ({ product }) => {
         </div>
 
         <div className="col-span-1 flex flex-col">
-          {/* <div className="mb-4">
-            {product.colors && (
-              <div className="mb-3 space-y-6">
-                <ColorSelector label="انتخاب رنگ" colors={product.colors} selectedColor={selectedColor} onColorChange={setSelectedColor} />
-              </div>
-            )}
-            {product.sizes && (
-              <div className="mb-3 space-y-6">
-                <SizeSelector label="انتخاب سایز" sizes={product.sizes} selectedSize={selectedSize} onSizeChange={setSelectedSize} />
-              </div>
-            )}
-          </div> */}
+          {product.type === 'VARIABLE' && <ProductVariants attributes={product.attributes} variants={product.variants} />}
 
           <div className="mb-6 flex items-center gap-x-2 rounded-lg bg-primary/10 p-4 text-sm text-primary">
             <HiOutlineShieldCheck className="h-6 w-6" />

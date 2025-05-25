@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import ProductDescription from './ProductDescription';
 import { IComment } from '@/lib/types/comments';
 import ProductSpecifications from './ProductSpecifications';
-import ProductComments from '@/Modules/product/components/productDetails/Comment/ProductComments';
+import ProductComments from '@/Modules/productDetails/components/Comment/ProductComments';
 
 interface Tab {
   id: string;

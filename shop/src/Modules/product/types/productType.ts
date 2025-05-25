@@ -1,4 +1,5 @@
 import { category } from '@/Modules/category/types/categoryType';
+import { attribute, attributeValues } from '@/shared/types/attributeType';
 import { Image } from '@/shared/types/imageType';
 import { SeoMeta } from '@/shared/types/seoMetaType';
 import { user } from '@/shared/types/userType';
@@ -10,6 +11,26 @@ export type Product = {
   basePrice: string | null;
   slug: string;
   mainImage: Image | null;
+};
+
+export type productVariant = {
+  id: number;
+  sku: null;
+  mainImageId: number;
+  productId: number;
+  orderId: number | null;
+  userId: 1;
+  shortDescription: string | null;
+  quantity: number | null;
+  basePrice: number | null;
+  salePrice: number | null;
+  width: number | null;
+  height: number | null;
+  length: number | null;
+  weight: number | null;
+  createdAt: string;
+  updatedAt: string;
+  attributeValues: attributeValues[];
 };
 
 export type ProductDetails = {
@@ -25,7 +46,7 @@ export type ProductDetails = {
   basePrice: number | null;
   salePrice: number | null;
   status: 'PUBLISHED';
-  type: 'SIMPLE' | 'VARIANT';
+  type: 'SIMPLE' | 'VARIABLE';
   width: number | null;
   height: number | null;
   length: number | null;
@@ -37,4 +58,6 @@ export type ProductDetails = {
   user: user;
   categories: category[] | [];
   seoMeta: SeoMeta;
+  attributes: attribute[] | [];
+  variants: productVariant[] | [];
 };

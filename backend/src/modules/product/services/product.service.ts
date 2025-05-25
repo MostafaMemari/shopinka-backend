@@ -291,7 +291,8 @@ export class ProductService {
         user: true,
         tags: true,
         categories: true,
-        attributes: { include: { values: true } },
+        attributes: true,
+        variants: { include: { attributeValues: true } },
         seoMeta: true,
       },
     });
@@ -306,7 +307,8 @@ export class ProductService {
         user: true,
         tags: true,
         categories: true,
-        attributes: { include: { values: true } },
+        attributes: true,
+        variants: { include: { attributeValues: true } },
         seoMeta: true,
       },
     });

@@ -57,12 +57,9 @@ const VariableTabContent = () => {
     staleTime: 10 * 60 * 1000
   })
 
-  console.log(data)
-
   const ProductVariants: ProductVariant[] = useMemo(() => data?.data?.items || [], [data])
 
   const { watch, setValue } = useFormContext()
-  const attributes: Attribute[] = useMemo(() => watch('attributes') || [], [watch])
   const [variants, setVariants] = useState<ProductVariant[]>([])
   const [expanded, setExpanded] = useState<string | false>(false)
 
@@ -91,7 +88,7 @@ const VariableTabContent = () => {
       <CardHeader
         title='مدیریت متغیرهای محصول'
         action={
-          <CreateProductVariantModal productId={String(productId)} attributes={attributes} existingAttributeCombinations={existingAttributeCombinations}>
+          <CreateProductVariantModal productId={String(productId)} existingAttributeCombinations={existingAttributeCombinations}>
             <Button variant='contained' startIcon={<AddIcon />}>
               افزودن متغیر
             </Button>
