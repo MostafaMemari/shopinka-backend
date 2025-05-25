@@ -297,6 +297,21 @@ export class ProductService {
     });
   }
 
+  findOneBySlug(slug: string): Promise<Product> {
+    return this.productRepository.findOneOrThrow({
+      where: { slug, status: ProductStatus.PUBLISHED },
+      include: {
+        galleryImages: true,
+        mainImage: true,
+        user: true,
+        tags: true,
+        categories: true,
+        attributes: { include: { values: true } },
+        seoMeta: true,
+      },
+    });
+  }
+
   findOneDraft(userId: number, id: number): Promise<Product> {
     return this.productRepository.findOneOrThrow({
       where: { userId, id, status: ProductStatus.DRAFT },

@@ -48,6 +48,12 @@ export class ProductController {
     return this.productService.findOne(id);
   }
 
+  @Get('by-slug/:slug')
+  @SkipAuth()
+  findOneBySlug(@Param('slug') slug: string) {
+    return this.productService.findOneBySlug(slug);
+  }
+
   @Get('draft/:id')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   findOneDraft(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
