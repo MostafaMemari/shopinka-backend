@@ -10,6 +10,7 @@ import { Attribute } from '@/types/app/productAttributes.type'
 import { useFormContext } from 'react-hook-form'
 import { showToast } from '@/utils/showToast'
 import { useAttribute } from '@/hooks/reactQuery/useAttribute'
+import { ProductVariantForm } from '@/types/app/productVariant.type'
 
 interface CreateProductVariantModalProps {
   children?: ReactNode
@@ -34,7 +35,7 @@ const CreateProductVariantModal = ({ children, productId, existingAttributeCombi
     staleTime: 5 * 60 * 1000
   })
 
-  const attributes: Attribute[] = (attributeData?.data?.items || []).filter(attr => attributeIds.includes(attr.id))
+  const attributes: Attribute[] = (attributeData?.data?.items || []).filter((attr: Attribute) => attributeIds.includes(attr.id))
 
   const [selectedValues, setSelectedValues] = useState<SelectedValue[]>(() =>
     attributes.map(attr => ({
@@ -49,7 +50,7 @@ const CreateProductVariantModal = ({ children, productId, existingAttributeCombi
   })
 
   useEffect(() => {
-    const fields = ['quantity', 'basePrice', 'salePrice', 'width', 'height', 'length', 'weight']
+    const fields: (keyof ProductVariantForm)[] = ['quantity', 'basePrice', 'salePrice', 'width', 'height', 'length', 'weight']
     fields.forEach(field => setValue(field, watch(field) || null))
   }, [watch, setValue])
 

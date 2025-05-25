@@ -2,13 +2,13 @@
 
 import { FC } from 'react';
 import { HiOutlineShieldCheck } from 'react-icons/hi';
-
-import QuantitySelector from '../../../shared/components/ui/QuantitySelector';
+import QuantitySelector from '@/shared/components/ui/QuantitySelector';
 import { useProductSelection } from '@/Modules/product/hooks/useProductSelection';
 import AddToCartButtonDesktop from './AddToCartButton/AddToCartButtonDesktop';
 import PriceDisplay from './PriceDisplay';
-import { ProductDetails } from '../../product/types/productType';
 import ProductVariants from './VariantSelector';
+import { ProductDetails } from '@/Modules/product/types/productType';
+import { useVariant } from './VariantProvider';
 
 interface Props {
   product: ProductDetails;
@@ -16,6 +16,12 @@ interface Props {
 
 const DesktopDetails: FC<Props> = ({ product }) => {
   const { quantity, handleIncrement, handleDecrement } = useProductSelection();
+  const { selectedVariant } = useVariant();
+
+  const discount =
+    selectedVariant && selectedVariant.basePrice && selectedVariant.salePrice
+      ? Math.round(((selectedVariant.basePrice - selectedVariant.salePrice) / selectedVariant.basePrice) * 100)
+      : undefined;
 
   return (
     <div className="col-span-8 flex min-h-full flex-col">
@@ -23,13 +29,6 @@ const DesktopDetails: FC<Props> = ({ product }) => {
 
       <div className="grid grow grid-cols-2 gap-x-4">
         <div className="col-span-1">
-          {/* {product.englishTitle && (
-            <div className="mb-4 flex items-center gap-x-2">
-              <h2 className="line-clamp-1 text-sm font-light text-text/60">{product.englishTitle}</h2>
-              <span className="h-px grow bg-background dark:bg-muted/10"></span>
-            </div>
-          )} */}
-
           <div className="mb-4 flex items-center gap-x-4 text-sm font-light text-primary">
             {product.sku && (
               <div>
@@ -48,8 +47,6 @@ const DesktopDetails: FC<Props> = ({ product }) => {
             </svg>
             <p className="text-sm font-light text-text/60">{product.shortDescription}</p>
           </div>
-
-          {/* {product.properties && product.properties.length > 0 && <ProductProperties properties={product.properties} />} */}
         </div>
 
         <div className="col-span-1 flex flex-col">
@@ -63,7 +60,13 @@ const DesktopDetails: FC<Props> = ({ product }) => {
           <div className="mb-6 flex items-center justify-between">
             <QuantitySelector quantity={quantity} onIncrement={handleIncrement} onDecrement={handleDecrement} />
             <div className="flex items-center gap-x-1 text-primary">
-              <PriceDisplay newPrice={20000} />
+              {selectedVariant && (
+                <PriceDisplay
+                  newPrice={selectedVariant.salePrice ?? undefined}
+                  oldPrice={selectedVariant.basePrice ?? undefined}
+                  discount={discount}
+                />
+              )}
             </div>
           </div>
 

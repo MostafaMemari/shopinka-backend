@@ -10,6 +10,7 @@ import DesktopDetails from './DesktopDetails';
 import BreadcrumbContainer from './BreadcrumbContainer';
 import { type ProductDetails } from '../../product/types/productType';
 import ProductImageSwiper from './ProductImageSwiper';
+import { VariantProvider } from './VariantProvider';
 
 interface Props {
   product: ProductDetails;
@@ -23,39 +24,41 @@ const ProductDetails: FC<Props> = ({ product }) => {
   ];
 
   return (
-    <>
-      <div className="container">
-        <div className="hidden lg:block">
-          <BreadcrumbContainer variant="boxed" items={breadcrumbItems} />
-          <div className="mb-6 rounded-lg bg-muted p-6 shadow-base">
-            <div className="mb-10 grid grow grid-cols-12 gap-4">
-              <div className="col-span-4">
-                <ProductActions productId={product.id} />
-                <ProductGallery mainImage={product.mainImage ?? null} galleryImages={product.galleryImages} title="تصاویر محصول" />
+    <VariantProvider variants={product.variants} attributes={product.attributes}>
+      <>
+        <div className="container">
+          <div className="hidden lg:block">
+            <BreadcrumbContainer variant="boxed" items={breadcrumbItems} />
+            <div className="mb-6 rounded-lg bg-muted p-6 shadow-base">
+              <div className="mb-10 grid grow grid-cols-12 gap-4">
+                <div className="col-span-4">
+                  <ProductActions productId={product.id} />
+                  <ProductGallery mainImage={product.mainImage ?? null} galleryImages={product.galleryImages} title="تصاویر محصول" />
+                </div>
+                <div className="col-span-8 flex min-h-full flex-col">
+                  <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
+                  <DesktopDetails product={product} />
+                </div>
               </div>
-              <div className="col-span-8 flex min-h-full flex-col">
-                <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
-                <DesktopDetails product={product} />
+              <div className="flex justify-between gap-4">
+                <ProductGuarantees />
               </div>
-            </div>
-            <div className="flex justify-between gap-4">
-              <ProductGuarantees />
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="lg:hidden">
-        <div className="mb-6 relative rounded-lg bg-muted p-4 shadow-base">
-          <div className="mb-4">
-            <ProductImageSwiper images={product.mainImage ? [product.mainImage, ...product.galleryImages] : product.galleryImages} />
-            <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
+        <div className="lg:hidden">
+          <div className="mb-6 relative rounded-lg bg-muted p-4 shadow-base">
+            <div className="mb-4">
+              <ProductImageSwiper images={product.mainImage ? [product.mainImage, ...product.galleryImages] : product.galleryImages} />
+              <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
+            </div>
+            <ProductActions productId={product.id} />
+            <MobileDetails product={product} />
           </div>
-          <ProductActions productId={product.id} />
-          <MobileDetails product={product} />
         </div>
-      </div>
-    </>
+      </>
+    </VariantProvider>
   );
 };
 

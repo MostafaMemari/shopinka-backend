@@ -6,7 +6,7 @@ export default function GalleryImage({ src, alt, isBlurred = false }: IProductTh
     <div className={`cursor-pointer rounded-lg border p-1 ${isBlurred ? 'relative' : ''}`}>
       <Image
         src={src}
-        alt={alt}
+        alt={alt ?? ''}
         width={80}
         height={80}
         className={`h-16 w-16 xl:h-20 xl:w-20 ${isBlurred ? 'blur-sm' : ''}`}

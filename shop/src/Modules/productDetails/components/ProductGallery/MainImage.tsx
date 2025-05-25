@@ -18,7 +18,7 @@ export default function MainImage({ src, alt }: MainImageProps) {
     <div className="relative overflow-hidden rounded-lg" onMouseEnter={() => setIsZoomed(true)} onMouseLeave={() => setIsZoomed(false)}>
       <Image
         src={imgSrc}
-        alt={alt}
+        alt={alt ?? ''}
         width={600}
         height={600}
         className={`w-full transform transition-transform duration-300 ${isZoomed ? 'scale-110' : 'scale-100'}`}

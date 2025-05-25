@@ -1,26 +1,19 @@
-import { productVariant } from '@/Modules/product/types/productType';
-import React, { useState, useMemo } from 'react';
+'use client';
+
+import { useMemo } from 'react';
+import { IColor } from '@/lib/types/colors';
 import ColorSelector from './ColorSelector';
 import ButtonSelector from './ButtonSelector';
+import { productVariant } from '@/Modules/product/types/productType';
 import { attribute, attributeValues } from '@/shared/types/attributeType';
-
-interface IColor {
-  id: string;
-  name: string;
-  color: string;
-}
+import { useVariant } from '../VariantProvider';
 
 interface TransformedVariants {
-  colors: { id: string; name: string; color: string }[];
+  colors: IColor[];
   buttons: { slug: string; label: string }[];
 }
 
-interface Props {
-  variants: productVariant[];
-  attributes: attribute[];
-}
-
-const transformVariants = (variants: productVariant[], attributes: attribute[]): TransformedVariants => {
+export const transformVariants = (variants: productVariant[], attributes: attribute[]): TransformedVariants => {
   const colors: IColor[] = [];
   const buttons: { slug: string; label: string }[] = [];
 
@@ -54,26 +47,28 @@ const transformVariants = (variants: productVariant[], attributes: attribute[]):
   };
 };
 
-function ProductVariants({ variants, attributes }: Props) {
+interface Props {
+  variants: productVariant[];
+  attributes: attribute[];
+}
+
+export default function ProductVariants({ variants, attributes }: Props) {
+  const { selectedColor, selectedButton, setSelectedColor, setSelectedButton } = useVariant();
   const transformedVariants = useMemo(() => transformVariants(variants, attributes), [variants, attributes]);
 
-  const [selectedColor, setSelectedColor] = useState<string>(transformedVariants.colors.length > 0 ? transformedVariants.colors[0].id : '');
-  const [selectedButton, setSelectedButton] = useState<string>(
-    transformedVariants.buttons.length > 0 ? transformedVariants.buttons[0].slug : '',
-  );
+  const validButtons = useMemo(() => {
+    const validVariants = variants.filter((variant) =>
+      variant.attributeValues.some((attr) => attr.attributeId === 1 && attr.id.toString() === selectedColor),
+    );
+    const validButtonSlugs = validVariants
+      .map((variant) => variant.attributeValues.find((attr) => attr.attributeId === 6)?.slug)
+      .filter((slug): slug is string => !!slug);
+
+    return transformedVariants.buttons.filter((button) => validButtonSlugs.includes(button.slug));
+  }, [selectedColor, variants, transformedVariants.buttons]);
 
   const colorLabel = attributes.find((attr) => attr.type === 'COLOR')?.name || 'انتخاب رنگ';
   const buttonLabel = attributes.find((attr) => attr.type === 'BUTTON')?.name || 'انتخاب نوع';
-
-  const handleColorChange = (id: string) => {
-    console.log('Selected Color:', id);
-    setSelectedColor(id);
-  };
-
-  const handleButtonChange = (slug: string) => {
-    console.log('Selected Button:', slug);
-    setSelectedButton(slug);
-  };
 
   return (
     <div className="mb-4">
@@ -83,22 +78,15 @@ function ProductVariants({ variants, attributes }: Props) {
             label={colorLabel}
             colors={transformedVariants.colors}
             selectedColor={selectedColor}
-            onColorChange={handleColorChange}
+            onColorChange={setSelectedColor}
           />
         </div>
       )}
-      {transformedVariants.buttons.length > 0 && (
+      {validButtons.length > 0 && (
         <div className="mb-3 space-y-6">
-          <ButtonSelector
-            title={buttonLabel}
-            options={transformedVariants.buttons}
-            selectedOption={selectedButton}
-            onOptionChange={handleButtonChange}
-          />
+          <ButtonSelector title={buttonLabel} options={validButtons} selectedOption={selectedButton} onOptionChange={setSelectedButton} />
         </div>
       )}
     </div>
   );
 }
-
-export default ProductVariants;

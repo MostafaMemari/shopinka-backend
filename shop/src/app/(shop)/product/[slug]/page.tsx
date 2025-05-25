@@ -6,6 +6,7 @@ type Props = {
 };
 
 export default async function Page({ params }: Props) {
-  const product = await fetchProductBySlug(params.slug);
+  const { slug } = params;
+  const product = await fetchProductBySlug(slug);
   return <ProductDetails product={product} />;
 }

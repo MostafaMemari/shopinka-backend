@@ -79,7 +79,7 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Props) 
                     <div className="relative h-[300px] sm:h-[400px] md:h-[500px] w-full">
                       <Image
                         src={image.fileUrl}
-                        alt={image.title}
+                        alt={image.title ?? ''}
                         fill
                         className="object-contain transition-transform duration-300"
                         priority={index === 0}
@@ -116,7 +116,7 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Props) 
                       <div className="relative h-20 w-20 sm:h-24 sm:w-24">
                         <Image
                           src={image.fileUrl}
-                          alt={image.title}
+                          alt={image.title ?? ''}
                           fill
                           className="object-contain"
                           sizes="(max-width: 640px) 80px, 96px"
