@@ -14,9 +14,12 @@ export const useDefaultVariant = ({ productId, variantId, onSuccess, onError }: 
     mutationFn: async (setAsDefault: boolean) => {
       if (!setAsDefault) {
         const response = await defaultVariantProduct(productId, null)
+
         return response.data
       }
+
       const response = await defaultVariantProduct(productId, variantId)
+
       return response.data
     },
     onSuccess: (data, setAsDefault) => {

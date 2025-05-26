@@ -55,6 +55,7 @@ const VariantAccordion = ({ variant, expanded, onChange, onUpdate }: VariantAcco
     setValue('height', variant.height ?? null)
     setValue('length', variant.length ?? null)
     setValue('weight', variant.weight ?? null)
+
     setValue('attributeValueIds', variant.attributeValues?.map(av => av.id) ?? [])
   }, [variant, setValue])
 

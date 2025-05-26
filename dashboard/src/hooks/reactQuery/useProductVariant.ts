@@ -32,16 +32,17 @@ interface UseProductVariantFormProps {
 
 export const useProductVariantForm = ({ initialData, productId, isUpdate = false }: UseProductVariantFormProps) => {
   const defaultValues: ProductVariantForm = {
-    sku: '',
-    shortDescription: '',
-    quantity: null,
-    basePrice: null,
-    salePrice: null,
-    mainImageId: null,
-    width: null,
-    height: null,
-    length: null,
-    weight: null,
+    sku: initialData?.sku ?? '',
+    shortDescription: initialData?.shortDescription ?? '',
+    quantity: initialData?.quantity ?? null,
+    basePrice: initialData?.basePrice ?? null,
+    salePrice: initialData?.salePrice ?? null,
+    mainImageId: initialData?.mainImageId ?? null,
+    width: initialData?.width ?? null,
+    height: initialData?.height ?? null,
+    length: initialData?.length ?? null,
+    weight: initialData?.weight ?? null,
+
     attributeValueIds: []
   }
 
@@ -62,8 +63,6 @@ export const useProductVariantForm = ({ initialData, productId, isUpdate = false
 
   const { isLoading, onSubmit } = useFormSubmit<ProductVariantForm>({
     createApi: async (formData: ProductVariantForm) => {
-      console.log('Submitting:', { productId, formData })
-
       const response = await createProductVariant(productId, formData)
 
       return { status: response.status, data: { id: response.data?.product?.id } }

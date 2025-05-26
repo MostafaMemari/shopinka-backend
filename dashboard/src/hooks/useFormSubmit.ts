@@ -50,6 +50,9 @@ export const useFormSubmit = <T extends Record<string, any>>({
       setIsLoading(true)
 
       try {
+        console.log(initialData)
+        console.log(formData)
+
         const processedData = preprocessData ? preprocessData(formData) : formData
         const cleanedData = cleanObject(processedData)
 
