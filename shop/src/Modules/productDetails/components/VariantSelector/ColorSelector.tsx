@@ -1,10 +1,12 @@
+'use client';
+
 import { IColor } from '@/lib/types/colors';
 import React from 'react';
 
 interface Props {
   colors: IColor[];
-  selectedColor: string;
-  onColorChange: (id: string) => void;
+  selectedColor: string | null;
+  onColorChange: (id: string | null) => void;
   label?: string;
 }
 
@@ -25,7 +27,7 @@ export default function ColorSelector({ colors, selectedColor, onColorChange, la
               id={color.id}
               checked={selectedColor === color.id}
               onChange={() => {
-                const newValue = selectedColor === color.id ? '' : color.id;
+                const newValue = selectedColor === color.id ? null : color.id;
                 console.log('Color input changed:', newValue);
                 onColorChange(newValue);
               }}

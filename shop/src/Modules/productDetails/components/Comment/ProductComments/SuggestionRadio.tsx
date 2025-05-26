@@ -1,3 +1,5 @@
+'use client';
+
 import { AiOutlineLike, AiOutlineDislike } from 'react-icons/ai';
 
 interface Props {

@@ -2,15 +2,25 @@
 
 import { productVariant } from '@/Modules/product/types/productType';
 import { attribute } from '@/shared/types/attributeType';
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import { transformVariants } from './VariantSelector';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import {
+  setSelectedColor,
+  setSelectedButton,
+  setSelectedVariant,
+  setVariants,
+  setAttributes,
+  setSelectedImage,
+} from '@/store/slices/variantSlice';
 
 interface VariantContextType {
   selectedVariant: productVariant | undefined;
-  selectedColor: string;
-  selectedButton: string;
-  setSelectedColor: (id: string) => void;
-  setSelectedButton: (slug: string) => void;
+  selectedColor: string | null;
+  selectedButton: string | null;
+  setSelectedColor: (id: string | null) => void;
+  setSelectedButton: (slug: string | null) => void;
 }
 
 const VariantContext = createContext<VariantContextType | undefined>(undefined);
@@ -30,43 +40,90 @@ interface VariantProviderProps {
 }
 
 export function VariantProvider({ children, variants, attributes }: VariantProviderProps) {
+  const dispatch = useDispatch();
+  const { selectedColor, selectedButton, selectedVariant } = useSelector((state: RootState) => state.variant);
+
+  // Initialize variants and attributes in Redux
+  React.useEffect(() => {
+    dispatch(setVariants(variants));
+    dispatch(setAttributes(attributes));
+  }, [variants, attributes, dispatch]);
+
   const transformedVariants = useMemo(() => transformVariants(variants, attributes), [variants, attributes]);
 
-  const [selectedColor, setSelectedColor] = useState<string>(transformedVariants.colors.length > 0 ? transformedVariants.colors[0].id : '');
-  const [selectedButton, setSelectedButton] = useState<string>(
-    transformedVariants.buttons.length > 0 ? transformedVariants.buttons[0].slug : '',
-  );
+  // Set initial color
+  React.useEffect(() => {
+    if (!selectedColor && transformedVariants.colors.length > 0) {
+      dispatch(setSelectedColor(transformedVariants.colors[0].id));
+    }
+  }, [selectedColor, transformedVariants.colors, dispatch]);
 
-  const validButtons = useMemo(() => {
-    const validVariants = variants.filter((variant) =>
-      variant.attributeValues.some((attr) => attr.attributeId === 1 && attr.id.toString() === selectedColor),
-    );
-    const validButtonSlugs = validVariants
-      .map((variant) => variant.attributeValues.find((attr) => attr.attributeId === 6)?.slug)
-      .filter((slug): slug is string => !!slug);
+  // Set initial button
+  React.useEffect(() => {
+    if (!selectedButton && transformedVariants.buttons.length > 0) {
+      const validVariants = variants.filter((variant) =>
+        variant.attributeValues.some((attr) => attr.attributeId === 1 && attr.id.toString() === selectedColor),
+      );
+      const firstValidButton = validVariants[0]?.attributeValues.find((attr) => attr.attributeId === 6)?.slug || null;
+      dispatch(setSelectedButton(firstValidButton));
+    }
+  }, [selectedButton, selectedColor, variants, transformedVariants.buttons, dispatch]);
 
-    return transformedVariants.buttons.filter((button) => validButtonSlugs.includes(button.slug));
-  }, [selectedColor, variants, transformedVariants.buttons]);
+  // Update selected variant and image
+  React.useEffect(() => {
+    if (!selectedColor && !selectedButton) {
+      const firstVariant = variants[0];
+      dispatch(setSelectedVariant(firstVariant));
+      if (firstVariant?.mainImage?.fileUrl) {
+        dispatch(setSelectedImage(firstVariant.mainImage.fileUrl));
+      }
+      return;
+    }
 
-  const selectedVariant = useMemo(() => {
-    return variants.find(
-      (variant) =>
-        variant.attributeValues.some((attr) => attr.attributeId === 1 && attr.id.toString() === selectedColor) &&
-        variant.attributeValues.some((attr) => attr.attributeId === 6 && attr.slug === selectedButton),
-    );
-  }, [selectedColor, selectedButton, variants]);
+    const variant = variants.find((variant) => {
+      const hasColor = variant.attributeValues.some((attr) => attr.attributeId === 1 && attr.id.toString() === selectedColor);
+      const hasButton = selectedButton
+        ? variant.attributeValues.some((attr) => attr.attributeId === 6 && attr.slug === selectedButton)
+        : true;
+      return hasColor && hasButton;
+    });
 
-  const handleColorChange = (id: string) => {
-    setSelectedColor(id);
-    const validVariants = variants.filter((variant) => variant.attributeValues.some((attr) => attr.id.toString() === id));
-    const firstValidButton = validVariants[0]?.attributeValues.find((attr) => attr.attributeId === 6)?.slug;
-    if (firstValidButton) {
-      setSelectedButton(firstValidButton);
+    const finalVariant =
+      variant || variants.find((v) => v.attributeValues.some((attr) => attr.id.toString() === selectedColor)) || variants[0];
+
+    dispatch(setSelectedVariant(finalVariant));
+    if (finalVariant?.mainImage?.fileUrl) {
+      dispatch(setSelectedImage(finalVariant.mainImage.fileUrl));
+    }
+  }, [selectedColor, selectedButton, variants, dispatch]);
+
+  const handleColorChange = (id: string | null) => {
+    dispatch(setSelectedColor(id));
+    if (id) {
+      const validVariants = variants.filter((variant) => variant.attributeValues.some((attr) => attr.id.toString() === id));
+      const firstValidButton = validVariants[0]?.attributeValues.find((attr) => attr.attributeId === 6)?.slug || null;
+      dispatch(setSelectedButton(firstValidButton));
+    } else {
+      dispatch(setSelectedButton(null));
+      // Reset to first variant when color is deselected
+      const firstVariant = variants[0];
+      dispatch(setSelectedVariant(firstVariant));
+      if (firstVariant?.mainImage?.fileUrl) {
+        dispatch(setSelectedImage(firstVariant.mainImage.fileUrl));
+      }
     }
   };
 
-  const handleButtonChange = (slug: string) => {
-    setSelectedButton(slug);
+  const handleButtonChange = (slug: string | null) => {
+    dispatch(setSelectedButton(slug));
+    if (!slug) {
+      // Reset to first variant when button is deselected
+      const firstVariant = variants[0];
+      dispatch(setSelectedVariant(firstVariant));
+      if (firstVariant?.mainImage?.fileUrl) {
+        dispatch(setSelectedImage(firstVariant.mainImage.fileUrl));
+      }
+    }
   };
 
   return (

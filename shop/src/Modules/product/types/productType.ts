@@ -13,13 +13,13 @@ export type Product = {
   mainImage: Image | null;
 };
 
-export type productVariant = {
+export interface productVariant {
   id: number;
-  sku: null;
-  mainImageId: number;
+  sku: string | null;
+  mainImageId: number | null;
   productId: number;
-  orderId: number | null;
-  userId: 1;
+  orderId: number;
+  userId: number;
   shortDescription: string | null;
   quantity: number | null;
   basePrice: number | null;
@@ -31,7 +31,8 @@ export type productVariant = {
   createdAt: string;
   updatedAt: string;
   attributeValues: attributeValues[];
-};
+  mainImage: Image | null;
+}
 
 export type ProductDetails = {
   id: number;

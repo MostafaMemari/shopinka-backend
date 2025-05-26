@@ -54,6 +54,7 @@ interface Props {
 
 export default function ProductVariants({ variants, attributes }: Props) {
   const { selectedColor, selectedButton, setSelectedColor, setSelectedButton } = useVariant();
+
   const transformedVariants = useMemo(() => transformVariants(variants, attributes), [variants, attributes]);
 
   const validButtons = useMemo(() => {

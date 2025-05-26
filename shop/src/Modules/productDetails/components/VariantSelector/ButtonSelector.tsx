@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 interface ButtonOption {
@@ -7,8 +9,8 @@ interface ButtonOption {
 
 interface Props {
   options: ButtonOption[];
-  selectedOption: string;
-  onOptionChange: (value: string) => void;
+  selectedOption: string | null;
+  onOptionChange: (value: string | null) => void;
   title?: string;
 }
 
@@ -29,7 +31,7 @@ export default function ButtonSelector({ options, selectedOption, onOptionChange
               id={option.slug}
               checked={selectedOption === option.slug}
               onChange={() => {
-                const newValue = selectedOption === option.slug ? '' : option.slug;
+                const newValue = selectedOption === option.slug ? null : option.slug;
                 console.log('Button input changed:', newValue);
                 onOptionChange(newValue);
               }}

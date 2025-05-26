@@ -1,3 +1,5 @@
+'use client';
+
 import { IProductThumbnail } from '@/lib/types/products';
 import Image from 'next/image';
 

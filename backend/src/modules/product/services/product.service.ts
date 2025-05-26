@@ -308,7 +308,7 @@ export class ProductService {
         tags: true,
         categories: true,
         attributes: true,
-        variants: { include: { attributeValues: true } },
+        variants: { include: { attributeValues: true, mainImage: true } },
         seoMeta: true,
       },
     });

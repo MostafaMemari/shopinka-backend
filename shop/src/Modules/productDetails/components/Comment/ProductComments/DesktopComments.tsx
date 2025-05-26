@@ -1,3 +1,5 @@
+'use client';
+
 import { IComment } from '@/lib/types/comments';
 import { AiOutlineLike, AiOutlineDislike, AiOutlineLeft } from 'react-icons/ai';
 

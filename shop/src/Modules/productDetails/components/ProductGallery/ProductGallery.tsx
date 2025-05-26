@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 import MainImage from './MainImage';
 import GalleryImage from './GalleryImage';
 import GalleryModal from './GalleryModal';
@@ -14,6 +16,7 @@ type ProductGalleryProps = {
 
 export default function ProductGallery({ mainImage, galleryImages, title = 'تصاویر محصول' }: ProductGalleryProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const selectedImage = useSelector((state: RootState) => state.variant.selectedImage);
 
   const displayedImages = galleryImages.slice(0, 3);
   const hasMoreImages = galleryImages.length > 3;
@@ -25,7 +28,7 @@ export default function ProductGallery({ mainImage, galleryImages, title = 'تص
         <div onClick={() => setIsModalOpen(true)} className="cursor-pointer">
           {mainImage && (
             <div onClick={() => setIsModalOpen(true)} className="cursor-pointer">
-              <MainImage src={mainImage.fileUrl} alt={mainImage.title} />
+              <MainImage src={selectedImage || mainImage.fileUrl} alt={mainImage.title} />
             </div>
           )}{' '}
         </div>
