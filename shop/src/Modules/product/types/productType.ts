@@ -52,6 +52,7 @@ export type ProductDetails = {
   height: number | null;
   length: number | null;
   weight: number | null;
+  defaultVariantId: number | null;
   createdAt: string;
   updatedAt: string;
   galleryImages: Image[] | [];

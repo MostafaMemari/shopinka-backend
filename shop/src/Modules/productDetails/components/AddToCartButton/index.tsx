@@ -1,7 +1,7 @@
 'use client';
 
 import { useVariant } from '../VariantProvider';
-import { ProductDetails } from '@/Modules/product/types/productType';
+import { ProductDetails, productVariant } from '@/Modules/product/types/productType';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { addToCart } from '@/store/slices/cartSlice';
@@ -13,7 +13,7 @@ interface Props {
 
 export default function AddToCartButton({ product }: Props) {
   const dispatch = useDispatch();
-  const { selectedVariant } = useVariant();
+  const { selectedVariant, selectedColor, selectedButton } = useVariant();
   const [quantity, setQuantity] = useState(1);
   const isVariableProduct = product.variants.length > 0;
 
@@ -24,21 +24,53 @@ export default function AddToCartButton({ product }: Props) {
     }
 
     const item = {
-      variant: selectedVariant || {
-        id: product.id,
-        name: product.name,
-        price: product.salePrice || product.basePrice,
-        stock: product.quantity,
-        attributeValues: [],
-        mainImage: product.mainImage,
-      },
+      variant:
+        selectedVariant ||
+        ({
+          id: product.id,
+          sku: product.sku,
+          mainImageId: product.mainImageId,
+          productId: product.id,
+          orderId: 0,
+          userId: product.userId,
+          shortDescription: product.shortDescription,
+          quantity: product.quantity,
+          basePrice: product.basePrice,
+          salePrice: product.salePrice,
+          width: product.width,
+          height: product.height,
+          length: product.length,
+          weight: product.weight,
+          createdAt: product.createdAt,
+          updatedAt: product.updatedAt,
+          attributeValues: [],
+          mainImage: product.mainImage,
+        } as productVariant),
       quantity,
     };
 
     dispatch(addToCart(item));
   };
 
-  const isDisabled = isVariableProduct && !selectedVariant;
+  // Check if we have a valid variant selection
+  const hasValidSelection = () => {
+    if (!isVariableProduct) return true;
+
+    // If product has only color attribute
+    if (product.attributes.some((attr) => attr.type === 'COLOR') && !product.attributes.some((attr) => attr.type === 'BUTTON')) {
+      return !!selectedColor;
+    }
+
+    // If product has only button attribute
+    if (!product.attributes.some((attr) => attr.type === 'COLOR') && product.attributes.some((attr) => attr.type === 'BUTTON')) {
+      return !!selectedButton;
+    }
+
+    // If product has both attributes
+    return !!selectedColor && !!selectedButton;
+  };
+
+  const isDisabled = isVariableProduct && !hasValidSelection();
 
   return (
     <div className="flex items-center gap-4">

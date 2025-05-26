@@ -27,7 +27,12 @@ const ProductDetails: FC<Props> = ({ product }) => {
   ];
 
   return (
-    <VariantProvider variants={product.variants} attributes={product.attributes} defaultImage={product.mainImage?.fileUrl ?? null}>
+    <VariantProvider
+      variants={product.variants}
+      attributes={product.attributes}
+      defaultImage={product.mainImage?.fileUrl ?? null}
+      defaultVariantId={product.defaultVariantId}
+    >
       <>
         <div className="container">
           <div className="hidden lg:block">

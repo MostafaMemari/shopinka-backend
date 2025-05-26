@@ -38,9 +38,10 @@ interface VariantProviderProps {
   variants: productVariant[];
   attributes: attribute[];
   defaultImage?: string | null;
+  defaultVariantId?: number | null;
 }
 
-export function VariantProvider({ children, variants, attributes, defaultImage }: VariantProviderProps) {
+export function VariantProvider({ children, variants, attributes, defaultImage, defaultVariantId }: VariantProviderProps) {
   const dispatch = useDispatch();
   const { selectedColor, selectedButton, selectedVariant } = useSelector((state: RootState) => state.variant);
   const isVariableProduct = variants.length > 0;
@@ -50,11 +51,32 @@ export function VariantProvider({ children, variants, attributes, defaultImage }
     dispatch(setVariants(variants));
     dispatch(setAttributes(attributes));
 
-    // Set default image for simple products
-    if (!isVariableProduct && defaultImage) {
+    // Set default variant if exists
+    if (defaultVariantId && isVariableProduct) {
+      const defaultVariant = variants.find((v) => v.id === defaultVariantId);
+      if (defaultVariant) {
+        // Find color and button attributes for the default variant
+        const colorAttr = defaultVariant.attributeValues.find((attr) => attr.attributeId === 1);
+        const buttonAttr = defaultVariant.attributeValues.find((attr) => attr.attributeId === 6);
+
+        if (colorAttr) {
+          dispatch(setSelectedColor(colorAttr.id.toString()));
+        }
+        if (buttonAttr) {
+          dispatch(setSelectedButton(buttonAttr.slug));
+        }
+
+        // Set the variant and its image
+        dispatch(setSelectedVariant(defaultVariant));
+        if (defaultVariant.mainImage?.fileUrl) {
+          dispatch(setSelectedImage(defaultVariant.mainImage.fileUrl));
+        }
+      }
+    } else if (!isVariableProduct && defaultImage) {
+      // Set default image for simple products
       dispatch(setSelectedImage(defaultImage));
     }
-  }, [variants, attributes, dispatch, isVariableProduct, defaultImage]);
+  }, [variants, attributes, dispatch, isVariableProduct, defaultImage, defaultVariantId]);
 
   const transformedVariants = useMemo(() => transformVariants(variants, attributes), [variants, attributes]);
 

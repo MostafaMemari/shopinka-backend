@@ -20,7 +20,7 @@ export default function ButtonSelector({ options, selectedOption, onOptionChange
   return (
     <div>
       {title && <div className="mb-4 text-text">{title}</div>}
-      <fieldset className="flex flex-wrap items-center gap-2">
+      <fieldset className="flex flex-wrap items-center gap-1">
         <legend className="sr-only">Options</legend>
         {options.map((option) => (
           <div key={option.slug}>
@@ -32,16 +32,18 @@ export default function ButtonSelector({ options, selectedOption, onOptionChange
               checked={selectedOption === option.slug}
               onChange={() => {
                 const newValue = selectedOption === option.slug ? null : option.slug;
-                console.log('Button input changed:', newValue);
                 onOptionChange(newValue);
               }}
               className="peer hidden"
             />
             <label
               htmlFor={option.slug}
-              className="relative flex h-12 w-auto min-w-[48px] cursor-pointer items-center justify-center rounded-full border-2 px-3 py-1 shadow-base transition-border duration-150 ease-in-out peer-checked:border-3 peer-checked:border-[hsl(var(--primary))] hover:border-[hsl(var(--primary))]"
+              className="relative block cursor-pointer rounded-full border-2 p-2 shadow-base transition-border duration-150 ease-in-out peer-checked:border-3 peer-checked:border-[hsl(var(--primary))] hover:border-[hsl(var(--primary))]"
+              style={{
+                borderColor: selectedOption === option.slug ? 'hsl(var(--primary))' : 'hsl(var(--border) / 0.3)',
+              }}
             >
-              <p className="text-sm font-bold text-text/90 md:text-base">{option.label}</p>
+              <p className="text-text/90">{option.label}</p>
             </label>
           </div>
         ))}
