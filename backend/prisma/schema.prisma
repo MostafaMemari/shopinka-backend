@@ -205,7 +205,9 @@ model Product {
   galleryImages    GalleryItem[]    @relation("ProductToGalleryItem")
   user             User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
   attributes       Attribute[]
-  variants         ProductVariant[]
+  variants         ProductVariant[] @relation("ProductVariants")
+  defaultVariantId Int?
+  defaultVariant   ProductVariant?  @relation("DefaultVariant", fields: [defaultVariantId], references: [id], onDelete: SetNull)
   favorites        Favorite[]
   categories       Category[]
   comments         Comment[]
@@ -233,7 +235,7 @@ model ProductVariant {
   basePrice        Int?             @map("base_price")
   salePrice        Int?             @map("sale_price")
   mainImage        GalleryItem?     @relation("VariantMainImage", fields: [mainImageId], references: [id], onDelete: SetNull)
-  product          Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product          Product          @relation("ProductVariants", fields: [productId], references: [id], onDelete: Cascade)
   user             User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
   attributeValues  AttributeValue[]
   cartItems        CartItem[]
@@ -244,6 +246,7 @@ model ProductVariant {
   weight           Int?
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt()
+  defaultFor       Product[]        @relation("DefaultVariant")
 }
 
 model Favorite {

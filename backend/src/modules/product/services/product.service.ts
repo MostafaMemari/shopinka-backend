@@ -1,8 +1,8 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductRepository } from '../repositories/product.repository';
-import { OrderStatus, Prisma, Product, ProductStatus, ProductType } from '@prisma/client';
+import { OrderStatus, Prisma, Product, ProductStatus, ProductType, ProductVariant } from '@prisma/client';
 import { CacheService } from '../../cache/cache.service';
 import { GalleryItemRepository } from '../../gallery/repositories/gallery-item.repository';
 import slugify from 'slugify';
@@ -19,6 +19,7 @@ import { CategoryRepository } from '../../category/category.repository';
 import { OrderItemRepository } from '../../order/repositories/order-item.repository';
 import { TagRepository } from 'src/modules/tag/tag.repository';
 import { QueryPublicProductDto } from '../dto/query-public-product.dto';
+import { SetDefaultVariantDto } from '../dto/update-product-variant.dto';
 
 @Injectable()
 export class ProductService {
@@ -197,6 +198,49 @@ export class ProductService {
     await this.cacheService.set(cacheKey, products, this.CACHE_EXPIRE_TIME);
 
     return pagination(paginationDto, products);
+  }
+
+  async setDefaultVariant(userId: number, productId: number, dto: SetDefaultVariantDto): Promise<{ message: string; product: Product }> {
+    const product = (await this.productRepository.findOneOrThrow({
+      where: { id: productId, userId },
+      include: {
+        variants: true,
+        defaultVariant: true,
+      },
+    })) as Product & { variants: ProductVariant[]; defaultVariant: ProductVariant | null };
+
+    if (product.type !== ProductType.VARIABLE) {
+      throw new BadRequestException(ProductMessages.InvalidProductType);
+    }
+
+    if (dto.variantId === null) {
+      const updatedProduct = await this.productRepository.update({
+        where: { id: productId },
+        data: { defaultVariantId: null },
+        include: { defaultVariant: true },
+      });
+
+      return {
+        message: ProductMessages.DefaultVariantRemovedSuccess,
+        product: updatedProduct,
+      };
+    }
+
+    const variant = product.variants.find((v) => v.id === dto.variantId);
+    if (!variant) {
+      throw new BadRequestException(ProductMessages.InvalidVariant);
+    }
+
+    const updatedProduct = await this.productRepository.update({
+      where: { id: productId },
+      data: { defaultVariantId: dto.variantId },
+      include: { defaultVariant: true },
+    });
+
+    return {
+      message: ProductMessages.SetProductVariantSuccess,
+      product: updatedProduct,
+    };
   }
 
   async findAllAdmin({ page, take, ...queryProductDto }: QueryProductDto): Promise<unknown> {
@@ -379,6 +423,7 @@ export class ProductService {
         orderItems: status && status == ProductStatus.DRAFT ? { deleteMany: { productId } } : undefined,
         cartItems: status && status == ProductStatus.DRAFT ? { deleteMany: { productId } } : undefined,
         favorites: status && status == ProductStatus.DRAFT ? { deleteMany: { productId } } : undefined,
+        defaultVariantId: type && type === ProductType.SIMPLE ? null : undefined,
       },
     });
 

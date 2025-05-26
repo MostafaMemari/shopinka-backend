@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query 
 import { ProductService } from '../services/product.service';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { SwaggerConsumes } from '../../../common/enums/swagger-consumes.enum';
 import { GetUser } from '../../../common/decorators/get-user.decorator';
 import { Role, User } from '@prisma/client';
@@ -12,6 +12,7 @@ import { SkipAuth } from '../../../common/decorators/skip-auth.decorator';
 import { QueryProductDto } from '../dto/query-product.dto';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
 import { QueryPublicProductDto } from '../dto/query-public-product.dto';
+import { SetDefaultVariantDto } from '../dto/update-product-variant.dto';
 
 @Controller('product')
 @ApiTags('product')
@@ -30,6 +31,12 @@ export class ProductController {
   @SkipAuth()
   findAllPublic(@Query() queryPublicProductDto: QueryPublicProductDto) {
     return this.productService.findAllPublic(queryPublicProductDto);
+  }
+
+  @Patch(':id/default-variant')
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  async setDefaultVariant(@Param('id', ParseIntPipe) id: number, @Body() defaultVariantDto: SetDefaultVariantDto, @GetUser() user: User) {
+    return this.productService.setDefaultVariant(user.id, id, defaultVariantDto);
   }
 
   @Get('admin')
