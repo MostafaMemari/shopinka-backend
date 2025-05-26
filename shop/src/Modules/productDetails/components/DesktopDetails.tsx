@@ -69,7 +69,7 @@ export default function DesktopDetails({ product }: Props) {
         </div>
       )}
 
-      <ProductProperties product={product} />
+      <ProductProperties />
     </div>
   );
 }

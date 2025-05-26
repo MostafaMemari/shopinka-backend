@@ -185,7 +185,7 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
     },
 
     errorMessages: errorProductMessage,
-    queryKey: QueryKeys.Products,
+    queryKey: [QueryKeys.Products, QueryKeys.Product],
     successMessage: isUpdate ? 'محصول با موفقیت به‌روزرسانی شد' : 'محصول با موفقیت ایجاد شد',
     initialData: initialProduct
       ? ({
