@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface MainImageProps {
   src: string;
@@ -12,16 +12,19 @@ const fallbackSrc = '/images/no-image.webp';
 
 export default function MainImage({ src, alt }: MainImageProps) {
   const [imgSrc, setImgSrc] = useState(src);
-  const [isZoomed, setIsZoomed] = useState(false);
+
+  useEffect(() => {
+    setImgSrc(src);
+  }, [src]);
 
   return (
-    <div className="relative overflow-hidden rounded-lg" onMouseEnter={() => setIsZoomed(true)} onMouseLeave={() => setIsZoomed(false)}>
+    <div className="relative overflow-hidden rounded-lg">
       <Image
         src={imgSrc}
         alt={alt ?? ''}
         width={600}
         height={600}
-        className={`w-full transform transition-transform duration-300 ${isZoomed ? 'scale-110' : 'scale-100'}`}
+        className="w-full transform transition-transform duration-300 hover:scale-110"
         onError={() => setImgSrc(fallbackSrc)}
         priority
       />

@@ -1,47 +1,43 @@
 'use client';
 
+import { useVariant } from './VariantProvider';
+import { ProductDetails } from '@/Modules/product/types/productType';
 import { formatPrice } from '@/shared/utils/formatter';
-import { FC } from 'react';
 
 interface Props {
-  newPrice?: number;
-  oldPrice?: number;
-  discount?: number;
-  className?: string;
+  product: ProductDetails;
 }
 
-const PriceDisplay: FC<Props> = ({ newPrice, oldPrice, discount, className = '' }) => {
-  const isFree = !newPrice && !oldPrice;
-  const hasDiscount = !!newPrice && !!discount;
+export default function PriceDisplay({ product }: Props) {
+  const { selectedVariant } = useVariant();
+  const isVariableProduct = product.variants.length > 0;
+
+  const price = selectedVariant ? selectedVariant.salePrice || selectedVariant.basePrice : product.salePrice || product.basePrice;
+  const basePrice = selectedVariant ? selectedVariant.basePrice : product.basePrice;
+  const hasDiscount = selectedVariant
+    ? selectedVariant.salePrice !== null && selectedVariant.salePrice < selectedVariant.basePrice!
+    : product.salePrice !== null && product.salePrice < product.basePrice!;
+
+  if (!price) return null;
 
   return (
-    <div className={`space-y-1 ${className}`} aria-live="polite">
+    <div className="space-y-1" aria-live="polite">
       {hasDiscount && (
         <div className="flex items-center gap-x-2">
-          {oldPrice && (
+          {basePrice && (
             <div>
-              <del className="text-sm text-text/60 decoration-warning md:text-base">{formatPrice(oldPrice)}</del>
+              <del className="text-sm text-text/60 decoration-warning md:text-base">{formatPrice(basePrice)}</del>
             </div>
           )}
-          {discount && (
-            <div className="flex w-10 items-center justify-center rounded-full bg-warning py-0.5 text-sm font-bold text-white dark:bg-red-600">
-              {discount}%
-            </div>
-          )}
+          <div className="flex w-10 items-center justify-center rounded-full bg-warning py-0.5 text-sm font-bold text-white dark:bg-red-600">
+            {Math.round(((basePrice! - price) / basePrice!) * 100)}%
+          </div>
         </div>
       )}
       <div className="text-primary">
-        {isFree ? (
-          <span className="text-base font-semibold lg:text-xl lg:font-bold">رایگان</span>
-        ) : newPrice ? (
-          <>
-            <span className={`font-semibold lg:text-xl lg:font-bold"}`}>{formatPrice(newPrice)}</span>
-            <span className="text-sm font-light lg:text-base lg:font-medium"> تومان</span>
-          </>
-        ) : null}
+        <span className="font-semibold lg:text-xl lg:font-bold">{formatPrice(price)}</span>
+        <span className="text-sm font-light lg:text-base lg:font-medium"> تومان</span>
       </div>
     </div>
   );
-};
-
-export default PriceDisplay;
+}

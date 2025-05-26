@@ -83,6 +83,7 @@ export default function ProductVariants({ variants, attributes }: Props) {
           />
         </div>
       )}
+
       {validButtons.length > 0 && (
         <div className="mb-3 space-y-6">
           <ButtonSelector title={buttonLabel} options={validButtons} selectedOption={selectedButton} onOptionChange={setSelectedButton} />

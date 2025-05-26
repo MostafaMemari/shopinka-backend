@@ -1,27 +1,18 @@
 'use client';
 
-import { FC } from 'react';
-import { HiOutlineShieldCheck } from 'react-icons/hi';
-import QuantitySelector from '@/shared/components/ui/QuantitySelector';
-import { useProductSelection } from '@/Modules/product/hooks/useProductSelection';
-import AddToCartButtonDesktop from './AddToCartButton/AddToCartButtonDesktop';
+import { ProductDetails } from '@/Modules/product/types/productType';
 import PriceDisplay from './PriceDisplay';
 import ProductVariants from './VariantSelector';
-import { ProductDetails } from '@/Modules/product/types/productType';
-import { useVariant } from './VariantProvider';
+import AddToCartButton from './AddToCartButton';
+import ProductProperties from './ProductProperties';
+import { HiOutlineShieldCheck } from 'react-icons/hi';
 
 interface Props {
   product: ProductDetails;
 }
 
-const DesktopDetails: FC<Props> = ({ product }) => {
-  const { quantity, handleIncrement, handleDecrement } = useProductSelection();
-  const { selectedVariant } = useVariant();
-
-  const discount =
-    selectedVariant && selectedVariant.basePrice && selectedVariant.salePrice
-      ? Math.round(((selectedVariant.basePrice - selectedVariant.salePrice) / selectedVariant.basePrice) * 100)
-      : undefined;
+export default function DesktopDetails({ product }: Props) {
+  const isVariableProduct = product.variants.length > 0;
 
   return (
     <div className="col-span-8 flex min-h-full flex-col">
@@ -50,31 +41,35 @@ const DesktopDetails: FC<Props> = ({ product }) => {
         </div>
 
         <div className="col-span-1 flex flex-col">
-          {product.type === 'VARIABLE' && <ProductVariants attributes={product.attributes} variants={product.variants} />}
+          {isVariableProduct && (
+            <div className="mb-6">
+              <ProductVariants variants={product.variants} attributes={product.attributes} />
+            </div>
+          )}
 
           <div className="mb-6 flex items-center gap-x-2 rounded-lg bg-primary/10 p-4 text-sm text-primary">
             <HiOutlineShieldCheck className="h-6 w-6" />
             تضمین سلامت فیزیکی و اصالت کالا
           </div>
 
-          <div className="mb-6 flex items-center justify-between">
-            <QuantitySelector quantity={quantity} onIncrement={handleIncrement} onDecrement={handleDecrement} />
-            <div className="flex items-center gap-x-1 text-primary">
-              {selectedVariant && (
-                <PriceDisplay
-                  newPrice={selectedVariant.salePrice ?? undefined}
-                  oldPrice={selectedVariant.basePrice ?? undefined}
-                  discount={discount}
-                />
-              )}
-            </div>
+          <div className="mb-6">
+            <PriceDisplay product={product} />
           </div>
 
-          <AddToCartButtonDesktop />
+          <div className="mb-6">
+            <AddToCartButton product={product} />
+          </div>
         </div>
       </div>
+
+      {product.description && (
+        <div className="mb-6">
+          <h2 className="mb-4 text-lg font-semibold text-text">توضیحات محصول</h2>
+          <div className="prose prose-sm max-w-none text-text/80" dangerouslySetInnerHTML={{ __html: product.description }} />
+        </div>
+      )}
+
+      <ProductProperties product={product} />
     </div>
   );
-};
-
-export default DesktopDetails;
+}

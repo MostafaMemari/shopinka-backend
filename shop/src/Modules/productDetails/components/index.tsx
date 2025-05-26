@@ -20,34 +20,14 @@ interface Props {
 }
 
 const ProductDetails: FC<Props> = ({ product }) => {
-  const { selectedImage } = useSelector((state: RootState) => state.variant);
   const breadcrumbItems = [
     { label: 'روتی کالا', href: '/' },
     { label: 'مردانه', href: '/men' },
     { label: 'کتونی مردانه', href: '/' },
   ];
 
-  const selectedImageObject: ImageType | null = selectedImage
-    ? {
-        id: 0,
-        galleryId: 0,
-        title: '',
-        description: null,
-        fileUrl: selectedImage,
-        fileKey: '',
-        thumbnailUrl: selectedImage,
-        thumbnailKey: '',
-        mimetype: '',
-        size: 0,
-        isDeleted: false,
-        deletedAt: null,
-        createdAt: '',
-        updatedAt: '',
-      }
-    : null;
-
   return (
-    <VariantProvider variants={product.variants} attributes={product.attributes}>
+    <VariantProvider variants={product.variants} attributes={product.attributes} defaultImage={product.mainImage?.fileUrl ?? null}>
       <>
         <div className="container">
           <div className="hidden lg:block">
@@ -56,11 +36,7 @@ const ProductDetails: FC<Props> = ({ product }) => {
               <div className="mb-10 grid grow grid-cols-12 gap-4">
                 <div className="col-span-4">
                   <ProductActions productId={product.id} />
-                  <ProductGallery
-                    mainImage={selectedImageObject ?? product.mainImage}
-                    galleryImages={product.galleryImages}
-                    title="تصاویر محصول"
-                  />
+                  <ProductGallery mainImage={product.mainImage} galleryImages={product.galleryImages} title="تصاویر محصول" />
                 </div>
                 <div className="col-span-8 flex min-h-full flex-col">
                   <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
@@ -78,13 +54,7 @@ const ProductDetails: FC<Props> = ({ product }) => {
           <div className="mb-6 relative rounded-lg bg-muted p-4 shadow-base">
             <div className="mb-4">
               <ProductImageSwiper
-                images={
-                  selectedImageObject
-                    ? [selectedImageObject, ...product.galleryImages]
-                    : product.mainImage
-                      ? [product.mainImage, ...product.galleryImages]
-                      : product.galleryImages
-                }
+                images={[product.mainImage, ...product.galleryImages].filter((img): img is ImageType => img !== null && img !== undefined)}
               />
               <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
             </div>
