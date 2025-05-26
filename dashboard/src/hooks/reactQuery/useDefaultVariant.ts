@@ -1,6 +1,8 @@
 import { defaultVariantProduct } from '@/libs/api/product.api'
 import { showToast } from '@/utils/showToast'
 import { useMutation } from '@tanstack/react-query'
+import { useInvalidateQuery } from '../useInvalidateQuery'
+import { QueryKeys } from '@/types/enums/query-keys'
 
 interface UseDefaultVariantProps {
   productId: number
@@ -10,6 +12,8 @@ interface UseDefaultVariantProps {
 }
 
 export const useDefaultVariant = ({ productId, variantId, onSuccess, onError }: UseDefaultVariantProps) => {
+  const { invalidate } = useInvalidateQuery()
+
   const { mutate, isPending } = useMutation({
     mutationFn: async (setAsDefault: boolean) => {
       if (!setAsDefault) {
@@ -27,6 +31,9 @@ export const useDefaultVariant = ({ productId, variantId, onSuccess, onError }: 
         type: 'success',
         message: setAsDefault ? 'پیش‌فرض تنظیم شد!' : 'پیش‌فرض حذف شد!'
       })
+
+      invalidate(QueryKeys.Product)
+
       onSuccess?.(data, setAsDefault)
     },
     onError: (error: any) => {

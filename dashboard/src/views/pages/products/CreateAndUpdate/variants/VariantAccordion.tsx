@@ -10,8 +10,6 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid2'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import SaveIcon from '@mui/icons-material/Save'
-import StarIcon from '@mui/icons-material/Star'
-import StarBorderIcon from '@mui/icons-material/StarBorder'
 import VariantInformation from './sections/VariantInformation'
 import VariantRestock from './sections/VariantRestock'
 import VariantPricing from './sections/VariantPricing'
@@ -19,17 +17,20 @@ import VariantImage from './sections/VariantImage'
 import RemoveProductVariantModal from './RemoveProductVariantModal'
 import { ProductVariant } from '@/types/app/productVariant.type'
 import { useProductVariantForm } from '@/hooks/reactQuery/useProductVariant'
-import { useDefaultVariant } from '@/hooks/reactQuery/useDefaultVariant'
 import { useEffect } from 'react'
+import { useDefaultVariant } from '@/hooks/reactQuery/useDefaultVariant'
+import StarBorderIcon from '@mui/icons-material/StarBorder'
+import StarIcon from '@mui/icons-material/Star'
 
 type VariantAccordionProps = {
   variant: ProductVariant & { isDefault?: boolean }
+  isDefault: boolean
   expanded: boolean
   onChange: (id: string) => void
-  onUpdate: (id: string, updatedFields: Partial<ProductVariant & { isDefault?: boolean }>) => void
+  onUpdate: (id: string, updatedFields: Partial<ProductVariant> & { isDefault?: boolean }) => void
 }
 
-const VariantAccordion = ({ variant, expanded, onChange, onUpdate }: VariantAccordionProps) => {
+const VariantAccordion = ({ variant, expanded, isDefault, onChange, onUpdate }: VariantAccordionProps) => {
   const { control, errors, setValue, isLoading, onSubmit } = useProductVariantForm({
     productId: Number(variant.productId),
     initialData: variant,
@@ -38,10 +39,7 @@ const VariantAccordion = ({ variant, expanded, onChange, onUpdate }: VariantAcco
 
   const { toggleDefaultVariant, isLoading: isSettingDefault } = useDefaultVariant({
     productId: Number(variant.productId),
-    variantId: Number(variant.id),
-    onSuccess: (data, isDefault) => {
-      onUpdate(String(variant.id), { ...variant, isDefault })
-    }
+    variantId: Number(variant.id)
   })
 
   useEffect(() => {
@@ -55,7 +53,6 @@ const VariantAccordion = ({ variant, expanded, onChange, onUpdate }: VariantAcco
     setValue('height', variant.height ?? null)
     setValue('length', variant.length ?? null)
     setValue('weight', variant.weight ?? null)
-
     setValue('attributeValueIds', variant.attributeValues?.map(av => av.id) ?? [])
   }, [variant, setValue])
 
@@ -70,25 +67,23 @@ const VariantAccordion = ({ variant, expanded, onChange, onUpdate }: VariantAcco
               </IconButton>
             </Tooltip>
           </RemoveProductVariantModal>
-          <Tooltip title={variant.isDefault ? 'حذف از پیش‌فرض' : 'تنظیم به‌عنوان پیش‌فرض'}>
+          <Tooltip title={isDefault ? 'حذف از پیش‌فرض' : 'تنظیم به‌عنوان پیش‌فرض'}>
             <span>
               <IconButton
                 size='small'
-                color={variant.isDefault ? 'warning' : 'default'}
-                onClick={() => toggleDefaultVariant(variant.isDefault ?? false)}
+                color={isDefault ? 'warning' : 'default'}
+                onClick={() => toggleDefaultVariant(isDefault ?? false)}
                 disabled={isSettingDefault}
                 sx={{ mr: 2 }}
               >
-                {variant.isDefault ? <StarIcon fontSize='small' /> : <StarBorderIcon fontSize='small' />}
+                {isDefault ? <StarIcon fontSize='small' /> : <StarBorderIcon fontSize='small' />}
               </IconButton>
             </span>
           </Tooltip>
           <Tooltip title='بروزرسانی متغیر'>
-            <span>
-              <IconButton size='small' color='primary' onClick={onSubmit} sx={{ mr: 2 }} disabled={isLoading}>
-                <SaveIcon fontSize='small' />
-              </IconButton>
-            </span>
+            <IconButton size='small' color='primary' onClick={onSubmit} sx={{ mr: 2 }} disabled={isLoading}>
+              <SaveIcon fontSize='small' />
+            </IconButton>
           </Tooltip>
           <Typography>{(variant.attributeValues ?? []).map(av => av.name).join(', ') || 'متغیر جدید'}</Typography>
         </Box>

@@ -29,6 +29,18 @@ export function useProducts({ enabled = true, params = {}, staleTime = 1 * 60 * 
   })
 }
 
+export function useProductById({ enabled = true, productId, staleTime = 1 * 60 * 1000 }: QueryOptions & { productId: number }) {
+  const fetchProduct = () => getProductById(Number(productId)).then(res => res)
+
+  return useQuery<any, Error>({
+    queryKey: [QueryKeys.Product, productId],
+    queryFn: fetchProduct,
+    enabled,
+    staleTime,
+    refetchOnWindowFocus: false
+  })
+}
+
 interface UseProductFormProps {
   id?: number | null
   initialData?: Product
@@ -39,6 +51,15 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
   const [isLoading, setIsLoading] = useState(!!id)
   const [initialProduct, setInitialProduct] = useState<Product | null>(null)
   const isUpdate = !!id || !!initialData
+
+  const {
+    data: response,
+    isLoading: productLoading,
+    isError
+  } = useProductById({
+    productId: id ?? 0,
+    enabled: !!id && !initialData
+  })
 
   const methods = useForm<ProductForm & { defaultVariantId: number | null }>({
     resolver: yupResolver(productFormSchema),
@@ -78,55 +99,57 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
 
   useEffect(() => {
     if (id && !initialData) {
-      setIsLoading(true)
-      getProductById(id)
-        .then(response => {
-          const product = response.data
+      setIsLoading(productLoading)
 
-          setInitialProduct(product)
+      if (isError) {
+        showToast({ type: 'error', message: 'خطا در بارگذاری محصول' })
 
-          if (product) {
-            Object.entries(product).forEach(([key, value]) => {
-              if (key in methods.getValues() && typeof value !== 'object') {
-                methods.setValue(key as keyof ProductForm, value ?? null)
-              }
-            })
+        return
+      }
 
-            if (product.seoMeta) {
-              methods.setValue('seo_title', product?.seoMeta.title || '')
-              methods.setValue('seo_description', product?.seoMeta.description || '')
-              methods.setValue('seo_keywords', product?.seoMeta.keywords || [])
-              methods.setValue('seo_canonicalUrl', product?.seoMeta.canonicalUrl || '')
-              methods.setValue('seo_ogTitle', product?.seoMeta.ogTitle || '')
-              methods.setValue('seo_ogDescription', product?.seoMeta.ogDescription || '')
-              methods.setValue('seo_ogImage', product?.seoMeta.ogImage || null)
-              methods.setValue('seo_robotsTag', product?.seoMeta.robotsTag || '')
+      if (response) {
+        const product = response.data
+
+        setInitialProduct(product)
+
+        if (product) {
+          Object.entries(product).forEach(([key, value]) => {
+            if (key in methods.getValues() && typeof value !== 'object') {
+              methods.setValue(key as keyof ProductForm, value as string | number | string[] | number[] | null)
             }
+          })
 
-            if (product.mainImage) {
-              methods.setValue('mainImage' as any, product.mainImage)
-            }
-
-            if (product.galleryImages && Array.isArray(product.galleryImages)) {
-              methods.setValue('galleryImages' as any, product.galleryImages as GalleryItem[])
-            }
-
-            methods.setValue('defaultVariantId', product.defaultVariantId || null)
-            methods.setValue('galleryImageIds', product.galleryImages?.map(img => img.id) || [])
-            methods.setValue('categoryIds', product.categories?.map(category => category.id) || [])
-            methods.setValue('attributeIds', product.attributes?.map(attribute => attribute.id) || [])
-            methods.setValue('tagIds', product.tags?.map(tag => tag.id) || [])
+          if (product.seoMeta) {
+            methods.setValue('seo_title', product?.seoMeta.title || '')
+            methods.setValue('seo_description', product?.seoMeta.description || '')
+            methods.setValue('seo_keywords', product?.seoMeta.keywords || [])
+            methods.setValue('seo_canonicalUrl', product?.seoMeta.canonicalUrl || '')
+            methods.setValue('seo_ogTitle', product?.seoMeta.ogTitle || '')
+            methods.setValue('seo_ogDescription', product?.seoMeta.ogDescription || '')
+            methods.setValue('seo_ogImage', product?.seoMeta.ogImage || null)
+            methods.setValue('seo_robotsTag', product?.seoMeta.robotsTag || '')
           }
-        })
-        .catch(() => {
-          showToast({ type: 'error', message: 'خطا در بارگذاری محصول' })
-        })
-        .finally(() => setIsLoading(false))
+
+          if (product.mainImage) {
+            methods.setValue('mainImage' as any, product.mainImage)
+          }
+
+          if (product.galleryImages && Array.isArray(product.galleryImages)) {
+            methods.setValue('galleryImages' as any, product.galleryImages as GalleryItem[])
+          }
+
+          methods.setValue('defaultVariantId', product.defaultVariantId || null)
+          methods.setValue('galleryImageIds', product.galleryImages?.map((img: { id: number }) => img.id) || [])
+          methods.setValue('categoryIds', product.categories?.map((category: { id: number }) => category.id) || [])
+          methods.setValue('attributeIds', product.attributes?.map((attribute: { id: number }) => attribute.id) || [])
+          methods.setValue('tagIds', product.tags?.map((tag: { id: number }) => tag.id) || [])
+        }
+      }
     } else if (initialData) {
       setInitialProduct(initialData)
       Object.entries(initialData).forEach(([key, value]) => {
         if (key in methods.getValues() && typeof value !== 'object') {
-          methods.setValue(key as keyof ProductForm, value ?? null)
+          methods.setValue(key as keyof ProductForm, value as string | number | string[] | number[] | null)
         }
       })
 
@@ -139,7 +162,6 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
       }
 
       methods.setValue('galleryImageIds', initialData.galleryImages?.map(img => img.id) || [])
-
       methods.setValue('categoryIds', initialData.categories?.map(category => category.id) || [])
       methods.setValue('attributeIds', initialData.attributes?.map(attribute => attribute.id) || [])
       methods.setValue('tagIds', initialData.tags?.map(tag => tag.id) || [])
@@ -147,7 +169,7 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
     } else {
       setIsLoading(false)
     }
-  }, [id, initialData, methods, router])
+  }, [id, initialData, methods, router, response, isError, productLoading])
 
   const { isLoading: submitLoading, onSubmit: submitForm } = useFormSubmit<ProductForm & { id?: string }>({
     createApi: async (formData: ProductForm) => {

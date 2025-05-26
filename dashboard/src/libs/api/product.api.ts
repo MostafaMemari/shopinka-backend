@@ -34,8 +34,6 @@ export const defaultVariantProduct = async (id: number, variantId: number | null
     body: { variantId }
   })
 
-  console.log(res)
-
   return {
     ...res
   }

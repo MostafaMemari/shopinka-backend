@@ -69,8 +69,6 @@ export const useBlogForm = ({ id, initialData }: UseBlogFormProps) => {
         .then(response => {
           const blog = response.data
 
-          console.log(blog)
-
           setInitialBlog(blog)
 
           if (blog) {

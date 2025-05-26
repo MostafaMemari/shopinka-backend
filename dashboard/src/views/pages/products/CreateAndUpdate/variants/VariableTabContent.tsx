@@ -10,6 +10,7 @@ import Button from '@mui/material/Button'
 import AddIcon from '@mui/icons-material/Add'
 import Typography from '@mui/material/Typography'
 import VariantAccordion from './VariantAccordion'
+import { Attribute } from '@/types/app/productAttributes.type'
 import { ProductVariant } from '@/types/app/productVariant.type'
 import { useSearchParams } from 'next/navigation'
 import { useProductVariants } from '@/hooks/reactQuery/useProductVariant'
@@ -22,15 +23,10 @@ const updateProductVariant = (
   variants: ProductVariant[],
   setVariants: React.Dispatch<React.SetStateAction<ProductVariant[]>>,
   id: string,
-  updatedFields: Partial<ProductVariant & { isDefault?: boolean }>,
-  queryClient: any,
-  setValue: (name: string, value: any) => void
+  updatedFields: Partial<ProductVariant>,
+  queryClient: any
 ) => {
   setVariants(prevVariants => prevVariants.map(variant => (String(variant.id) === id ? { ...variant, ...updatedFields } : variant)))
-
-  if ('isDefault' in updatedFields) {
-    setValue('defaultVariantId', updatedFields.isDefault ? Number(id) : null)
-  }
 
   queryClient.setQueryData([QueryKeys.ProductVariants, { productId: variants[0]?.productId }], (oldData: any) => {
     if (!oldData?.data?.items) return oldData
@@ -108,10 +104,11 @@ const VariableTabContent = () => {
           variants.map(variant => (
             <VariantAccordion
               key={variant.id}
-              variant={{ ...variant, isDefault: variant.id === defaultVariantId }}
+              variant={variant}
+              isDefault={variant.id === defaultVariantId}
               expanded={expanded === String(variant.id)}
               onChange={() => setExpanded(expanded === String(variant.id) ? false : String(variant.id))}
-              onUpdate={(id, updatedFields) => updateProductVariant(variants, setVariants, id, updatedFields, queryClient, setValue)}
+              onUpdate={(id, updatedFields) => updateProductVariant(variants, setVariants, id, updatedFields, queryClient)}
             />
           ))
         )}
