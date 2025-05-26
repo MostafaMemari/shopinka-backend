@@ -40,7 +40,7 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
   const [initialProduct, setInitialProduct] = useState<Product | null>(null)
   const isUpdate = !!id || !!initialData
 
-  const methods = useForm<ProductForm>({
+  const methods = useForm<ProductForm & { defaultVariantId: number | null }>({
     resolver: yupResolver(productFormSchema),
     mode: 'onChange',
     defaultValues: {
@@ -63,6 +63,7 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
       height: null,
       length: null,
       weight: null,
+      defaultVariantId: null,
 
       seo_title: '',
       seo_description: '',
@@ -110,6 +111,7 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
               methods.setValue('galleryImages' as any, product.galleryImages as GalleryItem[])
             }
 
+            methods.setValue('defaultVariantId', product.defaultVariantId || null)
             methods.setValue('galleryImageIds', product.galleryImages?.map(img => img.id) || [])
             methods.setValue('categoryIds', product.categories?.map(category => category.id) || [])
             methods.setValue('attributeIds', product.attributes?.map(attribute => attribute.id) || [])

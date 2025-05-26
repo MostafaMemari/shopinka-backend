@@ -28,9 +28,20 @@ export const getProductById = async (id: number): Promise<{ status: number; data
   }
 }
 
-export const updateProduct = async (id: number, data: Partial<ProductForm>): Promise<{ status: number; data: Product | null }> => {
-  console.log(data)
+export const defaultVariantProduct = async (id: number, variantId: number | null): Promise<{ status: number; data: Product | null }> => {
+  const res = await serverApiFetch(`/product/${id}/default-variant`, {
+    method: 'PATCH',
+    body: { variantId }
+  })
 
+  console.log(res)
+
+  return {
+    ...res
+  }
+}
+
+export const updateProduct = async (id: number, data: Partial<ProductForm>): Promise<{ status: number; data: Product | null }> => {
   const res = await serverApiFetch(`/product/${id}`, {
     method: 'PATCH',
     body: { ...data }

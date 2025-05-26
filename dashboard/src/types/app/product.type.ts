@@ -36,6 +36,7 @@ export type Product = {
   height: number | null
   length: number | null
   weight: number | null
+  defaultVariantId: number | null
 
   seoMeta: Seo | undefined
   mainImage: GalleryItem | undefined
@@ -44,5 +45,6 @@ export type Product = {
   categories: Category[] | undefined
   tags: Tag[] | undefined
 }
-
-export type ProductForm = yup.InferType<typeof productFormSchema>
+export type ProductForm = yup.InferType<typeof productFormSchema> & {
+  defaultVariantId: number | null
+}

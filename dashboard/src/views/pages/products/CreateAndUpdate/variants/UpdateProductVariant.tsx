@@ -6,6 +6,5 @@ export const updateProductVariant = (
   id: string,
   updatedFields: Partial<ProductVariant>
 ) => {
-  console.log(`Updating variant id: ${id}, updated fields:`, updatedFields)
   setVariants(variants.map(variant => (String(variant.id) === id ? { ...variant, ...updatedFields } : variant)))
 }

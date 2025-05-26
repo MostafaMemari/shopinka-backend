@@ -137,6 +137,13 @@ export const productSchema = yup.object().shape({
     .transform((value, originalValue) => (originalValue === '' ? null : value))
     .notRequired()
     .positive('باید عددی مثبت باشد')
+    .default(null),
+
+  defaultVariantId: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? null : value))
+    .notRequired()
+    .positive('باید عددی مثبت باشد')
     .default(null)
 })
 

@@ -57,8 +57,6 @@ const CreateProductVariantModal = ({ children, productId, existingAttributeCombi
   useEffect(() => {
     const newAttributeValueIds = selectedValues.map(item => item.valueId).filter((id): id is number => id !== null)
 
-    console.log(newAttributeValueIds)
-
     setValue('attributeValueIds', newAttributeValueIds, { shouldValidate: true })
   }, [selectedValues, setValue])
 
