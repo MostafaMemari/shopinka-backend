@@ -1,9 +1,9 @@
 'use client';
 
-import { FC } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
+import { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { Image as ImageType } from '@/shared/types/imageType';
+import { resetVariantState } from '@/store/slices/variantSlice';
 
 import ProductActions from './ActionButtons';
 import ProductGuarantees from './ProductGuarantees';
@@ -20,6 +20,13 @@ interface Props {
 }
 
 const ProductDetails: FC<Props> = ({ product }) => {
+  const dispatch = useDispatch();
+
+  // Reset variant state when product changes
+  useEffect(() => {
+    dispatch(resetVariantState());
+  }, [product.id, dispatch]);
+
   const breadcrumbItems = [
     { label: 'روتی کالا', href: '/' },
     { label: 'مردانه', href: '/men' },

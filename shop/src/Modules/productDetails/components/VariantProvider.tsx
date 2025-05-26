@@ -1,11 +1,11 @@
 'use client';
 
-import { productVariant } from '@/Modules/product/types/productType';
-import { attribute } from '@/shared/types/attributeType';
 import React, { createContext, useContext, useMemo } from 'react';
 import { transformVariants } from './VariantSelector';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
+import { productVariant } from '@/Modules/product/types/productType';
+import { attribute } from '@/shared/types/attributeType';
 import {
   setSelectedColor,
   setSelectedButton,
@@ -13,6 +13,7 @@ import {
   setVariants,
   setAttributes,
   setSelectedImage,
+  resetVariantState,
 } from '@/store/slices/variantSlice';
 
 interface VariantContextType {
@@ -46,6 +47,11 @@ export function VariantProvider({ children, variants, attributes, defaultImage, 
   const { selectedColor, selectedButton, selectedVariant } = useSelector((state: RootState) => state.variant);
   const isVariableProduct = variants.length > 0;
 
+  // Reset state when variants change
+  React.useEffect(() => {
+    dispatch(resetVariantState());
+  }, [variants[0]?.productId, dispatch]);
+
   // Initialize variants and attributes in Redux
   React.useEffect(() => {
     dispatch(setVariants(variants));
@@ -55,7 +61,10 @@ export function VariantProvider({ children, variants, attributes, defaultImage, 
     if (defaultVariantId && isVariableProduct) {
       const defaultVariant = variants.find((v) => v.id === defaultVariantId);
       if (defaultVariant) {
-        // Find color and button attributes for the default variant
+        // Set the variant first
+        dispatch(setSelectedVariant(defaultVariant));
+
+        // Find and set color and button attributes
         const colorAttr = defaultVariant.attributeValues.find((attr) => attr.attributeId === 1);
         const buttonAttr = defaultVariant.attributeValues.find((attr) => attr.attributeId === 6);
 
@@ -66,14 +75,12 @@ export function VariantProvider({ children, variants, attributes, defaultImage, 
           dispatch(setSelectedButton(buttonAttr.slug));
         }
 
-        // Set the variant and its image
-        dispatch(setSelectedVariant(defaultVariant));
+        // Set the variant's image
         if (defaultVariant.mainImage?.fileUrl) {
           dispatch(setSelectedImage(defaultVariant.mainImage.fileUrl));
         }
       }
     } else if (!isVariableProduct && defaultImage) {
-      // Set default image for simple products
       dispatch(setSelectedImage(defaultImage));
     }
   }, [variants, attributes, dispatch, isVariableProduct, defaultImage, defaultVariantId]);
@@ -83,13 +90,18 @@ export function VariantProvider({ children, variants, attributes, defaultImage, 
   // Handle variant selection and image updates
   const updateVariantAndImage = React.useCallback(
     (variant: productVariant | undefined) => {
-      dispatch(setSelectedVariant(variant));
-      if (variant?.mainImage?.fileUrl) {
-        dispatch(setSelectedImage(variant.mainImage.fileUrl));
-      } else if (!isVariableProduct && defaultImage) {
-        dispatch(setSelectedImage(defaultImage));
+      if (variant) {
+        dispatch(setSelectedVariant(variant));
+        if (variant.mainImage?.fileUrl) {
+          dispatch(setSelectedImage(variant.mainImage.fileUrl));
+        }
       } else {
-        dispatch(setSelectedImage(null));
+        dispatch(setSelectedVariant(undefined));
+        if (!isVariableProduct && defaultImage) {
+          dispatch(setSelectedImage(defaultImage));
+        } else {
+          dispatch(setSelectedImage(null));
+        }
       }
     },
     [dispatch, isVariableProduct, defaultImage],
