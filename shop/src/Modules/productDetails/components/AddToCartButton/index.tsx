@@ -7,14 +7,13 @@ import { ProductDetails } from '@/Modules/product/types/productType';
 
 interface Props {
   product: ProductDetails;
-  onAddToCart?: (quantity: number) => void; // برای ارسال تعداد به سبد خرید
+  onAddToCart?: (quantity: number) => void;
 }
 
 export default function AddToCartButton({ product, onAddToCart }: Props) {
   const [quantity, setQuantity] = useState(1);
   const { selectedVariant } = useSelector((state: RootState) => state.product);
 
-  // بررسی اینکه آیا دکمه باید فعال باشه
   const isButtonDisabled = product.type === 'VARIABLE' && !selectedVariant;
 
   return (

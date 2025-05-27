@@ -9,6 +9,10 @@ export default function PriceDisplay() {
 
   if (!product) return null;
 
+  console.log(selectedVariant);
+
+  if (product.type === 'VARIABLE' && !selectedVariant) return null;
+
   const newPrice = selectedVariant ? selectedVariant.salePrice : product?.salePrice;
   const oldPrice = selectedVariant ? selectedVariant.basePrice : product?.basePrice;
   const discount = newPrice && oldPrice ? Math.round(((oldPrice - newPrice) / oldPrice) * 100) : undefined;
