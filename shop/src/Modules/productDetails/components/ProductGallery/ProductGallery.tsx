@@ -6,56 +6,46 @@ import { RootState } from '@/store';
 import MainImage from './MainImage';
 import GalleryImage from './GalleryImage';
 import GalleryModal from './GalleryModal';
-import { Image } from '@/shared/types/imageType';
 
-type ProductGalleryProps = {
-  mainImage: Image | null;
-  galleryImages: Image[];
-  title?: string;
-};
-
-export default function ProductGallery({ mainImage, galleryImages, title = 'تصاویر محصول' }: ProductGalleryProps) {
+export default function ProductGallery() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const selectedImage = useSelector((state: RootState) => state.variant.selectedImage);
+  const { product, selectedVariant } = useSelector((state: RootState) => state.product);
 
-  const displayedImages = galleryImages.slice(0, 3);
-  const hasMoreImages = galleryImages.length > 3;
-  const blurredImage = hasMoreImages ? galleryImages[3] : null;
+  if (!product) return null;
+
+  const mainImage = product.type === 'VARIABLE' && selectedVariant?.mainImage ? selectedVariant.mainImage : product.mainImage;
+
+  const displayedImages = product.galleryImages.slice(0, 3);
+  const hasMoreImages = product.galleryImages.length > 3;
+  const blurredImage = hasMoreImages ? product.galleryImages[3] : null;
+
+  const modalImages = mainImage ? [mainImage, ...product.galleryImages] : product.galleryImages;
 
   return (
     <>
       <div className="space-y-4">
         <div onClick={() => setIsModalOpen(true)} className="cursor-pointer">
-          {mainImage && (
-            <div onClick={() => setIsModalOpen(true)} className="cursor-pointer">
-              <MainImage src={selectedImage || mainImage.fileUrl} alt={mainImage?.title ?? ''} />
-            </div>
-          )}
+          {mainImage && <MainImage src={mainImage.fileUrl} alt={mainImage.title ?? product.name} />}
         </div>
 
-        {galleryImages.length > 0 && (
+        {product?.galleryImages.length > 0 && (
           <div className="flex items-center justify-center gap-x-2">
             {displayedImages.map((image, index) => (
               <div key={index} onClick={() => setIsModalOpen(true)}>
-                <GalleryImage src={image.fileUrl} alt={image.title ?? ''} isBlurred={false} />
+                <GalleryImage src={image.fileUrl} alt={image.title ?? product.name} isBlurred={false} />
               </div>
             ))}
             {blurredImage && (
               <div onClick={() => setIsModalOpen(true)} className="shrink-0">
-                <GalleryImage src={blurredImage.fileUrl} alt={blurredImage.title ?? ''} isBlurred={true} />
+                <GalleryImage src={blurredImage.fileUrl} alt={blurredImage.title ?? product.name} isBlurred={true} />
               </div>
             )}
           </div>
         )}
       </div>
 
-      <GalleryModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        images={mainImage ? [mainImage, ...galleryImages] : galleryImages}
-        title={title}
-      />
+      <GalleryModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} images={modalImages} title={product.name} />
     </>
   );
 }

@@ -5,6 +5,7 @@ import ProductVariants from './VariantSelector';
 import AddToCartButton from './AddToCartButton';
 import ProductProperties from './ProductProperties';
 import { HiOutlineShieldCheck } from 'react-icons/hi';
+import PriceDisplay from './PriceDisplay';
 
 interface Props {
   product: ProductDetails;
@@ -32,7 +33,7 @@ export default function MobileDetails({ product }: Props) {
         <div className="mb-6 space-y-4">
           {isVariableProduct && (
             <div className="mb-6">
-              <ProductVariants variants={product.variants} attributes={product.attributes} />
+              <ProductVariants variants={product.variants} attributes={product.attributes} productType={product.type} />
             </div>
           )}
 
@@ -42,7 +43,7 @@ export default function MobileDetails({ product }: Props) {
           </div>
 
           <div className="mb-6">
-            <PriceDisplay product={product} />
+            <PriceDisplay />
           </div>
 
           <div className="mb-6">
@@ -58,7 +59,7 @@ export default function MobileDetails({ product }: Props) {
         </div>
       )}
 
-      <ProductProperties product={product} />
+      {/* <ProductProperties product={product} /> */}
     </div>
   );
 }

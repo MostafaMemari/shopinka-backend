@@ -12,7 +12,7 @@ import { setSelectedButton, setSelectedColor, setSelectedVariant } from '@/store
 
 interface TransformedVariants {
   colors: IColor[];
-  buttons: { slug: string; label: string }[];
+  buttons: { slug: string; label: string; isDisabled?: boolean }[];
 }
 
 interface Props {
@@ -25,10 +25,10 @@ interface Props {
 // تابع برای تبدیل واریانت‌ها
 export const transformVariants = (variants: productVariant[], attributes: attribute[]): TransformedVariants => {
   const colors: IColor[] = [];
-  const buttons: { slug: string; label: string }[] = [];
+  const buttons: { slug: string; label: string; isDisabled?: boolean }[] = [];
 
   const uniqueColors = new Map<string, IColor>();
-  const uniqueButtons = new Map<string, { slug: string; label: string }>();
+  const uniqueButtons = new Map<string, { slug: string; label: string; isDisabled?: boolean }>();
 
   variants.forEach((variant) => {
     variant.attributeValues.forEach((attr: attributeValues) => {
@@ -38,6 +38,7 @@ export const transformVariants = (variants: productVariant[], attributes: attrib
           id: attr.id.toString(),
           name: attr.name,
           color: attr.colorCode,
+          isDisabled: false, // فعلاً همه رنگ‌ها فعالن
         });
       }
 
@@ -46,6 +47,7 @@ export const transformVariants = (variants: productVariant[], attributes: attrib
         uniqueButtons.set(attr.slug, {
           slug: attr.slug,
           label: attr.buttonLabel || attr.name,
+          isDisabled: false, // به‌صورت پیش‌فرض فعال، بعداً مدیریت می‌شه
         });
       }
     });
@@ -63,13 +65,14 @@ const findMatchingVariant = (
   selectedColor: string | null,
   selectedButton: string | null,
 ): productVariant | null => {
+  if (!selectedColor || !selectedButton) return null; // فقط وقتی هر دو انتخاب شده باشن واریانت پیدا می‌شه
   return (
     variants.find((variant) =>
       variant.attributeValues.every((attr) => {
-        if (attr.attributeId === 1 && selectedColor) {
+        if (attr.attributeId === 1) {
           return attr.id.toString() === selectedColor;
         }
-        if (attr.attributeId === 6 && selectedButton) {
+        if (attr.attributeId === 6) {
           return attr.slug === selectedButton;
         }
         return true;
@@ -94,8 +97,11 @@ export default function ProductVariants({ variants, attributes, productType, def
     }
   }, [selectedColor, selectedButton, variants, productType, dispatch]);
 
+  // دکمه‌های معتبر برای رنگ انتخاب‌شده
   const validButtons = useMemo(() => {
-    if (!selectedColor) return transformedVariants.buttons;
+    const buttons = transformedVariants.buttons.map((button) => ({ ...button, isDisabled: !selectedColor }));
+    if (!selectedColor) return buttons; // اگه رنگی انتخاب نشده، همه دکمه‌ها غیرفعالن
+
     const validVariants = variants.filter((variant) =>
       variant.attributeValues.some((attr) => attr.attributeId === 1 && attr.id.toString() === selectedColor),
     );
@@ -103,7 +109,10 @@ export default function ProductVariants({ variants, attributes, productType, def
       .map((variant) => variant.attributeValues.find((attr) => attr.attributeId === 6)?.slug)
       .filter((slug): slug is string => !!slug);
 
-    return transformedVariants.buttons.filter((button) => validButtonSlugs.includes(button.slug));
+    return buttons.map((button) => ({
+      ...button,
+      isDisabled: !validButtonSlugs.includes(button.slug), // غیرفعال کردن دکمه‌های نامرتبط
+    }));
   }, [selectedColor, variants, transformedVariants.buttons]);
 
   const colorLabel = attributes.find((attr) => attr.type === 'COLOR')?.name || 'انتخاب رنگ';
@@ -126,12 +135,15 @@ export default function ProductVariants({ variants, attributes, productType, def
             label={colorLabel}
             colors={transformedVariants.colors}
             selectedColor={selectedColor}
-            onColorChange={(color) => dispatch(setSelectedColor(color))}
+            onColorChange={(color) => {
+              dispatch(setSelectedColor(color));
+              if (!color) dispatch(setSelectedButton(null)); // پاک کردن نوع برچسب وقتی رنگ پاک می‌شه
+            }}
           />
         </div>
       )}
 
-      {validButtons.length > 0 && (
+      {transformedVariants.buttons.length > 0 && (
         <div className="mb-3 space-y-6">
           <ButtonSelector
             title={buttonLabel}

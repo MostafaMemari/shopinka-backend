@@ -22,7 +22,9 @@ const productSlice = createSlice({
   reducers: {
     setProduct(state, action: PayloadAction<ProductDetails>) {
       state.product = action.payload;
-      // تنظیم واریانت پیش‌فرض
+      state.selectedColor = null;
+      state.selectedButton = null;
+      state.selectedVariant = null;
       if (action.payload.type === 'VARIABLE' && action.payload.defaultVariantId) {
         const defaultVariant = action.payload.variants.find((v) => v.id === action.payload.defaultVariantId);
         if (defaultVariant) {
@@ -42,6 +44,7 @@ const productSlice = createSlice({
     },
     setSelectedColor(state, action: PayloadAction<string | null>) {
       state.selectedColor = action.payload;
+      if (!action.payload) state.selectedButton = null;
     },
     setSelectedButton(state, action: PayloadAction<string | null>) {
       state.selectedButton = action.payload;

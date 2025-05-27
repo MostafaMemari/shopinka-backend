@@ -9,6 +9,9 @@ import BreadcrumbContainer from './BreadcrumbContainer';
 import { type ProductDetails } from '../../product/types/productType';
 import { RootState } from '@/store';
 import { clearProduct, setProduct } from '@/store/slices/productSlice';
+import ProductGallery from './ProductGallery/ProductGallery';
+import ProductImageSwiper from './ProductImageSwiper';
+import MobileDetails from './MobileDetails';
 
 interface Props {
   product: ProductDetails;
@@ -16,7 +19,7 @@ interface Props {
 
 const ProductDetails: FC<Props> = ({ product }) => {
   const dispatch = useDispatch();
-  const { product: currentProduct, selectedVariant } = useSelector((state: RootState) => state.product);
+  const { product: currentProduct } = useSelector((state: RootState) => state.product);
 
   useEffect(() => {
     if (product.id !== currentProduct?.id) {
@@ -24,11 +27,6 @@ const ProductDetails: FC<Props> = ({ product }) => {
       dispatch(setProduct(product));
     }
   }, [product, currentProduct, dispatch]);
-
-  const displayPrice = selectedVariant ? selectedVariant.salePrice : product.salePrice;
-  const displayImage = selectedVariant
-    ? product.variants.find((v) => v.id === selectedVariant.id)?.mainImageId // تصویر واریانت
-    : product.mainImage;
 
   const breadcrumbItems = [
     { label: 'روتی کالا', href: '/' },
@@ -45,7 +43,7 @@ const ProductDetails: FC<Props> = ({ product }) => {
             <div className="mb-10 grid grow grid-cols-12 gap-4">
               <div className="col-span-4">
                 <ProductActions productId={product.id} />
-                {/* <ProductGallery mainImage={product.mainImage} galleryImages={product.galleryImages} title="تصاویر محصول" /> */}
+                <ProductGallery />
               </div>
               <div className="col-span-8 flex min-h-full flex-col">
                 <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
@@ -59,18 +57,16 @@ const ProductDetails: FC<Props> = ({ product }) => {
         </div>
       </div>
 
-      {/* <div className="lg:hidden">
-          <div className="mb-6 relative rounded-lg bg-muted p-4 shadow-base">
-            <div className="mb-4">
-              <ProductImageSwiper
-                images={[product.mainImage, ...product.galleryImages].filter((img): img is ImageType => img !== null && img !== undefined)}
-              />
-              <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
-            </div>
-            <ProductActions productId={product.id} />
-            <MobileDetails product={product} />
+      <div className="lg:hidden">
+        <div className="mb-6 relative rounded-lg bg-muted p-4 shadow-base">
+          <div className="mb-4">
+            <ProductImageSwiper />
+            <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
           </div>
-        </div> */}
+          <ProductActions productId={product.id} />
+          <MobileDetails product={product} />
+        </div>
+      </div>
     </>
   );
 };

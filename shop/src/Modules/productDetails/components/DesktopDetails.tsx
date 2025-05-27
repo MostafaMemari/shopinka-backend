@@ -58,7 +58,7 @@ export default function DesktopDetails({ product }: Props) {
           </div>
 
           <div className="mb-6">
-            <PriceDisplay product={product} />
+            <PriceDisplay />
           </div>
 
           <div className="mb-6">
