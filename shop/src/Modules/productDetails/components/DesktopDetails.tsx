@@ -6,12 +6,14 @@ import ProductVariants from './VariantSelector';
 import AddToCartButton from './AddToCartButton';
 import ProductProperties from './ProductProperties';
 import { HiOutlineShieldCheck } from 'react-icons/hi';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
-interface Props {
-  product: ProductDetails;
-}
+export default function DesktopDetails() {
+  const { product } = useSelector((state: RootState) => state.product);
 
-export default function DesktopDetails({ product }: Props) {
+  if (!product) return null;
+
   const isVariableProduct = product.variants.length > 0;
 
   return (
