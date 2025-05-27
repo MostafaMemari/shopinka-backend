@@ -1,15 +1,15 @@
 'use client';
 
-import { useVariant } from './VariantProvider';
 import { ProductDetails } from '@/Modules/product/types/productType';
 import { formatPrice } from '@/shared/utils/formatter';
+import { productVariant } from '@/Modules/product/types/productType';
 
 interface Props {
   product: ProductDetails;
+  selectedVariant?: productVariant;
 }
 
-export default function PriceDisplay({ product }: Props) {
-  const { selectedVariant } = useVariant();
+export default function PriceDisplay({ product, selectedVariant }: Props) {
   const isVariableProduct = product.variants.length > 0;
 
   const price = selectedVariant ? selectedVariant.salePrice || selectedVariant.basePrice : product.salePrice || product.basePrice;

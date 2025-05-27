@@ -1,19 +1,14 @@
 'use client';
 
 import { FC, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { Image as ImageType } from '@/shared/types/imageType';
-import { resetVariantState } from '@/store/slices/variantSlice';
-
+import { useDispatch, useSelector } from 'react-redux';
 import ProductActions from './ActionButtons';
 import ProductGuarantees from './ProductGuarantees';
-import MobileDetails from './MobileDetails';
-import ProductGallery from './ProductGallery/ProductGallery';
 import DesktopDetails from './DesktopDetails';
 import BreadcrumbContainer from './BreadcrumbContainer';
 import { type ProductDetails } from '../../product/types/productType';
-import ProductImageSwiper from './ProductImageSwiper';
-import { VariantProvider } from './VariantProvider';
+import { RootState } from '@/store';
+import { clearProduct, setProduct } from '@/store/slices/productSlice';
 
 interface Props {
   product: ProductDetails;
@@ -21,11 +16,19 @@ interface Props {
 
 const ProductDetails: FC<Props> = ({ product }) => {
   const dispatch = useDispatch();
+  const { product: currentProduct, selectedVariant } = useSelector((state: RootState) => state.product);
 
-  // Reset variant state when product changes
   useEffect(() => {
-    dispatch(resetVariantState());
-  }, [product.id, dispatch]);
+    if (product.id !== currentProduct?.id) {
+      dispatch(clearProduct());
+      dispatch(setProduct(product));
+    }
+  }, [product, currentProduct, dispatch]);
+
+  const displayPrice = selectedVariant ? selectedVariant.salePrice : product.salePrice;
+  const displayImage = selectedVariant
+    ? product.variants.find((v) => v.id === selectedVariant.id)?.mainImageId // تصویر واریانت
+    : product.mainImage;
 
   const breadcrumbItems = [
     { label: 'روتی کالا', href: '/' },
@@ -34,35 +37,29 @@ const ProductDetails: FC<Props> = ({ product }) => {
   ];
 
   return (
-    <VariantProvider
-      variants={product.variants}
-      attributes={product.attributes}
-      defaultImage={product.mainImage?.fileUrl ?? null}
-      defaultVariantId={product.defaultVariantId}
-    >
-      <>
-        <div className="container">
-          <div className="hidden lg:block">
-            <BreadcrumbContainer variant="boxed" items={breadcrumbItems} />
-            <div className="mb-6 rounded-lg bg-muted p-6 shadow-base">
-              <div className="mb-10 grid grow grid-cols-12 gap-4">
-                <div className="col-span-4">
-                  <ProductActions productId={product.id} />
-                  <ProductGallery mainImage={product.mainImage} galleryImages={product.galleryImages} title="تصاویر محصول" />
-                </div>
-                <div className="col-span-8 flex min-h-full flex-col">
-                  <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
-                  <DesktopDetails product={product} />
-                </div>
+    <>
+      <div className="container">
+        <div className="hidden lg:block">
+          <BreadcrumbContainer variant="boxed" items={breadcrumbItems} />
+          <div className="mb-6 rounded-lg bg-muted p-6 shadow-base">
+            <div className="mb-10 grid grow grid-cols-12 gap-4">
+              <div className="col-span-4">
+                <ProductActions productId={product.id} />
+                {/* <ProductGallery mainImage={product.mainImage} galleryImages={product.galleryImages} title="تصاویر محصول" /> */}
               </div>
-              <div className="flex justify-between gap-4">
-                <ProductGuarantees />
+              <div className="col-span-8 flex min-h-full flex-col">
+                <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
+                <DesktopDetails product={product} />
               </div>
+            </div>
+            <div className="flex justify-between gap-4">
+              <ProductGuarantees />
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="lg:hidden">
+      {/* <div className="lg:hidden">
           <div className="mb-6 relative rounded-lg bg-muted p-4 shadow-base">
             <div className="mb-4">
               <ProductImageSwiper
@@ -73,9 +70,8 @@ const ProductDetails: FC<Props> = ({ product }) => {
             <ProductActions productId={product.id} />
             <MobileDetails product={product} />
           </div>
-        </div>
-      </>
-    </VariantProvider>
+        </div> */}
+    </>
   );
 };
 

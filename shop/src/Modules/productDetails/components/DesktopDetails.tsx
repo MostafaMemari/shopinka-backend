@@ -43,7 +43,12 @@ export default function DesktopDetails({ product }: Props) {
         <div className="col-span-1 flex flex-col">
           {isVariableProduct && (
             <div className="mb-6">
-              <ProductVariants variants={product.variants} attributes={product.attributes} />
+              <ProductVariants
+                variants={product.variants}
+                attributes={product.attributes}
+                productType={product.type}
+                defaultVariantId={product.defaultVariantId ?? undefined}
+              />
             </div>
           )}
 

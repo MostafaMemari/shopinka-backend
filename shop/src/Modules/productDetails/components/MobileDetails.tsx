@@ -1,7 +1,6 @@
 'use client';
 
 import { ProductDetails } from '@/Modules/product/types/productType';
-import PriceDisplay from './PriceDisplay';
 import ProductVariants from './VariantSelector';
 import AddToCartButton from './AddToCartButton';
 import ProductProperties from './ProductProperties';

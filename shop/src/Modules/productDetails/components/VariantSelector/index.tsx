@@ -1,18 +1,28 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { IColor } from '@/lib/types/colors';
 import ColorSelector from './ColorSelector';
 import ButtonSelector from './ButtonSelector';
 import { productVariant } from '@/Modules/product/types/productType';
 import { attribute, attributeValues } from '@/shared/types/attributeType';
-import { useVariant } from '../VariantProvider';
+import { RootState } from '@/store';
+import { setSelectedButton, setSelectedColor, setSelectedVariant } from '@/store/slices/productSlice';
 
 interface TransformedVariants {
   colors: IColor[];
   buttons: { slug: string; label: string }[];
 }
 
+interface Props {
+  variants: productVariant[];
+  attributes: attribute[];
+  productType: string;
+  defaultVariantId?: number;
+}
+
+// تابع برای تبدیل واریانت‌ها
 export const transformVariants = (variants: productVariant[], attributes: attribute[]): TransformedVariants => {
   const colors: IColor[] = [];
   const buttons: { slug: string; label: string }[] = [];
@@ -47,20 +57,45 @@ export const transformVariants = (variants: productVariant[], attributes: attrib
   };
 };
 
-interface Props {
-  variants: productVariant[];
-  attributes: attribute[];
-}
+// تابع برای پیدا کردن واریانت بر اساس انتخاب‌ها
+const findMatchingVariant = (
+  variants: productVariant[],
+  selectedColor: string | null,
+  selectedButton: string | null,
+): productVariant | null => {
+  return (
+    variants.find((variant) =>
+      variant.attributeValues.every((attr) => {
+        if (attr.attributeId === 1 && selectedColor) {
+          return attr.id.toString() === selectedColor;
+        }
+        if (attr.attributeId === 6 && selectedButton) {
+          return attr.slug === selectedButton;
+        }
+        return true;
+      }),
+    ) || null
+  );
+};
 
-export default function ProductVariants({ variants, attributes }: Props) {
-  const { selectedColor, selectedButton, setSelectedColor, setSelectedButton } = useVariant();
-
-  console.log(selectedColor);
-  console.log(selectedButton);
+export default function ProductVariants({ variants, attributes, productType, defaultVariantId }: Props) {
+  const dispatch = useDispatch();
+  const { selectedColor, selectedButton } = useSelector((state: RootState) => state.product);
 
   const transformedVariants = useMemo(() => transformVariants(variants, attributes), [variants, attributes]);
 
+  // آپدیت واریانت بر اساس انتخاب‌ها
+  useMemo(() => {
+    if (productType === 'VARIABLE') {
+      const matchingVariant = findMatchingVariant(variants, selectedColor, selectedButton);
+      dispatch(setSelectedVariant(matchingVariant));
+    } else {
+      dispatch(setSelectedVariant(null));
+    }
+  }, [selectedColor, selectedButton, variants, productType, dispatch]);
+
   const validButtons = useMemo(() => {
+    if (!selectedColor) return transformedVariants.buttons;
     const validVariants = variants.filter((variant) =>
       variant.attributeValues.some((attr) => attr.attributeId === 1 && attr.id.toString() === selectedColor),
     );
@@ -74,6 +109,15 @@ export default function ProductVariants({ variants, attributes }: Props) {
   const colorLabel = attributes.find((attr) => attr.type === 'COLOR')?.name || 'انتخاب رنگ';
   const buttonLabel = attributes.find((attr) => attr.type === 'BUTTON')?.name || 'انتخاب نوع';
 
+  if (productType === 'SIMPLE') {
+    return (
+      <div className="mb-4">
+        <p>مشخصات محصول:</p>
+        {/* مشخصات اصلی محصول */}
+      </div>
+    );
+  }
+
   return (
     <div className="mb-4">
       {transformedVariants.colors.length > 0 && (
@@ -82,14 +126,19 @@ export default function ProductVariants({ variants, attributes }: Props) {
             label={colorLabel}
             colors={transformedVariants.colors}
             selectedColor={selectedColor}
-            onColorChange={setSelectedColor}
+            onColorChange={(color) => dispatch(setSelectedColor(color))}
           />
         </div>
       )}
 
       {validButtons.length > 0 && (
         <div className="mb-3 space-y-6">
-          <ButtonSelector title={buttonLabel} options={validButtons} selectedOption={selectedButton} onOptionChange={setSelectedButton} />
+          <ButtonSelector
+            title={buttonLabel}
+            options={validButtons}
+            selectedOption={selectedButton}
+            onOptionChange={(button) => dispatch(setSelectedButton(button))}
+          />
         </div>
       )}
     </div>

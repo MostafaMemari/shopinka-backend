@@ -34,7 +34,7 @@ export interface productVariant {
   mainImage: Image | null;
 }
 
-export type ProductDetails = {
+export interface ProductDetails {
   id: number;
   sku: string | null;
   name: string;
@@ -62,4 +62,4 @@ export type ProductDetails = {
   seoMeta: SeoMeta;
   attributes: attribute[] | [];
   variants: productVariant[] | [];
-};
+}

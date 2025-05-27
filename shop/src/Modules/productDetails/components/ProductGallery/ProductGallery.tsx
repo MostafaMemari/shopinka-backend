@@ -16,6 +16,7 @@ type ProductGalleryProps = {
 
 export default function ProductGallery({ mainImage, galleryImages, title = 'تصاویر محصول' }: ProductGalleryProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const selectedImage = useSelector((state: RootState) => state.variant.selectedImage);
 
   const displayedImages = galleryImages.slice(0, 3);
@@ -28,21 +29,21 @@ export default function ProductGallery({ mainImage, galleryImages, title = 'تص
         <div onClick={() => setIsModalOpen(true)} className="cursor-pointer">
           {mainImage && (
             <div onClick={() => setIsModalOpen(true)} className="cursor-pointer">
-              <MainImage src={selectedImage || mainImage.fileUrl} alt={mainImage.title} />
+              <MainImage src={selectedImage || mainImage.fileUrl} alt={mainImage?.title ?? ''} />
             </div>
-          )}{' '}
+          )}
         </div>
 
         {galleryImages.length > 0 && (
           <div className="flex items-center justify-center gap-x-2">
             {displayedImages.map((image, index) => (
               <div key={index} onClick={() => setIsModalOpen(true)}>
-                <GalleryImage src={image.fileUrl} alt={image.title} isBlurred={false} />
+                <GalleryImage src={image.fileUrl} alt={image.title ?? ''} isBlurred={false} />
               </div>
             ))}
             {blurredImage && (
               <div onClick={() => setIsModalOpen(true)} className="shrink-0">
-                <GalleryImage src={blurredImage.fileUrl} alt={blurredImage.title} isBlurred={true} />
+                <GalleryImage src={blurredImage.fileUrl} alt={blurredImage.title ?? ''} isBlurred={true} />
               </div>
             )}
           </div>
