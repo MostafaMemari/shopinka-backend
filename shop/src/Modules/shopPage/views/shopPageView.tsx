@@ -5,7 +5,7 @@ import ProductGrid from '@/Modules/shopPage/shop/ProductGrid';
 
 import React from 'react';
 import FilterSection from './FilterSection';
-import SortBar from '../shop/SortBar';
+import SortBar from '../components/SortBar';
 
 interface ShopPageViewProps {
   products: Product[];

@@ -43,7 +43,7 @@ const SortBar: FC<SortBarProps> = ({ onSortChange }) => {
         {sortOptions.map((option) => (
           <button
             key={option}
-            className={`rounded-lg px-1 py-2 text-sm hover:bg-background lg:px-4 ${activeSort === option ? 'sort-button-active' : ''}`}
+            className={`rounded-lg px-1 py-2 text-sm hover:bg-background lg:px-4 cursor-pointer ${activeSort === option ? 'sort-button-active' : ''}`}
             onClick={() => handleSortClick(option)}
           >
             {option}
