@@ -5,8 +5,8 @@ import { FiFilter } from 'react-icons/fi';
 import { BsSortDown } from 'react-icons/bs';
 
 interface MobileOptionsProps {
-  onFilterClick: () => void;
-  onSortClick: () => void;
+  onFilterClick?: () => void;
+  onSortClick?: () => void;
 }
 
 const MobileOptions: FC<MobileOptionsProps> = ({ onFilterClick, onSortClick }) => {

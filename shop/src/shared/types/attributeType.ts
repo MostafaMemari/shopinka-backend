@@ -1,4 +1,4 @@
-export type attribute = {
+export type Attribute = {
   id: number;
   name: string;
   slug: string;
@@ -9,7 +9,7 @@ export type attribute = {
   updatedAt: string;
 };
 
-export type attributeValues = {
+export type AttributeValues = {
   id: number;
   name: string;
   slug: string;

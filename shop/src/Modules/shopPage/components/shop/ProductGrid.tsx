@@ -1,11 +1,9 @@
-'use client';
-
-import { IProduct } from '@/lib/types/products';
 import { FC } from 'react';
-import ProductCard from '../../../Modules/product/components/ProductCard';
+import ProductCard from '../../../product/components/ProductCard';
+import { Product } from '@/Modules/product/types/productType';
 
 interface ProductGridProps {
-  products: any[];
+  products: Product[];
 }
 
 const ProductGrid: FC<ProductGridProps> = ({ products }) => {

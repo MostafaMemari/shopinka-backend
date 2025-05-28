@@ -1,5 +1,6 @@
-import { getProducts } from '@/Modules/product/services/getProducts';
+import { getProducts } from '@/Modules/product/services/productService';
 import { ProductParams } from '@/Modules/product/types/productType';
+import ShopPageView from '@/Modules/shopPage/views/shopPageView';
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 
@@ -9,44 +10,28 @@ function parseArrayParam(param: string | string[] | undefined): number[] | undef
   return str.split(',').map(Number).filter(Boolean);
 }
 
-export default async function ShopPage({ searchParams }: { searchParams: SearchParams }) {
+export default async function ShopPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  const params = await searchParams;
+
   const query: ProductParams = {
-    page: searchParams.page ? Number(searchParams.page) : 1,
-    take: searchParams.take ? Number(searchParams.take) : 20,
-    hasDiscount: searchParams.hasDiscount === 'true' ? true : searchParams.hasDiscount === 'false' ? false : undefined,
-    categoryIds: parseArrayParam(searchParams.categoryIds),
-    attributeValueIds: parseArrayParam(searchParams.attributeValueIds),
-    minPrice: searchParams.minPrice ? Number(searchParams.minPrice) : undefined,
-    maxPrice: searchParams.maxPrice ? Number(searchParams.maxPrice) : undefined,
-    stockStatus: searchParams.stockStatus === 'instock' ? 'instock' : 'all',
-    search: typeof searchParams.search === 'string' ? searchParams.search : undefined,
-    includeMainImage: searchParams.includeMainImage === 'true',
-    includeVariants: searchParams.includeVariants === 'true',
+    page: params.page ? Number(params.page) : 1,
+    take: params.take ? Number(params.take) : 20,
+    hasDiscount: params.hasDiscount === 'true' ? true : params.hasDiscount === 'false' ? false : undefined,
+    categoryIds: parseArrayParam(params.categoryIds),
+    attributeValueIds: parseArrayParam(params.attributeValueIds),
+    minPrice: params.minPrice ? Number(params.minPrice) : undefined,
+    maxPrice: params.maxPrice ? Number(params.maxPrice) : undefined,
+    stockStatus: params.stockStatus === 'instock' ? 'instock' : 'all',
+    search: typeof params.search === 'string' ? params.search : undefined,
+    includeMainImage: params.includeMainImage === 'true',
+    includeVariants: params.includeVariants === 'true',
     sortBy:
-      typeof searchParams.sortBy === 'string' && ['price_asc', 'price_desc', 'price_newest'].includes(searchParams.sortBy)
-        ? (searchParams.sortBy as ProductParams['sortBy'])
+      typeof params.sortBy === 'string' && ['price_asc', 'price_desc', 'price_newest'].includes(params.sortBy)
+        ? (params.sortBy as ProductParams['sortBy'])
         : undefined,
   };
 
-  const data = await getProducts(query);
+  const [productsData] = await Promise.all([getProducts(query)]);
 
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">فروشگاه</h1>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {data.items.map((product: any) => (
-          <div key={product.id} className="border p-4 rounded">
-            <h2>{product.name}</h2>
-            <p>{product?.basePrice} تومان</p>
-          </div>
-        ))}
-      </div>
-
-      {/* صفحه‌بندی */}
-      <div className="mt-6">
-        صفحه {data.page} از {data.totalPages}
-      </div>
-    </div>
-  );
+  return <ShopPageView products={productsData.items} />;
 }

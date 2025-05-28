@@ -58,7 +58,7 @@ export default function ProductComments({ comments }: Props) {
               </ul>
 
               {/* Pagination */}
-              <Pagination currentPage={1} totalPages={2} onPageChange={setCurrentPage} />
+              <Pagination currentPage={1} totalPages={2} />
             </div>
 
             {/* Mobile Comments */}

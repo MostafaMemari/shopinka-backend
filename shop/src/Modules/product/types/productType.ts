@@ -1,5 +1,5 @@
-import { category } from '@/Modules/category/types/categoryType';
-import { attribute, attributeValues } from '@/shared/types/attributeType';
+import { Attribute, AttributeValues } from '@/shared/types/attributeType';
+import { Category } from '@/Modules/category/types/categoryType';
 import { Image } from '@/shared/types/imageType';
 import { SeoMeta } from '@/shared/types/seoMetaType';
 import { user } from '@/shared/types/userType';
@@ -45,7 +45,7 @@ export interface productVariant {
   weight: number | null;
   createdAt: string;
   updatedAt: string;
-  attributeValues: attributeValues[];
+  attributeValues: AttributeValues[];
   mainImage: Image | null;
 }
 
@@ -73,8 +73,8 @@ export interface ProductDetails {
   galleryImages: Image[] | [];
   mainImage: Image | null;
   user: user;
-  categories: category[] | [];
+  categories: Category[] | [];
   seoMeta: SeoMeta;
-  attributes: attribute[] | [];
+  attributes: Attribute[] | [];
   variants: productVariant[] | [];
 }

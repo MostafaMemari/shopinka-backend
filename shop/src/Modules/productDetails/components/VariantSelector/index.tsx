@@ -6,9 +6,9 @@ import { IColor } from '@/lib/types/colors';
 import ColorSelector from './ColorSelector';
 import ButtonSelector from './ButtonSelector';
 import { productVariant } from '@/Modules/product/types/productType';
-import { attribute, attributeValues } from '@/shared/types/attributeType';
 import { RootState } from '@/store';
 import { setSelectedButton, setSelectedColor, setSelectedVariant } from '@/store/slices/productSlice';
+import { Attribute, AttributeValues } from '@/shared/types/attributeType';
 
 interface TransformedVariants {
   colors: IColor[];
@@ -17,20 +17,20 @@ interface TransformedVariants {
 
 interface Props {
   variants: productVariant[];
-  attributes: attribute[];
+  attributes: Attribute[];
   productType: string;
   defaultVariantId?: number;
 }
 
 // Function to transform variants
-export const transformVariants = (variants: productVariant[], attributes: attribute[]): TransformedVariants => {
+export const transformVariants = (variants: productVariant[], attributes: Attribute[]): TransformedVariants => {
   const colors: IColor[] = [];
   const buttons: { slug: string; label: string; isDisabled?: boolean }[] = [];
   const uniqueColors = new Map<string, IColor>();
   const uniqueButtons = new Map<string, { slug: string; label: string; isDisabled?: boolean }>();
 
   variants.forEach((variant) => {
-    variant.attributeValues.forEach((attr: attributeValues) => {
+    variant.attributeValues.forEach((attr: AttributeValues) => {
       const colorAttr = attributes.find((a) => a.id === attr.attributeId && a.type === 'COLOR');
       if (colorAttr && attr.colorCode && !uniqueColors.has(attr.slug)) {
         uniqueColors.set(attr.slug, {

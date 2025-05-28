@@ -2,7 +2,12 @@
 
 const nextConfig = {
   images: {
-    domains: ['node-bucket.storage.c2.liara.space'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'node-bucket.storage.c2.liara.space',
+      },
+    ],
   },
 };
 

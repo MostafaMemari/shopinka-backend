@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import './globals.css';
 import './tailwind.css';
 import { iranyekan } from '@/fonts/iranyekan';
-
 import ClientProvider from './ClientProvider';
 
 export const metadata: Metadata = {

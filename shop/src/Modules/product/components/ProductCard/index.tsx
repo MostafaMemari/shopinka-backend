@@ -5,7 +5,7 @@ import ProductImage from './ProductImage';
 import { Product } from '../../types/productType';
 
 interface Props {
-  product: any;
+  product: Product;
 }
 
 const ProductCard: FC<Props> = ({ product }) => {
