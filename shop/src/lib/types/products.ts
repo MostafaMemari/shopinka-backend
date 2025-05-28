@@ -2,6 +2,13 @@ import { IColor } from './colors';
 
 export interface IProduct {
   id: string;
+  name: string;
+  slug: string;
+  mainImage: {
+    fileUrl: string;
+  };
+  salePrice: number;
+  basePrice: number;
   imageSrc: string;
   title: string;
   productLink: string;

@@ -1,4 +1,4 @@
-import NotificationsActions from '../NotificationsActions';
+import NotificationsActions from './NotificationsActions';
 
 interface Product {
   id: string;

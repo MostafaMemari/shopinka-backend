@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useState } from 'react';
 import { FaTimes, FaHome, FaShoppingCart, FaHeart, FaEye, FaBell, FaMapMarkerAlt, FaUserEdit, FaSignOutAlt } from 'react-icons/fa';
 import Link from 'next/link';
 

@@ -5,7 +5,7 @@ import { FC } from 'react';
 import ProductCard from '../../../Modules/product/components/ProductCard';
 
 interface ProductGridProps {
-  products: IProduct[];
+  products: any[];
 }
 
 const ProductGrid: FC<ProductGridProps> = ({ products }) => {

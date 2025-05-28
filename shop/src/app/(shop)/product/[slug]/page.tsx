@@ -1,19 +1,9 @@
-import { Suspense } from 'react';
-import ProductDetails from './ProductDetails';
-import ProductLoader from '@/components/ProductLoader';
+import { fetchProductBySlug } from '@/Modules/product/services/getProducts';
+import ProductDetailsView from '@/Modules/productDetails/views/ProductDetailsView';
 
-type Props = {
-  params: { slug: string };
-};
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const product = await fetchProductBySlug(slug);
 
-function ProductDetailsWrapper({ params }: Props) {
-  const { slug } = params;
-
-  return (
-    <Suspense fallback={<ProductLoader />}>
-      <ProductDetails key={slug} slug={slug} />
-    </Suspense>
-  );
+  return <ProductDetailsView product={product} />;
 }
-
-export default ProductDetailsWrapper;

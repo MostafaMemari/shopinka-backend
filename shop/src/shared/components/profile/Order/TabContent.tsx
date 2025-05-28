@@ -11,6 +11,8 @@ import OrderList from './OrderList';
 
 interface TabContentProps {
   tabId: 'current' | 'delivered' | 'canceled';
+  initialOrders: IOrder[];
+  pendingOrders: IOrder[];
 }
 
 const useOrders = (tabId: TabContentProps['tabId'], currentPage: number, itemsPerPage: number) => {
@@ -40,13 +42,18 @@ const useOrders = (tabId: TabContentProps['tabId'], currentPage: number, itemsPe
   return { orders, totalItems, loading, error };
 };
 
-const TabContent: React.FC<TabContentProps> = ({ tabId }) => {
+const TabContent: React.FC<TabContentProps> = ({ tabId, initialOrders, pendingOrders }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   const { orders, totalItems, loading, error } = useOrders(tabId, currentPage, itemsPerPage);
 
-  const displayOrders = useMemo(() => (tabId === 'current' ? [...orders] : orders), [tabId, orders]);
+  const displayOrders = useMemo(() => {
+    if (tabId === 'current') {
+      return [...pendingOrders, ...orders];
+    }
+    return orders;
+  }, [tabId, orders, pendingOrders]);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);

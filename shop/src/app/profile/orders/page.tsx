@@ -3,11 +3,9 @@ import TabContent from '@/shared/components/profile/Order/TabContent';
 import { cn } from '@/shared/utils/utils';
 import Link from 'next/link';
 
-interface Props {
-  searchParams?: { [key: string]: string | string[] | undefined };
-}
+const OrderTabs = async ({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) => {
+  const currSearchParams = await searchParams;
 
-const OrderTabs = async ({ searchParams }: Props) => {
   const tabs = [
     { id: 'current', label: 'فعلی', count: 5 },
     { id: 'delivered', label: 'تحویل شده', count: 10 },
@@ -15,7 +13,7 @@ const OrderTabs = async ({ searchParams }: Props) => {
   ];
 
   const tabsIds = tabs.map((tab) => tab.id);
-  const activeTab = searchParams?.activeTab;
+  const activeTab = currSearchParams?.activeTab;
   const tabId = (typeof activeTab === 'string' && tabsIds.includes(activeTab) ? activeTab : 'current') as
     | 'current'
     | 'delivered'
@@ -43,7 +41,7 @@ const OrderTabs = async ({ searchParams }: Props) => {
           </li>
         ))}
       </ul>
-      <TabContent tabId={tabId} />
+      <TabContent tabId={tabId} initialOrders={[]} pendingOrders={[]} />
     </div>
   );
 };
