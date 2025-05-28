@@ -11,7 +11,7 @@ function ProductDetailsWrapper({ params }: Props) {
 
   return (
     <Suspense fallback={<ProductLoader />}>
-      <ProductDetails slug={slug} />;
+      <ProductDetails key={slug} slug={slug} />
     </Suspense>
   );
 }
