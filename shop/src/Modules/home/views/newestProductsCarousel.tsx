@@ -1,9 +1,9 @@
 import { FC } from 'react';
 import CarouselProduct from '@/Modules/product/components/ProductCarousel';
-import { fetchNewestProducts } from '../../product/services/getProducts';
+import { getProducts } from '@/Modules/product/services/getProducts';
 
 const NewestProductsCarousel: FC = async () => {
-  const products = await fetchNewestProducts();
+  const products = await getProducts({ take: 14, sortBy: 'newest' });
 
   return <CarouselProduct title="جدیدترین محصولات" products={products.items} viewAllLink="/products" />;
 };

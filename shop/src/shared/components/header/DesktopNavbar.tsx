@@ -25,6 +25,12 @@ const menuItems: MenuItem[] = [
     color: { light: '#ef4444', dark: '#f87171' },
   },
   {
+    id: 10,
+    name: 'فروشگاه',
+    href: '/shop',
+    color: { light: '#ef4444', dark: '#f87171' },
+  },
+  {
     id: 2,
     name: 'چرا روتی کالا',
     href: './why-us.html',

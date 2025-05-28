@@ -13,6 +13,21 @@ export type Product = {
   mainImage: Image | null;
 };
 
+export type ProductParams = {
+  page?: number;
+  take?: number;
+  hasDiscount?: boolean;
+  categoryIds?: number[];
+  attributeValueIds?: number[];
+  minPrice?: number;
+  maxPrice?: number;
+  stockStatus?: 'all' | 'instock';
+  search?: string;
+  includeMainImage?: boolean;
+  includeVariants?: boolean;
+  sortBy?: 'price_asc' | 'price_desc' | 'newest';
+};
+
 export interface productVariant {
   id: number;
   sku: string | null;
