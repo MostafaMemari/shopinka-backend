@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import ProductCard from '../../../product/components/ProductCard';
+import ProductCard from '../../product/components/ProductCard';
 import { Product } from '@/Modules/product/types/productType';
 
 interface ProductGridProps {

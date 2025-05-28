@@ -1,6 +1,7 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { useQueryParam } from '@/shared/hooks/useQueryParam';
+import { FC } from 'react';
 import { BsSortDown } from 'react-icons/bs';
 
 interface SortBarProps {
@@ -8,13 +9,27 @@ interface SortBarProps {
 }
 
 const SortBar: FC<SortBarProps> = ({ onSortChange }) => {
-  const [activeSort, setActiveSort] = useState('جدید ترین');
-  const sortOptions = ['جدید ترین', 'پرفروش ترین', 'گران ترین', 'ارزان ترین'];
+  const sortMap: Record<string, string> = {
+    جدیدترین: 'newest',
+    ارزان‌ترین: 'price_asc',
+    گران‌ترین: 'price_desc',
+  };
+
+  const reverseSortMap: Record<string, string> = Object.fromEntries(Object.entries(sortMap).map(([key, value]) => [value, key]));
+
+  const [activeSort, setActiveSort] = useQueryParam({
+    paramKey: 'sortBy',
+    defaultValue: 'جدیدترین',
+    toQueryString: (value) => sortMap[value] || '',
+    fromQueryString: (value) => (value && reverseSortMap[value] ? reverseSortMap[value] : 'جدیدترین'),
+  });
+
+  const sortOptions = ['جدیدترین', 'ارزان‌ترین', 'گران‌ترین'];
 
   const handleSortClick = (option: string) => {
     setActiveSort(option);
     if (onSortChange) {
-      onSortChange(option);
+      onSortChange(sortMap[option] || 'newest');
     }
   };
 
@@ -23,7 +38,7 @@ const SortBar: FC<SortBarProps> = ({ onSortChange }) => {
       <div className="flex h-14 items-center gap-x-2 rounded-lg bg-muted px-2 text-text/90 shadow-base lg:px-4">
         <div className="flex items-center gap-x-2 text-sm lg:text-base">
           <BsSortDown className="h-6 w-6" />
-          <p>مرتب سازی بر اساس</p>
+          <p>مرتب‌سازی بر اساس</p>
         </div>
         {sortOptions.map((option) => (
           <button

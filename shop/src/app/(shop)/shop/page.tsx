@@ -26,7 +26,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
     includeMainImage: params.includeMainImage === 'true',
     includeVariants: params.includeVariants === 'true',
     sortBy:
-      typeof params.sortBy === 'string' && ['price_asc', 'price_desc', 'price_newest'].includes(params.sortBy)
+      typeof params.sortBy === 'string' && ['price_asc', 'price_desc', 'newest'].includes(params.sortBy)
         ? (params.sortBy as ProductParams['sortBy'])
         : undefined,
   };

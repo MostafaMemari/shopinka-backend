@@ -1,47 +1,25 @@
 'use client';
 
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 import { useCategories } from '@/Modules/category/hooks/useCategories';
-import { useEffect, useMemo, useState } from 'react';
-import { flattenCategories } from '../../utils/flattenCategories';
+import { flattenCategories } from '../../../utils/flattenCategories';
 import CategoryItem from './CategoryItem';
-
-function useSelectedCategories() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const [selectedCategories, setSelectedCategories] = useState<Set<number>>(() => {
-    const ids =
-      searchParams
-        .get('categoryIds')
-        ?.split(',')
-        .map(Number)
-        .filter((id) => !isNaN(id)) || [];
-    return new Set(ids);
-  });
-
-  useEffect(() => {
-    const newParams = new URLSearchParams(searchParams);
-    if (selectedCategories.size > 0) {
-      newParams.set('categoryIds', Array.from(selectedCategories).join(','));
-    } else {
-      newParams.delete('categoryIds');
-    }
-    router.replace(`?${newParams.toString()}`, { scroll: false });
-  }, [selectedCategories, router, searchParams]);
-
-  const toggleCategory = (id: number) => {
-    setSelectedCategories((prev) => {
-      const newSet = new Set(prev);
-      newSet.has(id) ? newSet.delete(id) : newSet.add(id);
-      return newSet;
-    });
-  };
-
-  return { selectedCategories, toggleCategory };
-}
+import { useQueryParam } from '@/shared/hooks/useQueryParam';
 
 function CategorySelector() {
-  const { selectedCategories, toggleCategory } = useSelectedCategories();
+  const [selectedCategories, setSelectedCategories] = useQueryParam<Set<number>>({
+    paramKey: 'categoryIds',
+    defaultValue: new Set<number>(),
+    toQueryString: (value) => (value.size > 0 ? Array.from(value).join(',') : ''),
+    fromQueryString: (value) =>
+      new Set(
+        value
+          ?.split(',')
+          .map(Number)
+          .filter((id) => !isNaN(id)) || [],
+      ),
+  });
+
   const { data, isLoading, error } = useCategories({
     enabled: true,
     params: { includeChildren: true },
@@ -52,6 +30,14 @@ function CategorySelector() {
     if (!data?.items) return [];
     return flattenCategories(data.items);
   }, [data]);
+
+  const toggleCategory = (id: number) => {
+    setSelectedCategories((prev) => {
+      const newSet = new Set(prev);
+      newSet.has(id) ? newSet.delete(id) : newSet.add(id);
+      return newSet;
+    });
+  };
 
   return (
     <div className="rounded-lg bg-white p-4 shadow">

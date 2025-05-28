@@ -5,8 +5,6 @@ import SearchInput from '../components/filters/SearchInput';
 import StockStatusFilter from '../components/filters/StockStatusFilter';
 import DiscountFilter from '../components/filters/DiscountFilter';
 import PriceSelector from '../components/filters/PriceSelector';
-import { Category } from '@/Modules/category/types/categoryType';
-import { useState } from 'react';
 
 const FilterSection = () => {
   return (

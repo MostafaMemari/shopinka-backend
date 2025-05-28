@@ -1,11 +1,11 @@
 import { Category } from '@/Modules/category/types/categoryType';
 import { Product } from '@/Modules/product/types/productType';
 
-import ProductGrid from '@/Modules/shopPage/components/shop/ProductGrid';
+import ProductGrid from '@/Modules/shopPage/shop/ProductGrid';
 
 import React from 'react';
 import FilterSection from './FilterSection';
-import SortBar from '../components/shop/SortBar';
+import SortBar from '../shop/SortBar';
 
 interface ShopPageViewProps {
   products: Product[];
