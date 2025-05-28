@@ -2,31 +2,51 @@
 
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useCategories } from '@/Modules/category/hooks/useCategories';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { flattenCategories } from '../../utils/flattenCategories';
 import CategoryItem from './CategoryItem';
-import { useSelectedCategories } from '../../hooks/useSelectedCategories';
 
-function CategorySelector() {
+function useSelectedCategories() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { selectedCategories, setFromSearchParams, toggleCategory, updateUrl } = useSelectedCategories(searchParams, router);
+  const [selectedCategories, setSelectedCategories] = useState<Set<number>>(() => {
+    const ids =
+      searchParams
+        .get('categoryIds')
+        ?.split(',')
+        .map(Number)
+        .filter((id) => !isNaN(id)) || [];
+    return new Set(ids);
+  });
 
+  useEffect(() => {
+    const newParams = new URLSearchParams(searchParams);
+    if (selectedCategories.size > 0) {
+      newParams.set('categoryIds', Array.from(selectedCategories).join(','));
+    } else {
+      newParams.delete('categoryIds');
+    }
+    router.replace(`?${newParams.toString()}`, { scroll: false });
+  }, [selectedCategories, router, searchParams]);
+
+  const toggleCategory = (id: number) => {
+    setSelectedCategories((prev) => {
+      const newSet = new Set(prev);
+      newSet.has(id) ? newSet.delete(id) : newSet.add(id);
+      return newSet;
+    });
+  };
+
+  return { selectedCategories, toggleCategory };
+}
+
+function CategorySelector() {
+  const { selectedCategories, toggleCategory } = useSelectedCategories();
   const { data, isLoading, error } = useCategories({
     enabled: true,
     params: { includeChildren: true },
     staleTime: 1 * 60 * 1000,
   });
-
-  // Initialize from URL
-  useEffect(() => {
-    setFromSearchParams();
-  }, [searchParams]);
-
-  // Update URL on change
-  useEffect(() => {
-    updateUrl(searchParams);
-  }, [selectedCategories]);
 
   const flatCategories = useMemo(() => {
     if (!data?.items) return [];
@@ -46,7 +66,7 @@ function CategorySelector() {
         <p className="text-gray-600 text-sm">هیچ دسته‌بندی یافت نشد</p>
       ) : (
         <ul className="space-y-1">
-          {flatCategories.map(({ category, depth }) => (
+          {flatCategories.map(({ category }) => (
             <CategoryItem
               key={category.id}
               category={category}
