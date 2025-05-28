@@ -1,12 +1,32 @@
+'use client';
+
+import { useQueryParam } from '@/shared/hooks/useQueryParam';
 import React from 'react';
 
 function DiscountFilter() {
+  const [hasDiscount, setHasDiscount] = useQueryParam<boolean>({
+    paramKey: 'hasDiscount',
+    defaultValue: false,
+    toQueryString: (value) => (value ? 'true' : ''),
+    fromQueryString: (value) => value === 'true',
+  });
+
+  // گزینه جایگزین برای وقتی می‌خوای false به hasDiscount=false نگاشت بشه:
+  // toQueryString: (value) => (value ? 'true' : 'false'),
+  // fromQueryString: (value) => value === 'true',
+
   return (
     <li>
       <label className="flex cursor-pointer items-center justify-between py-3" htmlFor="onlySpecialDesktop">
         <div>فقط محصولات ویژه</div>
         <div className="relative inline-flex cursor-pointer items-center">
-          <input className="peer sr-only" id="onlySpecialDesktop" type="checkbox" />
+          <input
+            className="peer sr-only"
+            id="onlySpecialDesktop"
+            type="checkbox"
+            checked={hasDiscount}
+            onChange={() => setHasDiscount(!hasDiscount)}
+          />
           <div className="peer h-6 w-11 rounded-full bg-background after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-muted after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-focus:ring-emerald-500 dark:bg-zinc-800 peer-focus:dark:ring-emerald-400"></div>
         </div>
       </label>
