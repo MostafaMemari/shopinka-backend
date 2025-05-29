@@ -2,8 +2,10 @@ import { ProductParams } from '@/Modules/product/types/productType';
 import ProductsListLoading from '@/Modules/shopPage/components/ProductsListLoading';
 import SortBar from '@/Modules/shopPage/components/SortBar';
 import { loadSearchParams } from '@/Modules/shopPage/utils/loadSearchParams';
+import { parseArrayParam } from '@/Modules/shopPage/utils/parseArrayParam';
 import FilterSection from '@/Modules/shopPage/views/FilterSection';
 import ProductListShop from '@/Modules/shopPage/views/ProductListShop';
+import { revalidateTag } from 'next/cache';
 import { SearchParams } from 'next/dist/server/request/search-params';
 import { Suspense } from 'react';
 
@@ -11,18 +13,12 @@ type PageProps = {
   searchParams: Promise<SearchParams>;
 };
 
-function parseArrayParam(param: string | string[] | undefined): number[] | undefined {
-  if (!param) return undefined;
-  const str = Array.isArray(param) ? param[0] : param;
-  return str.split(',').map(Number).filter(Boolean);
-}
-
 export default async function ShopPage({ searchParams }: PageProps) {
   const params = await loadSearchParams(searchParams);
 
   const query: ProductParams = {
     page: params.page ?? 1,
-    take: params.perPage ?? params.take ?? 20,
+    take: params.perPage ?? 20,
     hasDiscount: params.hasDiscount ?? undefined,
     categoryIds: parseArrayParam(params.categoryIds ?? undefined),
     attributeValueIds: parseArrayParam(params.attributeValueIds ?? undefined),
@@ -43,20 +39,10 @@ export default async function ShopPage({ searchParams }: PageProps) {
       <FilterSection />
       <div className="col-span-12 space-y-4 md:col-span-8 lg:col-span-9">
         <SortBar />
-
         <Suspense fallback={<ProductsListLoading />}>
           <ProductListShop params={query} />
         </Suspense>
-
-        {/* <Pagination currentPage={10} totalPages={5} /> */}
       </div>
-      {/* <MobileFilterDrawer
-        isOpen={isFilterOpen}
-        onClose={() => setIsFilterOpen(false)}
-        onFilterChange={handleFilterChange}
-        config={filterConfig}
-      />
-      <MobileSortDrawer isOpen={isSortOpen} onClose={() => setIsSortOpen(false)} onSortChange={handleSortChange} /> */}
     </div>
   );
 }

@@ -1,9 +1,7 @@
 'use client';
 
 import { useQueryState } from 'nuqs';
-import { FC } from 'react';
 import { BsSortDown } from 'react-icons/bs';
-import { refetchProducts } from '@/Modules/product/services/productService';
 
 const SORT_OPTIONS = {
   default: { label: 'پیش‌فرض', value: '' },
@@ -12,7 +10,7 @@ const SORT_OPTIONS = {
   price_desc: { label: 'گران‌ترین', value: 'price_desc' },
 } as const;
 
-const SortBar: FC = () => {
+function SortBar() {
   const [sortBy, setSortBy] = useQueryState('sortBy', {
     defaultValue: '',
     parse: (value) => value as keyof typeof SORT_OPTIONS,
@@ -21,7 +19,6 @@ const SortBar: FC = () => {
 
   const handleSortClick = (value: keyof typeof SORT_OPTIONS) => {
     setSortBy(value);
-    refetchProducts();
   };
 
   return (
@@ -45,6 +42,6 @@ const SortBar: FC = () => {
       </div>
     </div>
   );
-};
+}
 
 export default SortBar;

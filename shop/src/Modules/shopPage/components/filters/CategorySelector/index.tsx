@@ -5,7 +5,6 @@ import { useCategories } from '@/Modules/category/hooks/useCategories';
 import { flattenCategories } from '../../../utils/flattenCategories';
 import CategoryItem from './CategoryItem';
 import { useQueryState } from 'nuqs';
-import { refetchProducts } from '@/Modules/product/services/productService';
 
 type CategorySet = Set<number>;
 
@@ -33,7 +32,6 @@ function CategorySelector() {
       newSet.has(id) ? newSet.delete(id) : newSet.add(id);
       return newSet;
     });
-    refetchProducts();
   };
 
   return (

@@ -1,7 +1,6 @@
 'use client';
 
 import { useQueryState } from 'nuqs';
-import { refetchProducts } from '@/Modules/product/services/productService';
 
 function ResetFilters() {
   const [, setSearch] = useQueryState('search');
@@ -16,7 +15,6 @@ function ResetFilters() {
     setSortBy(null);
     setMinPrice(null);
     setMaxPrice(null);
-    refetchProducts();
   };
 
   return (

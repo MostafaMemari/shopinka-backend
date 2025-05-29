@@ -57,7 +57,7 @@ const RecentActions: React.FC<RecentActionsProps> = ({ recent: initialRecent }) 
             <Pagination
               currentPage={1}
               onPageChange={() => {
-                console.log('change pagination');
+                // TODO: Implement pagination
               }}
               itemsPerPage={5}
               totalItems={10}

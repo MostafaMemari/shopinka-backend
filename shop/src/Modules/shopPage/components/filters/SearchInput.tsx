@@ -2,21 +2,23 @@
 
 import React, { useState, useEffect } from 'react';
 import { useQueryState } from 'nuqs';
-import { refetchProducts } from '@/Modules/product/services/productService';
 import { useDebouncedCallback } from 'use-debounce';
 
 function SearchInput() {
-  const [searchQuery, setSearchQuery] = useQueryState('search', { defaultValue: '' });
+  const [searchQuery, setSearchQuery] = useQueryState('search', {
+    defaultValue: '',
+    history: 'replace',
+    shallow: false, // کل صفحه رو سرور-ساید نَو می‌کنه
+  });
+
   const [inputValue, setInputValue] = useState(searchQuery);
 
-  // Sync input value with URL query when it changes externally
   useEffect(() => {
     setInputValue(searchQuery);
   }, [searchQuery]);
 
   const debouncedSearch = useDebouncedCallback((value: string) => {
     setSearchQuery(value);
-    refetchProducts();
   }, 500);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

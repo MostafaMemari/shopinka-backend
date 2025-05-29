@@ -1,10 +1,7 @@
 import CategorySelector from '../components/filters/CategorySelector';
 import SearchInput from '../components/filters/SearchInput';
-import StockStatusFilter from '../components/filters/StockStatusFilter';
-import DiscountFilter from '../components/filters/DiscountFilter';
 import PriceSelector from '../components/filters/PriceSelector';
 import ResetFilters from '../components/filters/ResetFilters';
-import { revalidateTag } from 'next/cache';
 
 const FilterSection = () => {
   return (
