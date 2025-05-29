@@ -7,11 +7,12 @@ import { getProducts } from '@/Modules/product/services/productService';
 
 interface Props {
   query: ProductParams;
+  initialProducts: Product[];
 }
 
-export default function ProductListShopClient({ query }: Props) {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+export default function ProductListShopClient({ query, initialProducts }: Props) {
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);

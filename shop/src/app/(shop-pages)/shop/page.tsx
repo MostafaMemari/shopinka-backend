@@ -3,7 +3,7 @@ import { loadSearchParams } from '@/Modules/shopPage/utils/loadSearchParams';
 import { parseArrayParam } from '@/Modules/shopPage/utils/parseArrayParam';
 import { SearchParams } from 'next/dist/server/request/search-params';
 import ProductListShopClient from '@/Modules/shopPage/views/ProductListShopClient';
-
+import { getProducts } from '@/Modules/product/services/productService';
 type PageProps = {
   searchParams: Promise<SearchParams>;
 };
@@ -29,5 +29,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
         : undefined,
   };
 
-  return <ProductListShopClient query={query} />;
+  const productResponse = await getProducts(query);
+
+  return <ProductListShopClient query={query} initialProducts={productResponse.items || []} />;
 }
