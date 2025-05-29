@@ -4,12 +4,13 @@ import StockStatusFilter from '../components/filters/StockStatusFilter';
 import DiscountFilter from '../components/filters/DiscountFilter';
 import PriceSelector from '../components/filters/PriceSelector';
 import ResetFilters from '../components/filters/ResetFilters';
+import { revalidateTag } from 'next/cache';
 
 const FilterSection = () => {
   return (
     <div className="col-span-4 row-span-2 hidden md:block lg:col-span-3">
       <div className="sticky top-32 mb-4 overflow-hidden rounded-lg bg-muted shadow-base">
-        <div dir="ltr" className="flex max-h-[calc(95vh_-_100px)] flex-col overflow-y-auto overflow-x-hidden px-4 py-3">
+        <div dir="ltr" className="flex max-h-[calc(95vh_-_100px)] flex-col px-4 py-3">
           <div dir="rtl">
             <ResetFilters />
             <ul className="space-y-6">
@@ -18,8 +19,8 @@ const FilterSection = () => {
               <CategorySelector />
               {/* <BrandSelector /> */}
               {/* <AttributeSelector /> */}
-              <StockStatusFilter />
-              <DiscountFilter />
+              {/* <StockStatusFilter /> */}
+              {/* <DiscountFilter /> */}
             </ul>
           </div>
         </div>

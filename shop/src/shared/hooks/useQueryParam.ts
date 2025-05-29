@@ -14,6 +14,7 @@ export function useQueryParam<T>({ paramKey, defaultValue, toQueryString, fromQu
   const searchParams = useSearchParams();
   const router = useRouter();
   const prevQueryValueRef = useRef<string | null>(null);
+  const isInitialRender = useRef(true);
 
   const [value, setValue] = useState<T>(() => {
     const paramValue = searchParams.get(paramKey);
@@ -21,6 +22,19 @@ export function useQueryParam<T>({ paramKey, defaultValue, toQueryString, fromQu
   });
 
   useEffect(() => {
+    // در رندر اولیه، فقط اگر کوئری پارامتر وجود داشته باشد، مقدار را تنظیم کن
+    if (isInitialRender.current) {
+      const paramValue = searchParams.get(paramKey);
+      if (paramValue !== null) {
+        const newValue = fromQueryString(paramValue);
+        setValue(newValue);
+        prevQueryValueRef.current = toQueryString(newValue);
+      }
+      isInitialRender.current = false;
+      return;
+    }
+
+    // برای تغییرات بعدی، URL را به‌روزرسانی کن
     const currentQueryValue = toQueryString(value);
     if (currentQueryValue !== prevQueryValueRef.current) {
       const newParams = new URLSearchParams(searchParams);
@@ -32,7 +46,7 @@ export function useQueryParam<T>({ paramKey, defaultValue, toQueryString, fromQu
       router.replace(`?${newParams.toString()}`, { scroll: false });
       prevQueryValueRef.current = currentQueryValue;
     }
-  }, [value, paramKey, toQueryString, searchParams, router]);
+  }, [value, paramKey, toQueryString, fromQueryString, searchParams, router]);
 
   return [value, setValue] as const;
 }

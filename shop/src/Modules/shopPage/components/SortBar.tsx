@@ -1,36 +1,27 @@
 'use client';
 
-import { useQueryParam } from '@/shared/hooks/useQueryParam';
+import { useQueryState } from 'nuqs';
 import { FC } from 'react';
 import { BsSortDown } from 'react-icons/bs';
+import { refetchProducts } from '@/Modules/product/services/productService';
 
-interface SortBarProps {
-  onSortChange?: (sortOption: string) => void;
-}
+const SORT_OPTIONS = {
+  default: { label: 'پیش‌فرض', value: '' },
+  newest: { label: 'جدیدترین', value: 'newest' },
+  price_asc: { label: 'ارزان‌ترین', value: 'price_asc' },
+  price_desc: { label: 'گران‌ترین', value: 'price_desc' },
+} as const;
 
-const SortBar: FC<SortBarProps> = ({ onSortChange }) => {
-  const sortMap: Record<string, string> = {
-    جدیدترین: 'newest',
-    ارزان‌ترین: 'price_asc',
-    گران‌ترین: 'price_desc',
-  };
-
-  const reverseSortMap: Record<string, string> = Object.fromEntries(Object.entries(sortMap).map(([key, value]) => [value, key]));
-
-  const [activeSort, setActiveSort] = useQueryParam({
-    paramKey: 'sortBy',
-    defaultValue: 'جدیدترین',
-    toQueryString: (value) => sortMap[value] || '',
-    fromQueryString: (value) => (value && reverseSortMap[value] ? reverseSortMap[value] : 'جدیدترین'),
+const SortBar: FC = () => {
+  const [sortBy, setSortBy] = useQueryState('sortBy', {
+    defaultValue: '',
+    parse: (value) => value as keyof typeof SORT_OPTIONS,
+    serialize: (value) => value,
   });
 
-  const sortOptions = ['جدیدترین', 'ارزان‌ترین', 'گران‌ترین'];
-
-  const handleSortClick = (option: string) => {
-    setActiveSort(option);
-    if (onSortChange) {
-      onSortChange(sortMap[option] || 'newest');
-    }
+  const handleSortClick = (value: keyof typeof SORT_OPTIONS) => {
+    setSortBy(value);
+    refetchProducts();
   };
 
   return (
@@ -40,13 +31,15 @@ const SortBar: FC<SortBarProps> = ({ onSortChange }) => {
           <BsSortDown className="h-6 w-6" />
           <p>مرتب‌سازی بر اساس</p>
         </div>
-        {sortOptions.map((option) => (
+        {Object.entries(SORT_OPTIONS).map(([key, { label }]) => (
           <button
-            key={option}
-            className={`rounded-lg px-1 py-2 text-sm hover:bg-background lg:px-4 cursor-pointer ${activeSort === option ? 'sort-button-active' : ''}`}
-            onClick={() => handleSortClick(option)}
+            key={key}
+            className={`rounded-lg px-1 py-2 text-sm hover:bg-background lg:px-4 cursor-pointer ${
+              sortBy === key ? 'sort-button-active' : ''
+            }`}
+            onClick={() => handleSortClick(key as keyof typeof SORT_OPTIONS)}
           >
-            {option}
+            {label}
           </button>
         ))}
       </div>

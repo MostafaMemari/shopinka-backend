@@ -30,6 +30,8 @@ export class ProductController {
   @Get()
   @SkipAuth()
   findAllPublic(@Query() queryPublicProductDto: QueryPublicProductDto) {
+    console.log('get product', new Date().toLocaleString('fa-ir'));
+
     return this.productService.findAllPublic(queryPublicProductDto);
   }
 

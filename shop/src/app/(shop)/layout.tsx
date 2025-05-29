@@ -1,23 +1,21 @@
 import Footer from '@/shared/components/footer';
 import Header from '@/shared/components/header';
-import CarouselProduct from '@/Modules/product/components/ProductCarousel';
-import ProductTabs from '@/Modules/product/components/ProductTabs';
-import { mockProductDetails, popularProducts } from '@/mock/productCarousels';
-import NewestProductsCarousel from '@/Modules/home/views/newestProductsCarousel';
+// import CarouselProduct from "@/components/Carousel/CarouselProduct";
+// import ProductTabs from "@/components/ProductTabs";
+// import { mockProductDetails, popularProducts } from "@/mock/productCarousels";
 
 export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const product = mockProductDetails;
+  // const product = mockProductDetails;
 
   return (
     <>
       <Header />
 
+      <div className="fixed inset-x-0 top-1/3 mx-auto h-1/3 w-1/4 bg-primary/50 blur-[200px]"></div>
       <main className="grow bg-background pb-14 pt-36 xs:pt-36">
-        {children}
-        <div className="w-full max-w-screen-xl mx-auto px-4 mt-8">
-          <NewestProductsCarousel />
-        </div>
-        <ProductTabs description={product.description} specifications={product.properties} comments={product.comments} />
+        <section className="mb-8">
+          <div className="container relative">{children}</div>
+        </section>
       </main>
 
       <Footer />

@@ -4,20 +4,16 @@ import { useMemo } from 'react';
 import { useCategories } from '@/Modules/category/hooks/useCategories';
 import { flattenCategories } from '../../../utils/flattenCategories';
 import CategoryItem from './CategoryItem';
-import { useQueryParam } from '@/shared/hooks/useQueryParam';
+import { useQueryState } from 'nuqs';
+import { refetchProducts } from '@/Modules/product/services/productService';
+
+type CategorySet = Set<number>;
 
 function CategorySelector() {
-  const [selectedCategories, setSelectedCategories] = useQueryParam<Set<number>>({
-    paramKey: 'categoryIds',
-    defaultValue: new Set<number>(),
-    toQueryString: (value) => (value.size > 0 ? Array.from(value).join(',') : ''),
-    fromQueryString: (value) =>
-      new Set(
-        value
-          ?.split(',')
-          .map(Number)
-          .filter((id) => !isNaN(id)) || [],
-      ),
+  const [selectedCategories, setSelectedCategories] = useQueryState<CategorySet>('categoryIds', {
+    defaultValue: new Set(),
+    parse: (value) => new Set(value.split(',').map(Number).filter(Boolean)),
+    serialize: (value) => Array.from(value).join(','),
   });
 
   const { data, isLoading, error } = useCategories({
@@ -37,6 +33,7 @@ function CategorySelector() {
       newSet.has(id) ? newSet.delete(id) : newSet.add(id);
       return newSet;
     });
+    refetchProducts();
   };
 
   return (
