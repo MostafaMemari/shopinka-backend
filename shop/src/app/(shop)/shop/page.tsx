@@ -8,32 +8,11 @@ import ProductListShop from '@/Modules/shopPage/views/ProductListShop';
 import { SearchParams } from 'next/dist/server/request/search-params';
 import { Suspense } from 'react';
 import { Metadata } from 'next';
+import ProductSectionClient from '@/Modules/shopPage/views/ProductSectionClient';
 
 type PageProps = {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<SearchParams>;
 };
-
-// export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
-//   const search = searchParams?.search ?? '';
-//   const categoryIds = searchParams?.categoryIds ?? '';
-
-//   const title = search ? `جستجوی ${search} در فروشگاه` : categoryIds ? `دسته‌بندی ${categoryIds} در فروشگاه` : 'فروشگاه';
-
-//   const description = search
-//     ? `نتایج جستجو برای ${search} در فروشگاه.`
-//     : categoryIds
-//       ? `محصولات دسته‌بندی ${categoryIds} در فروشگاه.`
-//       : 'فروشگاه اینترنتی با انواع محصولات.';
-
-//   return {
-//     title,
-//     description,
-//     openGraph: {
-//       title,
-//       description,
-//     },
-//   };
-// }
 
 export default async function ShopPage({ searchParams }: PageProps) {
   const params = await loadSearchParams(searchParams);
