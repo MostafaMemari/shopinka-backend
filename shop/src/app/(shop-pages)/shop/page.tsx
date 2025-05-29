@@ -1,9 +1,13 @@
-import { ProductParams } from '@/Modules/product/types/productType';
-import { loadSearchParams } from '@/Modules/shopPage/utils/loadSearchParams';
-import { parseArrayParam } from '@/Modules/shopPage/utils/parseArrayParam';
-import { SearchParams } from 'next/dist/server/request/search-params';
+import { Suspense } from 'react';
 import ProductListShopClient from '@/Modules/shopPage/views/ProductListShopClient';
 import { getProducts } from '@/Modules/product/services/productService';
+import { loadSearchParams } from '@/Modules/shopPage/utils/loadSearchParams';
+import { parseArrayParam } from '@/Modules/shopPage/utils/parseArrayParam';
+import { ProductParams } from '@/Modules/product/types/productType';
+import { SearchParams } from 'nuqs';
+import SortBar from '@/Modules/shopPage/components/SortBar';
+import FilterSection from '@/Modules/shopPage/views/FilterSection';
+
 type PageProps = {
   searchParams: Promise<SearchParams>;
 };
@@ -31,5 +35,15 @@ export default async function ShopPage({ searchParams }: PageProps) {
 
   const productResponse = await getProducts(query);
 
-  return <ProductListShopClient query={query} initialProducts={productResponse.items || []} />;
+  return (
+    <div className="grid grid-cols-12 grid-rows-[60px_min(500px,_1fr)] gap-4">
+      <FilterSection />
+      <div className="col-span-12 space-y-4 md:col-span-8 lg:col-span-9">
+        <SortBar />
+        <Suspense fallback={<div>Loading...</div>}>
+          <ProductListShopClient query={query} initialProducts={productResponse.items || []} />
+        </Suspense>
+      </div>
+    </div>
+  );
 }
