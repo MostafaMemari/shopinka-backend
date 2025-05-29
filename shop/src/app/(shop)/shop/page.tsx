@@ -13,27 +13,27 @@ type PageProps = {
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
-export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
-  const search = searchParams.search as string;
-  const categoryIds = searchParams.categoryIds as string;
+// export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+//   const search = searchParams?.search ?? '';
+//   const categoryIds = searchParams?.categoryIds ?? '';
 
-  const title = search ? `جستجوی ${search} در فروشگاه` : categoryIds ? `دسته‌بندی ${categoryIds} در فروشگاه` : 'فروشگاه';
+//   const title = search ? `جستجوی ${search} در فروشگاه` : categoryIds ? `دسته‌بندی ${categoryIds} در فروشگاه` : 'فروشگاه';
 
-  const description = search
-    ? `خرید آنلاین ${search} با بهترین قیمت و کیفیت`
-    : categoryIds
-      ? `محصولات دسته‌بندی ${categoryIds} با قیمت مناسب`
-      : 'خرید آنلاین با بهترین قیمت و کیفیت';
+//   const description = search
+//     ? `نتایج جستجو برای ${search} در فروشگاه.`
+//     : categoryIds
+//       ? `محصولات دسته‌بندی ${categoryIds} در فروشگاه.`
+//       : 'فروشگاه اینترنتی با انواع محصولات.';
 
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-    },
-  };
-}
+//   return {
+//     title,
+//     description,
+//     openGraph: {
+//       title,
+//       description,
+//     },
+//   };
+// }
 
 export default async function ShopPage({ searchParams }: PageProps) {
   const params = await loadSearchParams(searchParams);

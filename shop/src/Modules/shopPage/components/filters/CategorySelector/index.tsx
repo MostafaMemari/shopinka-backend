@@ -29,8 +29,6 @@ function CategorySelector() {
     return flattenCategories(data.items);
   }, [data]);
 
-  const router = useRouter();
-
   const handleCategoryClick = (categoryId: number) => {
     const newSelectedCategories = selectedCategories.includes(categoryId)
       ? selectedCategories.filter((id: number) => id !== categoryId)

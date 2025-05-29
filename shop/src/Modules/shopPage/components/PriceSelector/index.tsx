@@ -8,7 +8,7 @@ import './PriceSelector.css';
 
 const MIN_PRICE = 0;
 const MAX_PRICE = 100000;
-const STEP = 5000;
+const STEP = 1000;
 
 function PriceSelector() {
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -18,11 +18,16 @@ function PriceSelector() {
     parse: (value) => (value ? Number(value) : MIN_PRICE),
     serialize: (value) => String(value),
     defaultValue: MIN_PRICE,
+    history: 'replace', // جایگزین کردن URL به جای افزودن به تاریخچه
+    shallow: false, // اطمینان از ارسال تغییرات به سرور
   });
+
   const [maxPrice, setMaxPrice] = useQueryState<number>('maxPrice', {
     parse: (value) => (value ? Number(value) : MAX_PRICE),
     serialize: (value) => String(value),
     defaultValue: MAX_PRICE,
+    history: 'replace', // جایگزین کردن URL به جای افزودن به تاریخچه
+    shallow: false, // اطمینان از ارسال تغییرات به سرور
   });
 
   useEffect(() => {

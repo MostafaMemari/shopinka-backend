@@ -2,6 +2,8 @@ import CategorySelector from '../components/filters/CategorySelector';
 import SearchInput from '../components/filters/SearchInput';
 import ResetFilters from '../components/filters/ResetFilters';
 import PriceSelector from '../components/PriceSelector';
+import StockStatusFilter from '../components/filters/StockStatusFilter';
+import DiscountFilter from '../components/filters/DiscountFilter';
 
 const FilterSection = () => {
   return (
@@ -16,8 +18,8 @@ const FilterSection = () => {
               <CategorySelector />
               {/* <BrandSelector /> */}
               {/* <AttributeSelector /> */}
-              {/* <StockStatusFilter /> */}
-              {/* <DiscountFilter /> */}
+              <StockStatusFilter />
+              <DiscountFilter />
             </ul>
           </div>
         </div>

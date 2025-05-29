@@ -1,19 +1,16 @@
 'use client';
 
-import { useQueryParam } from '@/shared/hooks/useQueryParam';
+import { useQueryState } from 'nuqs';
 import React from 'react';
 
 function DiscountFilter() {
-  const [hasDiscount, setHasDiscount] = useQueryParam<boolean>({
-    paramKey: 'hasDiscount',
+  const [hasDiscount, setHasDiscount] = useQueryState<boolean>('hasDiscount', {
+    parse: (value) => value === 'true',
+    serialize: (value) => (value ? 'true' : ''),
     defaultValue: false,
-    toQueryString: (value) => (value ? 'true' : ''),
-    fromQueryString: (value) => value === 'true',
+    history: 'replace', // جایگزین کردن URL به جای افزودن به تاریخچه
+    shallow: false, // اطمینان از ارسال تغییرات به سرور
   });
-
-  // گزینه جایگزین برای وقتی می‌خوای false به hasDiscount=false نگاشت بشه:
-  // toQueryString: (value) => (value ? 'true' : 'false'),
-  // fromQueryString: (value) => value === 'true',
 
   return (
     <li>

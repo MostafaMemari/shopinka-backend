@@ -1,19 +1,16 @@
 'use client';
 
-import { useQueryParam } from '@/shared/hooks/useQueryParam';
+import { useQueryState } from 'nuqs';
 import React from 'react';
 
 function StockStatusFilter() {
-  const [isInStock, setIsInStock] = useQueryParam<boolean>({
-    paramKey: 'stockStatus',
-    defaultValue: false, // پیش‌فرض: فقط کالاهای موجود غیرفعال
-    toQueryString: (value) => (value ? 'instock' : ''),
-    fromQueryString: (value) => value === 'instock',
+  const [isInStock, setIsInStock] = useQueryState<boolean>('stockStatus', {
+    parse: (value) => value === 'instock',
+    serialize: (value) => (value ? 'instock' : ''),
+    defaultValue: false,
+    history: 'replace',
+    shallow: false,
   });
-
-  // گزینه جایگزین برای وقتی می‌خوای false به all نگاشت بشه:
-  // toQueryString: (value) => (value ? 'instock' : 'all'),
-  // fromQueryString: (value) => value === 'instock' || value !== 'all',
 
   return (
     <li>
