@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@types/nouislider": "^9.0.10",
+    "nouislider": "^15.8.1"
+  }
+}

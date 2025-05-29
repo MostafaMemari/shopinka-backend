@@ -1,7 +1,7 @@
 import CategorySelector from '../components/filters/CategorySelector';
 import SearchInput from '../components/filters/SearchInput';
-import PriceSelector from '../components/filters/PriceSelector';
 import ResetFilters from '../components/filters/ResetFilters';
+import PriceSelector from '../components/PriceSelector';
 
 const FilterSection = () => {
   return (

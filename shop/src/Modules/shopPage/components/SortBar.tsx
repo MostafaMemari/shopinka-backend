@@ -15,10 +15,16 @@ function SortBar() {
     defaultValue: '',
     parse: (value) => value as keyof typeof SORT_OPTIONS,
     serialize: (value) => value,
+    history: 'replace',
+    shallow: false,
   });
 
   const handleSortClick = (value: keyof typeof SORT_OPTIONS) => {
-    setSortBy(value);
+    if (value === 'default') {
+      setSortBy('');
+    } else {
+      setSortBy(value);
+    }
   };
 
   return (
@@ -32,7 +38,7 @@ function SortBar() {
           <button
             key={key}
             className={`rounded-lg px-1 py-2 text-sm hover:bg-background lg:px-4 cursor-pointer ${
-              sortBy === key ? 'sort-button-active' : ''
+              (key === 'default' && !sortBy) || sortBy === key ? 'sort-button-active' : ''
             }`}
             onClick={() => handleSortClick(key as keyof typeof SORT_OPTIONS)}
           >

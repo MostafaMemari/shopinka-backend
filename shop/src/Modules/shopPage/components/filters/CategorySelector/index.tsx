@@ -7,10 +7,16 @@ import CategoryItem from './CategoryItem';
 import { useQueryState } from 'nuqs';
 import { useRouter } from 'next/navigation';
 
-type CategorySet = Set<number>;
-
 function CategorySelector() {
-  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+  const [categoryIds, setCategoryIds] = useQueryState('categoryIds', {
+    defaultValue: '',
+    history: 'replace',
+    shallow: false,
+  });
+
+  const selectedCategories = useMemo(() => {
+    return categoryIds ? categoryIds.split(',').map(Number) : [];
+  }, [categoryIds]);
 
   const { data, isLoading, error } = useCategories({
     enabled: true,
@@ -29,8 +35,12 @@ function CategorySelector() {
     const newSelectedCategories = selectedCategories.includes(categoryId)
       ? selectedCategories.filter((id: number) => id !== categoryId)
       : [...selectedCategories, categoryId];
-    setSelectedCategories(newSelectedCategories);
-    router.replace(`/shop?categoryIds=${newSelectedCategories.join(',')}`);
+
+    if (newSelectedCategories.length === 0) {
+      setCategoryIds('');
+    } else {
+      setCategoryIds(newSelectedCategories.join(','));
+    }
   };
 
   return (
