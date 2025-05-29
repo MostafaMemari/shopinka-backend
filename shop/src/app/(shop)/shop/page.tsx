@@ -5,7 +5,6 @@ import { loadSearchParams } from '@/Modules/shopPage/utils/loadSearchParams';
 import { parseArrayParam } from '@/Modules/shopPage/utils/parseArrayParam';
 import FilterSection from '@/Modules/shopPage/views/FilterSection';
 import ProductListShop from '@/Modules/shopPage/views/ProductListShop';
-import { revalidateTag } from 'next/cache';
 import { SearchParams } from 'next/dist/server/request/search-params';
 import { Suspense } from 'react';
 

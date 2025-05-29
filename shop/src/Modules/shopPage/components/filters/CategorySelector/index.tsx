@@ -1,19 +1,16 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useCategories } from '@/Modules/category/hooks/useCategories';
 import { flattenCategories } from '../../../utils/flattenCategories';
 import CategoryItem from './CategoryItem';
 import { useQueryState } from 'nuqs';
+import { useRouter } from 'next/navigation';
 
 type CategorySet = Set<number>;
 
 function CategorySelector() {
-  const [selectedCategories, setSelectedCategories] = useQueryState<CategorySet>('categoryIds', {
-    defaultValue: new Set(),
-    parse: (value) => new Set(value.split(',').map(Number).filter(Boolean)),
-    serialize: (value) => Array.from(value).join(','),
-  });
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
 
   const { data, isLoading, error } = useCategories({
     enabled: true,
@@ -26,12 +23,14 @@ function CategorySelector() {
     return flattenCategories(data.items);
   }, [data]);
 
-  const toggleCategory = (id: number) => {
-    setSelectedCategories((prev) => {
-      const newSet = new Set(prev);
-      newSet.has(id) ? newSet.delete(id) : newSet.add(id);
-      return newSet;
-    });
+  const router = useRouter();
+
+  const handleCategoryClick = (categoryId: number) => {
+    const newSelectedCategories = selectedCategories.includes(categoryId)
+      ? selectedCategories.filter((id: number) => id !== categoryId)
+      : [...selectedCategories, categoryId];
+    setSelectedCategories(newSelectedCategories);
+    router.replace(`/shop?categoryIds=${newSelectedCategories.join(',')}`);
   };
 
   return (
@@ -51,8 +50,8 @@ function CategorySelector() {
             <CategoryItem
               key={category.id}
               category={category}
-              isSelected={selectedCategories.has(category.id)}
-              onToggle={() => toggleCategory(category.id)}
+              isSelected={selectedCategories.includes(category.id)}
+              onToggle={() => handleCategoryClick(category.id)}
             />
           ))}
         </ul>

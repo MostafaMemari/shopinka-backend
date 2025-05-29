@@ -8,7 +8,7 @@ function SearchInput() {
   const [searchQuery, setSearchQuery] = useQueryState('search', {
     defaultValue: '',
     history: 'replace',
-    shallow: false, // کل صفحه رو سرور-ساید نَو می‌کنه
+    shallow: false,
   });
 
   const [inputValue, setInputValue] = useState(searchQuery);

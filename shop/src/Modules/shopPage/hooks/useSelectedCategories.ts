@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export function useSelectedCategories(searchParams: URLSearchParams, router: ReturnType<typeof useRouter>) {
-  const [selectedCategories, setSelectedCategories] = useState<Set<number>>(new Set());
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
 
   const setFromSearchParams = () => {
     const ids =
@@ -11,26 +11,26 @@ export function useSelectedCategories(searchParams: URLSearchParams, router: Ret
         ?.split(',')
         .map(Number)
         .filter((id) => !isNaN(id)) || [];
-    setSelectedCategories(new Set(ids));
+    setSelectedCategories(ids);
   };
 
   const updateUrl = (params: URLSearchParams) => {
     const newParams = new URLSearchParams(params);
-    if (selectedCategories.size > 0) {
-      newParams.set('categoryIds', Array.from(selectedCategories).join(','));
+    if (selectedCategories.length > 0) {
+      newParams.set('categoryIds', selectedCategories.join(','));
     } else {
       newParams.delete('categoryIds');
     }
     router.replace(`?${newParams.toString()}`, { scroll: false });
   };
 
-  const toggleCategory = (id: number) => {
-    setSelectedCategories((prev) => {
-      const newSet = new Set(prev);
-      newSet.has(id) ? newSet.delete(id) : newSet.add(id);
-      return newSet;
-    });
+  const handleCategoryClick = (categoryId: number) => {
+    const newSelectedCategories = selectedCategories.includes(categoryId)
+      ? selectedCategories.filter((id: number) => id !== categoryId)
+      : [...selectedCategories, categoryId];
+    setSelectedCategories(newSelectedCategories);
+    router.replace(`/shop?categoryIds=${newSelectedCategories.join(',')}`);
   };
 
-  return { selectedCategories, setFromSearchParams, updateUrl, toggleCategory };
+  return { selectedCategories, setFromSearchParams, updateUrl, handleCategoryClick };
 }
