@@ -1,11 +1,10 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useCategories } from '@/Modules/category/hooks/useCategories';
 import { flattenCategories } from '../../../utils/flattenCategories';
 import CategoryItem from './CategoryItem';
 import { useQueryState } from 'nuqs';
-import { useRouter } from 'next/navigation';
 
 function CategorySelector() {
   const [categoryIds, setCategoryIds] = useQueryState('categoryIds', {

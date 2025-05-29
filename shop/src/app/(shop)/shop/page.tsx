@@ -1,14 +1,10 @@
 import { ProductParams } from '@/Modules/product/types/productType';
-import ProductsListLoading from '@/Modules/shopPage/components/ProductsListLoading';
 import SortBar from '@/Modules/shopPage/components/SortBar';
 import { loadSearchParams } from '@/Modules/shopPage/utils/loadSearchParams';
 import { parseArrayParam } from '@/Modules/shopPage/utils/parseArrayParam';
 import FilterSection from '@/Modules/shopPage/views/FilterSection';
 import ProductListShop from '@/Modules/shopPage/views/ProductListShop';
 import { SearchParams } from 'next/dist/server/request/search-params';
-import { Suspense } from 'react';
-import { Metadata } from 'next';
-import ProductSectionClient from '@/Modules/shopPage/views/ProductSectionClient';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;
@@ -40,9 +36,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
       <FilterSection />
       <div className="col-span-12 space-y-4 md:col-span-8 lg:col-span-9">
         <SortBar />
-        <Suspense fallback={<ProductsListLoading />}>
-          <ProductListShop params={query} />
-        </Suspense>
+        <ProductListShop initialParams={query} />
       </div>
     </div>
   );

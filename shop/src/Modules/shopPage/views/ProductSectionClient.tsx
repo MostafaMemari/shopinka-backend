@@ -34,7 +34,7 @@ const ProductSectionClient = () => {
     [search, categoryIds, minPrice, maxPrice, sortBy],
   );
 
-  return <ProductListShop params={params} />;
+  return <ProductListShop initialParams={params} />;
 };
 
 export default ProductSectionClient;

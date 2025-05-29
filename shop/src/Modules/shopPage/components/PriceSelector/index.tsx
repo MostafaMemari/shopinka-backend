@@ -18,16 +18,16 @@ function PriceSelector() {
     parse: (value) => (value ? Number(value) : MIN_PRICE),
     serialize: (value) => String(value),
     defaultValue: MIN_PRICE,
-    history: 'replace', // جایگزین کردن URL به جای افزودن به تاریخچه
-    shallow: false, // اطمینان از ارسال تغییرات به سرور
+    history: 'replace',
+    shallow: false,
   });
 
   const [maxPrice, setMaxPrice] = useQueryState<number>('maxPrice', {
     parse: (value) => (value ? Number(value) : MAX_PRICE),
     serialize: (value) => String(value),
     defaultValue: MAX_PRICE,
-    history: 'replace', // جایگزین کردن URL به جای افزودن به تاریخچه
-    shallow: false, // اطمینان از ارسال تغییرات به سرور
+    history: 'replace',
+    shallow: false,
   });
 
   useEffect(() => {

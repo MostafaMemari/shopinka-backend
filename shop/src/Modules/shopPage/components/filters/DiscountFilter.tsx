@@ -8,8 +8,8 @@ function DiscountFilter() {
     parse: (value) => value === 'true',
     serialize: (value) => (value ? 'true' : ''),
     defaultValue: false,
-    history: 'replace', // جایگزین کردن URL به جای افزودن به تاریخچه
-    shallow: false, // اطمینان از ارسال تغییرات به سرور
+    history: 'replace',
+    shallow: false,
   });
 
   return (
