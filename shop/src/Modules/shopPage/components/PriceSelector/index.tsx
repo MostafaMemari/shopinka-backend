@@ -80,7 +80,7 @@ function PriceSelector() {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-2">
       <h3 className="text-base font-medium mb-2">محدوده قیمت</h3>
       <div className="space-y-2">
         <div ref={sliderRef} id="shop-price-slider"></div>

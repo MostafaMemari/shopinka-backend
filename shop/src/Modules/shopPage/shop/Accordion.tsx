@@ -22,7 +22,7 @@ const Accordion: FC<AccordionProps> = ({ title, children }) => {
         </div>
       </div>
       <div className={`relative overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-60' : 'max-h-0'}`} data-accordion-content>
-        <div className="mt-4 max-h-60 overflow-y-auto pl-1">{children}</div>
+        <div className="custom-scrollbar mt-4 max-h-60 overflow-y-auto pl-1">{children}</div>
       </div>
     </li>
   );

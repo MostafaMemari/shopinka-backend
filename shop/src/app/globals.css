@@ -39,6 +39,28 @@ body {
   font-family: 'IRANYekan';
 }
 
+/* فایل global.css یا index.css یا هرجایی که global style‌هات هست */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px; /* نازک بودن اسکرول */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f0f0f0; /* پس‌زمینه اسکرول‌بار */
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #bbb; /* رنگ خود اسکرول */
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+/* برای فایرفاکس */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #bbb #f0f0f0;
+}
+
 .product-slider {
   position: relative;
   overflow: hidden;
