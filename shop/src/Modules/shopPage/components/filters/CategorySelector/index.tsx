@@ -21,6 +21,7 @@ function CategorySelector() {
     enabled: true,
     params: { includeChildren: true },
     staleTime: 1 * 60 * 1000,
+    keepPreviousData: true,
   });
 
   const flatCategories = useMemo(() => {

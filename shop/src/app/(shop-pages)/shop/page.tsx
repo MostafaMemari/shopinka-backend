@@ -33,7 +33,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
         : undefined,
   };
 
-  const productResponse = await getProducts(query);
+  const { items, pager } = await getProducts(query);
 
   return (
     <div className="grid grid-cols-12 grid-rows-[60px_min(500px,_1fr)] gap-4">
@@ -41,7 +41,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
       <div className="col-span-12 space-y-4 md:col-span-8 lg:col-span-9">
         <SortBar />
         <Suspense fallback={<div>Loading...</div>}>
-          <ProductListShopClient query={query} initialProducts={productResponse.items || []} />
+          <ProductListShopClient query={query} initialProducts={items || []} />
         </Suspense>
       </div>
     </div>
