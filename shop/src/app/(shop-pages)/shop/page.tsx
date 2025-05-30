@@ -7,9 +7,7 @@ import { ProductParams } from '@/Modules/product/types/productType';
 import { SearchParams } from 'nuqs';
 import SortBar from '@/Modules/shopPage/components/SortBar';
 import FilterSection from '@/Modules/shopPage/views/FilterSection';
-import MobileSortDrawer from '@/Modules/shopPage/components/FilterMobile/MobileSortDrawer';
-import MobileFilterDrawer from '@/Modules/shopPage/components/FilterMobile/MobileFilterDrawer';
-import MobileFilterSection from '@/Modules/shopPage/views/MobileFilterSection';
+import MobileFilterSection from '@/Modules/shopPage/components/FilterMobile/MobileFilterSection';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;
@@ -39,14 +37,17 @@ export default async function ShopPage({ searchParams }: PageProps) {
   const { items, pager } = await getProducts(query);
 
   return (
-    <div className="grid grid-cols-12 grid-rows-[60px_min(500px,_1fr)] gap-4">
-      <FilterSection />
-      <div className="col-span-12 space-y-4 md:col-span-8 lg:col-span-9">
-        <SortBar />
-        <Suspense fallback={<div>Loading...</div>}>
-          <ProductListShopClient query={query} initialProducts={items || []} pager={pager} />
-        </Suspense>
+    <>
+      <MobileFilterSection />
+      <div className="grid grid-cols-12 grid-rows-[60px_min(500px,_1fr)] gap-4">
+        <FilterSection />
+        <div className="col-span-12 space-y-4 md:col-span-8 lg:col-span-9">
+          <SortBar />
+          <Suspense fallback={<div>Loading...</div>}>
+            <ProductListShopClient query={query} initialProducts={items || []} pager={pager} />
+          </Suspense>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
