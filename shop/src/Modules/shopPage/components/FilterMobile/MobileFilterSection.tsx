@@ -3,11 +3,15 @@
 import MobileFilter from './MobileFilter';
 import MobileSortDrawer from './MobileSortDrawer';
 
-const MobileFilterSection = () => {
+interface MobileFilterSectionProps {
+  totalCount: number;
+}
+
+const MobileFilterSection = ({ totalCount }: MobileFilterSectionProps) => {
   return (
     <>
       <div className="mb-6 flex items-center justify-center gap-x-4 md:hidden">
-        <MobileFilter />
+        <MobileFilter totalCount={totalCount} />
         <MobileSortDrawer />
       </div>
     </>

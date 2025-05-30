@@ -1,11 +1,12 @@
 'use server';
 
 import { shopApiFetch } from '@/server/api';
-import { ProductParams } from '../types/productType';
+import { Product, ProductParams } from '../types/productType';
 import { revalidateTag, unstable_cache } from 'next/cache';
+import { Pager } from '@/shared/types/pagerType';
 
 export const getProducts = unstable_cache(
-  async (params?: ProductParams) => {
+  async (params?: ProductParams): Promise<{ items: Product[]; pager: Pager }> => {
     const response = await shopApiFetch('/product', {
       query: { ...params, includeMainImage: true },
     });

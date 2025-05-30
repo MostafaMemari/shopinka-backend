@@ -2,37 +2,62 @@
 
 import { FC, useState } from 'react';
 import { FiFilter, FiX } from 'react-icons/fi';
+import { useRouter } from 'next/navigation';
 import SearchInput from '../FilterDesktop/SearchInput';
 import PriceSelector from '../PriceSelector';
 import CategorySelector from '../FilterDesktop/CategorySelector';
 import StockStatusFilter from '../FilterDesktop/StockStatusFilter';
 import DiscountFilter from '../FilterDesktop/DiscountFilter';
+import { useSearchParams } from 'next/navigation';
 
 interface MobileFilterProps {
-  onFilterChange?: (filters: any) => void;
+  totalCount: number;
 }
 
-const MobileFilter: FC<MobileFilterProps> = ({ onFilterChange }) => {
+const MobileFilter: FC<MobileFilterProps> = ({ totalCount }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const hasFilters = searchParams?.toString().length > 0;
 
   const handleApplyFilters = () => {
     setIsOpen(false);
-    if (onFilterChange) {
-      onFilterChange({}); // اینجا می‌تونید فیلترها رو پاس کنید
-    }
+  };
+
+  const handleClearFilters = () => {
+    router.replace('/shop', { scroll: false }); // فرض می‌کنیم مسیر پایه /shop است
   };
 
   return (
     <>
-      <button
-        className="flex w-full items-center gap-x-4 rounded-lg bg-muted px-4 py-3 text-sm xs:text-base"
-        onClick={() => setIsOpen(true)}
-        aria-controls="shop-filter-drawer-navigation"
-        type="button"
-      >
-        <FiFilter className="h-6 w-6" />
-        <div>فیلتر</div>
-      </button>
+      <div className="relative w-full">
+        <div
+          role="button"
+          tabIndex={0}
+          className="flex w-full cursor-pointer items-center gap-x-4 rounded-lg bg-muted px-4 py-3 text-sm xs:text-base"
+          onClick={() => setIsOpen(true)}
+          aria-controls="shop-filter-drawer-navigation"
+          onKeyDown={(e) => e.key === 'Enter' && setIsOpen(true)}
+        >
+          <FiFilter className="h-6 w-6" />
+          <div>فیلتر</div>
+        </div>
+
+        {hasFilters && (
+          <button
+            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full p-1 hover:bg-zinc-200 dark:hover:bg-zinc-800"
+            onClick={(e) => {
+              e.stopPropagation(); // جلوگیری از باز شدن فیلتر
+              handleClearFilters(); // حذف فیلترها
+            }}
+            type="button"
+          >
+            <FiX className="h-5 w-5 text-red-500" />
+            <span className="sr-only">حذف فیلترها</span>
+          </button>
+        )}
+      </div>
 
       <div
         className={`fixed bottom-0 left-0 right-0 z-40 h-full w-full bg-muted transition-transform duration-300 ${
@@ -68,7 +93,7 @@ const MobileFilter: FC<MobileFilterProps> = ({ onFilterChange }) => {
 
         <div className="sticky bottom-0 left-0 right-0 flex items-center justify-between border-t bg-muted p-4 px-6 py-4">
           <button className="btn-primary w-full py-3 text-sm" type="button" onClick={handleApplyFilters}>
-            مشاهده 200 محصول
+            مشاهده {totalCount} محصول
           </button>
         </div>
       </div>
