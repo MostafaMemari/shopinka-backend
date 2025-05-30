@@ -7,6 +7,9 @@ import { ProductParams } from '@/Modules/product/types/productType';
 import { SearchParams } from 'nuqs';
 import SortBar from '@/Modules/shopPage/components/SortBar';
 import FilterSection from '@/Modules/shopPage/views/FilterSection';
+import MobileSortDrawer from '@/Modules/shopPage/components/FilterMobile/MobileSortDrawer';
+import MobileFilterDrawer from '@/Modules/shopPage/components/FilterMobile/MobileFilterDrawer';
+import MobileFilterSection from '@/Modules/shopPage/views/MobileFilterSection';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;

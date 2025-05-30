@@ -1,9 +1,9 @@
-import CategorySelector from '../components/filters/CategorySelector';
-import SearchInput from '../components/filters/SearchInput';
-import ResetFilters from '../components/filters/ResetFilters';
+import CategorySelector from '../components/FilterDesktop/CategorySelector';
+import SearchInput from '../components/FilterDesktop/SearchInput';
+import ResetFilters from '../components/FilterDesktop/ResetFilters';
 import PriceSelector from '../components/PriceSelector';
-import StockStatusFilter from '../components/filters/StockStatusFilter';
-import DiscountFilter from '../components/filters/DiscountFilter';
+import StockStatusFilter from '../components/FilterDesktop/StockStatusFilter';
+import DiscountFilter from '../components/FilterDesktop/DiscountFilter';
 import Accordion from '../shop/Accordion';
 
 const FilterSection = () => {

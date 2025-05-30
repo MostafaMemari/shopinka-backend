@@ -1,6 +1,7 @@
 import ProductCard from '@/Modules/product/components/ProductCard';
 import { Product } from '@/Modules/product/types/productType';
 import ProductCardSkeleton from '../components/ProductCardSkeleton';
+import MobileFilterSection from './MobileFilterSection';
 
 export default function ProductListShop({ products, isLoading }: { products: Product[]; isLoading?: boolean }) {
   if (isLoading) {

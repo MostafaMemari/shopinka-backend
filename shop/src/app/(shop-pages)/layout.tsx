@@ -1,5 +1,6 @@
 import SortBar from '@/Modules/shopPage/components/SortBar';
 import FilterSection from '@/Modules/shopPage/views/FilterSection';
+import MobileFilterSection from '@/Modules/shopPage/views/MobileFilterSection';
 import Footer from '@/shared/components/footer';
 import Header from '@/shared/components/header';
 
@@ -14,6 +15,8 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
           <div className="container relative">{children}</div>
         </section>
       </main>
+
+      <MobileFilterSection />
 
       <Footer />
     </>
