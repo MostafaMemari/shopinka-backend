@@ -41,7 +41,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
       <div className="col-span-12 space-y-4 md:col-span-8 lg:col-span-9">
         <SortBar />
         <Suspense fallback={<div>Loading...</div>}>
-          <ProductListShopClient query={query} initialProducts={items || []} />
+          <ProductListShopClient query={query} initialProducts={items || []} pager={pager} />
         </Suspense>
       </div>
     </div>
