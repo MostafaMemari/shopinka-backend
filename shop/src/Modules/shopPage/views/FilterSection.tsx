@@ -16,9 +16,7 @@ const FilterSection = () => {
             <ul className="space-y-6">
               <SearchInput />
               <PriceSelector />
-              <Accordion title="دسته بندی ها">
-                <CategorySelector />
-              </Accordion>
+              <CategorySelector />
               {/* <BrandSelector /> */}
               {/* <AttributeSelector /> */}
               <StockStatusFilter />

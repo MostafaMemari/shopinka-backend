@@ -1,18 +1,30 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { FiChevronLeft } from 'react-icons/fi';
 
 interface AccordionProps {
   title: string;
   children: React.ReactNode;
+  isActive?: boolean;
+  checkActive?: () => boolean;
+  className?: string;
+  contentClassName?: string;
 }
 
-const Accordion: FC<AccordionProps> = ({ title, children }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const Accordion: FC<AccordionProps> = ({ title, children, isActive = false, checkActive, className = '', contentClassName = '' }) => {
+  const [isOpen, setIsOpen] = useState(isActive);
+
+  useEffect(() => {
+    if (checkActive) {
+      setIsOpen(checkActive());
+    } else {
+      setIsOpen(isActive);
+    }
+  }, [isActive, checkActive]);
 
   return (
-    <li className="relative" data-accordion-item>
+    <li className={`relative ${className}`} data-accordion-item>
       <div className="w-full text-right cursor-pointer" data-accordion-button onClick={() => setIsOpen(!isOpen)}>
         <div className="flex items-center justify-between gap-2 text-sm md:text-base">
           <span>{title}</span>
@@ -21,7 +33,10 @@ const Accordion: FC<AccordionProps> = ({ title, children }) => {
           </div>
         </div>
       </div>
-      <div className={`relative overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-60' : 'max-h-0'}`} data-accordion-content>
+      <div
+        className={`relative overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-60' : 'max-h-0'} ${contentClassName}`}
+        data-accordion-content
+      >
         <div className="custom-scrollbar mt-4 max-h-60 overflow-y-auto pl-1">{children}</div>
       </div>
     </li>
