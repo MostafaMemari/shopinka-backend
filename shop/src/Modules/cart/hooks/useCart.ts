@@ -1,12 +1,17 @@
-// src/hooks/useCart.ts
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CartItem } from '../types/cartType';
-import { clearCart, decreaseCount, deleteFromCart, increaseCount, setCart } from '@/store/slices/cartSlice';
+import { clearCart, decreaseCount, deleteFromCart, increaseCount, loadCart, setCart } from '@/store/slices/cartSlice';
 import { RootState } from '@/store';
 
 export function useCart() {
   const dispatch = useDispatch();
   const { cart, totalPrice, totalDiscountPrice, totalDiscount } = useSelector((state: RootState) => state.cart);
+
+  // لود کردن سبد خرید از localStorage موقع مونت شدن هوک
+  useEffect(() => {
+    dispatch(loadCart());
+  }, [dispatch]);
 
   const handleSetCart = (items: CartItem[]) => {
     dispatch(setCart(items));
@@ -22,8 +27,6 @@ export function useCart() {
 
   const handleDeleteFromCart = (productID: number) => {
     dispatch(deleteFromCart(productID.toString()));
-
-    // deleteOrder(productID.toString());
   };
 
   const handleClearCart = () => {
@@ -42,3 +45,4 @@ export function useCart() {
     clearCart: handleClearCart,
   };
 }
+// deleteOrder(productID.toString());
