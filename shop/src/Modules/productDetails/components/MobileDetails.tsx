@@ -2,7 +2,7 @@
 
 import { ProductDetails } from '@/Modules/product/types/productType';
 import ProductVariants from './VariantSelector';
-import AddToCartButton from './AddToCartButton';
+import AddToCartButton from '../../cart/components/AddToCartButton';
 import ProductProperties from './ProductProperties';
 import { HiOutlineShieldCheck } from 'react-icons/hi';
 import PriceDisplay from './PriceDisplay';

@@ -19,6 +19,7 @@ const initialState: CartState = {
 const loadCartFromLocalStorage = (): CartItem[] => {
   if (typeof window !== 'undefined') {
     const storedCart = localStorage.getItem('cart');
+
     return storedCart ? JSON.parse(storedCart) : [];
   }
   return [];

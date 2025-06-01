@@ -3,7 +3,7 @@
 import { FC, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import PriceDisplay from '../PriceDisplay';
+import PriceDisplay from '../../../productDetails/components/PriceDisplay';
 
 interface Props {
   onAddToCart?: (quantity: number) => void;
