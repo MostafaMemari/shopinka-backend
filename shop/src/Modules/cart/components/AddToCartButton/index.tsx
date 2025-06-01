@@ -8,7 +8,7 @@ import { ProductDetails } from '@/Modules/product/types/productType';
 import { cn } from '@/shared/utils/utils';
 import { CartItem } from '../../types/cartType';
 import { useCart } from '../../hooks/useCart';
-import CartItemControls from '../../views/CartItemControls';
+import CartControls from '../CartControls';
 
 interface Props {
   product?: ProductDetails;
@@ -73,12 +73,12 @@ export default function AddToCartButton({ product: propProduct, onAddToCart }: P
     <div className="flex items-center gap-4">
       {existingProduct ? (
         <div className="w-full">
-          <CartItemControls product={existingProduct} />
+          <CartControls product={existingProduct} />
         </div>
       ) : (
         <button
           className={cn(
-            'flex-1 rounded-lg bg-[hsl(var(--primary))] px-4 py-2 text-white transition-opacity hover:opacity-90',
+            'flex-1 rounded-lg bg-[hsl(var(--primary))] px-4 py-2 text-white transition-opacity hover:opacity-90 cursor-pointer',
             isButtonDisabled && 'cursor-not-allowed opacity-50',
           )}
           onClick={addToCart}

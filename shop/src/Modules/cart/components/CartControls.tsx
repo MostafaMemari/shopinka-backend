@@ -7,10 +7,10 @@ import { useCart } from '../hooks/useCart';
 
 interface CartControlsProps {
   product: CartItem;
-  className?: string; // برای استایل‌های اضافی از والد
+  className?: string;
 }
 
-export default function CartControls({ product, className }: CartControlsProps) {
+export function CartControls({ product, className }: CartControlsProps) {
   const { decreaseCount, increaseCount, deleteFromCart } = useCart();
 
   return (
@@ -53,3 +53,5 @@ export default function CartControls({ product, className }: CartControlsProps) 
     </div>
   );
 }
+
+export default CartControls;
