@@ -1,19 +1,15 @@
-// src/components/DesktopBasketItem.tsx
-import { formatPrice } from '@/shared/utils/formatter';
 import Image from 'next/image';
 import Link from 'next/link';
-import { HiOutlineMinus, HiOutlinePlus, HiOutlineX } from 'react-icons/hi';
 import { CartItem } from '../types/cartType';
-import { useCart } from '../hooks/useCart';
-import { AttributeValues } from '@/shared/types/attributeType';
+import CartControls from '../components/CartControls';
+import CartItemAttributes from '../components/CartItemAttributes';
+import ProductPriceCard from '../components/ProductPriceCard';
 
 export interface ItemCardBasketProp {
   item: CartItem;
 }
 
 export default function DesktopBasketItem({ item }: ItemCardBasketProp) {
-  const { increaseCount, decreaseCount, deleteFromCart } = useCart();
-
   const attributes = item.type === 'VARIABLE' && item.attributeValues ? item.attributeValues : [];
 
   return (
@@ -22,13 +18,6 @@ export default function DesktopBasketItem({ item }: ItemCardBasketProp) {
         <Link href={`/product-detail/${item.id}`}>
           <Image alt={item.title} className="h-[120px] w-[120px]" src={item.thumbnail} width={120} height={120} loading="lazy" />
         </Link>
-        <button
-          className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-background"
-          type="button"
-          onClick={() => deleteFromCart(item.id)}
-        >
-          <HiOutlineX className="h-6 w-6 text-red-600 dark:text-red-500" />
-        </button>
       </div>
 
       <div className="w-full space-y-1.5">
@@ -37,50 +26,13 @@ export default function DesktopBasketItem({ item }: ItemCardBasketProp) {
         </Link>
 
         <div className="flex items-center gap-x-2 text-sm text-text/60">
-          <div>تعداد: {item.count}</div>
-          {item.type === 'VARIABLE' && attributes.length > 0 && (
-            <>
-              <div className="h-3 w-px rounded-full bg-background"></div>
-              <div className="flex flex-wrap items-center gap-x-2">
-                {attributes.map((attr: AttributeValues, index: number) => (
-                  <div key={attr.id || index} className="flex items-center gap-x-2">
-                    {attr.colorCode ? (
-                      <>
-                        <span className="h-4 w-4 rounded-full" style={{ background: attr.colorCode || '#000' }}></span>
-                        <span>رنگ: {attr.name}</span>
-                      </>
-                    ) : attr.buttonLabel ? (
-                      <span>{attr.buttonLabel}</span>
-                    ) : (
-                      <span>{attr.name}</span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
+          <CartItemAttributes count={item.count} type={item.type} attributes={attributes} />
         </div>
 
         <div className="flex items-center justify-between gap-x-2">
-          <div className="text-primary">
-            <span className="text-lg font-bold">{formatPrice(item.price)}</span>
-            <span className="text-sm"> تومان</span>
-          </div>
+          <ProductPriceCard oldPrice={item.price} newPrice={item.discount_price} discount={item.discount} />
 
-          <div className="flex h-10 w-24 items-center justify-between rounded-lg border px-2 py-1">
-            <button type="button" onClick={() => increaseCount(item)}>
-              <HiOutlinePlus className="h-5 w-5 text-primary" />
-            </button>
-            <input
-              value={item.count}
-              disabled
-              type="number"
-              className="flex h-5 w-full grow select-none items-center justify-center bg-transparent text-center text-sm outline-hidden"
-            />
-            <button type="button" onClick={() => decreaseCount(item)}>
-              <HiOutlineMinus className="h-5 w-5 text-red-600 dark:text-red-500" />
-            </button>
-          </div>
+          <CartControls product={item} />
         </div>
       </div>
     </div>

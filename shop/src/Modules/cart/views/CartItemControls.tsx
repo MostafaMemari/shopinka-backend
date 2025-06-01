@@ -1,29 +1,30 @@
-import { BiMinus, BiPlus } from 'react-icons/bi';
 import { useCart } from '../hooks/useCart';
 import { CartItem } from '../types/cartType';
-import { BsTrash2 } from 'react-icons/bs';
+import { FaRegTrashAlt } from 'react-icons/fa';
+import { HiOutlineMinus, HiOutlinePlus } from 'react-icons/hi';
 
-export default function CartItemControls({ product, vertical }: { product: CartItem; vertical?: boolean }) {
+export default function CartItemControls({ product }: { product: CartItem }) {
   const { decreaseCount, increaseCount, deleteFromCart } = useCart();
 
   return (
-    <div className={`border shadow flex items-center justify-between gap-5 rounded-md text-red-500 p-2 ${vertical ? 'flex-col' : ''}`}>
-      <button>
-        <BiPlus onClick={() => increaseCount(product)} size={20} />
-      </button>
-      <span className="font-bold">{product.count}</span>
-      <button>
+    <>
+      <div className="flex h-10 w-24 items-center justify-between rounded-lg border px-2 py-1">
+        <button type="button" onClick={() => increaseCount(product)}>
+          <HiOutlinePlus className="h-5 w-5 text-primary" />
+        </button>
+
+        <span className="font-bold">{product.count}</span>
+
         {product.count > 1 ? (
-          <BiMinus onClick={() => decreaseCount(product)} size={20} />
+          <button type="button" onClick={() => decreaseCount(product)}>
+            <HiOutlineMinus className="h-5 w-5 text-red-600 dark:text-red-500" />
+          </button>
         ) : (
-          <BsTrash2
-            onClick={() => {
-              deleteFromCart(product.id);
-            }}
-            size={16}
-          />
+          <button type="button" onClick={() => deleteFromCart(product.id)}>
+            <FaRegTrashAlt className="h-5 w-5 text-red-600 dark:text-red-500" />
+          </button>
         )}
-      </button>
-    </div>
+      </div>
+    </>
   );
 }
