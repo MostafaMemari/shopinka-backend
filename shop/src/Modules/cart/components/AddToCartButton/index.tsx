@@ -9,6 +9,7 @@ import { cn } from '@/shared/utils/utils';
 import { CartItem } from '../../types/cartType';
 import { useCart } from '../../hooks/useCart';
 import CartControls from '../CartControls';
+import Link from 'next/link';
 
 interface Props {
   product?: ProductDetails;
@@ -72,8 +73,15 @@ export default function AddToCartButton({ product: propProduct, onAddToCart }: P
   return (
     <div className="flex items-center gap-4">
       {existingProduct ? (
-        <div className="w-full">
+        <div className="flex items-center justify-between gap-4">
           <CartControls product={existingProduct} />
+
+          <div className="flex flex-col items-start text-sm">
+            <span className="text-primary font-medium">در سبد شما</span>
+            <Link href="/cart" className="text-blue-600 hover:underline text-sm font-normal mt-1">
+              مشاهده سبد خرید
+            </Link>
+          </div>
         </div>
       ) : (
         <button

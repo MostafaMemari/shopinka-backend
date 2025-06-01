@@ -23,7 +23,7 @@ export function CartControls({ product, className }: CartControlsProps) {
       <button
         type="button"
         onClick={() => increaseCount(product)}
-        className="flex h-8 w-8 items-center justify-center rounded-md text-primary transition-colors"
+        className="flex h-8 w-8 items-center justify-center rounded-md text-primary transition-colors cursor-pointer"
         aria-label="افزایش تعداد"
       >
         <HiOutlinePlus className="h-5 w-5" />
@@ -35,7 +35,7 @@ export function CartControls({ product, className }: CartControlsProps) {
         <button
           type="button"
           onClick={() => decreaseCount(product)}
-          className="flex h-8 w-8 items-center justify-center rounded-md text-primary transition-colors"
+          className="flex h-8 w-8 items-center justify-center rounded-md text-primary transition-colors cursor-pointer"
           aria-label="کاهش تعداد"
         >
           <HiOutlineMinus className="h-5 w-5" />
@@ -44,7 +44,7 @@ export function CartControls({ product, className }: CartControlsProps) {
         <button
           type="button"
           onClick={() => deleteFromCart(product.id)}
-          className="flex h-8 w-8 items-center justify-center rounded-md text-primary transition-colors"
+          className="flex h-8 w-8 items-center justify-center rounded-md text-primary transition-colors cursor-pointer"
           aria-label="حذف از سبد خرید"
         >
           <FaRegTrashAlt className="h-5 w-5" />
