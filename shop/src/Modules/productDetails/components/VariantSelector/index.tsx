@@ -58,7 +58,6 @@ export const transformVariants = (variants: productVariant[], attributes: Attrib
   };
 };
 
-// Function to find a variant based on selections
 const findMatchingVariant = (
   variants: productVariant[],
   selectedColor: string | null,
@@ -66,7 +65,6 @@ const findMatchingVariant = (
 ): productVariant | null => {
   return (
     variants.find((variant) => {
-      // Handle variants with only one attribute value
       if (variant.attributeValues.length === 1) {
         const singleAttr = variant.attributeValues[0];
         if (singleAttr.attributeId === 1 && singleAttr.id.toString() === selectedColor) {
@@ -78,7 +76,6 @@ const findMatchingVariant = (
         return false;
       }
 
-      // Handle variants with multiple attribute values
       const hasColor = variant.attributeValues.some((attr) => attr.attributeId === 1 && attr.id.toString() === selectedColor);
       const hasButton = variant.attributeValues.some((attr) => attr.attributeId === 6 && attr.slug === selectedButton);
 
@@ -93,13 +90,11 @@ export default function ProductVariants({ variants, attributes, productType, def
 
   const transformedVariants = useMemo(() => transformVariants(variants, attributes), [variants, attributes]);
 
-  // Effect to handle initial selection or changes
   useEffect(() => {
     if (productType === 'VARIABLE') {
       const matchingVariant = findMatchingVariant(variants, selectedColor, selectedButton);
       dispatch(setSelectedVariant(matchingVariant));
 
-      // Special case: if a single-attribute variant is selected, update both color and button
       if (matchingVariant && matchingVariant.attributeValues.length === 1) {
         const singleAttr = matchingVariant.attributeValues[0];
         if (singleAttr.attributeId === 1 && singleAttr.id.toString() !== selectedColor) {
@@ -115,7 +110,6 @@ export default function ProductVariants({ variants, attributes, productType, def
     }
   }, [selectedColor, selectedButton, variants, productType, dispatch]);
 
-  // Valid buttons for the selected color
   const validButtons = useMemo(() => {
     const singleAttributeVariant = variants.find(
       (v) => v.attributeValues.length === 1 && v.attributeValues[0].id.toString() === selectedColor,
@@ -143,7 +137,6 @@ export default function ProductVariants({ variants, attributes, productType, def
     }));
   }, [selectedColor, variants, transformedVariants.buttons]);
 
-  // Valid colors considering button selection
   const validColors = useMemo(() => {
     if (selectedButton) {
       const combinableColorIds = new Set(
@@ -179,12 +172,11 @@ export default function ProductVariants({ variants, attributes, productType, def
     }));
   }, [selectedButton, variants, transformedVariants.colors]);
 
-  // Find the first valid button for auto-selection
   const getFirstValidButton = (colorId: string | null): string | null => {
     if (!colorId) return null;
 
     const singleAttributeVariant = variants.find((v) => v.attributeValues.length === 1 && v.attributeValues[0].id.toString() === colorId);
-    if (singleAttributeVariant) return null; // No button for single-attribute variants
+    if (singleAttributeVariant) return null;
 
     const validVariantsForColor = variants.filter((variant) =>
       variant.attributeValues.some((attr) => attr.attributeId === 1 && attr.id.toString() === colorId),
@@ -224,7 +216,6 @@ export default function ProductVariants({ variants, attributes, productType, def
                 return;
               }
 
-              // Check for single-attribute variant
               const singleAttrVariant = variants.find(
                 (v) => v.attributeValues.length === 1 && v.attributeValues[0].id.toString() === color,
               );
@@ -234,11 +225,9 @@ export default function ProductVariants({ variants, attributes, productType, def
                 return;
               }
 
-              // Auto-select the first valid button for multi-attribute variants
               const firstValidButton = getFirstValidButton(color);
               dispatch(setSelectedButton(firstValidButton));
 
-              // Find and set the matching variant
               const matchingVariant = findMatchingVariant(variants, color, firstValidButton);
               dispatch(setSelectedVariant(matchingVariant));
             }}
