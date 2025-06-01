@@ -1,32 +1,20 @@
-// src/components/AddToCartButton.tsx
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
+import { CartItem } from '../types/cartType';
+import { useCart } from './useCart';
 import { ProductDetails } from '@/Modules/product/types/productType';
-import { cn } from '@/shared/utils/utils';
-import { CartItem } from '../../types/cartType';
-import { useCart } from '../../hooks/useCart';
-import CartControls from '../CartControls';
-import Link from 'next/link';
 
-interface Props {
-  product?: ProductDetails;
-  onAddToCart?: (quantity: number) => void;
-}
-
-export default function AddToCartButton({ product: propProduct, onAddToCart }: Props) {
+export const useCartLogic = (propProduct?: ProductDetails) => {
   const { product: stateProduct, selectedVariant } = useSelector((state: RootState) => state.product);
   const product = propProduct || stateProduct;
-
   const { cart, setCart, increaseCount } = useCart();
   const [existingProduct, setExistingProduct] = useState<CartItem | undefined>();
 
   const newPrice = useMemo(() => (selectedVariant ? selectedVariant.salePrice : product?.salePrice), [selectedVariant, product]);
-
   const oldPrice = useMemo(() => (selectedVariant ? selectedVariant.basePrice : product?.basePrice), [selectedVariant, product]);
-
   const discount = useMemo(() => {
     if (newPrice && oldPrice) {
       return Math.round(((oldPrice - newPrice) / oldPrice) * 100);
@@ -38,18 +26,18 @@ export default function AddToCartButton({ product: propProduct, onAddToCart }: P
     if (!product) return;
 
     const cartItemId = product.type === 'VARIABLE' ? (selectedVariant?.id ?? product.id) : product.id;
-
     const found = cart.find((item) => item.id === cartItemId);
     setExistingProduct(found);
   }, [cart, product, selectedVariant]);
 
-  if (!product || !newPrice) return null;
-  if (product.type === 'VARIABLE' && !selectedVariant) return null;
+  const isVariableProduct = product?.type === 'VARIABLE';
+  const isVariantSelected = !!selectedVariant;
+  const isInCart = !!existingProduct;
 
   const addToCart = () => {
     if (existingProduct) {
       increaseCount(existingProduct);
-    } else {
+    } else if (product && newPrice) {
       const cartItem: CartItem = {
         id: product.type === 'VARIABLE' ? (selectedVariant?.id ?? product.id) : product.id,
         title: product.name,
@@ -64,37 +52,15 @@ export default function AddToCartButton({ product: propProduct, onAddToCart }: P
 
       setCart([...cart, cartItem]);
     }
-
-    onAddToCart?.(1);
   };
 
-  const isButtonDisabled = product.type === 'VARIABLE' && !selectedVariant;
-
-  return (
-    <div className="flex items-center gap-4">
-      {existingProduct ? (
-        <div className="flex items-center justify-between gap-4">
-          <CartControls product={existingProduct} />
-
-          <div className="flex flex-col items-start text-sm">
-            <span className="text-primary font-medium">در سبد شما</span>
-            <Link href="/cart" className="text-blue-600 hover:underline text-sm font-normal mt-1">
-              مشاهده سبد خرید
-            </Link>
-          </div>
-        </div>
-      ) : (
-        <button
-          className={cn(
-            'flex-1 rounded-lg bg-[hsl(var(--primary))] px-4 py-2 text-white transition-opacity hover:opacity-90 cursor-pointer',
-            isButtonDisabled && 'cursor-not-allowed opacity-50',
-          )}
-          onClick={addToCart}
-          disabled={isButtonDisabled}
-        >
-          افزودن به سبد
-        </button>
-      )}
-    </div>
-  );
-}
+  return {
+    product,
+    newPrice,
+    isVariableProduct,
+    isVariantSelected,
+    isInCart,
+    existingProduct,
+    addToCart,
+  };
+};

@@ -1,45 +1,24 @@
+// src/components/AddToCartButtonDesktop.tsx
 'use client';
 
-import { FC, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
+import { CartButtonContent } from './CartButtonContent';
+import { useCartLogic } from '../../hooks/useCartLogic';
 
-interface Props {
-  onAddToCart?: (quantity: number) => void;
-  productType: string;
-}
+export default function AddToCartButtonDesktop() {
+  const { product, newPrice, isVariableProduct, isVariantSelected, isInCart, existingProduct, addToCart } = useCartLogic();
 
-const AddToCartButtonDesktop: FC<Props> = ({ onAddToCart, productType }) => {
-  const [quantity, setQuantity] = useState(1);
-  const { selectedVariant } = useSelector((state: RootState) => state.product);
-
-  const isButtonDisabled = productType === 'VARIABLE' && !selectedVariant;
+  if (!product || !newPrice) return null;
 
   return (
     <div className="mb-6 flex items-center gap-4">
-      <div className="flex items-center gap-2">
-        <button
-          onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-          className="rounded-full border p-2 hover:bg-muted"
-          disabled={quantity <= 1}
-        >
-          -
-        </button>
-        <span className="w-8 text-center">{quantity}</span>
-        <button onClick={() => setQuantity((prev) => prev + 1)} className="rounded-full border p-2 hover:bg-muted">
-          +
-        </button>
-      </div>
-      <button
-        onClick={() => onAddToCart && onAddToCart(quantity)}
-        className={`btn-primary w-full py-3 ${isButtonDisabled ? 'cursor-not-allowed opacity-50' : ''}`}
-        disabled={isButtonDisabled}
-        aria-label={isButtonDisabled ? 'لطفاً گزینه‌های محصول را انتخاب کنید' : 'افزودن به سبد خرید'}
-      >
-        {isButtonDisabled ? 'لطفاً گزینه‌های محصول را انتخاب کنید' : 'افزودن به سبد خرید'}
-      </button>
+      <CartButtonContent
+        isVariableProduct={isVariableProduct}
+        isVariantSelected={isVariantSelected}
+        isInCart={isInCart}
+        existingProduct={existingProduct}
+        addToCart={addToCart}
+        className="w-full py-3"
+      />
     </div>
   );
-};
-
-export default AddToCartButtonDesktop;
+}
