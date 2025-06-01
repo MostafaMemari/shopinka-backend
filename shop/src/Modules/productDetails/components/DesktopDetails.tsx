@@ -58,8 +58,12 @@ export default function DesktopDetails() {
             تضمین سلامت فیزیکی و اصالت کالا
           </div>
 
-          <div className="mb-6">
-            <PriceDisplay />
+          <div className="mb-6 flex justify-between items-start w-full">
+            <div className="flex-grow"></div>
+
+            <div className="text-left">
+              <PriceDisplay />
+            </div>
           </div>
 
           <div className="mb-6">
