@@ -1,21 +1,12 @@
+// src/components/DesktopBasketDropdown.tsx
 import Link from 'next/link';
 import { HiOutlineChevronLeft } from 'react-icons/hi';
 import DesktopBasketItem from './DesktopBasketItem';
+import { formatPrice } from '@/shared/utils/formatter';
+import { useCart } from '../hooks/useCart';
 
-interface DesktopBasketDropdownProps {
-  cartItems: {
-    id: number;
-    title: string;
-    image: string;
-    quantity: number;
-    color: string;
-    colorHex: string;
-    price: number;
-  }[];
-}
-
-export default function DesktopBasketDropdown({ cartItems = [] }: DesktopBasketDropdownProps) {
-  const totalPrice = cartItems?.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0;
+export default function DesktopBasketDropdown() {
+  const { cart, totalPrice } = useCart();
 
   return (
     <div
@@ -27,7 +18,7 @@ export default function DesktopBasketDropdown({ cartItems = [] }: DesktopBasketD
       `}
     >
       <div className="flex items-center justify-between p-5 pb-2">
-        <div className="text-sm text-text/90">{cartItems.length} مورد</div>
+        <div className="text-sm text-text/90">{cart.length} مورد</div>
         <Link className="flex items-center gap-x-1 text-sm text-primary" href="/checkout-cart">
           <div>مشاهده سبد خرید</div>
           <div>
@@ -38,11 +29,15 @@ export default function DesktopBasketDropdown({ cartItems = [] }: DesktopBasketD
 
       <div className="h-60">
         <ul className="main-scroll h-full space-y-2 divide-y overflow-y-auto p-5 pl-2">
-          {cartItems.map((item) => (
-            <li key={item.id}>
-              <DesktopBasketItem item={item} />
-            </li>
-          ))}
+          {cart.length > 0 ? (
+            cart.map((item) => (
+              <li key={item.id}>
+                <DesktopBasketItem item={item} />
+              </li>
+            ))
+          ) : (
+            <div className="flex h-full items-center justify-center text-sm text-text/60">سبد خرید خالی است</div>
+          )}
         </ul>
       </div>
 
@@ -50,7 +45,7 @@ export default function DesktopBasketDropdown({ cartItems = [] }: DesktopBasketD
         <div className="flex flex-col items-center gap-y-1">
           <div className="text-sm text-text/60">مبلغ قابل پرداخت</div>
           <div className="text-text/90">
-            <span className="font-bold">{totalPrice}</span>
+            <span className="font-bold">{formatPrice(totalPrice)}</span>
             <span className="text-sm"> تومان</span>
           </div>
         </div>

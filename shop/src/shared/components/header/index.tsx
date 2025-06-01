@@ -7,7 +7,7 @@ import { categories } from '@/mock/categories';
 import MobileMenu from './MobileMenu';
 import SearchBarBase from './SearchBar';
 import { mockProductItems } from '@/mock/searchBar';
-import BasketDropdown from './Basket/BasketDropdown';
+import BasketDropdown from '../../../Modules/cart/views/BasketDropdown';
 import DesktopNavbar from './DesktopNavbar';
 
 function Header() {

@@ -1,8 +1,9 @@
 // src/features/cart/cartSlice.ts
+import { CartItem } from '@/Modules/cart/types/cartType';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface CartState {
-  cart: any[];
+  cart: CartItem[];
   totalPrice: number;
   totalDiscountPrice: number;
   totalDiscount: number;
@@ -15,7 +16,7 @@ const initialState: CartState = {
   totalDiscount: 0,
 };
 
-const loadCartFromLocalStorage = (): any[] => {
+const loadCartFromLocalStorage = (): CartItem[] => {
   if (typeof window !== 'undefined') {
     const storedCart = localStorage.getItem('cart');
     return storedCart ? JSON.parse(storedCart) : [];
@@ -33,31 +34,29 @@ const cartSlice = createSlice({
       state.totalDiscountPrice = state.cart.reduce((total, item) => total + item.discount_price * item.count, 0);
       state.totalDiscount = state.cart.reduce((total, item) => total + item.discount, 0);
     },
-    setCart(state, action: PayloadAction<any[]>) {
+    setCart(state, action: PayloadAction<CartItem[]>) {
       state.cart = action.payload;
       localStorage.setItem('cart', JSON.stringify(action.payload));
       state.totalPrice = action.payload.reduce((total, item) => total + item.price * item.count, 0);
       state.totalDiscountPrice = action.payload.reduce((total, item) => total + item.discount_price * item.count, 0);
       state.totalDiscount = action.payload.reduce((total, item) => total + item.discount, 0);
     },
-    decreaseCount(state, action: PayloadAction<any>) {
-      state.cart = state.cart.map((item) =>
-        item._id === action.payload._id && item.count > 1 ? { ...item, count: item.count - 1 } : item,
-      );
+    decreaseCount(state, action: PayloadAction<CartItem>) {
+      state.cart = state.cart.map((item) => (item.id === action.payload.id && item.count > 1 ? { ...item, count: item.count - 1 } : item));
       localStorage.setItem('cart', JSON.stringify(state.cart));
       state.totalPrice = state.cart.reduce((total, item) => total + item.price * item.count, 0);
       state.totalDiscountPrice = state.cart.reduce((total, item) => total + item.discount_price * item.count, 0);
       state.totalDiscount = state.cart.reduce((total, item) => total + item.discount, 0);
     },
-    increaseCount(state, action: PayloadAction<any>) {
-      state.cart = state.cart.map((item) => (item._id === action.payload._id ? { ...item, count: item.count + 1 } : item));
+    increaseCount(state, action: PayloadAction<CartItem>) {
+      state.cart = state.cart.map((item) => (item.id === action.payload.id ? { ...item, count: item.count + 1 } : item));
       localStorage.setItem('cart', JSON.stringify(state.cart));
       state.totalPrice = state.cart.reduce((total, item) => total + item.price * item.count, 0);
       state.totalDiscountPrice = state.cart.reduce((total, item) => total + item.discount_price * item.count, 0);
       state.totalDiscount = state.cart.reduce((total, item) => total + item.discount, 0);
     },
     deleteFromCart(state, action: PayloadAction<string>) {
-      state.cart = state.cart.filter((item) => item._id !== action.payload);
+      state.cart = state.cart.filter((item) => item.id !== Number(action.payload));
       localStorage.setItem('cart', JSON.stringify(state.cart));
       state.totalPrice = state.cart.reduce((total, item) => total + item.price * item.count, 0);
       state.totalDiscountPrice = state.cart.reduce((total, item) => total + item.discount_price * item.count, 0);
