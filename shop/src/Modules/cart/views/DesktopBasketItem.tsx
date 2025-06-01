@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { HiOutlineMinus, HiOutlinePlus, HiOutlineX } from 'react-icons/hi';
 import { CartItem } from '../types/cartType';
 import { useCart } from '../hooks/useCart';
+import { AttributeValues } from '@/shared/types/attributeType';
 
 export interface ItemCardBasketProp {
   item: CartItem;
@@ -12,6 +13,8 @@ export interface ItemCardBasketProp {
 
 export default function DesktopBasketItem({ item }: ItemCardBasketProp) {
   const { increaseCount, decreaseCount, deleteFromCart } = useCart();
+
+  const attributes = item.type === 'VARIABLE' && item.attributeValues ? item.attributeValues : [];
 
   return (
     <div className="flex gap-x-2 py-5">
@@ -34,12 +37,28 @@ export default function DesktopBasketItem({ item }: ItemCardBasketProp) {
         </Link>
 
         <div className="flex items-center gap-x-2 text-sm text-text/60">
-          <div>تعداد : {item.count}</div>
-          <div className="h-3 w-px rounded-full bg-background"></div>
-          <div className="flex items-center gap-x-2">
-            <span className="h-4 w-4 rounded-full" style={{ background: item.colorCode ?? '#000' }}></span>
-            <span>{item.colorCode ? 'رنگ انتخابی' : 'بدون رنگ'}</span>
-          </div>
+          <div>تعداد: {item.count}</div>
+          {item.type === 'VARIABLE' && attributes.length > 0 && (
+            <>
+              <div className="h-3 w-px rounded-full bg-background"></div>
+              <div className="flex flex-wrap items-center gap-x-2">
+                {attributes.map((attr: AttributeValues, index: number) => (
+                  <div key={attr.id || index} className="flex items-center gap-x-2">
+                    {attr.colorCode ? (
+                      <>
+                        <span className="h-4 w-4 rounded-full" style={{ background: attr.colorCode || '#000' }}></span>
+                        <span>رنگ: {attr.name}</span>
+                      </>
+                    ) : attr.buttonLabel ? (
+                      <span>{attr.buttonLabel}</span>
+                    ) : (
+                      <span>{attr.name}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
 
         <div className="flex items-center justify-between gap-x-2">

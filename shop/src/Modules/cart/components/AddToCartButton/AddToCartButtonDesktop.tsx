@@ -6,14 +6,13 @@ import { RootState } from '@/store';
 
 interface Props {
   onAddToCart?: (quantity: number) => void;
-  productType: string; // برای بررسی نوع محصول
+  productType: string;
 }
 
 const AddToCartButtonDesktop: FC<Props> = ({ onAddToCart, productType }) => {
   const [quantity, setQuantity] = useState(1);
   const { selectedVariant } = useSelector((state: RootState) => state.product);
 
-  // بررسی اینکه آیا دکمه باید فعال باشه
   const isButtonDisabled = productType === 'VARIABLE' && !selectedVariant;
 
   return (

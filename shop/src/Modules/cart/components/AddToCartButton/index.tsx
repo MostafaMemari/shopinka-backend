@@ -1,7 +1,7 @@
 // src/components/AddToCartButton.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { ProductDetails } from '@/Modules/product/types/productType';
@@ -11,32 +11,39 @@ import { useCart } from '../../hooks/useCart';
 import CartItemControls from '../../views/CartItemControls';
 
 interface Props {
-  product?: ProductDetails; // اختیاری کردن product به دلیل استفاده از useSelector
+  product?: ProductDetails;
   onAddToCart?: (quantity: number) => void;
 }
 
 export default function AddToCartButton({ product: propProduct, onAddToCart }: Props) {
   const { product: stateProduct, selectedVariant } = useSelector((state: RootState) => state.product);
-  const product = propProduct || stateProduct; // استفاده از propProduct اگر ارائه شده باشد، وگرنه stateProduct
+  const product = propProduct || stateProduct;
 
-  if (!product) return null;
-
-  if (product.type === 'VARIABLE' && !selectedVariant) return null;
-
-  const newPrice = selectedVariant ? selectedVariant.salePrice : product.salePrice;
-  const oldPrice = selectedVariant ? selectedVariant.basePrice : product.basePrice;
-  const discount = newPrice && oldPrice ? Math.round(((oldPrice - newPrice) / oldPrice) * 100) : 0;
-
-  if (!newPrice) return null;
-
-  const [quantity, setQuantity] = useState(1);
-  const { cart, setCart, increaseCount, decreaseCount } = useCart();
+  const { cart, setCart, increaseCount } = useCart();
   const [existingProduct, setExistingProduct] = useState<CartItem | undefined>();
 
+  const newPrice = useMemo(() => (selectedVariant ? selectedVariant.salePrice : product?.salePrice), [selectedVariant, product]);
+
+  const oldPrice = useMemo(() => (selectedVariant ? selectedVariant.basePrice : product?.basePrice), [selectedVariant, product]);
+
+  const discount = useMemo(() => {
+    if (newPrice && oldPrice) {
+      return Math.round(((oldPrice - newPrice) / oldPrice) * 100);
+    }
+    return 0;
+  }, [newPrice, oldPrice]);
+
   useEffect(() => {
+    if (!product) return;
+
     const cartItemId = product.type === 'VARIABLE' ? (selectedVariant?.id ?? product.id) : product.id;
-    setExistingProduct(cart.find((item) => item.id === cartItemId));
-  }, [cart, product.id, product.type, selectedVariant]);
+
+    const found = cart.find((item) => item.id === cartItemId);
+    setExistingProduct(found);
+  }, [cart, product, selectedVariant]);
+
+  if (!product || !newPrice) return null;
+  if (product.type === 'VARIABLE' && !selectedVariant) return null;
 
   const addToCart = () => {
     if (existingProduct) {
@@ -49,7 +56,7 @@ export default function AddToCartButton({ product: propProduct, onAddToCart }: P
         price: newPrice,
         discount_price: oldPrice ?? newPrice,
         discount: discount ?? 0,
-        count: quantity,
+        count: 1,
         type: product.type,
         attributeValues: selectedVariant?.attributeValues ?? [],
       };
@@ -57,9 +64,7 @@ export default function AddToCartButton({ product: propProduct, onAddToCart }: P
       setCart([...cart, cartItem]);
     }
 
-    if (onAddToCart) {
-      onAddToCart(quantity);
-    }
+    onAddToCart?.(1);
   };
 
   const isButtonDisabled = product.type === 'VARIABLE' && !selectedVariant;

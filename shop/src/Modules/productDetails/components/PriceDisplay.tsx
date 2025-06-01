@@ -2,18 +2,24 @@
 
 import { formatPrice } from '@/shared/utils/formatter';
 import { RootState } from '@/store';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
-export default function PriceDisplay() {
+export function ProductPrice() {
   const { product, selectedVariant } = useSelector((state: RootState) => state.product);
 
   if (!product) return null;
 
   if (product.type === 'VARIABLE' && !selectedVariant) return null;
 
-  const newPrice = selectedVariant ? selectedVariant.salePrice : product?.salePrice;
-  const oldPrice = selectedVariant ? selectedVariant.basePrice : product?.basePrice;
-  const discount = newPrice && oldPrice ? Math.round(((oldPrice - newPrice) / oldPrice) * 100) : undefined;
+  const newPrice = useMemo(() => (selectedVariant ? selectedVariant.salePrice : product?.salePrice), [selectedVariant, product]);
+  const oldPrice = useMemo(() => (selectedVariant ? selectedVariant.basePrice : product?.basePrice), [selectedVariant, product]);
+  const discount = useMemo(() => {
+    if (newPrice && oldPrice) {
+      return Math.round(((oldPrice - newPrice) / oldPrice) * 100);
+    }
+    return 0;
+  }, [newPrice, oldPrice]);
 
   if (!newPrice) return null;
 
@@ -38,3 +44,5 @@ export default function PriceDisplay() {
     </div>
   );
 }
+
+export default ProductPrice;
