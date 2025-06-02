@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import DesktopLogo from '@/shared/components/ui/Logo/DesktopLogo';
 
-import { ScaleLoader } from 'react-spinners';
+import { BeatLoader } from 'react-spinners';
 import CountdownTimer from '../components/CountdownTimer';
 import OtpForm from '../components/OtpForm';
 import { IoChevronBack } from 'react-icons/io5';
+import PrimaryButton from '@/shared/components/PrimaryButton';
 
 export default function AuthPage() {
   const [username, setUsername] = useState('');
@@ -83,13 +84,9 @@ export default function AuthPage() {
                 {/* <p className="h-5 text-sm text-red-500 dark:text-red-400">{error}</p> */}
               </div>
               <div className="mb-5">
-                <button
-                  className="btn-primary w-full py-3 flex items-center justify-center cursor-pointer"
-                  onClick={handleSubmit}
-                  disabled={isLoading}
-                >
-                  {isLoading ? <ScaleLoader color="#ffffff" height={20} /> : 'ورود'}
-                </button>
+                <PrimaryButton isLoading={isLoading} onClick={handleSubmit}>
+                  ورود
+                </PrimaryButton>
               </div>
               <p className="text-center text-sm text-text/90">
                 با ورود به فروشگاه،

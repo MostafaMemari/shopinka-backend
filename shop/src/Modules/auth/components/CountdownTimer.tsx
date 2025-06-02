@@ -39,7 +39,7 @@ export default function CountdownTimer({ initialMinutes, initialSeconds }: Count
   };
 
   return (
-    <ul className="mb-8 space-y-4">
+    <ul className="mb-8 space-y-4 mt-4">
       <li>
         <p className={`text-primary text-sm ${isResendEnabled ? 'hidden' : ''}`} id="countdownSection">
           زمان باقی‌مانده تا ارسال مجدد{' '}
