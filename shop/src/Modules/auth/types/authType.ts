@@ -1,6 +1,8 @@
-import { User } from './userType';
+import { UserState } from './userType';
 
 export interface AuthState {
   isLogin: boolean;
-  user: User | null;
+  user: UserState | null;
+  isLoading: boolean;
+  error?: string | null;
 }

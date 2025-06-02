@@ -56,7 +56,7 @@ export default function OtpForm({
       if (res.status === 200 || res.status === 201) {
         Toast.fire({ icon: 'success', title: 'ورود شما با موفقیت انجام شد' });
 
-        loginUser({ mobile, role: 'CUSTOMER' });
+        loginUser({ mobile, role: 'CUSTOMER', full_name: '' });
         router.push(backUrl);
       }
     } catch (error) {

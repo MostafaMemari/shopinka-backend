@@ -17,7 +17,6 @@ interface ApiResponse<T = any> {
   data: T;
 }
 
-// تابع کمکی برای ارسال درخواست refresh token
 async function refreshAccessToken(): Promise<ApiResponse> {
   try {
     const response = await ofetch('/auth/refresh-token', {
@@ -54,6 +53,14 @@ async function refreshAccessToken(): Promise<ApiResponse> {
 
 export const shopApiFetch = async (path: string, options: FetchOptions = {}): Promise<ApiResponse> => {
   const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get(COOKIE_NAMES.ACCESS_TOKEN)?.value;
+
+  const defaultHeaders: HeadersInit = {
+    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+    ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+    ...options.headers,
+  };
 
   try {
     const data = await ofetch(path, {
@@ -61,11 +68,7 @@ export const shopApiFetch = async (path: string, options: FetchOptions = {}): Pr
       method: options.method || 'GET',
       query: options.query,
       body: isFormData ? options.body : options.body ? JSON.stringify(options.body) : undefined,
-      headers: {
-        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
-        ...options.headers,
-      },
-      credentials: 'include', // ارسال کوکی‌ها با درخواست
+      headers: defaultHeaders,
       retry: 0,
     });
 
@@ -77,7 +80,9 @@ export const shopApiFetch = async (path: string, options: FetchOptions = {}): Pr
     if (statusCode === 401) {
       const refreshResult = await refreshAccessToken();
       if (refreshResult.status === 200) {
-        // تلاش مجدد برای درخواست اصلی
+        const cookieStore = await cookies();
+        const newAccessToken = cookieStore.get(COOKIE_NAMES.ACCESS_TOKEN)?.value;
+
         try {
           const retryData = await ofetch(path, {
             baseURL: process.env.API_BASE_URL,
@@ -86,9 +91,9 @@ export const shopApiFetch = async (path: string, options: FetchOptions = {}): Pr
             body: isFormData ? options.body : options.body ? JSON.stringify(options.body) : undefined,
             headers: {
               ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+              ...(newAccessToken ? { Authorization: `Bearer ${newAccessToken}` } : {}),
               ...options.headers,
             },
-            credentials: 'include',
             retry: 0,
           });
           return { status: 200, data: retryData };
@@ -98,7 +103,6 @@ export const shopApiFetch = async (path: string, options: FetchOptions = {}): Pr
           return { status: retryStatus, data: { message: retryMessage } };
         }
       } else {
-        // اگر refresh token ناموفق بود
         return { status: refreshResult.status, data: { message: refreshResult.data.message } };
       }
     }
