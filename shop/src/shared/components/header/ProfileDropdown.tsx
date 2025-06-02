@@ -109,9 +109,6 @@ const ProfileDropdown = () => {
                     aria-current={pathname === item.href ? 'page' : undefined}
                   >
                     <span className="flex items-center gap-x-4">
-                      {item.isProfile && (
-                        <Image src="/images/user.png" alt="پروفایل کاربر" width={32} height={32} className="rounded-full" priority />
-                      )}
                       <span className="flex items-center gap-x-2">
                         <item.icon className="h-6 w-6 group-hover:text-primary dark:group-hover:text-emerald-400" />
                         <span className="group-hover:text-primary dark:group-hover:text-emerald-400">{item.label}</span>
@@ -130,7 +127,7 @@ const ProfileDropdown = () => {
               <li>
                 <button
                   onClick={handleUserLogout}
-                  className="w-full flex items-center gap-x-2 rounded-lg p-4 text-red-500 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/20 transition group"
+                  className="w-full flex items-center gap-x-2 rounded-lg p-4 text-red-500 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/20 transition group cursor-pointer"
                   aria-label="خروج از حساب کاربری"
                 >
                   <HiOutlineLogout className="h-6 w-6 group-hover:text-red-600 dark:group-hover:text-red-300" />

@@ -19,7 +19,6 @@ interface OtpFormProps {
   backUrl: string;
 }
 
-// اسکیمای اعتبارسنجی با Yup
 const otpValidationSchema = Yup.object({
   otp: Yup.string()
     .required('لطفاً کد ۶ رقمی را وارد کنید')
