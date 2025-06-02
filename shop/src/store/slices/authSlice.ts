@@ -6,7 +6,7 @@ import { UserState } from '@/Modules/auth/types/userType';
 const initialState: AuthState = {
   isLogin: false,
   user: null,
-  isLoading: false,
+  isLoading: true,
   error: null,
 };
 
@@ -33,8 +33,11 @@ const authSlice = createSlice({
       state.isLoading = false;
       state.error = null;
     },
+    setLoading(state, action: PayloadAction<boolean>) {
+      state.isLoading = action.payload;
+    },
   },
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout } = authSlice.actions;
+export const { loginStart, loginSuccess, loginFailure, logout, setLoading } = authSlice.actions;
 export default authSlice.reducer;

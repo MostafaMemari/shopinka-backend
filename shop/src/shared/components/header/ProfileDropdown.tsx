@@ -5,17 +5,20 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { HiOutlineBell, HiOutlineChevronLeft, HiOutlineClock, HiOutlineHeart, HiOutlineLogout, HiOutlineUser } from 'react-icons/hi';
 import { BiLogIn } from 'react-icons/bi';
+import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/Modules/auth/hooks/useAuth';
 import { logout } from '@/Modules/auth/services/auth.api';
 import Toast from '@/shared/utils/swalToast';
+import { BeatLoader, PulseLoader } from 'react-spinners';
 
 const ProfileDropdown = () => {
   const currentPath = usePathname();
-  const { isLogin, user, logoutUser } = useAuth();
+  const { isLogin, user, logoutUser, isLoading } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const isHoverSupported = window.matchMedia('(hover: hover)').matches;
@@ -48,9 +51,10 @@ const ProfileDropdown = () => {
     try {
       const res = await logout();
       if (res?.status === 201) {
-        logoutUser(); // فراخوانی متد logoutUser از useAuth
+        logoutUser();
         Toast.fire({ icon: 'success', title: 'خروج با موفقیت انجام شد' });
-        setIsOpen(false); // بستن دراپ‌داون بعد از خروج
+        router.refresh();
+        setIsOpen(false);
       }
     } catch (err) {
       console.error(err);
@@ -58,9 +62,17 @@ const ProfileDropdown = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex h-9 items-center justify-center gap-2 rounded-full bg-transparent px-4">
+        <PulseLoader color="var(--color-primary, #10b981)" size={6} loading={true} aria-label="در حال بارگذاری" />
+      </div>
+    );
+  }
+
   return (
     <>
-      {!isLogin ? ( // تغییر شرط به !isLogin برای وضوح بیشتر
+      {!isLogin ? (
         <Link href={`/login/?backUrl=${currentPath}`}>
           <div className="flex h-9 items-center justify-center gap-2 rounded-md border border-gray-300 px-4 text-sm font-medium text-gray-700 dark:border-gray-600 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
             <BiLogIn size={18} className="transform scale-x-[-1]" />
@@ -91,7 +103,7 @@ const ProfileDropdown = () => {
                   aria-current={currentPath === '/profile' ? 'page' : undefined}
                 >
                   <span className="flex items-center gap-x-4">
-                    <Image src="/images/user.png" alt="پروفایل کاربر" width={32} height={32} className="rounded-full" />
+                    <Image src="/images/user.png" alt="پروفایل کاربر" width={32} height={32} className="rounded-full" priority />
                     <span className="line-clamp-1 group-hover:text-primary dark:group-hover:text-emerald-400">
                       {user?.full_name ?? 'کاربر گرامی'}
                     </span>

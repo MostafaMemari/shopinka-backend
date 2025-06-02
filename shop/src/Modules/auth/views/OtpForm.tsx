@@ -83,9 +83,10 @@ export default function OtpForm({
       }
 
       if (res.status === 200 || res.status === 201) {
-        Toast.fire({ icon: 'success', title: 'کد تأیید مجدداً ارسال شد' });
-        setOtp('');
-        resetTimer();
+        setError('');
+        Toast.fire({ icon: 'success', title: 'ورود شما با موفقیت انجام شد' });
+        loginUser({ mobile, role: 'CUSTOMER', full_name: '' });
+        router.push(backUrl);
       }
     } catch (error) {
       setError('خطا در ارسال کد تأیید. لطفاً دوباره تلاش کنید.');
