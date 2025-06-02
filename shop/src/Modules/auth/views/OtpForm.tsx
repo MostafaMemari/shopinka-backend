@@ -6,6 +6,7 @@ import { verifyOtp, sendOtp } from '../services/auth.api';
 import { handleApiError } from '@/shared/utils/handleApiError';
 import { errorOtpStepMessages, errorPhoneNumberStepMessages } from '../messages/errorAuthMessages';
 import CountdownTimer from '../components/CountdownTimer';
+import { useAuth } from '../hooks/useAuth';
 
 export default function OtpForm({
   mobile,
@@ -26,6 +27,7 @@ export default function OtpForm({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+  const { loginUser } = useAuth();
 
   const handleSubmit = useCallback(async () => {
     if (isLoading || isExpired || otp.length !== 6) {
@@ -53,6 +55,8 @@ export default function OtpForm({
 
       if (res.status === 200 || res.status === 201) {
         Toast.fire({ icon: 'success', title: 'ورود شما با موفقیت انجام شد' });
+
+        loginUser({ mobile, role: 'CUSTOMER' });
         router.push(backUrl);
       }
     } catch (error) {

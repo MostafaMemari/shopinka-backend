@@ -1,5 +1,5 @@
 export interface User {
-  full_name: string;
+  full_name?: string;
   mobile: string;
   role: 'CUSTOMER';
 }
