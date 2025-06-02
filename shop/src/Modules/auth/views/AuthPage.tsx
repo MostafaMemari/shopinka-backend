@@ -9,12 +9,21 @@ import PrimaryButton from '@/shared/components/PrimaryButton';
 import Toast from '@/shared/utils/swalToast';
 import { verifyOtp } from '../api/auth.api';
 import { sendOtp } from '../api/auth.api';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { handleApiError } from '@/shared/utils/handleApiError';
+import { errorOtpStepMessages, errorPhoneNumberStepMessages } from '../messages/errorAuthMessages';
+import { useOtpTimer } from '../hooks/useOtpTimer';
+import { register } from 'module';
 
 export default function AuthPage() {
   const [mobile, setMobile] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const backUrl = searchParams.get('backUrl') || '/';
 
   const validateIranPhoneNumber = (phone: string) => {
     const phoneRegex = /^(?:09|\+989|9)\d{9}$/;
@@ -30,8 +39,21 @@ export default function AuthPage() {
     setError('');
     setIsLoading(true);
     try {
-      await sendOtp(mobile);
-      setShowOtp(true);
+      const res = await sendOtp(mobile);
+
+      const errorMessage = handleApiError(res.status, errorPhoneNumberStepMessages);
+
+      if (errorMessage) {
+        Toast.fire({ icon: 'error', title: errorMessage });
+
+        return;
+      }
+
+      if (res?.status === 201 || res.status === 200) {
+        Toast.fire({ icon: 'success', title: 'کد اعتبار سنجی با موفقیت ارسال شد' });
+
+        setShowOtp(true);
+      }
     } catch (error) {
       Toast.fire({ icon: 'error', title: 'خطا در ارسال کد تأیید. لطفاً دوباره تلاش کنید.' });
     } finally {
@@ -42,8 +64,34 @@ export default function AuthPage() {
   const handleOtpSubmit = async (otp: string) => {
     setIsLoading(true);
     try {
-      await verifyOtp(mobile, otp);
-      Toast.fire({ icon: 'success', title: 'احراز هویت با موفقیت انجام شد' });
+      //   Toast.fire({ icon: 'success', title: 'احراز هویت با موفقیت انجام شد' });
+
+      if (otp.length === 6 && /^\d{6}$/.test(otp)) {
+        if (isExpired) {
+          //   register();
+
+          return Toast.fire({ icon: 'error', title: 'زمان شما به اتمام رسیده' });
+        }
+
+        const res = await verifyOtp(mobile, otp);
+
+        const errorMessage = handleApiError(res.status, errorOtpStepMessages);
+
+        if (errorMessage) {
+          //   resetOtpForm();
+
+          return Toast.fire({ icon: 'error', title: errorMessage });
+        }
+
+        if (res?.status === 201 || res.status === 200) {
+          Toast.fire({ icon: 'success', title: 'ورود شما با موفقیت انجام شد' });
+          router.push(backUrl);
+        }
+
+        // formRef.current?.requestSubmit();
+      } else {
+        Toast.fire({ icon: 'error', title: 'کد اعتبار سنجی اشتباه است' });
+      }
     } catch (error) {
       Toast.fire({
         icon: 'error',
@@ -63,6 +111,8 @@ export default function AuthPage() {
       title: 'بازگشت به فرم ورود',
     });
   };
+
+  const { timeLeft, isExpired, formatTime, resetTimer } = useOtpTimer(300);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
@@ -86,7 +136,7 @@ export default function AuthPage() {
           {showOtp ? (
             <>
               <OtpForm onSubmit={handleOtpSubmit} />
-              <CountdownTimer initialMinutes={2} initialSeconds={0} />
+              <CountdownTimer formatTime={formatTime} isExpired={isExpired} resetTimer={resetTimer} timeLeft={timeLeft} />
             </>
           ) : (
             <>

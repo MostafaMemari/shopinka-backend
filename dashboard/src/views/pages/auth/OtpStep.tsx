@@ -178,7 +178,6 @@ const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBac
               if (isExpired) {
                 resetTimer()
                 setOtp('')
-                console.log('Resend OTP')
               }
             }}
           >
