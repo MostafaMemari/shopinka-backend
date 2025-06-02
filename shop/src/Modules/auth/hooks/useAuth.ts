@@ -13,7 +13,8 @@ export function useAuth() {
     dispatch(loginStart());
     try {
       const userData = await getMe();
-      if (userData.status === 200) {
+
+      if (userData.status === 200 && userData?.data) {
         dispatch(
           loginSuccess({
             mobile: userData.data.mobile,

@@ -1,93 +1,85 @@
 import PrimaryButton from '@/shared/components/PrimaryButton';
 import Toast from '@/shared/utils/swalToast';
-import { useState } from 'react';
-import { validateIranPhoneNumber } from '../utils/validateIranPhoneNumber';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import { sendOtp } from '../services/auth.api';
 import { handleApiError } from '@/shared/utils/handleApiError';
 import { errorPhoneNumberStepMessages } from '../messages/errorAuthMessages';
+import { validateIranPhoneNumber } from '../utils/validateIranPhoneNumber';
 
-interface PhoneInputForm {
+interface PhoneInputFormProps {
   mobile: string;
   setMobile: (value: string) => void;
   handleShowOpt: () => void;
 }
 
-function PhoneInputForm({ mobile, setMobile, handleShowOpt }: PhoneInputForm) {
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+// اسکیمای اعتبارسنجی با Yup
+const phoneValidationSchema = Yup.object({
+  mobile: Yup.string()
+    .required('شماره موبایل الزامی است')
+    .test('is-valid-iran-phone', 'شماره موبایل معتبر نیست', (value) => validateIranPhoneNumber(value || '')),
+});
 
-  const handleSubmit = async () => {
-    if (!validateIranPhoneNumber(mobile)) {
-      setError('شماره موبایل معتبر نیست');
-      return;
-    }
-
-    setError('');
-    setIsLoading(true);
-
+function PhoneInputForm({ mobile, setMobile, handleShowOpt }: PhoneInputFormProps) {
+  const handleSubmit = async (
+    values: { mobile: string },
+    { setSubmitting, setErrors }: { setSubmitting: (isSubmitting: boolean) => void; setErrors: (errors: any) => void },
+  ) => {
     try {
-      const res = await sendOtp(mobile);
+      const res = await sendOtp(values.mobile);
       const errorMessage = handleApiError(res.status, errorPhoneNumberStepMessages);
 
       if (errorMessage) {
-        setError(errorMessage);
+        setErrors({ mobile: errorMessage });
         return;
       }
 
       if (res.status === 200 || res.status === 201) {
         Toast.fire({ icon: 'success', title: 'کد اعتبار سنجی با موفقیت ارسال شد' });
+        setMobile(values.mobile);
         handleShowOpt();
       }
     } catch (error) {
-      setError('خطا در ارسال کد تأیید. لطفاً دوباره تلاش کنید.');
+      setErrors({ mobile: 'خطا در ارسال کد تأیید. لطفاً دوباره تلاش کنید.' });
     } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleSubmit();
+      setSubmitting(false);
     }
   };
 
   return (
-    <>
-      <div className="mb-4 space-y-4">
-        <label htmlFor="mobile" className="relative block rounded-lg border shadow-base">
-          <input
-            type="text"
-            id="mobile"
-            dir="auto"
-            className={`peer w-full rounded-lg border-none bg-transparent p-4 text-left placeholder-transparent focus:outline-none focus:ring-0 ${
-              error ? 'border-red-500' : ''
-            }`}
-            placeholder="شماره موبایل"
-            value={mobile}
-            onChange={(e) => setMobile(e.target.value)}
-            onKeyDown={handleKeyDown}
-            autoFocus
-          />
-          <span className="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-muted px-2 py-0.5 text-sm text-text/90 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm">
-            شماره موبایل
-          </span>
-        </label>
-        {error && <p className="h-5 text-sm text-red-500 dark:text-red-400">{error}</p>}
-      </div>
-      <div className="mb-5">
-        <PrimaryButton isLoading={isLoading} onClick={handleSubmit}>
-          ورود
-        </PrimaryButton>
-      </div>
-      <p className="text-center text-sm text-text/90">
-        با ورود به فروشگاه،
-        <a href="./rules-and-terms.html" className="text-primary">
-          کلیه قوانین
-        </a>
-        را می‌پذیرم
-      </p>
-    </>
+    <Formik initialValues={{ mobile }} validationSchema={phoneValidationSchema} onSubmit={handleSubmit}>
+      {({ isSubmitting }) => (
+        <Form className="mb-4 space-y-4">
+          <div className="relative block rounded-lg border shadow-base">
+            <Field
+              type="text"
+              id="mobile"
+              name="mobile"
+              dir="auto"
+              className={`peer w-full rounded-lg border-none bg-transparent p-4 text-left placeholder-transparent focus:outline-none focus:ring-0`}
+              placeholder="شماره موبایل"
+              autoFocus
+            />
+            <span className="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-muted px-2 py-0.5 text-sm text-text/90 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm">
+              شماره موبایل
+            </span>
+          </div>
+          <ErrorMessage name="mobile" component="p" className="h-5 text-sm text-red-500 dark:text-red-400 mt-2" />
+          <div className="mb-5">
+            <PrimaryButton type="submit" isLoading={isSubmitting} disabled={isSubmitting}>
+              ورود
+            </PrimaryButton>
+          </div>
+          <p className="text-center text-sm text-text/90">
+            با ورود به فروشگاه،
+            <a href="./rules-and-terms.html" className="text-primary">
+              کلیه قوانین
+            </a>
+            را می‌پذیرم
+          </p>
+        </Form>
+      )}
+    </Formik>
   );
 }
 

@@ -67,7 +67,7 @@ const UserDropdown = () => {
     try {
       const res = await logout()
 
-      if (res?.status === 201) {
+      if (res?.status === 201 || res?.status === 200) {
         showToast({ type: 'success', message: 'خروج با موفقیت انجام شد' })
         router.push('/login')
       }
