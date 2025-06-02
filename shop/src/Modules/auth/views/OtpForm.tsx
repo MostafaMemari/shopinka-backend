@@ -2,7 +2,7 @@ import PrimaryButton from '@/shared/components/PrimaryButton';
 import Toast from '@/shared/utils/swalToast';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { verifyOtp, sendOtp } from '../api/auth.api';
+import { verifyOtp, sendOtp } from '../services/auth.api';
 import { handleApiError } from '@/shared/utils/handleApiError';
 import { errorOtpStepMessages, errorPhoneNumberStepMessages } from '../messages/errorAuthMessages';
 import CountdownTimer from '../components/CountdownTimer';

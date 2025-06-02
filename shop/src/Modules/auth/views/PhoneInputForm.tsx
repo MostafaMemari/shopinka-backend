@@ -2,7 +2,7 @@ import PrimaryButton from '@/shared/components/PrimaryButton';
 import Toast from '@/shared/utils/swalToast';
 import { useState } from 'react';
 import { validateIranPhoneNumber } from '../utils/validateIranPhoneNumber';
-import { sendOtp } from '../api/auth.api';
+import { sendOtp } from '../services/auth.api';
 import { handleApiError } from '@/shared/utils/handleApiError';
 import { errorPhoneNumberStepMessages } from '../messages/errorAuthMessages';
 
