@@ -28,6 +28,7 @@ export default function OtpForm({
   const [error, setError] = useState('');
   const router = useRouter();
   const { loginUser } = useAuth();
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const handleSubmit = useCallback(async () => {
     if (isLoading || isExpired || otp.length !== 6) {
@@ -55,17 +56,19 @@ export default function OtpForm({
 
       if (res.status === 200 || res.status === 201) {
         Toast.fire({ icon: 'success', title: 'ورود شما با موفقیت انجام شد' });
-
         loginUser({ mobile, role: 'CUSTOMER', full_name: '' });
+        setIsRedirecting(true); // اضافه شد
         router.push(backUrl);
       }
     } catch (error) {
-      setError('کد تأیید نامعتبر است');
-      setOtp('');
+      if (!isRedirecting) {
+        setError('کد تأیید نامعتبر است');
+        setOtp('');
+      }
     } finally {
       setIsLoading(false);
     }
-  }, [otp, isLoading, isExpired, mobile, backUrl, router]);
+  }, [otp, isLoading, isExpired, mobile, backUrl, router, isRedirecting]);
 
   const handleResendOtp = useCallback(async () => {
     if (isLoading) return;
@@ -83,7 +86,6 @@ export default function OtpForm({
       }
 
       if (res.status === 200 || res.status === 201) {
-        setError('');
         Toast.fire({ icon: 'success', title: 'ورود شما با موفقیت انجام شد' });
         loginUser({ mobile, role: 'CUSTOMER', full_name: '' });
         router.push(backUrl);
