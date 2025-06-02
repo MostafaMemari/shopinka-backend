@@ -1,118 +1,33 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import DesktopLogo from '@/shared/components/ui/Logo/DesktopLogo';
-import CountdownTimer from '../components/CountdownTimer';
-import OtpForm from '../components/OtpForm';
-import { IoChevronBack } from 'react-icons/io5';
-import PrimaryButton from '@/shared/components/PrimaryButton';
 import Toast from '@/shared/utils/swalToast';
-import { verifyOtp } from '../api/auth.api';
-import { sendOtp } from '../api/auth.api';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { handleApiError } from '@/shared/utils/handleApiError';
-import { errorOtpStepMessages, errorPhoneNumberStepMessages } from '../messages/errorAuthMessages';
-import { useOtpTimer } from '../hooks/useOtpTimer';
-import { register } from 'module';
 
-export default function AuthPage() {
+import { useOtpTimer } from '../hooks/useOtpTimer';
+import { IoChevronBack } from 'react-icons/io5';
+import PhoneInputForm from './PhoneInputForm';
+import OtpForm from './OtpForm';
+
+export default function AuthContainer() {
   const [mobile, setMobile] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+
   const [showOtp, setShowOtp] = useState(false);
 
-  const router = useRouter();
   const searchParams = useSearchParams();
   const backUrl = searchParams.get('backUrl') || '/';
-
-  const validateIranPhoneNumber = (phone: string) => {
-    const phoneRegex = /^(?:09|\+989|9)\d{9}$/;
-    return phoneRegex.test(phone.replace(/\s/g, ''));
-  };
-
-  const handleSubmit = async () => {
-    if (!validateIranPhoneNumber(mobile)) {
-      setError('شماره موبایل معتبر نیست');
-      Toast.fire({ icon: 'error', title: 'شماره موبایل معتبر نیست' });
-      return;
-    }
-    setError('');
-    setIsLoading(true);
-    try {
-      const res = await sendOtp(mobile);
-
-      const errorMessage = handleApiError(res.status, errorPhoneNumberStepMessages);
-
-      if (errorMessage) {
-        Toast.fire({ icon: 'error', title: errorMessage });
-
-        return;
-      }
-
-      if (res?.status === 201 || res.status === 200) {
-        Toast.fire({ icon: 'success', title: 'کد اعتبار سنجی با موفقیت ارسال شد' });
-
-        setShowOtp(true);
-      }
-    } catch (error) {
-      Toast.fire({ icon: 'error', title: 'خطا در ارسال کد تأیید. لطفاً دوباره تلاش کنید.' });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleOtpSubmit = async (otp: string) => {
-    setIsLoading(true);
-    try {
-      //   Toast.fire({ icon: 'success', title: 'احراز هویت با موفقیت انجام شد' });
-
-      if (otp.length === 6 && /^\d{6}$/.test(otp)) {
-        if (isExpired) {
-          //   register();
-
-          return Toast.fire({ icon: 'error', title: 'زمان شما به اتمام رسیده' });
-        }
-
-        const res = await verifyOtp(mobile, otp);
-
-        const errorMessage = handleApiError(res.status, errorOtpStepMessages);
-
-        if (errorMessage) {
-          //   resetOtpForm();
-
-          return Toast.fire({ icon: 'error', title: errorMessage });
-        }
-
-        if (res?.status === 201 || res.status === 200) {
-          Toast.fire({ icon: 'success', title: 'ورود شما با موفقیت انجام شد' });
-          router.push(backUrl);
-        }
-
-        // formRef.current?.requestSubmit();
-      } else {
-        Toast.fire({ icon: 'error', title: 'کد اعتبار سنجی اشتباه است' });
-      }
-    } catch (error) {
-      Toast.fire({
-        icon: 'error',
-        title: 'کد تأیید نامعتبر است',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { timeLeft, isExpired, formatTime, resetTimer } = useOtpTimer(300);
 
   const handleBack = () => {
     setShowOtp(false);
     setMobile('');
-    setError('');
-    Toast.fire({
-      icon: 'info',
-      title: 'بازگشت به فرم ورود',
-    });
+    Toast.fire({ icon: 'info', title: 'بازگشت به فرم ورود' });
   };
 
-  const { timeLeft, isExpired, formatTime, resetTimer } = useOtpTimer(300);
+  const handleShowOpt = () => {
+    setShowOtp(true);
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
@@ -126,52 +41,21 @@ export default function AuthPage() {
               <IoChevronBack className="w-6 h-6 rotate-180" />
             </button>
           )}
-
           <div className="mx-auto mb-10 w-40">
             <DesktopLogo />
           </div>
-
           <h1 className="mb-10 text-start text-lg">{showOtp ? 'کد تأیید را وارد کنید' : 'ورود | ثبت نام'}</h1>
-
           {showOtp ? (
-            <>
-              <OtpForm onSubmit={handleOtpSubmit} />
-              <CountdownTimer formatTime={formatTime} isExpired={isExpired} resetTimer={resetTimer} timeLeft={timeLeft} />
-            </>
+            <OtpForm
+              mobile={mobile}
+              isExpired={isExpired}
+              timeLeft={timeLeft}
+              formatTime={formatTime}
+              resetTimer={resetTimer}
+              backUrl={backUrl}
+            />
           ) : (
-            <>
-              <div className="mb-4 space-y-4">
-                <label htmlFor="mobile" className="relative block rounded-lg border shadow-base">
-                  <input
-                    type="text"
-                    id="mobile"
-                    dir="auto"
-                    className={`peer w-full rounded-lg border-none bg-transparent p-4 text-left placeholder-transparent focus:outline-hidden focus:ring-0 ${
-                      error ? 'border-red-500' : ''
-                    }`}
-                    placeholder="شماره موبایل"
-                    value={mobile}
-                    onChange={(e) => setMobile(e.target.value)}
-                  />
-                  <span className="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-muted px-2 py-0.5 text-sm text-text/90 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm">
-                    شماره موبایل
-                  </span>
-                </label>
-                <p className="h-5 text-sm text-red-500 dark:text-red-400">{error}</p>
-              </div>
-              <div className="mb-5">
-                <PrimaryButton isLoading={isLoading} onClick={handleSubmit}>
-                  ورود
-                </PrimaryButton>
-              </div>
-              <p className="text-center text-sm text-text/90">
-                با ورود به فروشگاه،
-                <a href="./rules-and-terms.html" className="text-primary">
-                  کلیه قوانین
-                </a>
-                را می‌پذیرم
-              </p>
-            </>
+            <PhoneInputForm mobile={mobile} setMobile={setMobile} handleShowOpt={handleShowOpt} />
           )}
         </div>
       </div>
