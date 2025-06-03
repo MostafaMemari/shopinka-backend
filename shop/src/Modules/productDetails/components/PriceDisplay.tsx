@@ -1,3 +1,4 @@
+// src/components/ProductPrice/ProductPrice.tsx
 'use client';
 
 import { formatPrice } from '@/shared/utils/formatter';

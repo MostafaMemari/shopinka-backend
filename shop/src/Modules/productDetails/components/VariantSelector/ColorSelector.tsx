@@ -11,12 +11,11 @@ interface Props {
 }
 
 export default function ColorSelector({ colors, selectedColor, onColorChange, label }: Props) {
-  if (!colors || colors.length === 0) return null;
+  if (!colors?.length) return null;
 
   const handleColorChange = (colorId: string): void => {
     const newValue = selectedColor === colorId ? null : colorId;
     onColorChange(newValue);
-    console.log('Color input changed:', newValue);
   };
 
   return (
@@ -35,18 +34,23 @@ export default function ColorSelector({ colors, selectedColor, onColorChange, la
               onChange={() => handleColorChange(color.id)}
               disabled={color.isDisabled}
               className="peer hidden"
+              aria-label={color.name}
             />
             <label
               htmlFor={color.id}
-              className={`relative block cursor-pointer rounded-full border-2 p-2 shadow-base transition-border duration-150 ease-in-out ${
-                color.isDisabled ? 'opacity-50 cursor-not-allowed' : selectedColor === color.id ? 'border-[hsl(var(--primary))]' : ''
+              className={`block cursor-pointer rounded-full border-2 p-2 shadow-base transition-border duration-150 ease-in-out ${
+                color.isDisabled
+                  ? 'opacity-50 cursor-not-allowed'
+                  : selectedColor === color.id
+                    ? 'border-[hsl(var(--primary))]'
+                    : 'border-[hsl(var(--border))]'
               }`}
             >
               <div className="flex items-center gap-x-2">
                 <div
                   className="h-6 w-6 rounded-full border-2"
                   style={{ backgroundColor: color.color, borderColor: 'hsl(var(--border) / 0.3)' }}
-                ></div>
+                />
                 <p className="text-text/90">{color.name}</p>
               </div>
             </label>

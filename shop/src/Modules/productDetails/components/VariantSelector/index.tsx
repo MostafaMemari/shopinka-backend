@@ -2,202 +2,100 @@
 
 import { useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { IColor } from '@/lib/types/colors';
-import ColorSelector from './ColorSelector';
-import ButtonSelector from './ButtonSelector';
 import { RootState } from '@/store';
 import { setSelectedButton, setSelectedColor, setSelectedVariant } from '@/store/slices/productSlice';
-import { Attribute, AttributeValues } from '@/shared/types/attributeType';
+import { Attribute } from '@/shared/types/attributeType';
 import { ProductVariant } from '@/Modules/product/types/productType';
+import ColorSelector from './ColorSelector';
+import ButtonSelector from './ButtonSelector';
 
-interface TransformedVariants {
-  colors: IColor[];
-  buttons: { slug: string; label: string; isDisabled?: boolean }[];
-}
-
+import { findMatchingVariant, getDefaultSelections, transformVariants } from '../utils/productVariants';
 interface Props {
   variants: ProductVariant[];
   attributes: Attribute[];
-  productType: string;
+  productType: 'VARIABLE' | 'SIMPLE';
   defaultVariantId?: number;
 }
 
-// Function to transform variants
-export const transformVariants = (variants: ProductVariant[], attributes: Attribute[]): TransformedVariants => {
-  const colors: IColor[] = [];
-  const buttons: { slug: string; label: string; isDisabled?: boolean }[] = [];
-  const uniqueColors = new Map<string, IColor>();
-  const uniqueButtons = new Map<string, { slug: string; label: string; isDisabled?: boolean }>();
-
-  variants.forEach((variant) => {
-    variant.attributeValues.forEach((attr: AttributeValues) => {
-      const colorAttr = attributes.find((a) => a.id === attr.attributeId && a.type === 'COLOR');
-      if (colorAttr && attr.colorCode && !uniqueColors.has(attr.slug)) {
-        uniqueColors.set(attr.slug, {
-          id: attr.id.toString(),
-          name: attr.name,
-          color: attr.colorCode,
-          isDisabled: false,
-        });
-      }
-
-      const buttonAttr = attributes.find((a) => a.id === attr.attributeId && a.type === 'BUTTON');
-      if (buttonAttr && !uniqueButtons.has(attr.slug)) {
-        uniqueButtons.set(attr.slug, {
-          slug: attr.slug,
-          label: attr.buttonLabel || attr.name,
-          isDisabled: false,
-        });
-      }
-    });
-  });
-
-  return {
-    colors: Array.from(uniqueColors.values()),
-    buttons: Array.from(uniqueButtons.values()),
-  };
-};
-
-const findMatchingVariant = (
-  variants: ProductVariant[],
-  selectedColor: string | null,
-  selectedButton: string | null,
-): ProductVariant | null => {
-  return (
-    variants.find((variant) => {
-      if (variant.attributeValues.length === 1) {
-        const singleAttr = variant.attributeValues[0];
-        if (singleAttr.attributeId === 1 && singleAttr.id.toString() === selectedColor) {
-          return true;
-        }
-        if (singleAttr.attributeId === 6 && singleAttr.slug === selectedButton) {
-          return true;
-        }
-        return false;
-      }
-
-      const hasColor = variant.attributeValues.some((attr) => attr.attributeId === 1 && attr.id.toString() === selectedColor);
-      const hasButton = variant.attributeValues.some((attr) => attr.attributeId === 6 && attr.slug === selectedButton);
-
-      return hasColor && hasButton;
-    }) || null
-  );
-};
-
 export default function ProductVariants({ variants, attributes, productType, defaultVariantId }: Props) {
   const dispatch = useDispatch();
-  const { selectedColor, selectedButton } = useSelector((state: RootState) => state.product);
+  const { selectedColor, selectedButton, selectedVariant } = useSelector((state: RootState) => state.product);
 
-  const transformedVariants = useMemo(() => transformVariants(variants, attributes), [variants, attributes]);
+  // Initialize default selections
+  useEffect(() => {
+    if (productType === 'VARIABLE' && defaultVariantId && !selectedVariant) {
+      const { defaultColor, defaultButton, defaultVariant } = getDefaultSelections(variants, attributes, defaultVariantId);
+      if (defaultVariant) {
+        dispatch(setSelectedVariant(defaultVariant));
+        if (defaultColor) dispatch(setSelectedColor(defaultColor));
+        if (defaultButton) dispatch(setSelectedButton(defaultButton));
+      }
+    }
+  }, [defaultVariantId, productType, variants, attributes, dispatch, selectedVariant]);
 
+  // Update selected variant when color or button changes
   useEffect(() => {
     if (productType === 'VARIABLE') {
-      const matchingVariant = findMatchingVariant(variants, selectedColor, selectedButton);
-      dispatch(setSelectedVariant(matchingVariant));
-
-      if (matchingVariant && matchingVariant.attributeValues.length === 1) {
-        const singleAttr = matchingVariant.attributeValues[0];
-        if (singleAttr.attributeId === 1 && singleAttr.id.toString() !== selectedColor) {
-          dispatch(setSelectedColor(singleAttr.id.toString()));
-          dispatch(setSelectedButton(null));
-        } else if (singleAttr.attributeId === 6 && singleAttr.slug !== selectedButton) {
-          dispatch(setSelectedButton(singleAttr.slug));
-          dispatch(setSelectedColor(null));
-        }
+      const matchingVariant = findMatchingVariant(variants, selectedColor, selectedButton, attributes);
+      if (matchingVariant !== selectedVariant) {
+        dispatch(setSelectedVariant(matchingVariant));
       }
     } else {
       dispatch(setSelectedVariant(null));
     }
-  }, [selectedColor, selectedButton, variants, productType, dispatch]);
+  }, [selectedColor, selectedButton, variants, attributes, productType, dispatch, selectedVariant]);
 
+  // Compute valid buttons based on selected color
   const validButtons = useMemo(() => {
-    const singleAttributeVariant = variants.find(
-      (v) => v.attributeValues.length === 1 && v.attributeValues[0].id.toString() === selectedColor,
-    );
-
-    if (singleAttributeVariant) {
-      return transformedVariants.buttons.map((button) => ({ ...button, isDisabled: true }));
+    const buttonAttrId = attributes.find((attr) => attr.type === 'BUTTON')?.id;
+    if (!buttonAttrId || !selectedColor) {
+      return transformVariants(variants, attributes).buttons.map((button) => ({ ...button, isDisabled: true }));
     }
 
-    if (!selectedColor) {
-      return transformedVariants.buttons.map((button) => ({ ...button, isDisabled: true }));
-    }
-
-    const validVariantsForColor = variants.filter((variant) =>
-      variant.attributeValues.some((attr: AttributeValues) => attr.attributeId === 1 && attr.id.toString() === selectedColor),
+    const validVariants = variants.filter((variant) =>
+      variant.attributeValues.some(
+        (attr) => attr.attributeId === attributes.find((a) => a.type === 'COLOR')?.id && attr.id.toString() === selectedColor,
+      ),
     );
 
     const validButtonSlugs = new Set(
-      validVariantsForColor
-        .flatMap((variant) => variant.attributeValues.filter((attr: AttributeValues) => attr.attributeId === 6))
-        .map((attr: AttributeValues) => attr.slug),
+      validVariants.flatMap((variant) =>
+        variant.attributeValues.filter((attr) => attr.attributeId === buttonAttrId).map((attr) => attr.slug),
+      ),
     );
 
-    return transformedVariants.buttons.map((button) => ({
+    return transformVariants(variants, attributes).buttons.map((button) => ({
       ...button,
       isDisabled: !validButtonSlugs.has(button.slug),
     }));
-  }, [selectedColor, variants, transformedVariants.buttons]);
+  }, [selectedColor, variants, attributes]);
 
+  // Compute valid colors based on selected button
   const validColors = useMemo(() => {
+    const colorAttrId = attributes.find((attr) => attr.type === 'COLOR')?.id;
+    if (!colorAttrId) return transformVariants(variants, attributes).colors;
+
     if (selectedButton) {
-      const combinableColorIds = new Set(
-        variants
-          .filter((variant) =>
-            variant.attributeValues.some((attr: AttributeValues) => attr.attributeId === 6 && attr.slug === selectedButton),
-          )
-          .flatMap((variant) =>
-            variant.attributeValues
-              .filter((attr: AttributeValues) => attr.attributeId === 1)
-              .map((attr: AttributeValues) => attr.id.toString()),
-          ),
+      const validVariants = variants.filter((variant) =>
+        variant.attributeValues.some(
+          (attr) => attr.attributeId === attributes.find((a) => a.type === 'BUTTON')?.id && attr.slug === selectedButton,
+        ),
       );
 
-      const singleAttributeColorVariants = variants.filter((v) => v.attributeValues.length === 1 && v.attributeValues[0].attributeId === 1);
+      const validColorIds = new Set(
+        validVariants.flatMap((variant) =>
+          variant.attributeValues.filter((attr) => attr.attributeId === colorAttrId).map((attr) => attr.id.toString()),
+        ),
+      );
 
-      return transformedVariants.colors.map((color) => {
-        const isSingleAttrColor = singleAttributeColorVariants.some((v) => v.attributeValues[0].id.toString() === color.id);
-        return {
-          ...color,
-          isDisabled: !isSingleAttrColor && !combinableColorIds.has(color.id),
-        };
-      });
+      return transformVariants(variants, attributes).colors.map((color) => ({
+        ...color,
+        isDisabled: !validColorIds.has(color.id),
+      }));
     }
 
-    const singleAttributeColorVariants = variants
-      .filter((v) => v.attributeValues.length === 1 && v.attributeValues[0].attributeId === 1)
-      .map((v) => v.attributeValues[0].id.toString());
-
-    const colorsWithButtons = new Set(
-      variants
-        .filter((v) => v.attributeValues.some((attr) => attr.attributeId === 6))
-        .flatMap((v) =>
-          v.attributeValues.filter((attr: AttributeValues) => attr.attributeId === 1).map((attr: AttributeValues) => attr.id.toString()),
-        ),
-    );
-
-    return transformedVariants.colors.map((color) => ({
-      ...color,
-      isDisabled: !(singleAttributeColorVariants.includes(color.id) || colorsWithButtons.has(color.id)),
-    }));
-  }, [selectedButton, variants, transformedVariants.colors]);
-
-  const getFirstValidButton = (colorId: string | null): string | null => {
-    if (!colorId) return null;
-
-    const singleAttributeVariant = variants.find((v) => v.attributeValues.length === 1 && v.attributeValues[0].id.toString() === colorId);
-    if (singleAttributeVariant) return null;
-
-    const validVariantsForColor = variants.filter((variant) =>
-      variant.attributeValues.some((attr: AttributeValues) => attr.attributeId === 1 && attr.id.toString() === colorId),
-    );
-
-    const firstValidButton = validVariantsForColor
-      .flatMap((variant) => variant.attributeValues.filter((attr: AttributeValues) => attr.attributeId === 6))
-      .map((attr: AttributeValues) => attr.slug)[0];
-
-    return firstValidButton || null;
-  };
+    return transformVariants(variants, attributes).colors;
+  }, [selectedButton, variants, attributes]);
 
   const colorLabel = attributes.find((attr) => attr.type === 'COLOR')?.name || 'انتخاب رنگ';
   const buttonLabel = attributes.find((attr) => attr.type === 'BUTTON')?.name || 'انتخاب نوع';
@@ -212,7 +110,7 @@ export default function ProductVariants({ variants, attributes, productType, def
 
   return (
     <div className="mb-4">
-      {transformedVariants.colors.length > 0 && (
+      {validColors.length > 0 && (
         <div className="mb-3 space-y-6">
           <ColorSelector
             label={colorLabel}
@@ -220,32 +118,14 @@ export default function ProductVariants({ variants, attributes, productType, def
             selectedColor={selectedColor}
             onColorChange={(color) => {
               dispatch(setSelectedColor(color));
-              if (!color) {
-                dispatch(setSelectedButton(null));
-                dispatch(setSelectedVariant(null));
-                return;
-              }
-
-              const singleAttrVariant = variants.find(
-                (v) => v.attributeValues.length === 1 && v.attributeValues[0].id.toString() === color,
-              );
-              if (singleAttrVariant) {
-                dispatch(setSelectedVariant(singleAttrVariant));
-                dispatch(setSelectedButton(null));
-                return;
-              }
-
-              const firstValidButton = getFirstValidButton(color);
-              dispatch(setSelectedButton(firstValidButton));
-
-              const matchingVariant = findMatchingVariant(variants, color, firstValidButton);
+              const matchingVariant = findMatchingVariant(variants, color, selectedButton, attributes);
               dispatch(setSelectedVariant(matchingVariant));
             }}
           />
         </div>
       )}
 
-      {transformedVariants.buttons.length > 0 && (
+      {validButtons.length > 0 && (
         <div className="mb-3 space-y-6">
           <ButtonSelector
             title={buttonLabel}
@@ -253,7 +133,7 @@ export default function ProductVariants({ variants, attributes, productType, def
             selectedOption={selectedButton}
             onOptionChange={(button) => {
               dispatch(setSelectedButton(button));
-              const matchingVariant = findMatchingVariant(variants, selectedColor, button);
+              const matchingVariant = findMatchingVariant(variants, selectedColor, button, attributes);
               dispatch(setSelectedVariant(matchingVariant));
             }}
           />
