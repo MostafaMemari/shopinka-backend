@@ -1,12 +1,12 @@
 // src/features/product/productSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ProductDetails, productVariant } from '@/Modules/product/types/productType';
+import { ProductDetails, ProductVariant } from '@/Modules/product/types/productType';
 
 interface ProductState {
   product: ProductDetails | null;
   selectedColor: string | null;
   selectedButton: string | null;
-  selectedVariant: productVariant | null;
+  selectedVariant: ProductVariant | null;
 }
 
 const initialState: ProductState = {
@@ -49,7 +49,7 @@ const productSlice = createSlice({
     setSelectedButton(state, action: PayloadAction<string | null>) {
       state.selectedButton = action.payload;
     },
-    setSelectedVariant(state, action: PayloadAction<productVariant | null>) {
+    setSelectedVariant(state, action: PayloadAction<ProductVariant | null>) {
       state.selectedVariant = action.payload;
     },
   },

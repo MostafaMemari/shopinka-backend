@@ -79,7 +79,11 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
                       <div className="flex-grow"></div>
 
                       <div className="text-left">
-                        <PriceDisplay />
+                        <PriceDisplay
+                          productType={product.type}
+                          productBasePrice={product?.basePrice}
+                          productSalePrice={product?.salePrice}
+                        />
                       </div>
                     </div>
 
