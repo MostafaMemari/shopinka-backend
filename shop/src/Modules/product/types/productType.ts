@@ -7,10 +7,12 @@ import { user } from '@/shared/types/userType';
 export type Product = {
   id: number;
   name: string;
-  salePrice: string | null;
-  basePrice: string | null;
+  salePrice: number | null;
+  basePrice: number | null;
   slug: string;
   mainImage: Image | null;
+  type: 'SIMPLE' | 'VARIABLE';
+  quantity: number | null;
 };
 
 export type ProductParams = {

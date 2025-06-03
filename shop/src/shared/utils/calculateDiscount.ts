@@ -1,4 +1,4 @@
-export const calculateDiscount = (oldPrice?: number, newPrice?: number): number => {
+export const calculateDiscount = (oldPrice?: number | null, newPrice?: number | null): number => {
   if (!oldPrice || !newPrice || oldPrice <= newPrice) {
     return 0;
   }

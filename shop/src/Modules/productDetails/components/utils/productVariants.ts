@@ -8,8 +8,6 @@ export interface TransformedVariants {
 }
 
 export const transformVariants = (variants: ProductVariant[], attributes: Attribute[]): TransformedVariants => {
-  const colors: IColor[] = [];
-  const buttons: { slug: string; label: string; isDisabled?: boolean }[] = [];
   const uniqueColors = new Map<string, IColor>();
   const uniqueButtons = new Map<string, { slug: string; label: string; isDisabled?: boolean }>();
 

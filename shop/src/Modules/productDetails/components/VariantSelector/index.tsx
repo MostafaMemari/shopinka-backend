@@ -21,7 +21,6 @@ export default function ProductVariants({ variants, attributes, productType, def
   const dispatch = useDispatch();
   const { selectedColor, selectedButton, selectedVariant } = useSelector((state: RootState) => state.product);
 
-  // Initialize default selections
   useEffect(() => {
     if (productType === 'VARIABLE' && defaultVariantId && !selectedVariant) {
       const { defaultColor, defaultButton, defaultVariant } = getDefaultSelections(variants, attributes, defaultVariantId);
@@ -33,7 +32,6 @@ export default function ProductVariants({ variants, attributes, productType, def
     }
   }, [defaultVariantId, productType, variants, attributes, dispatch, selectedVariant]);
 
-  // Update selected variant when color or button changes
   useEffect(() => {
     if (productType === 'VARIABLE') {
       const matchingVariant = findMatchingVariant(variants, selectedColor, selectedButton, attributes);
@@ -45,7 +43,6 @@ export default function ProductVariants({ variants, attributes, productType, def
     }
   }, [selectedColor, selectedButton, variants, attributes, productType, dispatch, selectedVariant]);
 
-  // Compute valid buttons based on selected color
   const validButtons = useMemo(() => {
     const buttonAttrId = attributes.find((attr) => attr.type === 'BUTTON')?.id;
     if (!buttonAttrId || !selectedColor) {
@@ -70,7 +67,6 @@ export default function ProductVariants({ variants, attributes, productType, def
     }));
   }, [selectedColor, variants, attributes]);
 
-  // Compute valid colors based on selected button
   const validColors = useMemo(() => {
     const colorAttrId = attributes.find((attr) => attr.type === 'COLOR')?.id;
     if (!colorAttrId) return transformVariants(variants, attributes).colors;

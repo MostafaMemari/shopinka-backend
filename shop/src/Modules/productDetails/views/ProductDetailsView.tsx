@@ -20,16 +20,7 @@ interface ProductDetailsViewProps {
 }
 
 const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
-  // const dispatch = useDispatch();
-  // const { product: currentProduct } = useSelector((state: RootState) => state.product);
-
   const isVariableProduct = product.variants.length > 0;
-
-  // useEffect(() => {
-  //   if (product.id !== currentProduct?.id) {
-  //     dispatch(setProduct(product));
-  //   }
-  // }, [product, currentProduct, dispatch]);
 
   const breadcrumbItems = [
     { label: 'روتی کالا', href: '/' },
@@ -45,7 +36,12 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
           <div className="mb-10 grid grow grid-cols-12 gap-4">
             <div className="col-span-4">
               <ProductActions productId={product.id} />
-              <ProductGallery />
+              <ProductGallery
+                productType={product.type}
+                productName={product.name}
+                mainImageProduct={product.mainImage}
+                galleryImagesProduct={product.galleryImages}
+              />
             </div>
             <div className="col-span-8 flex min-h-full flex-col">
               <BreadcrumbContainer variant="compact" items={breadcrumbItems} />

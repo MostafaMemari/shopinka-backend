@@ -1,3 +1,6 @@
+// src/components/ProductCard/ProductCard.tsx
+'use client';
+
 import { FC } from 'react';
 import ProductPrice from './ProductPrice';
 import Link from 'next/link';
@@ -9,24 +12,44 @@ interface Props {
 }
 
 const ProductCard: FC<Props> = ({ product }) => {
-  const imageUrl = product?.mainImage?.fileUrl || '';
+  const imageUrl = product?.mainImage?.fileUrl || '/placeholder-image.jpg';
+  const slug = product?.slug || '#';
+  const productName = product?.name || 'محصول بدون نام';
 
   return (
-    <div className="border-gradient group relative rounded-base p-px before:absolute before:-inset-px before:h-[calc(100%+2px)] before:w-[calc(100%+2px)] before:rounded-base">
+    <article className="border-gradient group relative rounded-base p-px before:absolute before:-inset-px before:h-[calc(100%+2px)] before:w-[calc(100%+2px)] before:rounded-base">
       <div className="relative rounded-xl bg-muted p-2 shadow-base md:p-5">
         <div className="mb-2 md:mb-5" draggable={false}>
-          <Link href={`/product/${product.slug}`}>
-            <ProductImage src={imageUrl} alt={product.name} />
+          <Link href={`/product/${slug}`} aria-label={`مشاهده جزئیات ${productName}`}>
+            <ProductImage src={imageUrl} alt={`${productName} || 'تصویر محصول'}`} />
           </Link>
         </div>
         <div className="mb-2">
-          <Link href={`/product/${product.slug}`} className="line-clamp-2 h-10 text-sm md:h-12 md:text-base">
-            {product.name}
+          <Link href={`/product/${slug}`} className="line-clamp-2 h-10 text-sm md:h-12 md:text-base hover:text-primary">
+            <h3 className="text-sm md:text-base">{productName}</h3>
           </Link>
         </div>
-        <ProductPrice newPrice={Number(product?.salePrice)} oldPrice={Number(product?.basePrice)} />
+        <ProductPrice salePrice={product?.salePrice} basePrice={product?.basePrice} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Product',
+              name: productName,
+              image: imageUrl,
+              description: productName || 'محصول بدون توضیحات',
+              offers: {
+                '@type': 'Offer',
+                priceCurrency: 'IRR',
+                price: product.salePrice || product.basePrice || 0,
+                availability: product.quantity && product.quantity > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+              },
+            }),
+          }}
+        />
       </div>
-    </div>
+    </article>
   );
 };
 

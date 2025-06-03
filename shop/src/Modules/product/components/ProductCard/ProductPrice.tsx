@@ -3,12 +3,12 @@ import { formatPrice } from '@/shared/utils/formatter';
 import { FC } from 'react';
 
 interface Props {
-  oldPrice?: number;
-  newPrice?: number;
+  basePrice?: number | null;
+  salePrice?: number | null;
 }
 
-const ProductPrice: FC<Props> = ({ oldPrice, newPrice }) => {
-  const discount = calculateDiscount(oldPrice, newPrice);
+const ProductPrice: FC<Props> = ({ basePrice, salePrice }) => {
+  const discount = calculateDiscount(basePrice, salePrice);
   const hasDiscount = discount > 0;
 
   return (
@@ -16,15 +16,15 @@ const ProductPrice: FC<Props> = ({ oldPrice, newPrice }) => {
       {hasDiscount ? (
         <>
           <div className="h-5 text-left">
-            <del className="text-sm text-text/60 decoration-warning md:text-base">{oldPrice && formatPrice(oldPrice)}</del>
+            <del className="text-sm text-text/60 decoration-warning md:text-base">{basePrice && formatPrice(basePrice)}</del>
           </div>
           <div className="flex items-center justify-between">
             <div>
               <p className="w-9 rounded-full bg-warning py-px text-center text-sm text-white">{discount}%</p>
             </div>
             <div className="text-sm font-bold text-primary md:text-base">
-              {newPrice && formatPrice(newPrice)}
-              {newPrice && <span className="text-xs font-light md:text-sm"> تومان</span>}
+              {salePrice && formatPrice(salePrice)}
+              {salePrice && <span className="text-xs font-light md:text-sm"> تومان</span>}
             </div>
           </div>
         </>
@@ -34,9 +34,9 @@ const ProductPrice: FC<Props> = ({ oldPrice, newPrice }) => {
           <div className="flex items-center justify-between">
             <div></div>
             <div className="text-sm font-bold text-primary md:text-base">
-              {oldPrice ? (
+              {basePrice ? (
                 <>
-                  {formatPrice(oldPrice)}
+                  {formatPrice(basePrice)}
                   <span className="text-xs font-light md:text-sm"> تومان</span>
                 </>
               ) : (

@@ -183,6 +183,8 @@ export class ProductService {
         salePrice: true,
         basePrice: true,
         slug: true,
+        type: true,
+        quantity: true,
         mainImage: includeMainImage && {
           select: { fileUrl: true, id: true, title: true, description: true },
         },
