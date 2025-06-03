@@ -5,10 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IColor } from '@/lib/types/colors';
 import ColorSelector from './ColorSelector';
 import ButtonSelector from './ButtonSelector';
-import { productVariant } from '@/Modules/product/types/productType';
 import { RootState } from '@/store';
 import { setSelectedButton, setSelectedColor, setSelectedVariant } from '@/store/slices/productSlice';
 import { Attribute, AttributeValues } from '@/shared/types/attributeType';
+import { ProductVariant } from '@/Modules/product/types/productType';
 
 interface TransformedVariants {
   colors: IColor[];
@@ -16,14 +16,14 @@ interface TransformedVariants {
 }
 
 interface Props {
-  variants: productVariant[];
+  variants: ProductVariant[];
   attributes: Attribute[];
   productType: string;
   defaultVariantId?: number;
 }
 
 // Function to transform variants
-export const transformVariants = (variants: productVariant[], attributes: Attribute[]): TransformedVariants => {
+export const transformVariants = (variants: ProductVariant[], attributes: Attribute[]): TransformedVariants => {
   const colors: IColor[] = [];
   const buttons: { slug: string; label: string; isDisabled?: boolean }[] = [];
   const uniqueColors = new Map<string, IColor>();
@@ -59,10 +59,10 @@ export const transformVariants = (variants: productVariant[], attributes: Attrib
 };
 
 const findMatchingVariant = (
-  variants: productVariant[],
+  variants: ProductVariant[],
   selectedColor: string | null,
   selectedButton: string | null,
-): productVariant | null => {
+): ProductVariant | null => {
   return (
     variants.find((variant) => {
       if (variant.attributeValues.length === 1) {
@@ -124,11 +124,13 @@ export default function ProductVariants({ variants, attributes, productType, def
     }
 
     const validVariantsForColor = variants.filter((variant) =>
-      variant.attributeValues.some((attr) => attr.attributeId === 1 && attr.id.toString() === selectedColor),
+      variant.attributeValues.some((attr: AttributeValues) => attr.attributeId === 1 && attr.id.toString() === selectedColor),
     );
 
     const validButtonSlugs = new Set(
-      validVariantsForColor.flatMap((variant) => variant.attributeValues.filter((attr) => attr.attributeId === 6)).map((attr) => attr.slug),
+      validVariantsForColor
+        .flatMap((variant) => variant.attributeValues.filter((attr: AttributeValues) => attr.attributeId === 6))
+        .map((attr: AttributeValues) => attr.slug),
     );
 
     return transformedVariants.buttons.map((button) => ({
@@ -141,8 +143,14 @@ export default function ProductVariants({ variants, attributes, productType, def
     if (selectedButton) {
       const combinableColorIds = new Set(
         variants
-          .filter((variant) => variant.attributeValues.some((attr) => attr.attributeId === 6 && attr.slug === selectedButton))
-          .flatMap((variant) => variant.attributeValues.filter((attr) => attr.attributeId === 1).map((attr) => attr.id.toString())),
+          .filter((variant) =>
+            variant.attributeValues.some((attr: AttributeValues) => attr.attributeId === 6 && attr.slug === selectedButton),
+          )
+          .flatMap((variant) =>
+            variant.attributeValues
+              .filter((attr: AttributeValues) => attr.attributeId === 1)
+              .map((attr: AttributeValues) => attr.id.toString()),
+          ),
       );
 
       const singleAttributeColorVariants = variants.filter((v) => v.attributeValues.length === 1 && v.attributeValues[0].attributeId === 1);
@@ -163,7 +171,9 @@ export default function ProductVariants({ variants, attributes, productType, def
     const colorsWithButtons = new Set(
       variants
         .filter((v) => v.attributeValues.some((attr) => attr.attributeId === 6))
-        .flatMap((v) => v.attributeValues.filter((attr) => attr.attributeId === 1).map((attr) => attr.id.toString())),
+        .flatMap((v) =>
+          v.attributeValues.filter((attr: AttributeValues) => attr.attributeId === 1).map((attr: AttributeValues) => attr.id.toString()),
+        ),
     );
 
     return transformedVariants.colors.map((color) => ({
@@ -179,12 +189,12 @@ export default function ProductVariants({ variants, attributes, productType, def
     if (singleAttributeVariant) return null;
 
     const validVariantsForColor = variants.filter((variant) =>
-      variant.attributeValues.some((attr) => attr.attributeId === 1 && attr.id.toString() === colorId),
+      variant.attributeValues.some((attr: AttributeValues) => attr.attributeId === 1 && attr.id.toString() === colorId),
     );
 
     const firstValidButton = validVariantsForColor
-      .flatMap((variant) => variant.attributeValues.filter((attr) => attr.attributeId === 6))
-      .map((attr) => attr.slug)[0];
+      .flatMap((variant) => variant.attributeValues.filter((attr: AttributeValues) => attr.attributeId === 6))
+      .map((attr: AttributeValues) => attr.slug)[0];
 
     return firstValidButton || null;
   };
