@@ -1,9 +1,10 @@
-// src/features/cart/cartSlice.ts
-import { CartItem } from '@/Modules/cart/types/cartType';
+import { CreateCartFromLocalStorage } from '@/Modules/cart/services/cart.api';
+import { CartData, CartItemState } from '@/Modules/cart/types/cartType';
+import { shopApiFetch } from '@/server/api';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface CartState {
-  cart: CartItem[];
+  cart: CartItemState[];
   totalPrice: number;
   totalDiscountPrice: number;
   totalDiscount: number;
@@ -16,10 +17,9 @@ const initialState: CartState = {
   totalDiscount: 0,
 };
 
-const loadCartFromLocalStorage = (): CartItem[] => {
+const loadCartFromLocalStorage = (): CartItemState[] => {
   if (typeof window !== 'undefined') {
     const storedCart = localStorage.getItem('cart');
-
     return storedCart ? JSON.parse(storedCart) : [];
   }
   return [];
@@ -35,21 +35,21 @@ const cartSlice = createSlice({
       state.totalDiscountPrice = state.cart.reduce((total, item) => total + item.discount_price * item.count, 0);
       state.totalDiscount = state.cart.reduce((total, item) => total + item.discount, 0);
     },
-    setCart(state, action: PayloadAction<CartItem[]>) {
+    setCart(state, action: PayloadAction<CartItemState[]>) {
       state.cart = action.payload;
       localStorage.setItem('cart', JSON.stringify(action.payload));
       state.totalPrice = action.payload.reduce((total, item) => total + item.price * item.count, 0);
       state.totalDiscountPrice = action.payload.reduce((total, item) => total + item.discount_price * item.count, 0);
       state.totalDiscount = action.payload.reduce((total, item) => total + item.discount, 0);
     },
-    decreaseCount(state, action: PayloadAction<CartItem>) {
+    decreaseCount(state, action: PayloadAction<CartItemState>) {
       state.cart = state.cart.map((item) => (item.id === action.payload.id && item.count > 1 ? { ...item, count: item.count - 1 } : item));
       localStorage.setItem('cart', JSON.stringify(state.cart));
       state.totalPrice = state.cart.reduce((total, item) => total + item.price * item.count, 0);
       state.totalDiscountPrice = state.cart.reduce((total, item) => total + item.discount_price * item.count, 0);
       state.totalDiscount = state.cart.reduce((total, item) => total + item.discount, 0);
     },
-    increaseCount(state, action: PayloadAction<CartItem>) {
+    increaseCount(state, action: PayloadAction<CartItemState>) {
       state.cart = state.cart.map((item) => (item.id === action.payload.id ? { ...item, count: item.count + 1 } : item));
       localStorage.setItem('cart', JSON.stringify(state.cart));
       state.totalPrice = state.cart.reduce((total, item) => total + item.price * item.count, 0);
@@ -73,5 +73,28 @@ const cartSlice = createSlice({
   },
 });
 
+export const syncCartWithApi = async (): Promise<void> => {
+  if (typeof window !== 'undefined') {
+    const cartData = localStorage.getItem('cart');
+    if (cartData) {
+      try {
+        const cartItems = JSON.parse(cartData) as CartItemState[];
+        if (cartItems.length > 0) {
+          for (const item of cartItems) {
+            const cartDataPayload: CartData = {
+              quantity: item.count,
+              productId: item.type === 'SIMPLE' ? item.id : null,
+              productVariantId: item.type === 'VARIABLE' ? item.id : null,
+            };
+            await CreateCartFromLocalStorage({ cartData: cartDataPayload });
+          }
+          localStorage.removeItem('cart');
+        }
+      } catch (error) {
+        console.error('Failed to sync cart with API:', error);
+      }
+    }
+  }
+};
 export const { loadCart, setCart, decreaseCount, increaseCount, deleteFromCart, clearCart } = cartSlice.actions;
 export default cartSlice.reducer;

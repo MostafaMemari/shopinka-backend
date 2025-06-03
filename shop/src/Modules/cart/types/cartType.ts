@@ -12,7 +12,7 @@ export interface CartItemState {
   count: number;
   attributeValues: AttributeValues[];
 }
-export interface CardItem {
+export interface CartItem {
   id: number;
   cartId: number;
   productId: number | null;
@@ -23,13 +23,13 @@ export interface CardItem {
   product: Product | null;
   productVariant: ProductVariant | null;
 }
-export interface Card {
+export interface Cart {
   finalPrice: number;
   totalSaved: number;
-  cartItems: CardItem[];
+  cartItems: CartItem[];
 }
 
-export interface CardData {
+export interface CartData {
   productId: number | null;
   productVariantId: number | null;
   quantity: number;

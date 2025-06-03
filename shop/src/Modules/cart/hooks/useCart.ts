@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { CartItem } from '../types/cartType';
+import { CartItemState } from '../types/cartType';
 import { clearCart, decreaseCount, deleteFromCart, increaseCount, loadCart, setCart } from '@/store/slices/cartSlice';
 import { RootState } from '@/store';
 
@@ -13,15 +13,15 @@ export function useCart() {
     dispatch(loadCart());
   }, [dispatch]);
 
-  const handleSetCart = (items: CartItem[]) => {
+  const handleSetCart = (items: CartItemState[]) => {
     dispatch(setCart(items));
   };
 
-  const handleDecreaseCount = (product: CartItem) => {
+  const handleDecreaseCount = (product: CartItemState) => {
     dispatch(decreaseCount(product));
   };
 
-  const handleIncreaseCount = (product: CartItem) => {
+  const handleIncreaseCount = (product: CartItemState) => {
     dispatch(increaseCount(product));
   };
 

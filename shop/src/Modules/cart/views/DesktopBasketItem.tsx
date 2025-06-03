@@ -1,12 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { CartItem } from '../types/cartType';
+import { CartItem, CartItemState } from '../types/cartType';
 import CartControls from '../components/CartControls';
 import CartItemAttributes from '../components/CartItemAttributes';
 import ProductPriceCard from '../components/ProductPriceCard';
 
 export interface ItemCardBasketProp {
-  item: CartItem;
+  item: CartItemState;
 }
 
 export default function DesktopBasketItem({ item }: ItemCardBasketProp) {

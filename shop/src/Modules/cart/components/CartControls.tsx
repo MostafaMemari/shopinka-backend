@@ -1,16 +1,16 @@
 // src/components/CartControls.tsx
 import { cn } from '@/shared/utils/utils';
-import { CartItem } from '@/Modules/cart/types/cartType';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { HiOutlineMinus, HiOutlinePlus } from 'react-icons/hi';
 import { useCart } from '../hooks/useCart';
+import { CartItemState } from '../types/cartType';
 
 interface CartControlsProps {
-  product: CartItem;
+  product: CartItemState;
   className?: string;
 }
 
-export function CartControls({ product, className }: CartControlsProps) {
+export function CardControls({ product, className }: CartControlsProps) {
   const { decreaseCount, increaseCount, deleteFromCart } = useCart();
 
   return (
@@ -54,4 +54,4 @@ export function CartControls({ product, className }: CartControlsProps) {
   );
 }
 
-export default CartControls;
+export default CardControls;
