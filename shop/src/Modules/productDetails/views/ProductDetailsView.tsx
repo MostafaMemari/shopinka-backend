@@ -75,16 +75,22 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
                       <div className="flex-grow"></div>
 
                       <div className="text-left">
-                        <PriceDisplay
-                          productType={product.type}
-                          productBasePrice={product?.basePrice}
-                          productSalePrice={product?.salePrice}
-                        />
+                        <PriceDisplay product={{ type: product.type, basePrice: product.basePrice ?? 0, salePrice: product.salePrice }} />
                       </div>
                     </div>
 
                     <div className="mb-6">
-                      <AddToCartButtonDesktop />
+                      <AddToCartButtonDesktop
+                        key={product.id}
+                        product={{
+                          id: product.id,
+                          name: product.name,
+                          basePrice: product.basePrice ?? 0,
+                          salePrice: product.salePrice ?? 0,
+                          mainImageUrl: product.mainImage?.fileUrl ?? null,
+                          type: product.type,
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -130,7 +136,24 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
 
                 <ProductGuaranteeBadge />
 
-                <AddToCartButtonMobile />
+                <div className="fixed inset-x-0 bottom-0 z-10 bg-muted p-5">
+                  <div className="flex items-center justify-between gap-x-6">
+                    <div className="flex grow items-center gap-2">
+                      <AddToCartButtonMobile
+                        key={product.id}
+                        product={{
+                          id: product.id,
+                          name: product.name,
+                          basePrice: product.basePrice ?? 0,
+                          salePrice: product.salePrice ?? 0,
+                          mainImageUrl: product.mainImage?.fileUrl ?? null,
+                          type: product.type,
+                        }}
+                      />
+                      <PriceDisplay product={{ type: product.type, basePrice: product.basePrice ?? 0, salePrice: product.salePrice }} />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 

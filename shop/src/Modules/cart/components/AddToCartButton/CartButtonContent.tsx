@@ -3,13 +3,13 @@
 import { cn } from '@/shared/utils/utils';
 import Link from 'next/link';
 import CartControls from '../CartControls';
-import { CartItem } from '../../types/cartType';
+import { CartItemState } from '../../types/cartType';
 
 interface CartButtonContentProps {
   isVariableProduct: boolean;
   isVariantSelected: boolean;
   isInCart: boolean;
-  existingProduct?: CartItem;
+  existingProduct?: CartItemState;
   addToCart: () => void;
   className?: string;
 }
@@ -24,7 +24,7 @@ export const CartButtonContent = ({
 }: CartButtonContentProps) => {
   return (
     <>
-      {isInCart && isVariantSelected ? (
+      {isInCart ? (
         <div className={cn('flex items-center gap-4', className)}>
           {existingProduct && <CartControls product={existingProduct} />}
           <div className="hidden lg:flex flex-col items-start text-sm">

@@ -3,18 +3,23 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { CartItem } from '../types/cartType';
+import { CartItemState } from '../types/cartType';
 import { useCart } from './useCart';
-import { ProductDetails } from '@/Modules/product/types/productType';
+import { ProductCardLogic } from '../types/productCardLogic';
 
-export const useCartLogic = (propProduct?: ProductDetails) => {
-  const { product: stateProduct, selectedVariant } = useSelector((state: RootState) => state.product);
-  const product = propProduct || stateProduct;
+export interface ProductCardLogicProps {
+  product: ProductCardLogic;
+}
+
+export const useCartLogic = ({ product }: ProductCardLogicProps) => {
+  const { selectedVariant } = useSelector((state: RootState) => state.product);
   const { cart, setCart, increaseCount } = useCart();
-  const [existingProduct, setExistingProduct] = useState<CartItem | undefined>();
+  const [existingProduct, setExistingProduct] = useState<CartItemState | undefined>();
 
-  const newPrice = useMemo(() => (selectedVariant ? selectedVariant.salePrice : product?.salePrice), [selectedVariant, product]);
-  const oldPrice = useMemo(() => (selectedVariant ? selectedVariant.basePrice : product?.basePrice), [selectedVariant, product]);
+  const isVariableProduct = product.type === 'VARIABLE';
+
+  const newPrice = useMemo(() => (selectedVariant ? selectedVariant.salePrice : product.salePrice), [selectedVariant]);
+  const oldPrice = useMemo(() => (selectedVariant ? selectedVariant.basePrice : product.basePrice), [selectedVariant]);
   const discount = useMemo(() => {
     if (newPrice && oldPrice) {
       return Math.round(((oldPrice - newPrice) / oldPrice) * 100);
@@ -23,27 +28,26 @@ export const useCartLogic = (propProduct?: ProductDetails) => {
   }, [newPrice, oldPrice]);
 
   useEffect(() => {
-    if (!product) return;
+    const cartItemId = isVariableProduct ? selectedVariant?.id : product.id;
 
-    const cartItemId = product.type === 'VARIABLE' ? (selectedVariant?.id ?? product.id) : product.id;
     const found = cart.find((item) => item.id === cartItemId);
-    setExistingProduct(found);
-  }, [cart, product, selectedVariant]);
 
-  const isVariableProduct = product?.type === 'VARIABLE';
+    setExistingProduct(found);
+  }, [cart, selectedVariant]);
+
   const isVariantSelected = !!selectedVariant;
   const isInCart = !!existingProduct;
 
   const addToCart = () => {
     if (existingProduct) {
       increaseCount(existingProduct);
-    } else if (product && newPrice) {
-      const cartItem: CartItem = {
-        id: product.type === 'VARIABLE' ? (selectedVariant?.id ?? product.id) : product.id,
+    } else {
+      const cartItem: CartItemState = {
+        id: isVariableProduct ? (selectedVariant?.id ?? product.id) : product.id,
         title: product.name,
-        thumbnail: product.mainImage?.fileUrl ?? '',
-        price: newPrice,
-        discount_price: oldPrice ?? newPrice,
+        thumbnail: product.mainImageUrl ?? '',
+        price: newPrice ?? 0,
+        discount_price: oldPrice ?? newPrice ?? 0,
         discount: discount ?? 0,
         count: 1,
         type: product.type,
@@ -53,7 +57,6 @@ export const useCartLogic = (propProduct?: ProductDetails) => {
       setCart([...cart, cartItem]);
     }
   };
-
   return {
     product,
     newPrice,

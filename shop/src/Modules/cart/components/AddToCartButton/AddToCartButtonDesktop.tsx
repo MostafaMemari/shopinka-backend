@@ -3,11 +3,14 @@
 
 import { CartButtonContent } from './CartButtonContent';
 import { useCartLogic } from '../../hooks/useCartLogic';
+import { ProductCardLogic } from '../../types/productCardLogic';
 
-export default function AddToCartButtonDesktop() {
-  const { product, newPrice, isVariableProduct, isVariantSelected, isInCart, existingProduct, addToCart } = useCartLogic();
+interface AddToCartButtonDesktopProps {
+  product: ProductCardLogic;
+}
 
-  if (!product || !newPrice) return null;
+export function AddToCartButtonDesktop({ product }: AddToCartButtonDesktopProps) {
+  const { isVariableProduct, isVariantSelected, isInCart, existingProduct, addToCart } = useCartLogic({ product });
 
   return (
     <div className="mb-6 flex items-center gap-4">
@@ -22,3 +25,5 @@ export default function AddToCartButtonDesktop() {
     </div>
   );
 }
+
+export default AddToCartButtonDesktop;

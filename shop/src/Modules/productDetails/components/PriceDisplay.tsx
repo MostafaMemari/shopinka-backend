@@ -7,17 +7,19 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 interface ProductPriceProps {
-  productType: 'VARIABLE' | 'SIMPLE';
-  productSalePrice: number | null;
-  productBasePrice: number | null;
+  product: {
+    type: 'VARIABLE' | 'SIMPLE';
+    salePrice: number | null;
+    basePrice: number | null;
+  };
 }
 
-export function ProductPrice({ productType, productSalePrice, productBasePrice }: ProductPriceProps) {
+export function ProductPrice({ product }: ProductPriceProps) {
   const { selectedVariant } = useSelector((state: RootState) => state.product);
-  const isVariable = productType === 'VARIABLE';
+  const isVariable = product.type === 'VARIABLE';
 
-  const salePrice = isVariable ? (selectedVariant?.salePrice ?? null) : productSalePrice;
-  const basePrice = isVariable ? (selectedVariant?.basePrice ?? null) : productBasePrice;
+  const salePrice = isVariable ? (selectedVariant?.salePrice ?? null) : product.salePrice;
+  const basePrice = isVariable ? (selectedVariant?.basePrice ?? null) : product.basePrice;
 
   const discount = useMemo(() => {
     if (typeof salePrice === 'number' && typeof basePrice === 'number' && basePrice > 0) {
