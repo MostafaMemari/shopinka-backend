@@ -28,7 +28,7 @@ export type ProductParams = {
   sortBy?: 'price_asc' | 'price_desc' | 'newest';
 };
 
-export interface productVariant {
+export interface ProductVariant {
   id: number;
   sku: string | null;
   mainImageId: number | null;
@@ -76,5 +76,5 @@ export interface ProductDetails {
   categories: Category[] | [];
   seoMeta: SeoMeta;
   attributes: Attribute[] | [];
-  variants: productVariant[] | [];
+  variants: ProductVariant[] | [];
 }

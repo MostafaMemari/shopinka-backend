@@ -82,7 +82,12 @@ export class CartService {
 
     if (existingCartItem) throw new ConflictException(CartItemMessages.AlreadyExistsCartItem);
 
-    const cart = await this.cartRepository.findOneOrThrow({ where: { userId }, include: { items: true } });
+    let cart = (await this.cartRepository.findOne({
+      where: { userId },
+      include: { items: { include: { product: true, productVariant: true } } },
+    })) as any;
+
+    if (!cart) await this.cartRepository.create({ data: { userId } });
 
     const product =
       productId && (await this.productRepository.findOneOrThrow({ where: { id: productId, status: ProductStatus.PUBLISHED } }));
