@@ -8,10 +8,14 @@ import 'swiper/css/pagination';
 import Image from 'next/image';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { Image as ImageType } from '@/shared/types/imageType';
+import { ProductGalleriesType } from '../types/productGalleriesType';
 
-export default function ProductImageSwiper() {
-  const { product, selectedVariant } = useSelector((state: RootState) => state.product);
+interface ProductImageSwiperProps {
+  product: ProductGalleriesType;
+}
+
+export default function ProductImageSwiper({ product }: ProductImageSwiperProps) {
+  const { selectedVariant } = useSelector((state: RootState) => state.product);
 
   if (!product) return null;
 

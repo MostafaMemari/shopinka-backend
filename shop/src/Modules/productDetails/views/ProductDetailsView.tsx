@@ -37,10 +37,12 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
             <div className="col-span-4">
               <ProductActions productId={product.id} />
               <ProductGallery
-                productType={product.type}
-                productName={product.name}
-                mainImageProduct={product.mainImage}
-                galleryImagesProduct={product.galleryImages}
+                product={{
+                  type: product.type,
+                  mainImage: product.mainImage,
+                  galleryImages: product.galleryImages,
+                  name: product.name,
+                }}
               />
             </div>
             <div className="col-span-8 flex min-h-full flex-col">
@@ -114,7 +116,14 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
       <div className="lg:hidden">
         <div className="mb-6 relative rounded-lg bg-muted p-4 shadow-base">
           <div className="mb-4">
-            <ProductImageSwiper />
+            <ProductImageSwiper
+              product={{
+                type: product.type,
+                mainImage: product.mainImage,
+                galleryImages: product.galleryImages,
+                name: product.name,
+              }}
+            />
             <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
           </div>
           <ProductActions productId={product.id} />
