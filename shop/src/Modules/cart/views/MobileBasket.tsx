@@ -1,21 +1,18 @@
-// src/components/MobileBasketDrawer.tsx
 'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
 import { HiOutlineShoppingCart, HiOutlineX } from 'react-icons/hi';
 import MobileBasketItem from './MobileBasketItem';
-import { formatPrice } from '@/shared/utils/formatter';
 import { CartItemState } from '../types/cartType';
-import { deleteFromCart } from '@/store/slices/cartSlice';
+import { formatPrice } from '@/shared/utils/formatter';
 
 interface MobileBasketDrawerProps {
-  cart: {
-    items: CartItemState[] | [];
-  };
+  cartItems: CartItemState[] | [];
+  totalPrice: number;
 }
 
-export default function MobileBasketDrawer({ cart }: MobileBasketDrawerProps) {
+export default function MobileBasketDrawer({ cartItems, totalPrice }: MobileBasketDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpen = () => setIsOpen(true);
@@ -30,11 +27,11 @@ export default function MobileBasketDrawer({ cart }: MobileBasketDrawerProps) {
         <span className="cursor-pointer">
           <HiOutlineShoppingCart className="h-6 w-6" />
         </span>
-        {/* {totalQuantity > 0 && (
+        {cartItems.length > 0 && (
           <span className="absolute -right-2.5 -top-2.5 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-primary-btn text-sm font-bold text-white">
-            {totalQuantity}
+            {cartItems.length}
           </span>
-        )} */}
+        )}
       </button>
 
       {isOpen && <div className="fixed inset-0 z-30 bg-black/50" onClick={handleClose}></div>}
@@ -58,13 +55,15 @@ export default function MobileBasketDrawer({ cart }: MobileBasketDrawerProps) {
             <HiOutlineX className="h-5 w-5" />
             <span className="sr-only">بستن منو</span>
           </button>
-          <h5 className="text-lg text-text/90">{/* سبد خرید <span className="text-sm">({totalQuantity})</span> */}</h5>
+          <h5 className="text-lg text-text/90">
+            سبد خرید <span className="text-sm">({cartItems.length})</span>
+          </h5>
         </div>
 
         <div className="h-full pb-[150px]">
           <ul className="main-scroll h-full space-y-2 divide-y overflow-y-auto p-4">
-            {cart.items.length > 0 ? (
-              cart.items.map((item) => (
+            {cartItems.length > 0 ? (
+              cartItems.map((item) => (
                 <li key={item.id}>
                   <MobileBasketItem item={item} />
                 </li>
@@ -79,7 +78,7 @@ export default function MobileBasketDrawer({ cart }: MobileBasketDrawerProps) {
           <div className="flex flex-col items-center gap-y-1">
             <div className="text-sm text-text/60">مبلغ قابل پرداخت</div>
             <div className="text-text/90">
-              {/* <span className="font-bold">{formatPrice(totalPrice)}</span> */}
+              <span className="font-bold">{formatPrice(totalPrice)}</span>
               <span className="text-sm">تومان</span>
             </div>
           </div>

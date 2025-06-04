@@ -1,4 +1,3 @@
-import { Product, ProductVariant } from '@/Modules/product/types/productType';
 import { AttributeValues } from '@/shared/types/attributeType';
 
 export interface CartItemState {
@@ -12,6 +11,14 @@ export interface CartItemState {
   count: number;
   attributeValues: AttributeValues[];
 }
+
+export interface CartState {
+  items: CartItemState[];
+  totalPrice: number;
+  totalDiscountPrice: number;
+  totalDiscount: number;
+}
+
 export interface CartItem {
   id: number;
   cartId: number;
@@ -45,7 +52,7 @@ export interface CartResponse {
   userId: number;
   createdAt: string;
   updatedAt: string;
-  items: CartItem[];
+  items: CartItemState[];
 }
 
 export interface CartData {

@@ -4,15 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
-import {
-  setCart,
-  mapCartResponseToCartItemState,
-  addToCart,
-  increaseCount,
-  decreaseCount,
-  deleteFromCart,
-  clearCartAction,
-} from '@/store/slices/cartSlice';
+import { setCart, addToCart, increaseCount, decreaseCount, deleteFromCart, clearCartAction } from '@/store/slices/cartSlice';
 import { createCart, getCart, updateQuantityItemCart, removeItemCart, clearCart } from '@/Modules/cart/services/cart.api';
 import { CartResponse, CartData, CartItemState } from '@/Modules/cart/types/cartType';
 
@@ -42,12 +34,12 @@ export const useCart = () => {
     queryKey: ['cart'],
     queryFn: getCart,
     enabled: isLogin,
-    staleTime: 5 * 60 * 1000, // داده‌ها به مدت 5 دقیقه تازه می‌مانند
+    staleTime: 5 * 60 * 1000,
   });
 
   useEffect(() => {
     if (isLogin && cart) {
-      dispatch(setCart({ items: mapCartResponseToCartItemState(cart) }));
+      dispatch(setCart({ items: cart.items }));
     }
   }, [cart, dispatch, isLogin]);
 
@@ -64,7 +56,7 @@ export const useCart = () => {
   const updateQuantityMutation = useMutation({
     mutationFn: ({ quantity, itemId }: { quantity: number; itemId: number }) => updateQuantityItemCart({ quantity, itemId }),
     onSuccess: (updatedCart) => {
-      dispatch(setCart({ items: mapCartResponseToCartItemState(updatedCart) }));
+      dispatch(setCart({ items: updatedCart.items }));
       queryClient.setQueryData(['cart'], updatedCart);
     },
     onError: (error) => {
@@ -75,7 +67,7 @@ export const useCart = () => {
   const removeItemMutation = useMutation({
     mutationFn: ({ itemId }: { itemId: number }) => removeItemCart(itemId),
     onSuccess: (updatedCart) => {
-      dispatch(setCart({ items: mapCartResponseToCartItemState(updatedCart) }));
+      dispatch(setCart({ items: updatedCart.items }));
       queryClient.setQueryData(['cart'], updatedCart);
     },
     onError: (error) => {
@@ -86,7 +78,7 @@ export const useCart = () => {
   const clearCartMutation = useMutation({
     mutationFn: clearCart,
     onSuccess: (updatedCart) => {
-      dispatch(setCart({ items: mapCartResponseToCartItemState(updatedCart) }));
+      dispatch(setCart({ items: updatedCart.items }));
       queryClient.setQueryData(['cart'], updatedCart);
     },
     onError: (error) => {
@@ -94,15 +86,12 @@ export const useCart = () => {
     },
   });
 
-  const currentCart = isLogin && cart ? mapCartResponseToCartItemState(cart) : reduxCart;
+  const currentCart = isLogin && cart?.items ? cart.items : reduxCart;
 
   return {
     cart: currentCart,
     isLoading,
     error,
-    totalPrice: isLogin && cart ? 0 : totalPrice,
-    totalDiscountPrice: isLogin && cart ? 0 : totalDiscountPrice,
-    totalDiscount: isLogin && cart ? 0 : totalDiscount,
     addToCart: (item: CartItemState) => {
       if (!isLogin) {
         dispatch(addToCart(item));

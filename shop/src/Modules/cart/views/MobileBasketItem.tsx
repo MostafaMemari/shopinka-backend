@@ -1,12 +1,9 @@
-// src/components/MobileBasketItem.tsx
-import { formatPrice } from '@/shared/utils/formatter';
-import Image from 'next/image';
 import Link from 'next/link';
 import { CartItemState } from '../types/cartType';
-import { AttributeValues } from '@/shared/types/attributeType';
 import CartControls from '../components/CartControls';
 import ProductCardImage from '../components/ProductCardImage';
 import CartItemAttributes from '../components/CartItemAttributes';
+import ProductPriceCard from '../components/ProductPriceCard';
 
 interface MobileBasketItemProp {
   item: CartItemState;
@@ -29,10 +26,7 @@ export default function MobileBasketItem({ item }: MobileBasketItemProp) {
           <CartItemAttributes count={item.count} type={item.type} attributes={attributes} />
         </div>
         <div className="flex items-center justify-between gap-x-2">
-          <div className="text-primary">
-            <span className="font-bold">{formatPrice(item.salePrice)}</span>
-            <span className="text-xs"> تومان</span>
-          </div>
+          <ProductPriceCard oldPrice={item.basePrice} newPrice={item.salePrice} discount={item.discount} />
 
           <CartControls product={item} />
         </div>

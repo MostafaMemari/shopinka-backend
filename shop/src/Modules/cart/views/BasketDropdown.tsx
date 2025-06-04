@@ -4,11 +4,26 @@ import { HiOutlineShoppingCart } from 'react-icons/hi';
 import DesktopBasketDropdown from './DesktopBasket';
 import MobileBasketDrawer from './MobileBasket';
 import { useCart } from '../hooks/useCart';
+import { PulseLoader } from 'react-spinners';
+import { calculateTotals } from '../utils/calculateTotals';
 
 export default function BasketDropdown() {
-  const { cart, totalPrice, isLoading, error } = useCart();
+  const { cart: cartItems, isLoading, error } = useCart();
 
-  const totalQuantity = cart.reduce((sum, item) => sum + item.count, 0) || 0;
+  const totals = calculateTotals(cartItems);
+
+  const totalQuantity = cartItems.reduce((sum, item) => sum + item.count, 0) || 0;
+  const totalPrice = totals.totalPrice;
+  const totalDiscountPrice = totals.totalDiscountPrice;
+  const totalDiscount = totals.totalDiscount;
+
+  if (isLoading) {
+    return (
+      <div className="flex h-9 items-center justify-center gap-2 rounded-full px-4">
+        <PulseLoader color="var(--color-primary, #10b981)" size={6} loading aria-label="در حال بارگذاری" />
+      </div>
+    );
+  }
 
   return (
     <div className="group relative">
@@ -24,11 +39,11 @@ export default function BasketDropdown() {
       </button>
 
       <div className="relative group hidden md:block">
-        <DesktopBasketDropdown cart={{ items: cart }} />
+        <DesktopBasketDropdown cartItems={cartItems} totalPrice={totalPrice} />
       </div>
 
       <div className="md:hidden">
-        <MobileBasketDrawer cart={{ items: cart }} />
+        <MobileBasketDrawer cartItems={cartItems} totalPrice={totalPrice} />
       </div>
     </div>
   );

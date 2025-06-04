@@ -1,58 +1,14 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '@/store';
 import { createCartBulk, getCart, updateQuantityItemCart, removeItemCart, clearCart } from '@/Modules/cart/services/cart.api';
-import { CartData, CartItem, CartItemState, CartResponse } from '@/Modules/cart/types/cartType';
-
-interface CartState {
-  items: CartItemState[];
-  totalPrice: number;
-  totalDiscountPrice: number;
-  totalDiscount: number;
-}
+import { CartData, CartItem, CartItemState, CartResponse, CartState } from '@/Modules/cart/types/cartType';
+import { calculateTotals } from '@/Modules/cart/utils/calculateTotals';
 
 const initialState: CartState = {
   items: [],
   totalPrice: 0,
   totalDiscountPrice: 0,
   totalDiscount: 0,
-};
-
-const calculateTotals = (items: CartItemState[]): Pick<CartState, 'totalPrice' | 'totalDiscountPrice' | 'totalDiscount'> => {
-  const validItems = Array.isArray(items) ? items : [];
-  return {
-    totalPrice: validItems.reduce((total, item) => total + item.basePrice * item.count, 0),
-    totalDiscountPrice: validItems.reduce((total, item) => total + item.salePrice * item.count, 0),
-    totalDiscount: validItems.reduce((total, item) => total + (item.basePrice - item.salePrice) * item.count, 0), // اصلاح محاسبه تخفیف
-  };
-};
-
-export const mapCartResponseToCartItemState = (cart: CartResponse): CartItemState[] => {
-  return (
-    cart.items?.map((item: CartItem) => {
-      const productId = item.product?.id ?? item.productVariant?.id ?? 0;
-      const type = item.product?.type === 'SIMPLE' ? 'SIMPLE' : 'VARIABLE';
-      const productTitle = item.product?.name ?? item.productVariant?.product?.name ?? '';
-      const productThumbnail = item.product?.mainImage?.fileUrl ?? item.productVariant?.product?.mainImage?.fileUrl ?? '';
-
-      const basePrice = item.product?.basePrice ?? item.productVariant?.basePrice ?? 0;
-      const salePrice = item.product?.salePrice ?? item.productVariant?.salePrice ?? 0;
-      const discount = Math.round(((basePrice - salePrice) / basePrice) * 100) || 0; // درصد تخفیف
-
-      const attributeValues = item.productVariant?.attributeValues ?? [];
-
-      return {
-        id: productId,
-        count: item.quantity,
-        type,
-        title: productTitle,
-        thumbnail: productThumbnail,
-        basePrice,
-        salePrice,
-        discount,
-        attributeValues,
-      };
-    }) || []
-  );
 };
 
 // Thunk برای همگام‌سازی سبد خرید موقع لاگین
@@ -65,7 +21,7 @@ export const syncCartWithApi = createAsyncThunk('cart/syncCartWithApi', async (_
   const cartDataLS = localStorage.getItem('cart');
   if (!cartDataLS) {
     const updatedCart = await getCart();
-    const items = mapCartResponseToCartItemState(updatedCart);
+    const items = updatedCart.items;
     dispatch(setCart({ items }));
     return;
   }
@@ -75,7 +31,7 @@ export const syncCartWithApi = createAsyncThunk('cart/syncCartWithApi', async (_
     if (cartItems.length === 0) {
       localStorage.removeItem('cart');
       const updatedCart = await getCart();
-      const items = mapCartResponseToCartItemState(updatedCart);
+      const items = updatedCart.items;
       dispatch(setCart({ items }));
       return;
     }
@@ -89,7 +45,7 @@ export const syncCartWithApi = createAsyncThunk('cart/syncCartWithApi', async (_
     await createCartBulk({ items: itemsPayload });
     localStorage.removeItem('cart');
     const updatedCart = await getCart();
-    const items = mapCartResponseToCartItemState(updatedCart);
+    const items = updatedCart.items;
     dispatch(setCart({ items }));
   } catch (error) {
     console.error('Failed to sync cart with API:', error);
@@ -127,7 +83,7 @@ export const addToCart = createAsyncThunk('cart/addToCart', async (item: CartIte
     };
     await createCartBulk({ items: [payload] });
     const updatedCart = await getCart();
-    const items = mapCartResponseToCartItemState(updatedCart);
+    const items = updatedCart.items;
     dispatch(setCart({ items }));
   } catch (error) {
     console.error('Failed to add to cart:', error);
@@ -152,7 +108,7 @@ export const increaseCount = createAsyncThunk('cart/increaseCount', async (item:
   try {
     await updateQuantityItemCart({ itemId: Number(item.id), quantity: item.count + 1 });
     const updatedCart = await getCart();
-    const items = mapCartResponseToCartItemState(updatedCart);
+    const items = updatedCart.items;
     dispatch(setCart({ items }));
   } catch (error) {
     console.error('Failed to increase cart item count:', error);
@@ -177,7 +133,7 @@ export const decreaseCount = createAsyncThunk('cart/decreaseCount', async (item:
   try {
     await updateQuantityItemCart({ itemId: Number(item.id), quantity: item.count - 1 });
     const updatedCart = await getCart();
-    const items = mapCartResponseToCartItemState(updatedCart);
+    const items = updatedCart.items;
     dispatch(setCart({ items }));
   } catch (error) {
     console.error('Failed to decrease cart item count:', error);
@@ -202,7 +158,7 @@ export const deleteFromCart = createAsyncThunk('cart/deleteFromCart', async (ite
   try {
     await removeItemCart(Number(itemId));
     const updatedCart = await getCart();
-    const items = mapCartResponseToCartItemState(updatedCart);
+    const items = updatedCart.items;
     dispatch(setCart({ items }));
   } catch (error) {
     console.error('Failed to remove from cart:', error);
@@ -224,7 +180,7 @@ export const clearCartAction = createAsyncThunk('cart/clearCart', async (_, { ge
   try {
     await clearCart();
     const updatedCart = await getCart();
-    const items = mapCartResponseToCartItemState(updatedCart);
+    const items = updatedCart.items;
     dispatch(setCart({ items }));
   } catch (error) {
     console.error('Failed to clear cart:', error);
@@ -248,7 +204,6 @@ const cartSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase('auth/loginSuccess', (state) => {
-        // به جای ریست کردن، منتظر همگام‌سازی با API می‌مانیم
         state.items = [];
         state.totalPrice = 0;
         state.totalDiscountPrice = 0;
