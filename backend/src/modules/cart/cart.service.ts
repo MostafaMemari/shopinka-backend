@@ -10,6 +10,7 @@ import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { pagination } from '../../common/utils/pagination.utils';
 import { IGetCart } from './interfaces/cart.interface';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class CartService {
@@ -18,6 +19,7 @@ export class CartService {
     private readonly cartItemRepository: CartItemRepository,
     private readonly productRepository: ProductRepository,
     private readonly productVariantRepository: ProductVariantRepository,
+    private readonly prismaService: PrismaService,
   ) {}
 
   async me(userId: number): Promise<IGetCart> {
@@ -102,6 +104,60 @@ export class CartService {
     });
 
     return { message: CartItemMessages.CreatedCartItemSuccess, cartItem: newCartItem };
+  }
+
+  async addItems(userId: number, items: CreateCartItemDto[]): Promise<{ message: string; cartItems: CartItem[] }> {
+    return this.prismaService.$transaction(async (prisma) => {
+      const cart = await prisma.cart.upsert({
+        where: { userId },
+        update: {},
+        create: { userId },
+        include: { items: true },
+      });
+
+      const createdItems: CartItem[] = [];
+
+      for (const item of items) {
+        const { productId, productVariantId, quantity } = item;
+
+        if (productId && productVariantId) throw new BadRequestException(CartItemMessages.OneFailedAllowed);
+
+        const existingCartItem = await prisma.cartItem.findFirst({
+          where: {
+            cartId: cart.id,
+            OR: [{ productId }, { productVariantId }],
+          },
+        });
+
+        if (existingCartItem) throw new ConflictException(CartItemMessages.AlreadyExistsCartItem);
+
+        if (productId) {
+          const product = await prisma.product.findFirst({
+            where: { id: productId, status: ProductStatus.PUBLISHED },
+          });
+
+          if (!product || product.quantity < quantity) throw new BadRequestException(CartItemMessages.ProductNotAvailable);
+        }
+
+        if (productVariantId) {
+          const productVariant = await prisma.productVariant.findFirst({
+            where: { id: productVariantId },
+          });
+
+          if (!productVariant || productVariant.quantity < quantity)
+            throw new BadRequestException(CartItemMessages.ProductVariantNotAvailable);
+        }
+
+        const newItem = await prisma.cartItem.create({
+          data: { ...item, cartId: cart.id },
+          include: { product: true, productVariant: true },
+        });
+
+        createdItems.push(newItem);
+      }
+
+      return { message: CartItemMessages.CreatedCartItemSuccess, cartItems: createdItems };
+    });
   }
 
   async removeItem(userId: number, cartItemId: number): Promise<{ message: string; cartItem: CartItem }> {

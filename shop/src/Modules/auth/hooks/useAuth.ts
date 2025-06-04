@@ -4,6 +4,7 @@ import { loginStart, loginSuccess, loginFailure, logout } from '@/store/slices/a
 import { UserState } from '@/Modules/auth/types/userType';
 import { getMe } from '../services/user.api';
 import { logout as logoutApi } from '../services/auth.api';
+import { syncCartWithApi } from '@/store/slices/cartSlice';
 
 export function useAuth() {
   const dispatch = useAppDispatch();
@@ -42,6 +43,7 @@ export function useAuth() {
       dispatch(loginStart());
       try {
         dispatch(loginSuccess(userData));
+        await dispatch(syncCartWithApi()).unwrap();
       } catch (err) {
         dispatch(loginFailure('Login failed'));
         console.error('Login error:', err);

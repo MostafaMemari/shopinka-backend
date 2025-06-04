@@ -6,8 +6,8 @@ export interface CartItemState {
   type: 'SIMPLE' | 'VARIABLE';
   title: string;
   thumbnail: string;
-  price: number;
-  discount_price: number;
+  basePrice: number;
+  salePrice: number;
   discount: number;
   count: number;
   attributeValues: AttributeValues[];
@@ -23,7 +23,7 @@ export interface CartItem {
   product: Product | null;
   productVariant: ProductVariant | null;
 }
-export interface Cart {
+export interface CartResponse {
   finalPrice: number;
   totalSaved: number;
   cartItems: CartItem[];

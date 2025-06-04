@@ -4,7 +4,7 @@ import { AuthDecorator } from '../../common/decorators/auth.decorator';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { GetUser } from '../../common/decorators/get-user.decorator';
 import { User } from '@prisma/client';
-import { CreateCartItemDto } from './dto/create-cart-item.dto';
+import { BulkCreateCartItemDto, CreateCartItemDto } from './dto/create-cart-item.dto';
 import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
@@ -34,6 +34,12 @@ export class CartController {
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   addItem(@Body() createCatItemDto: CreateCartItemDto, @GetUser() user: User) {
     return this.cartService.addItem(user.id, createCatItemDto);
+  }
+
+  @Post('items')
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  addItems(@Body() bulkDto: BulkCreateCartItemDto, @GetUser() user: User) {
+    return this.cartService.addItems(user.id, bulkDto.items);
   }
 
   @Patch('item/:id')

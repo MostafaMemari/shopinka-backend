@@ -1,23 +1,9 @@
 import { shopApiFetch } from '@/server/api';
-import { CartData, CartItem } from '../types/cartType';
+import { CartData, CartResponse } from '../types/cartType';
 
-export const createCart = async (data: CartData): Promise<{ message: string; cartItem: CartItem }> => {
-  const res = await shopApiFetch('/cart/item', {
-    method: 'POST',
-    body: { ...data },
-  });
-
-  return {
-    message: res.data.message,
-    cartItem: res.data.cartItem,
-  };
-};
-
-export const CreateCartFromLocalStorage = async ({ cartData }: { cartData?: CartData }): Promise<void> => {
-  console.log(cartData);
-
+export const createCart = async ({ cartData }: { cartData?: CartData }): Promise<void> => {
   if (cartData) {
-    const res = await shopApiFetch('/cart/item', {
+    await shopApiFetch('/cart/item', {
       method: 'POST',
       body: {
         quantity: cartData.quantity,
@@ -25,13 +11,29 @@ export const CreateCartFromLocalStorage = async ({ cartData }: { cartData?: Cart
         productVariantId: cartData.productVariantId ?? undefined,
       },
     });
-
-    console.log(res);
   }
+};
 
-  // const res = JSON.parse(cartData);
-  // await shopApiFetch('/cart/register', {
-  //   method: 'POST',
-  //   body: cart,
-  // });
+export const getCart = async (): Promise<CartResponse> => {
+  const res = await shopApiFetch('/cart/me', { method: 'GET' });
+
+  return res.data;
+};
+
+export const clearCart = async (): Promise<CartResponse> => {
+  const res = await shopApiFetch('/cart/clear', { method: 'POST' });
+
+  return res.data;
+};
+
+export const updateQuantityItemCart = async ({ quantity, itemId }: { quantity: number; itemId: number }): Promise<CartResponse> => {
+  const res = await shopApiFetch(`/cart/item/${itemId}`, { method: 'POST', body: quantity });
+
+  return res.data;
+};
+
+export const removeQuantityItemCart = async ({ itemId }: { itemId: number }): Promise<CartResponse> => {
+  const res = await shopApiFetch(`/cart/item/${itemId}`, { method: 'DELETE' });
+
+  return res.data;
 };

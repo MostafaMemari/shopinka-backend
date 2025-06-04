@@ -1,5 +1,6 @@
-// store/slices/authSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+// src/store/slices/authSlice.ts
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { syncCartWithApi } from '@/store/slices/cartSlice';
 import { AuthState } from '@/Modules/auth/types/authType';
 import { UserState } from '@/Modules/auth/types/userType';
 
@@ -9,6 +10,20 @@ const initialState: AuthState = {
   isLoading: true,
   error: null,
 };
+
+export const loginUser = createAsyncThunk('auth/loginUser', async (userData: UserState, { dispatch }) => {
+  try {
+    // فرض می‌کنیم API لاگین داری
+    // const response = await loginApi(userData);
+
+    dispatch(loginSuccess(userData));
+
+    await dispatch(syncCartWithApi()).unwrap();
+  } catch (error) {
+    dispatch(loginFailure('Login failed'));
+    throw error;
+  }
+});
 
 const authSlice = createSlice({
   name: 'auth',

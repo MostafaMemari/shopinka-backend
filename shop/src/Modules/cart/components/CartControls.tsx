@@ -1,17 +1,19 @@
 // src/components/CartControls.tsx
+'use client';
+
 import { cn } from '@/shared/utils/utils';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { HiOutlineMinus, HiOutlinePlus } from 'react-icons/hi';
+import { CartItemState } from '@/Modules/cart/types/cartType';
 import { useCart } from '../hooks/useCart';
-import { CartItemState } from '../types/cartType';
 
 interface CartControlsProps {
   product: CartItemState;
   className?: string;
 }
 
-export function CardControls({ product, className }: CartControlsProps) {
-  const { decreaseCount, increaseCount, deleteFromCart } = useCart();
+export function CartControls({ product, className }: CartControlsProps) {
+  const { increaseCount, decreaseCount, deleteFromCart } = useCart();
 
   return (
     <div
@@ -29,7 +31,7 @@ export function CardControls({ product, className }: CartControlsProps) {
         <HiOutlinePlus className="h-5 w-5" />
       </button>
 
-      <span className="w-8 text-center font-bold text-gray-900 ">{product.count}</span>
+      <span className="w-8 text-center font-bold text-gray-900">{product.count}</span>
 
       {product.count > 1 ? (
         <button
@@ -54,4 +56,4 @@ export function CardControls({ product, className }: CartControlsProps) {
   );
 }
 
-export default CardControls;
+export default CartControls;

@@ -9,7 +9,6 @@ import { errorOtpStepMessages, errorPhoneNumberStepMessages } from '../messages/
 import CountdownTimer from '../components/CountdownTimer';
 import { useAuth } from '../hooks/useAuth';
 import { useEffect } from 'react';
-import { syncCartWithApi } from '@/store/slices/cartSlice';
 
 interface OtpFormProps {
   mobile: string;
@@ -56,8 +55,8 @@ export default function OtpForm({ mobile, isExpired, timeLeft, formatTime, reset
 
       if (res.status === 200 || res.status === 201) {
         Toast.fire({ icon: 'success', title: 'ورود شما با موفقیت انجام شد' });
-        await syncCartWithApi();
         loginUser({ mobile, role: 'CUSTOMER', full_name: '' });
+
         router.push(backUrl);
       }
     } catch (error) {
