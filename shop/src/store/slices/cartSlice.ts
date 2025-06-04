@@ -22,35 +22,37 @@ const calculateTotals = (items: CartItemState[]): Pick<CartState, 'totalPrice' |
   return {
     totalPrice: validItems.reduce((total, item) => total + item.basePrice * item.count, 0),
     totalDiscountPrice: validItems.reduce((total, item) => total + item.salePrice * item.count, 0),
-    totalDiscount: validItems.reduce((total, item) => total + item.discount * item.count, 0),
+    totalDiscount: validItems.reduce((total, item) => total + (item.basePrice - item.salePrice) * item.count, 0), // اصلاح محاسبه تخفیف
   };
 };
 
 export const mapCartResponseToCartItemState = (cart: CartResponse): CartItemState[] => {
-  return cart.items?.map((item: CartItem) => {
-    const productId = item.product?.id ?? item.productVariant?.id ?? 0;
-    const type = item.product?.type === 'SIMPLE' ? 'SIMPLE' : 'VARIABLE';
-    const productTitle = item.product?.name ?? item.productVariant?.product?.name ?? '';
-    const productThumbnail = item.product?.mainImage?.fileUrl ?? item.productVariant?.product?.mainImage?.fileUrl ?? '';
+  return (
+    cart.items?.map((item: CartItem) => {
+      const productId = item.product?.id ?? item.productVariant?.id ?? 0;
+      const type = item.product?.type === 'SIMPLE' ? 'SIMPLE' : 'VARIABLE';
+      const productTitle = item.product?.name ?? item.productVariant?.product?.name ?? '';
+      const productThumbnail = item.product?.mainImage?.fileUrl ?? item.productVariant?.product?.mainImage?.fileUrl ?? '';
 
-    const basePrice = item.product?.basePrice ?? item.productVariant?.basePrice ?? 0;
-    const salePrice = item.product?.salePrice ?? item.productVariant?.salePrice ?? 0;
-    const discount = Math.max(basePrice - salePrice, 0);
+      const basePrice = item.product?.basePrice ?? item.productVariant?.basePrice ?? 0;
+      const salePrice = item.product?.salePrice ?? item.productVariant?.salePrice ?? 0;
+      const discount = Math.round(((basePrice - salePrice) / basePrice) * 100) || 0; // درصد تخفیف
 
-    const attributeValues = item.productVariant?.attributeValues ?? [];
+      const attributeValues = item.productVariant?.attributeValues ?? [];
 
-    return {
-      id: productId,
-      count: item.quantity,
-      type,
-      title: productTitle,
-      thumbnail: productThumbnail,
-      basePrice,
-      salePrice,
-      discount,
-      attributeValues,
-    };
-  });
+      return {
+        id: productId,
+        count: item.quantity,
+        type,
+        title: productTitle,
+        thumbnail: productThumbnail,
+        basePrice,
+        salePrice,
+        discount,
+        attributeValues,
+      };
+    }) || []
+  );
 };
 
 // Thunk برای همگام‌سازی سبد خرید موقع لاگین
@@ -246,19 +248,11 @@ const cartSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase('auth/loginSuccess', (state) => {
+        // به جای ریست کردن، منتظر همگام‌سازی با API می‌مانیم
         state.items = [];
         state.totalPrice = 0;
         state.totalDiscountPrice = 0;
         state.totalDiscount = 0;
-      })
-      .addCase('auth/loginFailure', (state) => {
-        const cartDataLS = localStorage.getItem('cart');
-        const items = cartDataLS ? JSON.parse(cartDataLS) : [];
-        state.items = items;
-        const totals = calculateTotals(items);
-        state.totalPrice = totals.totalPrice;
-        state.totalDiscountPrice = totals.totalDiscountPrice;
-        state.totalDiscount = totals.totalDiscount;
       })
       .addCase('auth/logout/fulfilled', (state) => {
         const cartDataLS = localStorage.getItem('cart');

@@ -18,24 +18,23 @@ import { createCart, getCart, updateQuantityItemCart, removeItemCart, clearCart 
 import { CartResponse, CartData, CartItemState } from '@/Modules/cart/types/cartType';
 
 export const useCart = () => {
-  const dispatch = useDispatch<AppDispatch>(); // استفاده از AppDispatch
+  const dispatch = useDispatch<AppDispatch>();
   const queryClient = useQueryClient();
   const { items: reduxCart, totalPrice, totalDiscountPrice, totalDiscount } = useSelector((state: RootState) => state.cart);
   const { isLogin } = useSelector((state: RootState) => state.auth);
 
-  // لود سبد خرید بر اساس وضعیت لاگین
+  // همگام‌سازی اولیه سبد خرید
   useEffect(() => {
     if (isLogin) {
-      // کاربر لاگین کرده: همگام‌سازی با API
       dispatch(syncCartWithApi());
     } else {
-      // کاربر لاگین نیست: لود از localStorage
       const cartDataLS = localStorage.getItem('cart');
-      dispatch(setCart({ items: cartDataLS ? JSON.parse(cartDataLS) : [] }));
+      const parsedCart = cartDataLS ? JSON.parse(cartDataLS) : [];
+      dispatch(setCart({ items: parsedCart }));
     }
   }, [isLogin, dispatch]);
 
-  // درخواست گرفتن سبد خرید از API (فقط برای کاربر لاگین‌کرده)
+  // گرفتن سبد خرید از API برای کاربران لاگین‌شده
   const {
     data: cart,
     isLoading,
@@ -45,16 +44,20 @@ export const useCart = () => {
     queryKey: ['cart'],
     queryFn: getCart,
     enabled: isLogin,
+    staleTime: 5 * 60 * 1000, // داده‌ها به مدت 5 دقیقه تازه می‌مانند
   });
 
-  // آپدیت Redux state وقتی داده‌های API تغییر می‌کنن
+  // به‌روزرسانی Redux فقط وقتی داده‌های API تغییر کرده‌اند
   useEffect(() => {
     if (isLogin && cart) {
-      dispatch(setCart({ items: mapCartResponseToCartItemState(cart) }));
+      const mappedCart = mapCartResponseToCartItemState(cart);
+      // فقط اگر سبد خرید تغییر کرده باشد، Redux را به‌روزرسانی کن
+      if (JSON.stringify(mappedCart) !== JSON.stringify(reduxCart)) {
+        dispatch(setCart({ items: mappedCart }));
+      }
     }
-  }, [cart, dispatch, isLogin]);
+  }, [cart, dispatch, isLogin, reduxCart]);
 
-  // Mutation برای اضافه کردن آیتم به سبد خرید
   const addToCartMutation = useMutation({
     mutationFn: (cartData: CartData) => createCart({ cartData }),
     onSuccess: () => {
@@ -65,11 +68,11 @@ export const useCart = () => {
     },
   });
 
-  // Mutation برای آپدیت تعداد آیتم
   const updateQuantityMutation = useMutation({
     mutationFn: ({ quantity, itemId }: { quantity: number; itemId: number }) => updateQuantityItemCart({ quantity, itemId }),
     onSuccess: (updatedCart) => {
-      dispatch(setCart({ items: mapCartResponseToCartItemState(updatedCart) }));
+      const mappedCart = mapCartResponseToCartItemState(updatedCart);
+      dispatch(setCart({ items: mappedCart }));
       queryClient.setQueryData(['cart'], updatedCart);
     },
     onError: (error) => {
@@ -77,11 +80,11 @@ export const useCart = () => {
     },
   });
 
-  // Mutation برای حذف آیتم
   const removeItemMutation = useMutation({
     mutationFn: ({ itemId }: { itemId: number }) => removeItemCart(itemId),
     onSuccess: (updatedCart) => {
-      dispatch(setCart({ items: mapCartResponseToCartItemState(updatedCart) }));
+      const mappedCart = mapCartResponseToCartItemState(updatedCart);
+      dispatch(setCart({ items: mappedCart }));
       queryClient.setQueryData(['cart'], updatedCart);
     },
     onError: (error) => {
@@ -89,11 +92,11 @@ export const useCart = () => {
     },
   });
 
-  // Mutation برای پاک کردن سبد خرید
   const clearCartMutation = useMutation({
     mutationFn: clearCart,
     onSuccess: (updatedCart) => {
-      dispatch(setCart({ items: mapCartResponseToCartItemState(updatedCart) }));
+      const mappedCart = mapCartResponseToCartItemState(updatedCart);
+      dispatch(setCart({ items: mappedCart }));
       queryClient.setQueryData(['cart'], updatedCart);
     },
     onError: (error) => {
@@ -101,7 +104,6 @@ export const useCart = () => {
     },
   });
 
-  // انتخاب سبد خرید مناسب برای نمایش
   const currentCart = isLogin && cart ? mapCartResponseToCartItemState(cart) : reduxCart;
 
   return {
@@ -123,25 +125,16 @@ export const useCart = () => {
       }
     },
     increaseCount: (item: CartItemState) => {
-      if (!isLogin) {
-        dispatch(increaseCount(item));
-      } else {
-        updateQuantityMutation.mutate({ itemId: item.id, quantity: item.count + 1 });
-      }
+      if (!isLogin) dispatch(increaseCount(item));
+      else updateQuantityMutation.mutate({ itemId: item.id, quantity: item.count + 1 });
     },
     decreaseCount: (item: CartItemState) => {
-      if (!isLogin) {
-        dispatch(decreaseCount(item));
-      } else {
-        updateQuantityMutation.mutate({ itemId: item.id, quantity: item.count - 1 });
-      }
+      if (!isLogin) dispatch(decreaseCount(item));
+      else updateQuantityMutation.mutate({ itemId: item.id, quantity: item.count - 1 });
     },
     deleteFromCart: (productId: number | string) => {
-      if (!isLogin) {
-        dispatch(deleteFromCart(productId.toString()));
-      } else {
-        removeItemMutation.mutate({ itemId: Number(productId) });
-      }
+      if (!isLogin) dispatch(deleteFromCart(productId.toString()));
+      else removeItemMutation.mutate({ itemId: Number(productId) });
     },
     clearCart: () => {
       clearCartMutation.mutate();
