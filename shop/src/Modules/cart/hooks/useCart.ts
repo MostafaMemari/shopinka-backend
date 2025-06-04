@@ -12,7 +12,7 @@ export const useCart = () => {
   const dispatch = useDispatch<AppDispatch>();
   const queryClient = useQueryClient();
 
-  const { items: reduxCart, totalPrice, totalDiscountPrice, totalDiscount } = useSelector((state: RootState) => state.cart);
+  const { items: reduxCart } = useSelector((state: RootState) => state.cart);
 
   const { isLogin } = useSelector((state: RootState) => state.auth);
 

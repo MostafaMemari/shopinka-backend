@@ -139,7 +139,12 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
               <div className="mb-6 space-y-4">
                 {isVariableProduct && (
                   <div className="mb-6">
-                    <ProductVariants variants={product.variants} attributes={product.attributes} productType={product.type} />
+                    <ProductVariants
+                      defaultVariantId={product.defaultVariantId ?? undefined}
+                      variants={product.variants}
+                      attributes={product.attributes}
+                      productType={product.type}
+                    />
                   </div>
                 )}
 

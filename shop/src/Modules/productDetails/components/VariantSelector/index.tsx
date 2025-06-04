@@ -22,7 +22,6 @@ export default function ProductVariants({ variants, attributes, productType, def
   const dispatch = useDispatch();
   const { selectedColor, selectedButton, selectedVariant } = useSelector((state: RootState) => state.product);
 
-  // تنظیم واریانت پیش‌فرض
   useEffect(() => {
     if (productType === 'VARIABLE' && defaultVariantId && !selectedVariant) {
       const { defaultColor, defaultButton, defaultVariant } = getDefaultSelections(variants, attributes, defaultVariantId);
