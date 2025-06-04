@@ -30,7 +30,7 @@ export interface CartResponse {
 }
 
 export interface CartData {
-  productId: number | null;
-  productVariantId: number | null;
+  productId: number | null | undefined;
+  productVariantId: number | null | undefined;
   quantity: number;
 }

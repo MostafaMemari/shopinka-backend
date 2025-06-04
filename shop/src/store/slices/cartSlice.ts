@@ -103,7 +103,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { CartItemState, CartResponse, CartData } from '@/Modules/cart/types/cartType';
 import { RootState } from '@/store';
-import { createCart, getCart } from '@/Modules/cart/services/cart.api';
+import { createCart, createCartBulk, getCart } from '@/Modules/cart/services/cart.api';
 
 interface CartState {
   cart: CartItemState[];
@@ -160,33 +160,33 @@ export const mapCartResponseToCartItemState = (cartResponse: CartResponse): Cart
 };
 export const syncCartWithApi = createAsyncThunk('cart/syncCartWithApi', async (_, { getState, dispatch }) => {
   const state = getState() as RootState;
-
   const { isLogin } = state.auth;
 
   if (!isLogin) return;
 
-  const cartData = localStorage.getItem('cart');
-  if (cartData) {
-    try {
-      const cartItems = JSON.parse(cartData) as CartItemState[];
-      if (cartItems.length > 0) {
-        for (const item of cartItems) {
-          const cartDataPayload: CartData = {
-            quantity: item.count,
-            productId: item.type === 'SIMPLE' ? item.id : null,
-            productVariantId: item.type === 'VARIABLE' ? item.id : null,
-          };
-          await createCart({ cartData: cartDataPayload });
-        }
-        localStorage.removeItem('cart');
-        dispatch(setIsSyncedWithApi(true));
-        const updatedCart = await getCart();
-        dispatch(setCart(mapCartResponseToCartItemState(updatedCart)));
-      }
-    } catch (error) {
-      console.error('Failed to sync cart with API:', error);
-      throw error;
-    }
+  const cartDataLS = localStorage.getItem('cart');
+  if (!cartDataLS) return;
+
+  try {
+    const cartItems = JSON.parse(cartDataLS) as CartItemState[];
+    if (cartItems.length === 0) return;
+
+    const itemsPayload: CartData[] = cartItems.map((item) => ({
+      quantity: item.count,
+      productId: item.type === 'SIMPLE' ? (item.id ?? undefined) : undefined,
+      productVariantId: item.type === 'VARIABLE' ? (item.id ?? undefined) : undefined,
+    }));
+
+    await createCartBulk({ items: itemsPayload });
+
+    localStorage.removeItem('cart');
+    dispatch(setIsSyncedWithApi(true));
+
+    const updatedCart = await getCart();
+    dispatch(setCart(mapCartResponseToCartItemState(updatedCart)));
+  } catch (error) {
+    console.error('Failed to sync cart with API:', error);
+    throw error;
   }
 });
 
