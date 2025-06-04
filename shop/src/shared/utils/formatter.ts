@@ -5,4 +5,4 @@ export const formatRemainingTime = (time?: string): string => {
   return `${minutes} دقیقه`;
 };
 
-export const formatPrice = (price: number) => price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+export const formatPrice = (price: number) => price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');

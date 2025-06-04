@@ -15,11 +15,14 @@ export const createCart = async ({ cartData }: { cartData?: CartData }): Promise
 };
 
 export const createCartBulk = async ({ items }: { items: CartData[] }): Promise<void> => {
+  console.log(items);
   if (items.length > 0) {
-    await shopApiFetch('/cart/items', {
+    const res = await shopApiFetch('/cart/items', {
       method: 'POST',
       body: { items },
     });
+
+    console.log(res);
   }
 };
 
@@ -41,7 +44,7 @@ export const updateQuantityItemCart = async ({ quantity, itemId }: { quantity: n
   return res.data;
 };
 
-export const removeQuantityItemCart = async ({ itemId }: { itemId: number }): Promise<CartResponse> => {
+export const removeItemCart = async (itemId: number): Promise<CartResponse> => {
   const res = await shopApiFetch(`/cart/item/${itemId}`, { method: 'DELETE' });
 
   return res.data;

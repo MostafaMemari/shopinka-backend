@@ -316,17 +316,21 @@ model Cart {
 }
 
 model CartItem {
-  id               Int  @id() @default(autoincrement())
+  id               Int  @id @default(autoincrement())
   cartId           Int
-  productId        Int? @unique()
-  productVariantId Int? @unique()
+  productId        Int?
+  productVariantId Int?
 
   cart           Cart            @relation(fields: [cartId], references: [id], onDelete: Cascade)
   product        Product?        @relation(fields: [productId], references: [id], onDelete: Cascade)
   productVariant ProductVariant? @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
-  quantity       Int
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt()
+
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  @@unique([cartId, productId])
+  @@unique([cartId, productVariantId])
 }
 
 model Order {

@@ -1,163 +1,51 @@
-// import { createCart } from '@/Modules/cart/services/cart.api';
-// import { CartData, CartItemState } from '@/Modules/cart/types/cartType';
-// import { shopApiFetch } from '@/server/api';
-// import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-// interface CartState {
-//   cart: CartItemState[];
-//   totalPrice: number;
-//   totalDiscountPrice: number;
-//   totalDiscount: number;
-// }
-
-// const initialState: CartState = {
-//   cart: [],
-//   totalPrice: 0,
-//   totalDiscountPrice: 0,
-//   totalDiscount: 0,
-// };
-
-// const loadCartFromLocalStorage = (): CartItemState[] => {
-//   if (typeof window !== 'undefined') {
-//     const storedCart = localStorage.getItem('cart');
-//     return storedCart ? JSON.parse(storedCart) : [];
-//   }
-//   return [];
-// };
-
-// const cartSlice = createSlice({
-//   name: 'cart',
-//   initialState,
-//   reducers: {
-//     loadCart(state) {
-//       state.cart = loadCartFromLocalStorage();
-//       state.totalPrice = state.cart.reduce((total, item) => total + item.price * item.count, 0);
-//       state.totalDiscountPrice = state.cart.reduce((total, item) => total + item.discount_price * item.count, 0);
-//       state.totalDiscount = state.cart.reduce((total, item) => total + item.discount, 0);
-//     },
-//     setCart(state, action: PayloadAction<CartItemState[]>) {
-//       state.cart = action.payload;
-//       localStorage.setItem('cart', JSON.stringify(action.payload));
-//       state.totalPrice = action.payload.reduce((total, item) => total + item.price * item.count, 0);
-//       state.totalDiscountPrice = action.payload.reduce((total, item) => total + item.discount_price * item.count, 0);
-//       state.totalDiscount = action.payload.reduce((total, item) => total + item.discount, 0);
-//     },
-//     decreaseCount(state, action: PayloadAction<CartItemState>) {
-//       state.cart = state.cart.map((item) => (item.id === action.payload.id && item.count > 1 ? { ...item, count: item.count - 1 } : item));
-//       localStorage.setItem('cart', JSON.stringify(state.cart));
-//       state.totalPrice = state.cart.reduce((total, item) => total + item.price * item.count, 0);
-//       state.totalDiscountPrice = state.cart.reduce((total, item) => total + item.discount_price * item.count, 0);
-//       state.totalDiscount = state.cart.reduce((total, item) => total + item.discount, 0);
-//     },
-//     increaseCount(state, action: PayloadAction<CartItemState>) {
-//       state.cart = state.cart.map((item) => (item.id === action.payload.id ? { ...item, count: item.count + 1 } : item));
-//       localStorage.setItem('cart', JSON.stringify(state.cart));
-//       state.totalPrice = state.cart.reduce((total, item) => total + item.price * item.count, 0);
-//       state.totalDiscountPrice = state.cart.reduce((total, item) => total + item.discount_price * item.count, 0);
-//       state.totalDiscount = state.cart.reduce((total, item) => total + item.discount, 0);
-//     },
-//     deleteFromCart(state, action: PayloadAction<string>) {
-//       state.cart = state.cart.filter((item) => item.id !== Number(action.payload));
-//       localStorage.setItem('cart', JSON.stringify(state.cart));
-//       state.totalPrice = state.cart.reduce((total, item) => total + item.price * item.count, 0);
-//       state.totalDiscountPrice = state.cart.reduce((total, item) => total + item.discount_price * item.count, 0);
-//       state.totalDiscount = state.cart.reduce((total, item) => total + item.discount, 0);
-//     },
-//     clearCart(state) {
-//       state.cart = [];
-//       localStorage.removeItem('cart');
-//       state.totalPrice = 0;
-//       state.totalDiscountPrice = 0;
-//       state.totalDiscount = 0;
-//     },
-//   },
-// });
-
-// export const syncCartWithApi = async (): Promise<void> => {
-//   if (typeof window !== 'undefined') {
-//     const cartData = localStorage.getItem('cart');
-//     if (cartData) {
-//       try {
-//         const cartItems = JSON.parse(cartData) as CartItemState[];
-//         if (cartItems.length > 0) {
-//           for (const item of cartItems) {
-//             const cartDataPayload: CartData = {
-//               quantity: item.count,
-//               productId: item.type === 'SIMPLE' ? item.id : null,
-//               productVariantId: item.type === 'VARIABLE' ? item.id : null,
-//             };
-//             await createCart({ cartData: cartDataPayload });
-//           }
-//           localStorage.removeItem('cart');
-//         }
-//       } catch (error) {
-//         console.error('Failed to sync cart with API:', error);
-//       }
-//     }
-//   }
-// };
-// export const { loadCart, setCart, decreaseCount, increaseCount, deleteFromCart, clearCart } = cartSlice.actions;
-// export default cartSlice.reducer;
-
-// src/store/slices/cartSlice.ts
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { CartItemState, CartResponse, CartData } from '@/Modules/cart/types/cartType';
 import { RootState } from '@/store';
-import { createCart, createCartBulk, getCart } from '@/Modules/cart/services/cart.api';
+import { createCartBulk, getCart, updateQuantityItemCart, removeItemCart, clearCart } from '@/Modules/cart/services/cart.api';
+import { CartData, CartItemState, CartResponse } from '@/Modules/cart/types/cartType';
 
 interface CartState {
-  cart: CartItemState[];
+  items: CartItemState[];
   totalPrice: number;
   totalDiscountPrice: number;
   totalDiscount: number;
-  isSyncedWithApi: boolean;
 }
 
 const initialState: CartState = {
-  cart: [],
+  items: [],
   totalPrice: 0,
   totalDiscountPrice: 0,
   totalDiscount: 0,
-  isSyncedWithApi: false,
 };
 
-const loadCartFromLocalStorage = (): CartItemState[] => {
-  if (typeof window !== 'undefined') {
-    const storedCart = localStorage.getItem('cart');
-    return storedCart ? JSON.parse(storedCart) : [];
-  }
-  return [];
-};
-
-// تابع کمکی برای محاسبه توتال‌ها
-const calculateTotals = (cart: CartItemState[]): Pick<CartState, 'totalPrice' | 'totalDiscountPrice' | 'totalDiscount'> => {
+const calculateTotals = (items: CartItemState[]): Pick<CartState, 'totalPrice' | 'totalDiscountPrice' | 'totalDiscount'> => {
+  const validItems = Array.isArray(items) ? items : [];
   return {
-    totalPrice: cart.reduce((total, item) => total + item.basePrice * item.count, 0),
-    totalDiscountPrice: cart.reduce((total, item) => total + item.salePrice * item.count, 0),
-    totalDiscount: cart.reduce((total, item) => total + item.discount, 0),
+    totalPrice: validItems.reduce((total, item) => total + item.basePrice * item.count, 0),
+    totalDiscountPrice: validItems.reduce((total, item) => total + item.salePrice * item.count, 0),
+    totalDiscount: validItems.reduce((total, item) => total + item.discount * item.count, 0),
   };
 };
 
-export const mapCartResponseToCartItemState = (cartResponse: CartResponse): CartItemState[] => {
-  return cartResponse.cartItems.map((item) => {
-    const basePrice = item.product?.basePrice ?? item.productVariant?.basePrice ?? 0;
-    const salePrice = item.product?.salePrice ?? item.productVariant?.salePrice ?? 0;
-
-    const discount = basePrice > 0 && salePrice > 0 && salePrice < basePrice ? basePrice - salePrice : 0;
-
+// تبدیل پاسخ API به CartItemState
+export const mapCartResponseToCartItemState = (cart: CartResponse): CartItemState[] => {
+  return cart.cartItems.map((item: any) => {
+    const isSimple = !!item.productId;
+    const source = isSimple ? item.product : item.productVariant;
     return {
-      id: item.id,
-      type: item.productId ? 'SIMPLE' : 'VARIABLE',
-      title: item.product?.name || 'Unknown Product',
-      thumbnail: item.product?.mainImage?.fileUrl || '',
-      basePrice,
-      salePrice,
-      discount,
+      id: (item.productId || item.productVariantId)?.toString(),
       count: item.quantity,
-      attributeValues: item.productVariant?.attributeValues || [],
+      type: isSimple ? 'SIMPLE' : 'VARIABLE',
+      title: source?.title || '',
+      thumbnail: source?.thumbnail || '',
+      basePrice: source?.basePrice || 0,
+      salePrice: source?.salePrice || 0,
+      discount: source?.discount || 0,
+      attributeValues: source?.attributeValues || [],
     };
   });
 };
+
+// Thunk برای همگام‌سازی سبد خرید موقع لاگین
 export const syncCartWithApi = createAsyncThunk('cart/syncCartWithApi', async (_, { getState, dispatch }) => {
   const state = getState() as RootState;
   const { isLogin } = state.auth;
@@ -165,101 +53,216 @@ export const syncCartWithApi = createAsyncThunk('cart/syncCartWithApi', async (_
   if (!isLogin) return;
 
   const cartDataLS = localStorage.getItem('cart');
-  if (!cartDataLS) return;
+  if (!cartDataLS) {
+    const updatedCart = await getCart();
+    const items = mapCartResponseToCartItemState(updatedCart);
+    dispatch(setCart({ items }));
+    return;
+  }
 
   try {
     const cartItems = JSON.parse(cartDataLS) as CartItemState[];
-    if (cartItems.length === 0) return;
+    if (cartItems.length === 0) {
+      localStorage.removeItem('cart');
+      const updatedCart = await getCart();
+      const items = mapCartResponseToCartItemState(updatedCart);
+      dispatch(setCart({ items }));
+      return;
+    }
 
     const itemsPayload: CartData[] = cartItems.map((item) => ({
       quantity: item.count,
-      productId: item.type === 'SIMPLE' ? (item.id ?? undefined) : undefined,
-      productVariantId: item.type === 'VARIABLE' ? (item.id ?? undefined) : undefined,
+      productId: item.type === 'SIMPLE' ? (item.id ? Number(item.id) : undefined) : undefined,
+      productVariantId: item.type === 'VARIABLE' ? (item.id ? Number(item.id) : undefined) : undefined,
     }));
 
     await createCartBulk({ items: itemsPayload });
-
     localStorage.removeItem('cart');
-    dispatch(setIsSyncedWithApi(true));
-
     const updatedCart = await getCart();
-    dispatch(setCart(mapCartResponseToCartItemState(updatedCart)));
+    const items = mapCartResponseToCartItemState(updatedCart);
+    dispatch(setCart({ items }));
   } catch (error) {
     console.error('Failed to sync cart with API:', error);
     throw error;
   }
 });
 
+// Thunk برای اضافه کردن آیتم به سبد خرید
+export const addToCart = createAsyncThunk('cart/addToCart', async (item: CartItemState, { getState, dispatch }) => {
+  const state = getState() as RootState;
+  const { isLogin } = state.auth;
+
+  if (!isLogin) {
+    const cartDataLS = localStorage.getItem('cart');
+    const cartItems: CartItemState[] = cartDataLS ? JSON.parse(cartDataLS) : [];
+    const existingItem = cartItems.find((i) => i.id === item.id);
+    let updatedCart: CartItemState[];
+
+    if (existingItem) {
+      updatedCart = cartItems.map((i) => (i.id === item.id ? { ...i, count: i.count + item.count } : i));
+    } else {
+      updatedCart = [...cartItems, item];
+    }
+
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    dispatch(setCart({ items: updatedCart }));
+    return;
+  }
+
+  try {
+    const payload: CartData = {
+      quantity: item.count,
+      productId: item.type === 'SIMPLE' ? (item.id ? Number(item.id) : undefined) : undefined,
+      productVariantId: item.type === 'VARIABLE' ? (item.id ? Number(item.id) : undefined) : undefined,
+    };
+    await createCartBulk({ items: [payload] });
+    const updatedCart = await getCart();
+    const items = mapCartResponseToCartItemState(updatedCart);
+    dispatch(setCart({ items }));
+  } catch (error) {
+    console.error('Failed to add to cart:', error);
+    throw error;
+  }
+});
+
+// Thunk برای افزایش تعداد آیتم
+export const increaseCount = createAsyncThunk('cart/increaseCount', async (item: CartItemState, { getState, dispatch }) => {
+  const state = getState() as RootState;
+  const { isLogin } = state.auth;
+
+  if (!isLogin) {
+    const cartDataLS = localStorage.getItem('cart');
+    const cartItems: CartItemState[] = cartDataLS ? JSON.parse(cartDataLS) : [];
+    const updatedCart = cartItems.map((i) => (i.id === item.id ? { ...i, count: i.count + 1 } : i));
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    dispatch(setCart({ items: updatedCart }));
+    return;
+  }
+
+  try {
+    await updateQuantityItemCart({ itemId: Number(item.id), quantity: item.count + 1 });
+    const updatedCart = await getCart();
+    const items = mapCartResponseToCartItemState(updatedCart);
+    dispatch(setCart({ items }));
+  } catch (error) {
+    console.error('Failed to increase cart item count:', error);
+    throw error;
+  }
+});
+
+// Thunk برای کاهش تعداد آیتم
+export const decreaseCount = createAsyncThunk('cart/decreaseCount', async (item: CartItemState, { getState, dispatch }) => {
+  const state = getState() as RootState;
+  const { isLogin } = state.auth;
+
+  if (!isLogin) {
+    const cartDataLS = localStorage.getItem('cart');
+    const cartItems: CartItemState[] = cartDataLS ? JSON.parse(cartDataLS) : [];
+    const updatedCart = cartItems.map((i) => (i.id === item.id && i.count > 1 ? { ...i, count: i.count - 1 } : i));
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    dispatch(setCart({ items: updatedCart }));
+    return;
+  }
+
+  try {
+    await updateQuantityItemCart({ itemId: Number(item.id), quantity: item.count - 1 });
+    const updatedCart = await getCart();
+    const items = mapCartResponseToCartItemState(updatedCart);
+    dispatch(setCart({ items }));
+  } catch (error) {
+    console.error('Failed to decrease cart item count:', error);
+    throw error;
+  }
+});
+
+// Thunk برای حذف آیتم از سبد خرید
+export const deleteFromCart = createAsyncThunk('cart/deleteFromCart', async (itemId: string, { getState, dispatch }) => {
+  const state = getState() as RootState;
+  const { isLogin } = state.auth;
+
+  if (!isLogin) {
+    const cartDataLS = localStorage.getItem('cart');
+    let cartItems: CartItemState[] = cartDataLS ? JSON.parse(cartDataLS) : [];
+    cartItems = cartItems.filter((item) => item.id !== Number(itemId));
+    localStorage.setItem('cart', JSON.stringify(cartItems));
+    dispatch(setCart({ items: cartItems }));
+    return;
+  }
+
+  try {
+    await removeItemCart(Number(itemId));
+    const updatedCart = await getCart();
+    const items = mapCartResponseToCartItemState(updatedCart);
+    dispatch(setCart({ items }));
+  } catch (error) {
+    console.error('Failed to remove from cart:', error);
+    throw error;
+  }
+});
+
+// Thunk برای پاک کردن سبد خرید
+export const clearCartAction = createAsyncThunk('cart/clearCart', async (_, { getState, dispatch }) => {
+  const state = getState() as RootState;
+  const { isLogin } = state.auth;
+
+  if (!isLogin) {
+    localStorage.removeItem('cart');
+    dispatch(setCart({ items: [] }));
+    return;
+  }
+
+  try {
+    await clearCart();
+    const updatedCart = await getCart();
+    const items = mapCartResponseToCartItemState(updatedCart);
+    dispatch(setCart({ items }));
+  } catch (error) {
+    console.error('Failed to clear cart:', error);
+    throw error;
+  }
+});
+
+// تعریف cartSlice
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    loadCart(state) {
-      if (!state.isSyncedWithApi) {
-        state.cart = loadCartFromLocalStorage();
-        Object.assign(state, calculateTotals(state.cart));
-      }
-    },
-    setCart(state, action: PayloadAction<CartItemState[]>) {
-      state.cart = action.payload;
-      if (!state.isSyncedWithApi) {
-        localStorage.setItem('cart', JSON.stringify(action.payload));
-      }
-      Object.assign(state, calculateTotals(state.cart));
-    },
-    addToCart(state, action: PayloadAction<CartItemState>) {
-      const existingItem = state.cart.find((item) => item.id === action.payload.id);
-      if (existingItem) {
-        state.cart = state.cart.map((item) =>
-          item.id === action.payload.id ? { ...item, count: item.count + action.payload.count } : item,
-        );
-      } else {
-        state.cart.push(action.payload);
-      }
-      if (!state.isSyncedWithApi) {
-        localStorage.setItem('cart', JSON.stringify(state.cart));
-      }
-      Object.assign(state, calculateTotals(state.cart));
-    },
-    decreaseCount(state, action: PayloadAction<CartItemState>) {
-      state.cart = state.cart.map((item) => (item.id === action.payload.id && item.count > 1 ? { ...item, count: item.count - 1 } : item));
-      if (!state.isSyncedWithApi) {
-        localStorage.setItem('cart', JSON.stringify(state.cart));
-      }
-      Object.assign(state, calculateTotals(state.cart));
-    },
-    increaseCount(state, action: PayloadAction<CartItemState>) {
-      state.cart = state.cart.map((item) => (item.id === action.payload.id ? { ...item, count: item.count + 1 } : item));
-      if (!state.isSyncedWithApi) {
-        localStorage.setItem('cart', JSON.stringify(state.cart));
-      }
-      Object.assign(state, calculateTotals(state.cart));
-    },
-    deleteFromCart(state, action: PayloadAction<string>) {
-      state.cart = state.cart.filter((item) => item.id !== Number(action.payload));
-      if (!state.isSyncedWithApi) {
-        localStorage.setItem('cart', JSON.stringify(state.cart));
-      }
-      Object.assign(state, calculateTotals(state.cart));
-    },
-    clearCart(state) {
-      state.cart = [];
-      if (!state.isSyncedWithApi) {
-        localStorage.removeItem('cart');
-      }
-      Object.assign(state, calculateTotals(state.cart));
-    },
-    setIsSyncedWithApi(state, action: PayloadAction<boolean>) {
-      state.isSyncedWithApi = action.payload;
+    setCart(state, action: PayloadAction<{ items: CartItemState[] }>) {
+      state.items = action.payload.items;
+      const totals = calculateTotals(action.payload.items);
+      state.totalPrice = totals.totalPrice;
+      state.totalDiscountPrice = totals.totalDiscountPrice;
+      state.totalDiscount = totals.totalDiscount;
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(syncCartWithApi.fulfilled, (state) => {
-      state.isSyncedWithApi = true;
-    });
+    builder
+      .addCase('auth/loginSuccess', (state) => {
+        state.items = [];
+        state.totalPrice = 0;
+        state.totalDiscountPrice = 0;
+        state.totalDiscount = 0;
+      })
+      .addCase('auth/loginFailure', (state) => {
+        const cartDataLS = localStorage.getItem('cart');
+        const items = cartDataLS ? JSON.parse(cartDataLS) : [];
+        state.items = items;
+        const totals = calculateTotals(items);
+        state.totalPrice = totals.totalPrice;
+        state.totalDiscountPrice = totals.totalDiscountPrice;
+        state.totalDiscount = totals.totalDiscount;
+      })
+      .addCase('auth/logout/fulfilled', (state) => {
+        const cartDataLS = localStorage.getItem('cart');
+        const items = cartDataLS ? JSON.parse(cartDataLS) : [];
+        state.items = items;
+        const totals = calculateTotals(items);
+        state.totalPrice = totals.totalPrice;
+        state.totalDiscountPrice = totals.totalDiscountPrice;
+        state.totalDiscount = totals.totalDiscount;
+      });
   },
 });
 
-export const { loadCart, setCart, addToCart, decreaseCount, increaseCount, deleteFromCart, clearCart, setIsSyncedWithApi } =
-  cartSlice.actions;
+export const { setCart } = cartSlice.actions;
 export default cartSlice.reducer;

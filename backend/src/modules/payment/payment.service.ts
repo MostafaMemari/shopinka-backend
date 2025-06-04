@@ -244,16 +244,13 @@ export class PaymentService {
   private async restoreCart(userId: number, orderItems: OrderItem[]) {
     await this.increaseCartItemsStock(userId);
 
-    const cartItems = orderItems.map((item) => {
-      const { id, createdAt, ...rest } = item;
-      return rest;
-    });
+    const cartItemsToConnect = orderItems.map((item) => ({ id: item.id }));
 
     await this.cartRepository.update({
       where: { userId },
       data: {
         items: {
-          connect: cartItems,
+          connect: cartItemsToConnect,
         },
       },
     });

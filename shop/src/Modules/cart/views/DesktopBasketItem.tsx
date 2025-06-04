@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { CartItem, CartItemState } from '../types/cartType';
+import { CartItemState } from '../types/cartType';
 import CartControls from '../components/CartControls';
 import CartItemAttributes from '../components/CartItemAttributes';
 import ProductPriceCard from '../components/ProductPriceCard';
@@ -16,7 +16,7 @@ export default function DesktopBasketItem({ item }: ItemCardBasketProp) {
     <div className="flex gap-x-2 py-5">
       <div className="relative min-w-fit">
         <Link href={`/product-detail/${item.id}`}>
-          <Image alt={item.title} className="h-[120px] w-[120px]" src={item.thumbnail} width={120} height={120} loading="lazy" />
+          <Image alt={item.title} className="h-[120px] w-[120px]" src={item?.thumbnail ?? ''} width={120} height={120} loading="lazy" />
         </Link>
       </div>
 

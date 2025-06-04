@@ -17,10 +17,8 @@ const ProfileDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Detect hover support only once on mount
   const isDesktop = useRef(typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches).current;
 
-  // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -47,7 +45,6 @@ const ProfileDropdown = () => {
     }
   };
 
-  // Menu items configuration
   const menuItems = [
     {
       href: '/profile',

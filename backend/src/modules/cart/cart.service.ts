@@ -9,7 +9,6 @@ import { CartItemMessages } from './enums/cart-item-messages.enum';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { pagination } from '../../common/utils/pagination.utils';
-import { IGetCart } from './interfaces/cart.interface';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -22,36 +21,31 @@ export class CartService {
     private readonly prismaService: PrismaService,
   ) {}
 
-  async me(userId: number): Promise<IGetCart> {
-    let cart = (await this.cartRepository.findOne({
+  async me(userId: number): Promise<any> {
+    const cart = await this.prismaService.cart.findFirst({
       where: { userId },
-      include: { items: { include: { product: true, productVariant: true } } },
-    })) as any;
-
-    if (!cart) {
-      await this.cartRepository.create({ data: { userId } });
-      return { finalPrice: 0, totalSaved: 0, cartItems: [] };
-    }
-
-    const { items: cartItems } = cart;
-
-    let finalPrice = 0;
-    let totalSaved = 0;
-
-    cartItems.forEach((item) => {
-      const base = item['product'] ?? item['productVariant'];
-      const discountPerItem = base.salePrice * item.quantity;
-
-      totalSaved += discountPerItem;
-      finalPrice += base.basePrice * item.quantity - discountPerItem;
+      include: {
+        items: {
+          include: {
+            product: {
+              select: { id: true, name: true, salePrice: true, basePrice: true, mainImage: { select: { fileUrl: true } } },
+            },
+            productVariant: {
+              select: {
+                id: true,
+                mainImage: true,
+                salePrice: true,
+                basePrice: true,
+                product: { select: { name: true, mainImage: { select: { fileUrl: true } } } },
+              },
+            },
+          },
+        },
+      },
     });
 
-    if (cart['shipping']) finalPrice += cart['shipping'].price;
-
     return {
-      finalPrice,
-      totalSaved,
-      cartItems,
+      cart,
     };
   }
 
