@@ -1,29 +1,17 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setCart, addToCart, increaseCount, decreaseCount, deleteFromCart, clearCartAction } from '@/store/slices/cartSlice';
 import { createCart, getCart, updateQuantityItemCart, removeItemCart, clearCart } from '@/Modules/cart/services/cart.api';
 import { CartResponse, CartData, CartItemState } from '@/Modules/cart/types/cartType';
+import { QueryOptions } from '@/shared/types/queryOptions';
+import { QueryKeys } from '@/shared/types/query-keys';
 
-export const useCart = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const queryClient = useQueryClient();
-
-  const { items: reduxCart } = useSelector((state: RootState) => state.cart);
-
+export function useCartData({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const { isLogin } = useSelector((state: RootState) => state.auth);
-
-  // useEffect(() => {
-  //   if (isLogin) {
-  //     dispatch(syncCartWithApi());
-  //   } else {
-  //     const cartDataLS = localStorage.getItem('cart');
-  //     dispatch(setCart({ items: cartDataLS ? JSON.parse(cartDataLS) : [] }));
-  //   }
-  // }, [isLogin, dispatch]);
 
   const {
     data: cart,
@@ -31,11 +19,21 @@ export const useCart = () => {
     error,
     refetch,
   } = useQuery<CartResponse>({
-    queryKey: ['cart'],
+    queryKey: [QueryKeys.Cart],
     queryFn: getCart,
-    enabled: isLogin,
-    staleTime: 5 * 60 * 1000,
+    enabled: enabled && isLogin,
+    staleTime,
   });
+
+  return { cart, isLoading, error, refetch };
+}
+
+export const useCart = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const queryClient = useQueryClient();
+  const { items: reduxCart } = useSelector((state: RootState) => state.cart);
+  const { isLogin } = useSelector((state: RootState) => state.auth);
+  const { cart, isLoading, error, refetch } = useCartData({});
 
   useEffect(() => {
     if (isLogin && cart) {

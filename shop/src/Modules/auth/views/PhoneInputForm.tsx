@@ -13,7 +13,6 @@ interface PhoneInputFormProps {
   handleShowOpt: () => void;
 }
 
-// اسکیمای اعتبارسنجی با Yup
 const phoneValidationSchema = Yup.object({
   mobile: Yup.string()
     .required('شماره موبایل الزامی است')

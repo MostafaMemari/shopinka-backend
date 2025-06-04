@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '@/store';
 import { createCartBulk, getCart, updateQuantityItemCart, removeItemCart, clearCart } from '@/Modules/cart/services/cart.api';
-import { CartData, CartItem, CartItemState, CartResponse, CartState } from '@/Modules/cart/types/cartType';
+import { CartData, CartItemState, CartState } from '@/Modules/cart/types/cartType';
 import { calculateTotals } from '@/Modules/cart/utils/calculateTotals';
 
 const initialState: CartState = {
@@ -12,46 +12,47 @@ const initialState: CartState = {
 };
 
 // Thunk برای همگام‌سازی سبد خرید موقع لاگین
-export const syncCartWithApi = createAsyncThunk('cart/syncCartWithApi', async (_, { getState, dispatch }) => {
-  const state = getState() as RootState;
-  const { isLogin } = state.auth;
+export const syncCartWithApi = createAsyncThunk<void, void, { state: RootState }>(
+  'cart/syncCartWithApi',
+  async (_, { getState, dispatch, rejectWithValue }) => {
+    const {
+      auth: { isLogin },
+    } = getState();
+    if (!isLogin) return;
 
-  if (!isLogin) return;
-
-  const cartDataLS = localStorage.getItem('cart');
-  if (!cartDataLS) {
-    const updatedCart = await getCart();
-    const items = updatedCart.items;
-    dispatch(setCart({ items }));
-    return;
-  }
-
-  try {
-    const cartItems = JSON.parse(cartDataLS) as CartItemState[];
-    if (cartItems.length === 0) {
-      localStorage.removeItem('cart');
-      const updatedCart = await getCart();
-      const items = updatedCart.items;
+    const pullServerCart = async () => {
+      const { items } = await getCart();
       dispatch(setCart({ items }));
+    };
+
+    let localCart: CartItemState[] = [];
+    try {
+      localCart = JSON.parse(localStorage.getItem('cart') ?? '[]');
+    } catch {
+      localStorage.removeItem('cart');
+    }
+
+    if (localCart.length === 0) {
+      await pullServerCart();
       return;
     }
 
-    const itemsPayload: CartData[] = cartItems.map((item) => ({
+    const itemsPayload: CartData[] = localCart.map((item) => ({
       quantity: item.count,
-      productId: item.type === 'SIMPLE' ? (item.id ? Number(item.id) : undefined) : undefined,
-      productVariantId: item.type === 'VARIABLE' ? (item.id ? Number(item.id) : undefined) : undefined,
+      productId: item.type === 'SIMPLE' ? Number(item.id) : undefined,
+      productVariantId: item.type === 'VARIABLE' ? Number(item.id) : undefined,
     }));
 
-    await createCartBulk({ items: itemsPayload });
-    localStorage.removeItem('cart');
-    const updatedCart = await getCart();
-    const items = updatedCart.items;
-    dispatch(setCart({ items }));
-  } catch (error) {
-    console.error('Failed to sync cart with API:', error);
-    throw error;
-  }
-});
+    try {
+      await createCartBulk({ items: itemsPayload });
+      localStorage.removeItem('cart');
+      await pullServerCart();
+    } catch (err) {
+      console.error('Failed to sync cart with API:', err);
+      return rejectWithValue(err instanceof Error ? err.message : 'unknown');
+    }
+  },
+);
 
 // Thunk برای اضافه کردن آیتم به سبد خرید
 export const addToCart = createAsyncThunk('cart/addToCart', async (item: CartItemState, { getState, dispatch }) => {
