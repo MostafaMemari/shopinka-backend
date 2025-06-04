@@ -17,7 +17,7 @@ export class CartController {
 
   @Get('me')
   me(@GetUser() user: User) {
-    console.log(user, new Date().toLocaleString('fa-ir'));
+    console.log('cart', new Date().toLocaleString('fa-ir'));
     return this.cartService.me(user.id);
   }
 

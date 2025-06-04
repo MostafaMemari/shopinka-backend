@@ -1,21 +1,34 @@
 import { useEffect, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useQueryClient } from '@tanstack/react-query';
 import { loginStart, loginSuccess, loginFailure, logout } from '@/store/slices/authSlice';
-import { UserState } from '@/Modules/auth/types/userType';
+import { User, UserState } from '@/Modules/auth/types/userType';
 import { getMe } from '../services/user.api';
 import { logout as logoutApi } from '../services/auth.api';
-import { syncCartWithApi } from '@/store/slices/cartSlice';
+import { clearCartAction } from '@/store/slices/cartSlice';
+import { QueryKeys } from '@/shared/types/query-keys';
+import { useSyncCart } from '@/Modules/cart/hooks/useSyncCart';
 
 export function useAuth() {
   const dispatch = useAppDispatch();
   const { isLogin, user, isLoading, error } = useAppSelector((state) => state.auth);
+  const queryClient = useQueryClient();
+  const { syncCart } = useSyncCart();
 
   const checkAuth = useCallback(async () => {
     dispatch(loginStart());
     try {
-      const userData = await getMe();
+      let userData = queryClient.getQueryData<{ status: number; data: User | null }>([QueryKeys.User]);
 
-      if (userData.status === 200 && userData?.data) {
+      if (!userData) {
+        userData = await queryClient.fetchQuery({
+          queryKey: [QueryKeys.User],
+          queryFn: getMe,
+          staleTime: 1 * 60 * 1000,
+        });
+      }
+
+      if (userData && userData.status === 200 && userData.data) {
         dispatch(
           loginSuccess({
             mobile: userData.data.mobile,
@@ -23,6 +36,7 @@ export function useAuth() {
             full_name: userData.data.fullName ?? '',
           }),
         );
+        await syncCart();
       } else {
         dispatch(loginFailure('No user data found'));
       }
@@ -30,7 +44,13 @@ export function useAuth() {
       dispatch(loginFailure('Failed to authenticate'));
       console.error('Authentication error:', err);
     }
-  }, [dispatch]);
+  }, [dispatch, queryClient, syncCart]);
+
+  useEffect(() => {
+    if (!isLogin) {
+      checkAuth();
+    }
+  }, [checkAuth, isLogin]);
 
   useEffect(() => {
     if (!isLogin) {
@@ -43,26 +63,28 @@ export function useAuth() {
       dispatch(loginStart());
       try {
         dispatch(loginSuccess(userData));
-        await dispatch(syncCartWithApi()).unwrap();
+        await syncCart();
+        queryClient.invalidateQueries({ queryKey: [QueryKeys.User] });
       } catch (err) {
         dispatch(loginFailure('Login failed'));
         console.error('Login error:', err);
       }
     },
-    [dispatch],
+    [dispatch, queryClient, syncCart],
   );
 
   const logoutUser = useCallback(async () => {
     dispatch(loginStart());
     try {
       await logoutApi();
-
+      await dispatch(clearCartAction());
       dispatch(logout());
+      queryClient.removeQueries({ queryKey: [QueryKeys.User] });
     } catch (err) {
       dispatch(loginFailure('Logout failed'));
       console.error('Logout error:', err);
     }
-  }, [dispatch]);
+  }, [dispatch, queryClient]);
 
   return {
     isLogin,
@@ -71,5 +93,6 @@ export function useAuth() {
     error,
     loginUser,
     logoutUser,
+    checkAuth,
   };
 }

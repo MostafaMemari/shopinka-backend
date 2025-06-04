@@ -9,9 +9,10 @@ import { createCart, getCart, updateQuantityItemCart, removeItemCart, clearCart 
 import { CartResponse, CartData, CartItemState } from '@/Modules/cart/types/cartType';
 import { QueryOptions } from '@/shared/types/queryOptions';
 import { QueryKeys } from '@/shared/types/query-keys';
+import { useAuth } from '@/Modules/auth/hooks/useAuth';
 
 export function useCartData({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
-  const { isLogin } = useSelector((state: RootState) => state.auth);
+  const { isLogin } = useAuth();
 
   const {
     data: cart,

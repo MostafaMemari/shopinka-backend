@@ -11,50 +11,6 @@ const initialState: CartState = {
   totalDiscount: 0,
 };
 
-// Thunk برای همگام‌سازی سبد خرید موقع لاگین
-export const syncCartWithApi = createAsyncThunk<void, void, { state: RootState }>(
-  'cart/syncCartWithApi',
-  async (_, { getState, dispatch, rejectWithValue }) => {
-    const {
-      auth: { isLogin },
-    } = getState();
-    if (!isLogin) return;
-
-    const pullServerCart = async () => {
-      const { items } = await getCart();
-      dispatch(setCart({ items }));
-    };
-
-    let localCart: CartItemState[] = [];
-    try {
-      localCart = JSON.parse(localStorage.getItem('cart') ?? '[]');
-    } catch {
-      localStorage.removeItem('cart');
-    }
-
-    if (localCart.length === 0) {
-      await pullServerCart();
-      return;
-    }
-
-    const itemsPayload: CartData[] = localCart.map((item) => ({
-      quantity: item.count,
-      productId: item.type === 'SIMPLE' ? Number(item.id) : undefined,
-      productVariantId: item.type === 'VARIABLE' ? Number(item.id) : undefined,
-    }));
-
-    try {
-      await createCartBulk({ items: itemsPayload });
-      localStorage.removeItem('cart');
-      await pullServerCart();
-    } catch (err) {
-      console.error('Failed to sync cart with API:', err);
-      return rejectWithValue(err instanceof Error ? err.message : 'unknown');
-    }
-  },
-);
-
-// Thunk برای اضافه کردن آیتم به سبد خرید
 export const addToCart = createAsyncThunk('cart/addToCart', async (item: CartItemState, { getState, dispatch }) => {
   const state = getState() as RootState;
   const { isLogin } = state.auth;

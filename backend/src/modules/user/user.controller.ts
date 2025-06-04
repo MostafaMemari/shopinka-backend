@@ -33,6 +33,7 @@ export class UserController {
 
   @Get('me')
   getMe(@GetUser() user: User) {
+    console.log('user', new Date().toLocaleString('fa-ir'));
     return user;
   }
 

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { HiOutlineBell, HiOutlineChevronLeft, HiOutlineClock, HiOutlineHeart, HiOutlineLogout, HiOutlineUser } from 'react-icons/hi';
 import { BiLogIn } from 'react-icons/bi';
@@ -10,6 +9,8 @@ import { useAuth } from '@/Modules/auth/hooks/useAuth';
 import { logout } from '@/Modules/auth/services/auth.api';
 import Toast from '@/shared/utils/swalToast';
 import { PulseLoader } from 'react-spinners';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 const ProfileDropdown = () => {
   const pathname = usePathname();
