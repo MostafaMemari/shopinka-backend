@@ -1,4 +1,3 @@
-// src/components/DesktopBasketDropdown.tsx
 import Link from 'next/link';
 import { HiOutlineChevronLeft } from 'react-icons/hi';
 import DesktopBasketItem from './DesktopBasketItem';
@@ -6,7 +5,7 @@ import { formatPrice } from '@/shared/utils/formatter';
 import { useCart } from '../hooks/useCart';
 
 export default function DesktopBasketDropdown() {
-  const { cart, totalPrice } = useCart();
+  const { cart, totalPrice, isLoading, error } = useCart();
 
   return (
     <div
@@ -58,3 +57,5 @@ export default function DesktopBasketDropdown() {
     </div>
   );
 }
+
+// src/components/BasketDropdown.tsx
