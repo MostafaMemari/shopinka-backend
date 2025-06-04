@@ -2,15 +2,14 @@
 import { formatPrice } from '@/shared/utils/formatter';
 import Image from 'next/image';
 import Link from 'next/link';
-import { CartItem } from '../types/cartType';
+import { CartItemState } from '../types/cartType';
 import { AttributeValues } from '@/shared/types/attributeType';
 import CartControls from '../components/CartControls';
 import ProductCardImage from '../components/ProductCardImage';
 import CartItemAttributes from '../components/CartItemAttributes';
 
 interface MobileBasketItemProp {
-  item: CartItem;
-  onRemove: () => void;
+  item: CartItemState;
 }
 
 export default function MobileBasketItem({ item }: MobileBasketItemProp) {
@@ -31,7 +30,7 @@ export default function MobileBasketItem({ item }: MobileBasketItemProp) {
         </div>
         <div className="flex items-center justify-between gap-x-2">
           <div className="text-primary">
-            <span className="font-bold">{formatPrice(item.price)}</span>
+            <span className="font-bold">{formatPrice(item.salePrice)}</span>
             <span className="text-xs"> تومان</span>
           </div>
 

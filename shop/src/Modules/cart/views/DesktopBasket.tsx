@@ -2,11 +2,15 @@ import Link from 'next/link';
 import { HiOutlineChevronLeft } from 'react-icons/hi';
 import DesktopBasketItem from './DesktopBasketItem';
 import { formatPrice } from '@/shared/utils/formatter';
-import { useCart } from '../hooks/useCart';
+import { CartItemState } from '../types/cartType';
 
-export default function DesktopBasketDropdown() {
-  const { cart, totalPrice, isLoading, error } = useCart();
+interface DesktopBasketDropdownProps {
+  cart: {
+    items: CartItemState[] | [];
+  };
+}
 
+export default function DesktopBasketDropdown({ cart }: DesktopBasketDropdownProps) {
   return (
     <div
       className={`
@@ -17,7 +21,7 @@ export default function DesktopBasketDropdown() {
       `}
     >
       <div className="flex items-center justify-between p-5 pb-2">
-        <div className="text-sm text-text/90">{cart.length} مورد</div>
+        <div className="text-sm text-text/90">{cart.items.length} مورد</div>
         <Link className="flex items-center gap-x-1 text-sm text-primary" href="/checkout-cart">
           <div>مشاهده سبد خرید</div>
           <div>
@@ -28,8 +32,8 @@ export default function DesktopBasketDropdown() {
 
       <div className="h-60">
         <ul className="main-scroll h-full space-y-2 divide-y overflow-y-auto p-5 pl-2">
-          {cart.length > 0 ? (
-            cart.map((item) => (
+          {cart.items.length > 0 ? (
+            cart.items.map((item) => (
               <li key={item.id}>
                 <DesktopBasketItem item={item} />
               </li>
@@ -44,7 +48,7 @@ export default function DesktopBasketDropdown() {
         <div className="flex flex-col items-center gap-y-1">
           <div className="text-sm text-text/60">مبلغ قابل پرداخت</div>
           <div className="text-text/90">
-            <span className="font-bold">{formatPrice(totalPrice)}</span>
+            <span className="font-bold">{formatPrice(0)}</span>
             <span className="text-sm"> تومان</span>
           </div>
         </div>

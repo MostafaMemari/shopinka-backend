@@ -33,11 +33,10 @@ export const useCartLogic = ({ product }: ProductCardLogicProps) => {
 
   useEffect(() => {
     const found = cart.find((item) => item.id === cartItemId);
-    // فقط اگر ID محصول یا تعداد آن تغییر کرده باشد، state را به‌روزرسانی کن
     if (found?.id !== existingProduct?.id || found?.count !== existingProduct?.count) {
       setExistingProduct(found);
     }
-  }, [cart, cartItemId]); // فقط به cart و cartItemId وابسته است
+  }, [cart, cartItemId]);
 
   const isVariantSelected = !!selectedVariant;
   const isInCart = !!existingProduct;

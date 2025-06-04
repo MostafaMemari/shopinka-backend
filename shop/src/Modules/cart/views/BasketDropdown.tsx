@@ -6,7 +6,7 @@ import MobileBasketDrawer from './MobileBasket';
 import { useCart } from '../hooks/useCart';
 
 export default function BasketDropdown() {
-  const { cart } = useCart();
+  const { cart, totalPrice, isLoading, error } = useCart();
 
   const totalQuantity = cart.reduce((sum, item) => sum + item.count, 0) || 0;
 
@@ -24,11 +24,11 @@ export default function BasketDropdown() {
       </button>
 
       <div className="relative group hidden md:block">
-        <DesktopBasketDropdown />
+        <DesktopBasketDropdown cart={{ items: cart }} />
       </div>
 
       <div className="md:hidden">
-        <MobileBasketDrawer />
+        <MobileBasketDrawer cart={{ items: cart }} />
       </div>
     </div>
   );
