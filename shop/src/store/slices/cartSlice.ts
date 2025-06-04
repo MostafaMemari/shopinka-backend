@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '@/store';
 import { createCartBulk, getCart, updateQuantityItemCart, removeItemCart, clearCart } from '@/Modules/cart/services/cart.api';
-import { CartData, CartItemState, CartResponse } from '@/Modules/cart/types/cartType';
+import { CartData, CartItem, CartItemState, CartResponse } from '@/Modules/cart/types/cartType';
 
 interface CartState {
   items: CartItemState[];
@@ -26,21 +26,29 @@ const calculateTotals = (items: CartItemState[]): Pick<CartState, 'totalPrice' |
   };
 };
 
-// تبدیل پاسخ API به CartItemState
 export const mapCartResponseToCartItemState = (cart: CartResponse): CartItemState[] => {
-  return cart.cartItems.map((item: any) => {
-    const isSimple = !!item.productId;
-    const source = isSimple ? item.product : item.productVariant;
+  return cart.items?.map((item: CartItem) => {
+    const productId = item.product?.id ?? item.productVariant?.id ?? 0;
+    const type = item.product?.type === 'SIMPLE' ? 'SIMPLE' : 'VARIABLE';
+    const productTitle = item.product?.name ?? item.productVariant?.product?.name ?? '';
+    const productThumbnail = item.product?.mainImage?.fileUrl ?? item.productVariant?.product?.mainImage?.fileUrl ?? '';
+
+    const basePrice = item.product?.basePrice ?? item.productVariant?.basePrice ?? 0;
+    const salePrice = item.product?.salePrice ?? item.productVariant?.salePrice ?? 0;
+    const discount = Math.max(basePrice - salePrice, 0);
+
+    const attributeValues = item.productVariant?.attributeValues ?? [];
+
     return {
-      id: (item.productId || item.productVariantId)?.toString(),
+      id: productId,
       count: item.quantity,
-      type: isSimple ? 'SIMPLE' : 'VARIABLE',
-      title: source?.title || '',
-      thumbnail: source?.thumbnail || '',
-      basePrice: source?.basePrice || 0,
-      salePrice: source?.salePrice || 0,
-      discount: source?.discount || 0,
-      attributeValues: source?.attributeValues || [],
+      type,
+      title: productTitle,
+      thumbnail: productThumbnail,
+      basePrice,
+      salePrice,
+      discount,
+      attributeValues,
     };
   });
 };

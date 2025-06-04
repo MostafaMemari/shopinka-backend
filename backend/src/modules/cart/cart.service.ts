@@ -28,15 +28,15 @@ export class CartService {
         items: {
           include: {
             product: {
-              select: { id: true, name: true, salePrice: true, basePrice: true, mainImage: { select: { fileUrl: true } } },
+              select: { id: true, name: true, type: true, salePrice: true, basePrice: true, mainImage: { select: { fileUrl: true } } },
             },
             productVariant: {
               select: {
                 id: true,
-                mainImage: true,
                 salePrice: true,
                 basePrice: true,
-                product: { select: { name: true, mainImage: { select: { fileUrl: true } } } },
+                product: { select: { name: true, type: true, mainImage: { select: { fileUrl: true } } } },
+                attributeValues: { select: { name: true, colorCode: true, buttonLabel: true } },
               },
             },
           },
@@ -44,9 +44,7 @@ export class CartService {
       },
     });
 
-    return {
-      cart,
-    };
+    return { ...cart };
   }
 
   async clear(userId: number): Promise<Cart> {

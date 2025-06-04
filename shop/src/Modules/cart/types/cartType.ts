@@ -20,13 +20,32 @@ export interface CartItem {
   quantity: number;
   createdAt: string;
   updatedAt: string;
-  product: Product | null;
-  productVariant: ProductVariant | null;
+  product: {
+    id: number;
+    name: string;
+    salePrice: number | null;
+    basePrice: number | null;
+    type: 'SIMPLE' | 'VARIABLE';
+    mainImage: { fileUrl: string | null } | null;
+  } | null;
+  productVariant: {
+    id: number;
+    salePrice: number;
+    basePrice: number;
+    product: {
+      name: string;
+      mainImage: { fileUrl: string } | null;
+      type: 'SIMPLE' | 'VARIABLE';
+    };
+    attributeValues: AttributeValues[] | [];
+  } | null;
 }
 export interface CartResponse {
-  finalPrice: number;
-  totalSaved: number;
-  cartItems: CartItem[];
+  id: number;
+  userId: number;
+  createdAt: string;
+  updatedAt: string;
+  items: CartItem[];
 }
 
 export interface CartData {
