@@ -1,3 +1,5 @@
+'use client';
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -106,9 +108,9 @@ export const useCart = () => {
     cart: currentCart,
     isLoading,
     error,
-    totalPrice: isLogin && cart ? cart.finalPrice : totalPrice,
-    totalDiscountPrice: isLogin && cart ? cart.finalPrice : totalDiscountPrice,
-    totalDiscount: isLogin && cart ? cart.totalSaved : totalDiscount,
+    totalPrice: isLogin && cart ? 0 : totalPrice,
+    totalDiscountPrice: isLogin && cart ? 0 : totalDiscountPrice,
+    totalDiscount: isLogin && cart ? 0 : totalDiscount,
     addToCart: (item: CartItemState) => {
       if (!isLogin) {
         dispatch(addToCart(item));

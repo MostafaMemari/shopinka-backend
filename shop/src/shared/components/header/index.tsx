@@ -21,14 +21,6 @@ function Header() {
             <div className="flex">
               <ProfileDropdown />
               <BasketDropdown />
-              <div className="cursor-pointer" id="toggleThemeDesktop">
-                <div className="dark:hidden">
-                  <HiOutlineMoon className="h-6 w-6" />
-                </div>
-                <div className="hidden dark:block">
-                  <HiOutlineSun className="h-6 w-6" />
-                </div>
-              </div>
             </div>
           </div>
 
