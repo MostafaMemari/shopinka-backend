@@ -52,12 +52,6 @@ export function useAuth() {
     }
   }, [checkAuth, isLogin]);
 
-  useEffect(() => {
-    if (!isLogin) {
-      checkAuth();
-    }
-  }, [checkAuth, isLogin]);
-
   const loginUser = useCallback(
     async (userData: UserState) => {
       dispatch(loginStart());

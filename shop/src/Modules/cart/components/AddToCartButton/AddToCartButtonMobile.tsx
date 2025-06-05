@@ -2,7 +2,6 @@
 'use client';
 
 import { CartButtonContent } from './CartButtonContent';
-import PriceDisplay from '../../../productDetails/components/PriceDisplay';
 import { useCartLogic } from '../../hooks/useCartLogic';
 import { ProductCardLogic } from '../../types/productCardLogic';
 

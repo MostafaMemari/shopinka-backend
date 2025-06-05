@@ -20,7 +20,7 @@ export default function DesktopBasketDropdown({ cartItems, totalPrice }: Desktop
       `}
     >
       <div className="flex items-center justify-between p-5 pb-2">
-        <div className="text-sm text-text/90">{cartItems.length} مورد</div>
+        <div className="text-sm text-text/90">{cartItems?.length} مورد</div>
         <Link className="flex items-center gap-x-1 text-sm text-primary" href="/checkout-cart">
           <div>مشاهده سبد خرید</div>
           <div>
@@ -31,8 +31,8 @@ export default function DesktopBasketDropdown({ cartItems, totalPrice }: Desktop
 
       <div className="h-60">
         <ul className="main-scroll h-full space-y-2 divide-y overflow-y-auto p-5 pl-2">
-          {cartItems.length > 0 ? (
-            cartItems.map((item) => (
+          {cartItems?.length > 0 ? (
+            cartItems?.map((item) => (
               <li key={item.id}>
                 <DesktopBasketItem item={item} />
               </li>

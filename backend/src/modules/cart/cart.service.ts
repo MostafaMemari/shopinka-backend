@@ -107,7 +107,7 @@ export class CartService {
         include: { items: true },
       });
 
-      const createdItems: CartItem[] = [];
+      const createdOrUpdatedItems: CartItem[] = [];
 
       for (const item of items) {
         const { productId, productVariantId, quantity } = item;
@@ -121,34 +121,62 @@ export class CartService {
           },
         });
 
-        if (existingCartItem) throw new ConflictException(CartItemMessages.AlreadyExistsCartItem);
-
-        if (productId) {
-          const product = await prisma.product.findFirst({
-            where: { id: productId, status: ProductStatus.PUBLISHED },
+        if (existingCartItem) {
+          const updatedItem = await prisma.cartItem.update({
+            where: { id: existingCartItem.id },
+            data: { quantity: { increment: quantity } },
+            include: { product: true, productVariant: true },
           });
 
-          if (!product || product.quantity < quantity) throw new BadRequestException(CartItemMessages.ProductNotAvailable);
-        }
+          if (productId) {
+            const product = await prisma.product.findFirst({
+              where: { id: productId, status: ProductStatus.PUBLISHED },
+            });
+            if (!product || product.quantity < updatedItem.quantity) {
+              throw new BadRequestException(CartItemMessages.ProductNotAvailable);
+            }
+          }
 
-        if (productVariantId) {
-          const productVariant = await prisma.productVariant.findFirst({
-            where: { id: productVariantId },
+          if (productVariantId) {
+            const productVariant = await prisma.productVariant.findFirst({
+              where: { id: productVariantId },
+            });
+            if (!productVariant || productVariant.quantity < updatedItem.quantity) {
+              throw new BadRequestException(CartItemMessages.ProductVariantNotAvailable);
+            }
+          }
+
+          createdOrUpdatedItems.push(updatedItem);
+        } else {
+          if (productId) {
+            const product = await prisma.product.findFirst({
+              where: { id: productId, status: ProductStatus.PUBLISHED },
+            });
+            if (!product || product.quantity < quantity) {
+              throw new BadRequestException(CartItemMessages.ProductNotAvailable);
+            }
+          }
+
+          if (productVariantId) {
+            const productVariant = await prisma.productVariant.findFirst({
+              where: { id: productVariantId },
+            });
+            if (!productVariant || productVariant.quantity < quantity) {
+              throw new BadRequestException(CartItemMessages.ProductVariantNotAvailable);
+            }
+          }
+
+          // Create new item
+          const newItem = await prisma.cartItem.create({
+            data: { ...item, cartId: cart.id },
+            include: { product: true, productVariant: true },
           });
 
-          if (!productVariant || productVariant.quantity < quantity)
-            throw new BadRequestException(CartItemMessages.ProductVariantNotAvailable);
+          createdOrUpdatedItems.push(newItem);
         }
-
-        const newItem = await prisma.cartItem.create({
-          data: { ...item, cartId: cart.id },
-          include: { product: true, productVariant: true },
-        });
-
-        createdItems.push(newItem);
       }
 
-      return { message: CartItemMessages.CreatedCartItemSuccess, cartItems: createdItems };
+      return { message: CartItemMessages.CreatedCartItemSuccess, cartItems: createdOrUpdatedItems };
     });
   }
 

@@ -48,7 +48,6 @@ export const addToCart = createAsyncThunk('cart/addToCart', async (item: CartIte
   }
 });
 
-// Thunk برای افزایش تعداد آیتم
 export const increaseCount = createAsyncThunk('cart/increaseCount', async (item: CartItemState, { getState, dispatch }) => {
   const state = getState() as RootState;
   const { isLogin } = state.auth;
@@ -73,7 +72,6 @@ export const increaseCount = createAsyncThunk('cart/increaseCount', async (item:
   }
 });
 
-// Thunk برای کاهش تعداد آیتم
 export const decreaseCount = createAsyncThunk('cart/decreaseCount', async (item: CartItemState, { getState, dispatch }) => {
   const state = getState() as RootState;
   const { isLogin } = state.auth;
@@ -98,7 +96,6 @@ export const decreaseCount = createAsyncThunk('cart/decreaseCount', async (item:
   }
 });
 
-// Thunk برای حذف آیتم از سبد خرید
 export const deleteFromCart = createAsyncThunk('cart/deleteFromCart', async (itemId: string, { getState, dispatch }) => {
   const state = getState() as RootState;
   const { isLogin } = state.auth;
@@ -123,7 +120,6 @@ export const deleteFromCart = createAsyncThunk('cart/deleteFromCart', async (ite
   }
 });
 
-// Thunk برای پاک کردن سبد خرید
 export const clearCartAction = createAsyncThunk('cart/clearCart', async (_, { getState, dispatch }) => {
   const state = getState() as RootState;
   const { isLogin } = state.auth;
@@ -145,7 +141,6 @@ export const clearCartAction = createAsyncThunk('cart/clearCart', async (_, { ge
   }
 });
 
-// تعریف cartSlice
 const cartSlice = createSlice({
   name: 'cart',
   initialState,

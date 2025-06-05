@@ -12,7 +12,7 @@ export default function BasketDropdown() {
 
   const totals = calculateTotals(cartItems);
 
-  const totalQuantity = cartItems.reduce((sum, item) => sum + item.count, 0) || 0;
+  const totalQuantity = cartItems?.reduce((sum, item) => sum + item.count, 0) || 0;
   const totalPrice = totals.totalPrice;
 
   const totalDiscountPrice = totals.totalDiscountPrice;

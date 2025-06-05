@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getCart, createCartBulk } from '../services/cart.api';
@@ -12,15 +12,13 @@ export function useSyncCart() {
   const queryClient = useQueryClient();
 
   const pullServerCart = async () => {
-    // تلاش برای گرفتن داده از کش
     let cartData = queryClient.getQueryData<{ items: CartItemState[] }>([QueryKeys.Cart]);
 
     if (!cartData) {
-      // اگه داده توی کش نبود، کوئری رو دستی اجرا کن
       cartData = await queryClient.fetchQuery({
         queryKey: [QueryKeys.Cart],
         queryFn: getCart,
-        staleTime: 1 * 60 * 1000, // مشابه useCartData
+        staleTime: 1 * 60 * 1000,
       });
     }
 
@@ -31,12 +29,11 @@ export function useSyncCart() {
     return [];
   };
 
-  // موتیشن برای ارسال آیتم‌های محلی به سرور
   const { mutateAsync: syncCartMutation } = useMutation({
     mutationFn: (itemsPayload: CartData[]) => createCartBulk({ items: itemsPayload }),
     onSuccess: () => {
       localStorage.removeItem('cart');
-      pullServerCart(); // بعد از موفقیت، سبد خرید رو از سرور بگیر
+      pullServerCart();
     },
     onError: (err) => {
       console.error('Failed to sync cart with API:', err);
@@ -66,13 +63,18 @@ export function useSyncCart() {
 
     try {
       await syncCartMutation(itemsPayload);
-      // اطمینان از به‌روزرسانی useCartData
       queryClient.invalidateQueries({ queryKey: [QueryKeys.Cart] });
     } catch (err) {
       console.error('Failed to sync cart:', err);
-      throw err; // برای مدیریت خطا در کامپوننت
+      throw err;
     }
   }, [isLogin, syncCartMutation, queryClient]);
+
+  useEffect(() => {
+    if (isLogin) {
+      syncCart();
+    }
+  }, [isLogin, syncCart]);
 
   return { syncCart };
 }
