@@ -32,7 +32,9 @@ export default function DesktopBasketItem({ item }: ItemCardBasketProp) {
         <div className="flex items-center justify-between gap-x-2">
           <ProductPriceCard oldPrice={item.basePrice} newPrice={item.salePrice} discount={item.discount} />
 
-          <CartControls product={item} />
+          <div className="w-28">
+            <CartControls product={item} />
+          </div>
         </div>
       </div>
     </div>

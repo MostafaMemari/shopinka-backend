@@ -11,7 +11,7 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
     <>
       <Header />
 
-      <main className="grow bg-background pb-14 pt-36 xs:pt-36">
+      <main className="grow bg-background pb-14 pt-22 lg:pt-36">
         {children}
         <NewestProductsCarousel />
         <ProductTabs description={product.description} specifications={product.properties} comments={product.comments} />

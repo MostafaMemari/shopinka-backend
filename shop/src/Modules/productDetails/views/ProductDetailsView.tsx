@@ -150,21 +150,31 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
 
                 <ProductGuaranteeBadge />
 
-                <div className="fixed inset-x-0 bottom-0 z-10 bg-muted p-5">
-                  <div className="flex items-center justify-between gap-x-6">
-                    <div className="flex grow items-center gap-2">
-                      <AddToCartButtonMobile
-                        key={product.id}
-                        product={{
-                          id: product.id,
-                          name: product.name,
-                          basePrice: product.basePrice ?? 0,
-                          salePrice: product.salePrice ?? 0,
-                          mainImageUrl: product.mainImage?.fileUrl ?? null,
-                          type: product.type,
-                        }}
-                      />
-                      <PriceDisplay product={{ type: product.type, basePrice: product.basePrice ?? 0, salePrice: product.salePrice }} />
+                <div className="fixed bottom-3 right-3 left-3 rounded-2xl z-50 bg-white shadow-md">
+                  <div className="flex justify-between items-center text-xs rtl flex-row-reverse h-[60px]">
+                    <div className="flex justify-between items-center w-full">
+                      <div className="w-1/2 p-3">
+                        <AddToCartButtonMobile
+                          key={product.id}
+                          product={{
+                            id: product.id,
+                            name: product.name,
+                            basePrice: product.basePrice ?? 0,
+                            salePrice: product.salePrice ?? 0,
+                            mainImageUrl: product.mainImage?.fileUrl ?? null,
+                            type: product.type,
+                          }}
+                        />
+                      </div>
+                      <div className="p-2">
+                        <PriceDisplay
+                          product={{
+                            type: product.type,
+                            basePrice: product.basePrice ?? 0,
+                            salePrice: product.salePrice,
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

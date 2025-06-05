@@ -1,8 +1,11 @@
 'use client';
 
-import { CartButtonContent } from './CartButtonContent';
 import { useCartLogic } from '../../hooks/useCartLogic';
 import { ProductCardLogic } from '../../types/productCardLogic';
+import CartControls from '../CartControls';
+import Link from 'next/link';
+import PrimaryButton from '@/shared/components/PrimaryButton';
+import { PulseLoader } from 'react-spinners';
 
 interface AddToCartButtonDesktopProps {
   product: ProductCardLogic;
@@ -12,16 +15,42 @@ export function AddToCartButtonDesktop({ product }: AddToCartButtonDesktopProps)
   const { isVariableProduct, isVariantSelected, isInCart, existingProduct, addToCart, isAddingToCart } = useCartLogic({ product });
 
   return (
-    <div className="mb-6 flex items-center gap-4">
-      <CartButtonContent
-        isVariableProduct={isVariableProduct}
-        isVariantSelected={isVariantSelected}
-        isInCart={isInCart}
-        existingProduct={existingProduct}
-        addToCart={addToCart}
-        isAddingToCart={isAddingToCart}
-        className="w-full py-3"
-      />
+    <div className="mb-6 center gap-4">
+      {isInCart ? (
+        <div className={'flex items-center gap-4'}>
+          {existingProduct && (
+            <div className="w-1/3">
+              <CartControls product={existingProduct} />
+            </div>
+          )}
+          <div className="hidden lg:flex flex-col items-start text-sm">
+            <span className="text-primary font-medium">در سبد شما</span>
+            <Link href="/cart" className="text-blue-600 hover:underline text-sm font-normal mt-1">
+              مشاهده سبد خرید
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <>
+          <PrimaryButton
+            type="submit"
+            onClick={addToCart}
+            aria-label={isVariableProduct && !isVariantSelected ? 'لطفاً گزینه‌های محصول را انتخاب کنید' : 'افزودن به سبد خرید'}
+            isLoading={isAddingToCart}
+            disabled={(isVariableProduct && !isVariantSelected) || isAddingToCart}
+          >
+            {isAddingToCart ? (
+              <div className="flex items-center justify-center gap-2">
+                <PulseLoader color="#ffffff" size={6} loading aria-label="در حال بارگذاری" />
+              </div>
+            ) : isVariableProduct && !isVariantSelected ? (
+              'لطفاً گزینه‌های محصول را انتخاب کنید'
+            ) : (
+              'افزودن به سبد خرید'
+            )}
+          </PrimaryButton>
+        </>
+      )}
     </div>
   );
 }

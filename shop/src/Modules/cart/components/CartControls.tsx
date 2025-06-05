@@ -20,7 +20,7 @@ export function CartControls({ product, className }: CartControlsProps) {
   return (
     <div
       className={cn(
-        'flex h-10 w-28 items-center justify-between rounded-lg border border-gray-200 bg-white px-2 py-1 shadow-sm transition-all dark:border-gray-700 dark:bg-gray-800',
+        'flex h-12 w-full items-center justify-between rounded-lg border border-gray-200 bg-white px-2 py-1 shadow-sm transition-all dark:border-gray-700 dark:bg-gray-800',
         className,
       )}
     >

@@ -3,15 +3,16 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import MobileLogo from './ui/Logo/MobileLogo';
-import MobileMenu from './header/MobileMenu';
+
 import { categories } from '@/mock/categories';
 import { PiPhoneCall } from 'react-icons/pi';
 import { LuList, LuShoppingCart, LuUser, LuCheck } from 'react-icons/lu';
 import { RiHome3Line } from 'react-icons/ri';
 import { useAuth } from '@/Modules/auth/hooks/useAuth';
+import MobileMenu from '@/shared/components/header/MobileMenu';
+import MobileLogo from '@/shared/components/ui/Logo/MobileLogo';
 
-const MobileLayout = () => {
+const ProductLayout = () => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isLogin } = useAuth();
@@ -46,7 +47,7 @@ const MobileLayout = () => {
       )}
 
       <div className="fixed top-3 right-3 left-3 rounded-2xl z-50 bg-white shadow-md">
-        <div className="flex items-center justify-between py-2 px-4 [60px]">
+        <div className="flex items-center justify-between py-2 px-4">
           <MobileMenu categories={categories} onToggleMenu={setIsMenuOpen} />
           <MobileLogo />
           <PiPhoneCall className="h-6 w-6" />
@@ -54,7 +55,7 @@ const MobileLayout = () => {
       </div>
 
       <nav className="fixed bottom-3 right-3 left-3 rounded-2xl z-50 bg-white shadow-md">
-        <ul className="flex justify-between items-center text-xs rtl flex-row-reverse h-[60px]">
+        <ul className="flex justify-between items-center text-xs rtl flex-row-reverse">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -77,4 +78,4 @@ const MobileLayout = () => {
   );
 };
 
-export default MobileLayout;
+export default ProductLayout;
