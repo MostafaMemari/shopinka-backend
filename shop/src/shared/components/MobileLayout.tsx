@@ -7,19 +7,30 @@ import MobileLogo from './ui/Logo/MobileLogo';
 import MobileMenu from './header/MobileMenu';
 import { categories } from '@/mock/categories';
 import { PiPhoneCall } from 'react-icons/pi';
-import { LuList, LuShoppingCart, LuUser } from 'react-icons/lu';
+import { LuList, LuShoppingCart, LuUser, LuCheck } from 'react-icons/lu';
 import { RiHome3Line } from 'react-icons/ri';
+import { useAuth } from '@/Modules/auth/hooks/useAuth';
 
 const MobileLayout = () => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isLogin } = useAuth();
 
   if (pathname.startsWith('/product')) {
     return null;
   }
 
   const navItems = [
-    { href: '/account', icon: <LuUser size={22} />, label: 'حساب کاربری' },
+    {
+      href: `${isLogin ? '/profile' : '/login'}`,
+      icon: (
+        <div className="relative">
+          <LuUser size={22} />
+          {isLogin && <LuCheck size={14} className="absolute -bottom-1 -right-1 text-primary bg-white rounded-full p-0.5" />}
+        </div>
+      ),
+      label: 'حساب کاربری',
+    },
     { href: '/cart', icon: <LuShoppingCart size={22} />, label: 'سبد خرید' },
     { href: '/categories', icon: <LuList size={22} />, label: 'دسته‌بندی' },
     { href: '/', icon: <RiHome3Line size={22} />, label: 'خانه' },

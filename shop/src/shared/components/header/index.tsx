@@ -1,10 +1,7 @@
-import { HiOutlineMoon, HiOutlineSun } from 'react-icons/hi';
 import DesktopLogo from '../ui/Logo/DesktopLogo';
 import ProfileDropdown from './ProfileDropdown';
-import MobileLogo from '../ui/Logo/MobileLogo';
 import TopbarContainer from './TopbarContainer';
 import { categories } from '@/mock/categories';
-import MobileMenu from './MobileMenu';
 import SearchBarBase from './SearchBar';
 import { mockProductItems } from '@/mock/searchBar';
 import BasketDropdown from '../../../Modules/cart/views/BasketDropdown';
