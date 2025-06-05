@@ -40,7 +40,6 @@ export class CartController {
   @Post('items')
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   addItems(@Body() bulkDto: BulkCreateCartItemDto, @GetUser() user: User) {
-    console.log(bulkDto);
     return this.cartService.addItems(user.id, bulkDto.items);
   }
 

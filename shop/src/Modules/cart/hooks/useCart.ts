@@ -95,6 +95,7 @@ export const useCart = () => {
     isLoading,
     error,
     addToCart: (item: CartItemState) => {
+      console.log(item);
       if (!isLogin) {
         dispatch(addToCart(item));
       } else {

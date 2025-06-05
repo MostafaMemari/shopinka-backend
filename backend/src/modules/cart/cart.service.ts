@@ -68,34 +68,72 @@ export class CartService {
   }
 
   async addItem(userId: number, createCartItemDto: CreateCartItemDto): Promise<{ message: string; cartItem: CartItem }> {
-    const { quantity, productId, productVariantId } = createCartItemDto;
+    return this.prismaService.$transaction(async (prisma) => {
+      const { quantity, productId, productVariantId } = createCartItemDto;
 
-    if (productId && productVariantId) throw new BadRequestException(CartItemMessages.OneFailedAllowed);
+      if (productId && productVariantId) {
+        throw new BadRequestException(CartItemMessages.OneFailedAllowed);
+      }
 
-    const existingCartItem = await this.cartItemRepository.findOne({ where: { OR: [{ productId }, { productVariantId }] } });
+      const cart = await prisma.cart.upsert({
+        where: { userId },
+        update: {},
+        create: { userId },
+        include: { items: true },
+      });
 
-    if (existingCartItem) throw new ConflictException(CartItemMessages.AlreadyExistsCartItem);
+      const existingCartItem = await prisma.cartItem.findFirst({
+        where: {
+          cartId: cart.id,
+          OR: [{ productId }, { productVariantId }],
+        },
+        include: { product: true, productVariant: true },
+      });
 
-    let cart = (await this.cartRepository.findOne({
-      where: { userId },
-      include: { items: { include: { product: true, productVariant: true } } },
-    })) as any;
+      let cartItem: CartItem;
 
-    if (!cart) await this.cartRepository.create({ data: { userId } });
+      if (existingCartItem) {
+        const newQuantity = existingCartItem.quantity + quantity;
 
-    const product =
-      productId && (await this.productRepository.findOneOrThrow({ where: { id: productId, status: ProductStatus.PUBLISHED } }));
-    const productVariant = productVariantId && (await this.productVariantRepository.findOneOrThrow({ where: { id: productVariantId } }));
+        if (productId && existingCartItem.product?.quantity < newQuantity) {
+          throw new BadRequestException(CartItemMessages.ProductNotAvailable);
+        }
+        if (productVariantId && existingCartItem.productVariant?.quantity < newQuantity) {
+          throw new BadRequestException(CartItemMessages.ProductVariantNotAvailable);
+        }
 
-    if (product && product.quantity < quantity) throw new BadRequestException(CartItemMessages.ProductNotAvailable);
-    if (productVariant && productVariant.quantity < quantity) throw new BadRequestException(CartItemMessages.ProductVariantNotAvailable);
+        cartItem = await prisma.cartItem.update({
+          where: { id: existingCartItem.id },
+          data: { quantity: newQuantity },
+          include: { product: true, productVariant: true },
+        });
+      } else {
+        if (productId) {
+          const product = await prisma.product.findFirst({
+            where: { id: productId, status: ProductStatus.PUBLISHED },
+          });
+          if (!product || product.quantity < quantity) {
+            throw new BadRequestException(CartItemMessages.ProductNotAvailable);
+          }
+        }
 
-    const newCartItem = await this.cartItemRepository.create({
-      data: { ...createCartItemDto, cartId: cart.id },
-      include: { product: true, productVariant: true },
+        if (productVariantId) {
+          const productVariant = await prisma.productVariant.findFirst({
+            where: { id: productVariantId },
+          });
+          if (!productVariant || productVariant.quantity < quantity) {
+            throw new BadRequestException(CartItemMessages.ProductVariantNotAvailable);
+          }
+        }
+
+        cartItem = await prisma.cartItem.create({
+          data: { ...createCartItemDto, cartId: cart.id },
+          include: { product: true, productVariant: true },
+        });
+      }
+
+      return { message: CartItemMessages.CreatedCartItemSuccess, cartItem };
     });
-
-    return { message: CartItemMessages.CreatedCartItemSuccess, cartItem: newCartItem };
   }
 
   async addItems(userId: number, items: CreateCartItemDto[]): Promise<{ message: string; cartItems: CartItem[] }> {
@@ -109,64 +147,75 @@ export class CartService {
 
       const createdOrUpdatedItems: CartItem[] = [];
 
+      const productIds = items.filter((item) => item.productId).map((item) => item.productId!);
+      const productVariantIds = items.filter((item) => item.productVariantId).map((item) => item.productVariantId!);
+
+      const products = productIds.length
+        ? await prisma.product.findMany({
+            where: { id: { in: productIds }, status: ProductStatus.PUBLISHED },
+          })
+        : [];
+
+      const productVariants = productVariantIds.length
+        ? await prisma.productVariant.findMany({
+            where: { id: { in: productVariantIds } },
+          })
+        : [];
+
       for (const item of items) {
         const { productId, productVariantId, quantity } = item;
 
-        if (productId && productVariantId) throw new BadRequestException(CartItemMessages.OneFailedAllowed);
+        if (productId && productVariantId) {
+          throw new BadRequestException(CartItemMessages.OneFailedAllowed);
+        }
 
         const existingCartItem = await prisma.cartItem.findFirst({
           where: {
             cartId: cart.id,
             OR: [{ productId }, { productVariantId }],
           },
+          include: { product: true, productVariant: true },
         });
 
         if (existingCartItem) {
-          const updatedItem = await prisma.cartItem.update({
-            where: { id: existingCartItem.id },
-            data: { quantity: { increment: quantity } },
-            include: { product: true, productVariant: true },
-          });
+          const newQuantity = existingCartItem.quantity + quantity;
 
           if (productId) {
-            const product = await prisma.product.findFirst({
-              where: { id: productId, status: ProductStatus.PUBLISHED },
-            });
-            if (!product || product.quantity < updatedItem.quantity) {
+            const product = products.find((p) => p.id === productId);
+            if (!product || product.quantity < newQuantity) {
               throw new BadRequestException(CartItemMessages.ProductNotAvailable);
             }
           }
 
           if (productVariantId) {
-            const productVariant = await prisma.productVariant.findFirst({
-              where: { id: productVariantId },
-            });
-            if (!productVariant || productVariant.quantity < updatedItem.quantity) {
+            const productVariant = productVariants.find((pv) => pv.id === productVariantId);
+            if (!productVariant || productVariant.quantity < newQuantity) {
               throw new BadRequestException(CartItemMessages.ProductVariantNotAvailable);
             }
           }
 
+          const updatedItem = await prisma.cartItem.update({
+            where: { id: existingCartItem.id },
+            data: { quantity: newQuantity },
+            include: { product: true, productVariant: true },
+          });
+
           createdOrUpdatedItems.push(updatedItem);
         } else {
           if (productId) {
-            const product = await prisma.product.findFirst({
-              where: { id: productId, status: ProductStatus.PUBLISHED },
-            });
+            const product = products.find((p) => p.id === productId);
             if (!product || product.quantity < quantity) {
               throw new BadRequestException(CartItemMessages.ProductNotAvailable);
             }
           }
 
           if (productVariantId) {
-            const productVariant = await prisma.productVariant.findFirst({
-              where: { id: productVariantId },
-            });
+            const productVariant = productVariants.find((pv) => pv.id === productVariantId);
             if (!productVariant || productVariant.quantity < quantity) {
               throw new BadRequestException(CartItemMessages.ProductVariantNotAvailable);
             }
           }
 
-          // Create new item
           const newItem = await prisma.cartItem.create({
             data: { ...item, cartId: cart.id },
             include: { product: true, productVariant: true },
