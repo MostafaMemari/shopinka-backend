@@ -37,8 +37,10 @@ function Header() {
 
             <MobileLogo />
             <div className="flex gap-x-1">
-              <ProfileDropdown />
-              <BasketDropdown />
+              <div className="flex justify-center items-center">
+                <ProfileDropdown />
+                <BasketDropdown />
+              </div>
             </div>
           </div>
           <div className="absolute left-0 right-0 top-full z-20 bg-muted pb-4 transition-transform duration-300" id="mobile-header-bottom">

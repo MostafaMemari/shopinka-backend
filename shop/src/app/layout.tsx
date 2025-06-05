@@ -4,6 +4,7 @@ import './tailwind.css';
 import { iranyekan } from '@/fonts/iranyekan';
 import ClientProvider from './ClientProvider';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import BottomNav from '@/shared/components/BottomNav';
 
 export const metadata: Metadata = {
   title: 'صفجه اصلی | فروشگاه اینترنتی شاپینکا',
@@ -18,6 +19,8 @@ export default function RootLayout({
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <body className={`${iranyekan} antialiased`}>
+        <BottomNav />
+
         <ClientProvider>
           <div className="flex min-h-screen flex-col">
             <NuqsAdapter>{children}</NuqsAdapter>

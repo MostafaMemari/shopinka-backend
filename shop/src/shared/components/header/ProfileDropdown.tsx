@@ -1,36 +1,24 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
-import { HiOutlineBell, HiOutlineChevronLeft, HiOutlineClock, HiOutlineHeart, HiOutlineLogout, HiOutlineUser } from 'react-icons/hi';
-import { BiLogIn } from 'react-icons/bi';
-import { usePathname } from 'next/navigation';
 import { useAuth } from '@/Modules/auth/hooks/useAuth';
 import { logout } from '@/Modules/auth/services/auth.api';
 import Toast from '@/shared/utils/swalToast';
 import { PulseLoader } from 'react-spinners';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
+import Link from 'next/link';
+import { HiOutlineBell, HiOutlineChevronLeft, HiOutlineClock, HiOutlineHeart, HiOutlineLogout, HiOutlineUser } from 'react-icons/hi';
+import { BiLogIn } from 'react-icons/bi';
+import { usePathname } from 'next/navigation';
+import { useDropdown } from '@/shared/hooks/useDropdown';
+import IconButtonWithBadge from '../IconButtonWithBadge';
+import SkeletonLoader from '../SkeletonLoader';
 
 const ProfileDropdown = () => {
   const pathname = usePathname();
   const { isLogin, user, logoutUser, isLoading } = useAuth();
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const isDesktop = useRef(typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches).current;
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const toggleDropdown = () => setIsOpen((prev) => !prev);
+  const { isOpen, dropdownRef, handleMouseEnter, handleMouseLeave, closeDropdown } = useDropdown({
+    closeOnOutsideClick: false,
+    openOnHover: true,
+  });
 
   const handleUserLogout = async () => {
     try {
@@ -38,7 +26,7 @@ const ProfileDropdown = () => {
       if (res?.status === 201 || res?.status === 200) {
         logoutUser();
         Toast.fire({ icon: 'success', title: 'خروج با موفقیت انجام شد' });
-        setIsOpen(false);
+        closeDropdown();
       }
     } catch (err) {
       console.error('Logout error:', err);
@@ -71,28 +59,21 @@ const ProfileDropdown = () => {
   if (isLoading) {
     return (
       <div className="flex h-9 items-center justify-center gap-2 rounded-full px-4">
-        <PulseLoader color="var(--color-primary, #10b981)" size={6} loading aria-label="در حال بارگذاری" />
+        <SkeletonLoader width="2rem" height="2rem" className="rounded-full" />
       </div>
     );
   }
 
   return (
-    <div
-      className="relative"
-      ref={dropdownRef}
-      onMouseEnter={isDesktop ? () => setIsOpen(true) : undefined}
-      onMouseLeave={isDesktop ? () => setIsOpen(false) : undefined}
-    >
+    <div className="relative" ref={dropdownRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       {isLogin ? (
         <>
-          <button
-            type="button"
-            className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
-            onClick={toggleDropdown}
-            aria-label="باز کردن منوی پروفایل"
-          >
-            <HiOutlineUser className="h-6 w-6" />
-          </button>
+          <IconButtonWithBadge
+            icon={<HiOutlineUser className="h-6 w-6 cursor-pointer" />}
+            badgeCount={0}
+            onClick={closeDropdown}
+            ariaLabel="باز کردن منوی پروفایل"
+          />
           <div
             className={`absolute left-0 z-10 w-60 rounded-lg border-t-2 border-t-primary bg-muted shadow-lg dark:bg-gray-800 transition-all duration-200 origin-top ${
               isOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
@@ -105,6 +86,7 @@ const ProfileDropdown = () => {
                     href={item.href}
                     className="flex items-center justify-between gap-x-2 rounded-lg p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition group"
                     aria-current={pathname === item.href ? 'page' : undefined}
+                    onClick={closeDropdown}
                   >
                     <span className="flex items-center gap-x-4">
                       <span className="flex items-center gap-x-2">
