@@ -129,5 +129,8 @@ export const useCart = () => {
       }
     },
     refetchCart: refetch,
+    isAddingToCart: addToCartMutation.isPending, // اضافه کردن وضعیت لودینگ برای افزودن به سبد خرید
+    isUpdatingQuantity: updateQuantityMutation.isPending,
+    isRemovingItem: removeItemMutation.isPending,
   };
 };

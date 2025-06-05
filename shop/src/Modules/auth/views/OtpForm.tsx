@@ -9,7 +9,6 @@ import { errorOtpStepMessages, errorPhoneNumberStepMessages } from '../messages/
 import CountdownTimer from '../components/CountdownTimer';
 import { useAuth } from '../hooks/useAuth';
 import { useEffect } from 'react';
-import { useSyncCart } from '@/Modules/cart/hooks/useSyncCart';
 
 interface OtpFormProps {
   mobile: string;
@@ -128,7 +127,6 @@ export default function OtpForm({ mobile, isExpired, timeLeft, formatTime, reset
               )}
             </div>
           </Form>
-          {/* سابمیت خودکار فرم هنگام وارد کردن ۶ رقم */}
           <Effect values={values} isSubmitting={isSubmitting} isExpired={isExpired} submitForm={submitForm} />
         </>
       )}
@@ -136,7 +134,6 @@ export default function OtpForm({ mobile, isExpired, timeLeft, formatTime, reset
   );
 }
 
-// کامپوننت جداگانه برای مدیریت useEffect
 function Effect({
   values,
   isSubmitting,

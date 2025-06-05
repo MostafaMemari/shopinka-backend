@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
-import { setSelectedVariant } from '@/store/slices/productSlice'; // فرض می‌کنم این action وجود دارد
+import { setSelectedVariant } from '@/store/slices/productSlice';
 import { CartItemState } from '@/Modules/cart/types/cartType';
 import { useCart } from './useCart';
 import { ProductCardLogic } from '../types/productCardLogic';
@@ -15,7 +15,7 @@ export interface ProductCardLogicProps {
 export const useCartLogic = ({ product }: ProductCardLogicProps) => {
   const dispatch = useDispatch();
   const { selectedVariant } = useSelector((state: RootState) => state.product);
-  const { cart, addToCart } = useCart();
+  const { cart, addToCart, isAddingToCart } = useCart();
   const [existingProduct, setExistingProduct] = useState<CartItemState | undefined>();
 
   const isVariableProduct = product.type === 'VARIABLE';
@@ -74,5 +74,6 @@ export const useCartLogic = ({ product }: ProductCardLogicProps) => {
     isInCart,
     existingProduct,
     addToCart: addToCartHandler,
+    isAddingToCart,
   };
 };

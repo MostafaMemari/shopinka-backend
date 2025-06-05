@@ -1,9 +1,8 @@
-// src/components/CartButtonContent.tsx
-
 import { cn } from '@/shared/utils/utils';
 import Link from 'next/link';
 import CartControls from '../CartControls';
 import { CartItemState } from '../../types/cartType';
+import { PulseLoader } from 'react-spinners';
 
 interface CartButtonContentProps {
   isVariableProduct: boolean;
@@ -12,6 +11,7 @@ interface CartButtonContentProps {
   existingProduct?: CartItemState;
   addToCart: () => void;
   className?: string;
+  isAddingToCart?: boolean;
 }
 
 export const CartButtonContent = ({
@@ -21,6 +21,7 @@ export const CartButtonContent = ({
   existingProduct,
   addToCart,
   className,
+  isAddingToCart = false,
 }: CartButtonContentProps) => {
   return (
     <>
@@ -42,10 +43,18 @@ export const CartButtonContent = ({
             className,
           )}
           onClick={addToCart}
-          disabled={isVariableProduct && !isVariantSelected}
+          disabled={(isVariableProduct && !isVariantSelected) || isAddingToCart}
           aria-label={isVariableProduct && !isVariantSelected ? 'لطفاً گزینه‌های محصول را انتخاب کنید' : 'افزودن به سبد خرید'}
         >
-          {isVariableProduct && !isVariantSelected ? 'لطفاً گزینه‌های محصول را انتخاب کنید' : 'افزودن به سبد خرید'}
+          {isAddingToCart ? (
+            <div className="flex items-center justify-center gap-2">
+              <PulseLoader color="#ffffff" size={6} loading aria-label="در حال بارگذاری" />
+            </div>
+          ) : isVariableProduct && !isVariantSelected ? (
+            'لطفاً گزینه‌های محصول را انتخاب کنید'
+          ) : (
+            'افزودن به سبد خرید'
+          )}
         </button>
       )}
     </>

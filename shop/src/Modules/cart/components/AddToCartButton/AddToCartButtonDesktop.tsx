@@ -1,4 +1,3 @@
-// src/components/AddToCartButtonDesktop.tsx
 'use client';
 
 import { CartButtonContent } from './CartButtonContent';
@@ -10,7 +9,7 @@ interface AddToCartButtonDesktopProps {
 }
 
 export function AddToCartButtonDesktop({ product }: AddToCartButtonDesktopProps) {
-  const { isVariableProduct, isVariantSelected, isInCart, existingProduct, addToCart } = useCartLogic({ product });
+  const { isVariableProduct, isVariantSelected, isInCart, existingProduct, addToCart, isAddingToCart } = useCartLogic({ product });
 
   return (
     <div className="mb-6 flex items-center gap-4">
@@ -20,6 +19,7 @@ export function AddToCartButtonDesktop({ product }: AddToCartButtonDesktopProps)
         isInCart={isInCart}
         existingProduct={existingProduct}
         addToCart={addToCart}
+        isAddingToCart={isAddingToCart}
         className="w-full py-3"
       />
     </div>
