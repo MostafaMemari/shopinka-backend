@@ -16,7 +16,7 @@ const BottomNav = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 right-0 left-0 z-50 bg-white border-t shadow-md sm:hidden">
+    <nav className="fixed bottom-3 right-3 left-3 rounded-2xl z-50 bg-white shadow-md lg:hidden">
       <ul className="flex justify-between items-center text-xs rtl flex-row-reverse">
         {navItems.map((item) => {
           const isActive = pathname === item.href;

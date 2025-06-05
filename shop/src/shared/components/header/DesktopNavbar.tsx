@@ -140,7 +140,7 @@ const DesktopNavbar = ({ categories }: DesktopNavbarProps) => {
         ${isVisible ? 'translate-y-0' : '-translate-y-full'}
       `}
     >
-      <div className="container relative flex max-w-[1680px] items-center gap-x-2">
+      <div className="container relative flex max-w-[1640px] items-center gap-x-2">
         <div
           className="group relative"
           onMouseEnter={() => setSelectedCategoryId(categories[0].id)}

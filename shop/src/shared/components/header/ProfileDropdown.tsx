@@ -17,6 +17,7 @@ import { BiLogIn } from 'react-icons/bi';
 import { usePathname } from 'next/navigation';
 import { useDropdown } from '@/shared/hooks/useDropdown';
 import SkeletonLoader from '../SkeletonLoader';
+import { useState } from 'react';
 
 const ProfileDropdown = () => {
   const pathname = usePathname();
@@ -25,18 +26,22 @@ const ProfileDropdown = () => {
     closeOnOutsideClick: true,
     openOnHover: false,
   });
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleUserLogout = async () => {
+    setIsLoggingOut(true);
     try {
       const res = await logout();
       if (res?.status === 201 || res?.status === 200) {
+        closeDropdown();
         logoutUser();
         Toast.fire({ icon: 'success', title: 'خروج با موفقیت انجام شد' });
-        closeDropdown();
       }
     } catch (err) {
       console.error('Logout error:', err);
       Toast.fire({ icon: 'error', title: 'خروج با خطا مواجه شد' });
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -112,9 +117,10 @@ const ProfileDropdown = () => {
                   onClick={handleUserLogout}
                   className="w-full flex items-center gap-x-2 rounded-lg p-4 text-red-500 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/20 transition group cursor-pointer"
                   aria-label="خروج از حساب کاربری"
+                  disabled={isLoggingOut}
                 >
                   <HiOutlineLogout className="h-6 w-6 group-hover:text-red-600 dark:group-hover:text-red-300" />
-                  <span className="group-hover:text-red-600 dark:group-hover:text-red-300">خروج</span>
+                  <span className="group-hover:text-red-600 dark:group-hover:text-red-300">{isLoggingOut ? 'در حال خروج...' : 'خروج'}</span>
                 </button>
               </li>
             </ul>

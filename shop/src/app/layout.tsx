@@ -5,6 +5,7 @@ import { iranyekan } from '@/fonts/iranyekan';
 import ClientProvider from './ClientProvider';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import BottomNav from '@/shared/components/BottomNav';
+import HeaderMobile from '@/shared/components/header/HeaderMobile';
 
 export const metadata: Metadata = {
   title: 'صفجه اصلی | فروشگاه اینترنتی شاپینکا',
@@ -19,6 +20,7 @@ export default function RootLayout({
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <body className={`${iranyekan} antialiased`}>
+        <HeaderMobile />
         <BottomNav />
 
         <ClientProvider>

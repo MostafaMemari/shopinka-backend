@@ -38,7 +38,7 @@ const SearchBar = ({ isMobile = false, productItems, recentSearchItems }: Search
   }, []);
 
   return (
-    <div ref={wrapperRef} className={`relative ${isMobile ? '' : 'max-w-xl flex-1'}`} id="desktopHeaderSearchBase">
+    <div ref={wrapperRef} className={`relative ${isMobile ? '' : 'max-w-xl flex-1'}`}>
       <div
         className={`flex items-center justify-between rounded-t-lg px-2 transition-all duration-200
         ${isMobile ? 'bg-background' : 'border-b-transparent bg-background dark:border-white/10'}
@@ -50,8 +50,7 @@ const SearchBar = ({ isMobile = false, productItems, recentSearchItems }: Search
         </div>
         <label className="sr-only">search</label>
         <input
-          id="desktopHeaderSearch"
-          className={`flex grow rounded-lg border-none px-2 py-3 outline-hidden placeholder:text-sm placeholder:text-text/60 focus:ring-0
+          className={`flex w-[500px] grow rounded-lg border-none px-2 py-3 outline-hidden placeholder:text-sm placeholder:text-text/60 focus:ring-0
           ${isMobile ? 'bg-red' : 'bg-background text-text/90'}
           `}
           placeholder="جستجو کنید ..."
@@ -65,7 +64,7 @@ const SearchBar = ({ isMobile = false, productItems, recentSearchItems }: Search
         <div
           className={`absolute inset-x-0 top-full w-full overflow-hidden rounded-b-lg border border-t-transparent bg-muted dark:border-white/10 dark:border-t-transparent`}
         >
-          <div className="max-h-[450px] overflow-y-auto py-5">
+          <div className="max-h-[600px] overflow-y-auto py-5">
             {productItems.length > 0 && (
               <div className="mb-8 px-5">
                 <CarouselSearchBar items={productItems} variant="product" />
