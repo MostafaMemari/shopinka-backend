@@ -1,37 +1,33 @@
 'use client';
 
 import Link from 'next/link';
-import { FiHelpCircle, FiInfo, FiMail, FiMoon, FiShoppingBag, FiSun } from 'react-icons/fi';
 import { useState, useEffect, useRef } from 'react';
-import MobileLogo from '../ui/Logo/MobileLogo';
+import { HiOutlineXMark } from 'react-icons/hi2';
+import { FiInfo, FiMail, FiHelpCircle } from 'react-icons/fi';
 import CategoryAccordion from './CategoryAccordion';
 import { ICategory } from '@/lib/types/categories';
 import { HiOutlineMenu } from 'react-icons/hi';
-import { HiOutlineXMark } from 'react-icons/hi2';
 
 interface MobileMenuProps {
   categories: ICategory[];
+  onToggleMenu?: (isOpen: boolean) => void;
 }
 
-const MobileMenu = ({ categories }: MobileMenuProps) => {
+const MobileMenu = ({ categories, onToggleMenu }: MobileMenuProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    const newState = !isMenuOpen;
+    setIsMenuOpen(newState);
+    onToggleMenu?.(newState);
   };
 
-  const toggleTheme = () => {
-    document.documentElement.classList.toggle('dark');
-    setIsDarkMode(!isDarkMode);
-  };
-
-  // بستن منو با کلیک/تاچ بیرون
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsMenuOpen(false);
+        onToggleMenu?.(false);
       }
     };
 
@@ -42,9 +38,8 @@ const MobileMenu = ({ categories }: MobileMenuProps) => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('touchstart', handleClickOutside);
     };
-  }, []);
+  }, [onToggleMenu]);
 
-  // قفل کردن اسکرول بدنه وقتی منو بازه
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -58,99 +53,45 @@ const MobileMenu = ({ categories }: MobileMenuProps) => {
 
   return (
     <>
-      {/* Menu Toggle Button */}
-      <button aria-controls="mobile-menu-drawer-navigation" className="cursor-pointer" onClick={toggleMenu} type="button">
-        <HiOutlineMenu className="h-6 w-6" />
-      </button>
+      <div ref={menuRef} className="mt-2">
+        <button onClick={toggleMenu} className="cursor-pointer">
+          {isMenuOpen ? <HiOutlineXMark className="h-6 w-6" /> : <HiOutlineMenu className="h-6 w-6" />}
+        </button>
+      </div>
 
-      {/* Mobile Menu Drawer */}
       <div
-        id="mobile-menu-drawer-navigation"
-        className={`fixed top-0 right-0 h-full w-64 bg-background z-50 transform transition-transform duration-300 ${
-          isMenuOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
         ref={menuRef}
+        className={`fixed w-[265px] top-[5rem] bottom-[5rem] right-3 rounded-2xl z-40 bg-white shadow-md transition-transform duration-300 ${
+          isMenuOpen ? 'translate-x-0' : 'translate-x-[110%]'
+        }`}
       >
-        <div className="flex flex-col h-full">
-          {/* Header: Logo and Close Button */}
-          <div className="flex items-center justify-between p-4 border-b border-border">
-            <MobileLogo />
-            <button onClick={toggleMenu} className="text-text/80">
-              <HiOutlineXMark className="h-6 w-6" />
-            </button>
+        <div className="flex flex-col h-full p-4 overflow-y-auto">
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-lg font-bold">منو</span>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4">
-            <div className="mb-4">
-              <div
-                className="flex cursor-pointer items-center gap-x-2 rounded-lg px-4 py-3 text-gray-800 dark:text-white"
-                id="toggleThemeMobile"
-                onClick={toggleTheme}
-              >
-                <div className="relative w-6 h-6">
-                  {isDarkMode ? <FiMoon className="absolute inset-0 h-6 w-6" /> : <FiSun className="absolute inset-0 hidden h-6 w-6" />}
-                </div>
+          <ul className="space-y-2 mb-4">
+            <li>
+              <Link href="/about" onClick={toggleMenu} className="flex items-center gap-x-2 py-2 px-4 hover:bg-gray-100 rounded">
+                <FiInfo className="h-5 w-5" />
+                <span>درباره ما</span>
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" onClick={toggleMenu} className="flex items-center gap-x-2 py-2 px-4 hover:bg-gray-100 rounded">
+                <FiMail className="h-5 w-5" />
+                <span>تماس با ما</span>
+              </Link>
+            </li>
+            <li>
+              <Link href="/faq" onClick={toggleMenu} className="flex items-center gap-x-2 py-2 px-4 hover:bg-gray-100 rounded">
+                <FiHelpCircle className="h-5 w-5" />
+                <span>سوالات متداول</span>
+              </Link>
+            </li>
+          </ul>
 
-                <div className="flex items-center justify-between" id="themeText">
-                  <span>{isDarkMode ? 'روشن' : 'تاریک'}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Navigation Links */}
-            <ul className="space-y-4 mb-4">
-              <li>
-                <Link
-                  className="flex items-center justify-between rounded-lg px-4 py-3 hover:text-primary"
-                  href="/about"
-                  onClick={toggleMenu}
-                >
-                  <span className="flex items-center gap-x-2">
-                    <FiInfo className="h-6 w-6" />
-                    <span>درباره ما</span>
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="flex items-center justify-between rounded-lg px-4 py-3 hover:text-primary"
-                  href="/contact"
-                  onClick={toggleMenu}
-                >
-                  <span className="flex items-center gap-x-2">
-                    <FiMail className="h-6 w-6" />
-                    <span>تماس با ما</span>
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="flex items-center justify-between rounded-lg px-4 py-3 hover:text-primary"
-                  href="/faq"
-                  onClick={toggleMenu}
-                >
-                  <span className="flex items-center gap-x-2">
-                    <FiHelpCircle className="h-6 w-6" />
-                    <span>سوالات متداول</span>
-                  </span>
-                </Link>
-              </li>
-
-              {/* Divider */}
-              <li>
-                <div className="flex items-center">
-                  <div className="h-px w-full grow rounded-full bg-border"></div>
-                  <div className="p-2 text-text/80">
-                    <FiShoppingBag className="h-6 w-6" />
-                  </div>
-                  <div className="h-px w-full grow rounded-full bg-border"></div>
-                </div>
-              </li>
-            </ul>
-
-            {/* Categories Accordion */}
-            <CategoryAccordion categories={categories} onItemClick={toggleMenu} />
-          </div>
+          <CategoryAccordion categories={categories} onItemClick={toggleMenu} />
         </div>
       </div>
     </>
