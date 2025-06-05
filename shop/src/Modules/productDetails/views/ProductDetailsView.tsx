@@ -15,6 +15,10 @@ import { FC } from 'react';
 import ProductSku from '../components/ProductSku';
 import ProductCommentCount from '../components/ProductCommentCount';
 import ProductGuaranteeBadge from '../components/ProductGuaranteeBadge';
+import { RiHome3Line } from 'react-icons/ri';
+import { IoIosArrowBack } from 'react-icons/io';
+import { HiOutlineHeart, HiOutlineShare, HiOutlineShoppingCart } from 'react-icons/hi';
+import MobileHeader from '../components/MobileProductHeader';
 interface ProductDetailsViewProps {
   product: ProductDetails;
 }
@@ -30,6 +34,7 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
 
   return (
     <div className="container">
+      <MobileHeader productId={product.id} />
       <div className="hidden lg:block">
         <BreadcrumbContainer variant="boxed" items={breadcrumbItems} />
         <div className="mb-6 rounded-lg bg-muted p-6 shadow-base">
@@ -126,7 +131,6 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
             />
             <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
           </div>
-          <ProductActions productId={product.id} />
           <div>
             <div className="space-y-4">
               {product.name && <h1 className="text-lg font-semibold pb-2">{product.name}</h1>}
