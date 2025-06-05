@@ -106,14 +106,13 @@ export const useCart = () => {
       if (!isLogin) {
         dispatch(increaseCount(item));
       } else {
-        console.log({ itemId: item.id, quantity: item.count - 1 });
-        // updateQuantityMutation.mutate({ itemId: item.id, quantity: item.count + 1 });
+        updateQuantityMutation.mutate({ itemId: Number(item.itemId), quantity: item.count + 1 });
       }
     },
     decreaseCount: (item: CartItemState) => {
       if (!isLogin) dispatch(decreaseCount(item));
       else {
-        updateQuantityMutation.mutate({ itemId: item.id, quantity: item.count - 1 });
+        updateQuantityMutation.mutate({ itemId: Number(item.itemId), quantity: item.count - 1 });
       }
     },
     deleteFromCart: (item: CartItemState) => {

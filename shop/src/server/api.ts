@@ -6,7 +6,7 @@ import { cookies } from 'next/headers';
 import { COOKIE_NAMES } from '@/shared/types/constants';
 
 interface FetchOptions {
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   query?: Record<string, any>;
   body?: any;
   headers?: HeadersInit;
