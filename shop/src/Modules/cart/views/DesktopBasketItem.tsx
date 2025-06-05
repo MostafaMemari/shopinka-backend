@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { CartItemState } from '../types/cartType';
 import CartControls from '../components/CartControls';
 import CartItemAttributes from '../components/CartItemAttributes';
-import ProductPriceCard from '../components/ProductPriceCard';
+import ProductPriceCard from '../components/ProductPriceCart';
 
 export interface ItemCardBasketProp {
   item: CartItemState;

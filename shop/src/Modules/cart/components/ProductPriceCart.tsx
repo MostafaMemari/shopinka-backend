@@ -2,13 +2,13 @@
 
 import { formatPrice } from '@/shared/utils/formatter';
 
-interface ProductPriceCardProps {
+interface ProductPriceCartProps {
   newPrice: number;
   oldPrice: number;
   discount: number;
 }
 
-export function ProductPriceCard({ newPrice, oldPrice, discount }: ProductPriceCardProps) {
+export function ProductPriceCart({ newPrice, oldPrice, discount }: ProductPriceCartProps) {
   return (
     <div className="space-y-1" aria-live="polite">
       {discount > 0 && (
@@ -31,4 +31,4 @@ export function ProductPriceCard({ newPrice, oldPrice, discount }: ProductPriceC
   );
 }
 
-export default ProductPriceCard;
+export default ProductPriceCart;

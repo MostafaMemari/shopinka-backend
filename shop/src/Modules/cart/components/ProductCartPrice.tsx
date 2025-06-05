@@ -2,12 +2,12 @@
 
 import React, { useMemo } from 'react';
 
-interface ProductCardPriceProps {
+interface ProductCartPriceProps {
   newPrice?: number;
   oldPrice?: number;
 }
 
-export default function ProductCardPrice({ newPrice, oldPrice }: ProductCardPriceProps) {
+export default function ProductCartPrice({ newPrice, oldPrice }: ProductCartPriceProps) {
   const discount = useMemo(() => {
     if (!newPrice || !oldPrice || oldPrice <= newPrice) return 0;
     return Math.round(((oldPrice - newPrice) / oldPrice) * 100);
