@@ -3,7 +3,6 @@
 import { HiOutlineChevronLeft, HiOutlineShoppingCart } from 'react-icons/hi';
 import { useCart } from '../hooks/useCart';
 import { calculateTotals } from '../utils/calculateTotals';
-import SkeletonLoader from '@/shared/components/SkeletonLoader';
 import { useDropdown } from '@/shared/hooks/useDropdown';
 import IconButtonWithBadge from '@/shared/components/IconButtonWithBadge';
 import Link from 'next/link';
@@ -18,30 +17,19 @@ export default function BasketDropdown() {
   });
 
   const totals = calculateTotals(cartItems);
-
   const totalQuantity = cartItems?.reduce((sum, item) => sum + item.count, 0) || 0;
   const totalPrice = totals.totalPrice;
 
-  const totalDiscountPrice = totals.totalDiscountPrice;
-  const totalDiscount = totals.totalDiscount;
-
-  if (isLoading) {
-    return (
-      <div className="flex h-9 items-center justify-center gap-2 rounded-full px-4">
-        <SkeletonLoader width="2rem" height="2rem" className="rounded-full" />
-      </div>
-    );
-  }
-
   return (
-    <div className="group relative">
-      <div className="relative group hidden md:block">
+    <div className="relative">
+      <div className="relative hidden md:block">
         <div className="relative" ref={dropdownRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
           <IconButtonWithBadge
             icon={<HiOutlineShoppingCart className="h-6 w-6 cursor-pointer" />}
             badgeCount={totalQuantity}
             onClick={closeDropdown}
             ariaLabel="باز کردن سبد خرید"
+            isLoading={isLoading}
           />
 
           <div

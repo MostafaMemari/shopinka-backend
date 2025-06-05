@@ -18,8 +18,9 @@ function Header() {
           <div className="container relative z-30 flex max-w-[1680px] items-center justify-between gap-x-4 bg-muted py-4">
             <DesktopLogo />
             <SearchBarBase recentSearchItems={mockProductItems} productItems={mockProductItems} />
-            <div className="flex">
+            <div className="flex items-center gap-x-3">
               <ProfileDropdown />
+              <div className="h-6 w-px bg-gray-300 dark:bg-gray-600" aria-hidden="true" />
               <BasketDropdown />
             </div>
           </div>
@@ -36,12 +37,11 @@ function Header() {
             <MobileMenu categories={categories} />
 
             <MobileLogo />
-            <div className="flex gap-x-1">
-              <div className="flex justify-center items-center">
-                <ProfileDropdown />
-                <BasketDropdown />
-              </div>
-            </div>
+            {/* <div className="flex items-center gap-x-3">
+              <ProfileDropdown />
+              <div className="h-6 w-px bg-gray-300 dark:bg-gray-600" aria-hidden="true" />
+              <BasketDropdown />
+            </div> */}
           </div>
           <div className="absolute left-0 right-0 top-full z-20 bg-muted pb-4 transition-transform duration-300" id="mobile-header-bottom">
             <div className="container">

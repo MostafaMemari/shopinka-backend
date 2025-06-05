@@ -3,21 +3,27 @@
 import { useAuth } from '@/Modules/auth/hooks/useAuth';
 import { logout } from '@/Modules/auth/services/auth.api';
 import Toast from '@/shared/utils/swalToast';
-import { PulseLoader } from 'react-spinners';
 import Link from 'next/link';
-import { HiOutlineBell, HiOutlineChevronLeft, HiOutlineClock, HiOutlineHeart, HiOutlineLogout, HiOutlineUser } from 'react-icons/hi';
+import {
+  HiOutlineBell,
+  HiOutlineChevronDown,
+  HiOutlineChevronUp,
+  HiOutlineClock,
+  HiOutlineHeart,
+  HiOutlineLogout,
+  HiOutlineUser,
+} from 'react-icons/hi';
 import { BiLogIn } from 'react-icons/bi';
 import { usePathname } from 'next/navigation';
 import { useDropdown } from '@/shared/hooks/useDropdown';
-import IconButtonWithBadge from '../IconButtonWithBadge';
 import SkeletonLoader from '../SkeletonLoader';
 
 const ProfileDropdown = () => {
   const pathname = usePathname();
   const { isLogin, user, logoutUser, isLoading } = useAuth();
-  const { isOpen, dropdownRef, handleMouseEnter, handleMouseLeave, closeDropdown } = useDropdown({
-    closeOnOutsideClick: false,
-    openOnHover: true,
+  const { isOpen, dropdownRef, toggleDropdown, closeDropdown } = useDropdown({
+    closeOnOutsideClick: true,
+    openOnHover: false,
   });
 
   const handleUserLogout = async () => {
@@ -35,12 +41,6 @@ const ProfileDropdown = () => {
   };
 
   const menuItems = [
-    {
-      href: '/profile',
-      icon: HiOutlineUser,
-      label: user?.full_name || 'کاربر گرامی',
-      isProfile: true,
-    },
     { href: '/profile-orders', icon: HiOutlineClock, label: 'سفارش‌ها' },
     { href: '/profile-favorite', icon: HiOutlineHeart, label: 'علاقه‌مندی‌ها' },
     {
@@ -58,24 +58,30 @@ const ProfileDropdown = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-9 items-center justify-center gap-2 rounded-full px-4">
-        <SkeletonLoader width="2rem" height="2rem" className="rounded-full" />
+      <div className="flex h-9 items-center justify-center gap-2 rounded-md border border-gray-300 px-4">
+        <SkeletonLoader width="2rem" height="1.5rem" className="rounded-md" />
+        <SkeletonLoader width="4rem" height="1rem" className="rounded-md" />
       </div>
     );
   }
 
   return (
-    <div className="relative" ref={dropdownRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <div className="relative" ref={dropdownRef}>
       {isLogin ? (
         <>
-          <IconButtonWithBadge
-            icon={<HiOutlineUser className="h-6 w-6 cursor-pointer" />}
-            badgeCount={0}
-            onClick={closeDropdown}
-            ariaLabel="باز کردن منوی پروفایل"
-          />
+          <button
+            type="button"
+            className="flex h-9 my-1 items-center justify-center gap-2 rounded-md border border-gray-300 px-4 text-sm font-medium text-gray-700 dark:border-gray-600 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition cursor-pointer"
+            onClick={toggleDropdown}
+            aria-label="باز کردن منوی پروفایل"
+            aria-expanded={isOpen}
+          >
+            <HiOutlineUser className="h-5 w-5" />
+            <span>{user?.full_name || 'کاربر گرامی'}</span>
+            {isOpen ? <HiOutlineChevronUp className="h-5 w-5" /> : <HiOutlineChevronDown className="h-5 w-5" />}
+          </button>
           <div
-            className={`absolute left-0 z-10 w-60 rounded-lg border-t-2 border-t-primary bg-muted shadow-lg dark:bg-gray-800 transition-all duration-200 origin-top ${
+            className={`absolute left-0 top-full z-10 w-60 rounded-lg border-t-2 border-t-primary bg-muted shadow-lg dark:bg-gray-800 transition-all duration-200 origin-top ${
               isOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
             }`}
           >
@@ -94,10 +100,7 @@ const ProfileDropdown = () => {
                         <span className="group-hover:text-primary dark:group-hover:text-emerald-400">{item.label}</span>
                       </span>
                     </span>
-                    {item.badge ||
-                      (item.isProfile && (
-                        <HiOutlineChevronLeft className="h-6 w-6 group-hover:text-primary dark:group-hover:text-emerald-400" />
-                      ))}
+                    {item.badge}
                   </Link>
                 </li>
               ))}
@@ -121,7 +124,7 @@ const ProfileDropdown = () => {
         <Link href={`/login/?backUrl=${pathname}`}>
           <div className="flex h-9 items-center justify-center gap-2 rounded-md border border-gray-300 px-4 text-sm font-medium text-gray-700 dark:border-gray-600 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
             <BiLogIn size={18} className="transform scale-x-[-1]" />
-            ورود | ثبت‌نام
+            <span>ورود | ثبت‌نام</span>
           </div>
         </Link>
       )}
