@@ -129,7 +129,7 @@ export const useCart = () => {
       }
     },
     refetchCart: refetch,
-    isAddingToCart: addToCartMutation.isPending, // اضافه کردن وضعیت لودینگ برای افزودن به سبد خرید
+    isAddingToCart: addToCartMutation.isPending,
     isUpdatingQuantity: updateQuantityMutation.isPending,
     isRemovingItem: removeItemMutation.isPending,
   };

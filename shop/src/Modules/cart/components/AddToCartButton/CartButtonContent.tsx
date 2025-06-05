@@ -3,6 +3,7 @@ import Link from 'next/link';
 import CartControls from '../CartControls';
 import { CartItemState } from '../../types/cartType';
 import { PulseLoader } from 'react-spinners';
+import PrimaryButton from '@/shared/components/PrimaryButton';
 
 interface CartButtonContentProps {
   isVariableProduct: boolean;
@@ -36,26 +37,25 @@ export const CartButtonContent = ({
           </div>
         </div>
       ) : (
-        <button
-          className={cn(
-            'flex-1 rounded-lg bg-[hsl(var(--primary))] px-4 py-2 text-white transition-opacity hover:opacity-90 cursor-pointer',
-            isVariableProduct && !isVariantSelected && 'cursor-not-allowed opacity-50',
-            className,
-          )}
-          onClick={addToCart}
-          disabled={(isVariableProduct && !isVariantSelected) || isAddingToCart}
-          aria-label={isVariableProduct && !isVariantSelected ? 'لطفاً گزینه‌های محصول را انتخاب کنید' : 'افزودن به سبد خرید'}
-        >
-          {isAddingToCart ? (
-            <div className="flex items-center justify-center gap-2">
-              <PulseLoader color="#ffffff" size={6} loading aria-label="در حال بارگذاری" />
-            </div>
-          ) : isVariableProduct && !isVariantSelected ? (
-            'لطفاً گزینه‌های محصول را انتخاب کنید'
-          ) : (
-            'افزودن به سبد خرید'
-          )}
-        </button>
+        <>
+          <PrimaryButton
+            type="submit"
+            onClick={addToCart}
+            aria-label={isVariableProduct && !isVariantSelected ? 'لطفاً گزینه‌های محصول را انتخاب کنید' : 'افزودن به سبد خرید'}
+            isLoading={isAddingToCart}
+            disabled={(isVariableProduct && !isVariantSelected) || isAddingToCart}
+          >
+            {isAddingToCart ? (
+              <div className="flex items-center justify-center gap-2">
+                <PulseLoader color="#ffffff" size={6} loading aria-label="در حال بارگذاری" />
+              </div>
+            ) : isVariableProduct && !isVariantSelected ? (
+              'لطفاً گزینه‌های محصول را انتخاب کنید'
+            ) : (
+              'افزودن به سبد خرید'
+            )}
+          </PrimaryButton>
+        </>
       )}
     </>
   );

@@ -44,8 +44,6 @@ export const clearCart = async (): Promise<CartResponse> => {
 export const updateQuantityItemCart = async ({ quantity, itemId }: { quantity: number; itemId: number }): Promise<CartResponse> => {
   const res = await shopApiFetch(`/cart/item/${itemId}`, { method: 'PATCH', body: { quantity } });
 
-  console.log(res);
-
   return res.data;
 };
 
