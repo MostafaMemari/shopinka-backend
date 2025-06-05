@@ -96,7 +96,7 @@ export const decreaseCount = createAsyncThunk('cart/decreaseCount', async (item:
   }
 });
 
-export const deleteFromCart = createAsyncThunk('cart/deleteFromCart', async (itemId: string, { getState, dispatch }) => {
+export const deleteFromCart = createAsyncThunk('cart/deleteFromCart', async (itemId: number, { getState, dispatch }) => {
   const state = getState() as RootState;
   const { isLogin } = state.auth;
 

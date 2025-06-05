@@ -15,6 +15,7 @@ export const mapCartResponseToCartItemState = (cartItems: CartItem[]): CartItemS
       const attributeValues = item.productVariant?.attributeValues ?? [];
 
       return {
+        itemId: item.id,
         id: productId,
         count: item.quantity,
         type,

@@ -45,7 +45,7 @@ export function CartControls({ product, className }: CartControlsProps) {
       ) : (
         <button
           type="button"
-          onClick={() => deleteFromCart(product.id)}
+          onClick={() => deleteFromCart(product)}
           className="flex h-8 w-8 items-center justify-center rounded-md text-primary transition-colors cursor-pointer"
           aria-label="حذف از سبد خرید"
         >

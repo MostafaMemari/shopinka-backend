@@ -57,9 +57,8 @@ export const useCart = () => {
 
   const updateQuantityMutation = useMutation({
     mutationFn: ({ quantity, itemId }: { quantity: number; itemId: number }) => updateQuantityItemCart({ quantity, itemId }),
-    onSuccess: (updatedCart) => {
-      dispatch(setCart({ items: updatedCart.items }));
-      queryClient.setQueryData(['cart'], updatedCart);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
     },
     onError: (error) => {
       console.error('Failed to update cart quantity:', error);
@@ -68,9 +67,8 @@ export const useCart = () => {
 
   const removeItemMutation = useMutation({
     mutationFn: ({ itemId }: { itemId: number }) => removeItemCart(itemId),
-    onSuccess: (updatedCart) => {
-      dispatch(setCart({ items: updatedCart.items }));
-      queryClient.setQueryData(['cart'], updatedCart);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
     },
     onError: (error) => {
       console.error('Failed to remove cart item:', error);
@@ -79,9 +77,8 @@ export const useCart = () => {
 
   const clearCartMutation = useMutation({
     mutationFn: clearCart,
-    onSuccess: (updatedCart) => {
-      dispatch(setCart({ items: updatedCart.items }));
-      queryClient.setQueryData(['cart'], updatedCart);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
     },
     onError: (error) => {
       console.error('Failed to clear cart:', error);
@@ -95,7 +92,6 @@ export const useCart = () => {
     isLoading,
     error,
     addToCart: (item: CartItemState) => {
-      console.log(item);
       if (!isLogin) {
         dispatch(addToCart(item));
       } else {
@@ -110,7 +106,8 @@ export const useCart = () => {
       if (!isLogin) {
         dispatch(increaseCount(item));
       } else {
-        updateQuantityMutation.mutate({ itemId: item.id, quantity: item.count + 1 });
+        console.log({ itemId: item.id, quantity: item.count - 1 });
+        // updateQuantityMutation.mutate({ itemId: item.id, quantity: item.count + 1 });
       }
     },
     decreaseCount: (item: CartItemState) => {
@@ -119,11 +116,11 @@ export const useCart = () => {
         updateQuantityMutation.mutate({ itemId: item.id, quantity: item.count - 1 });
       }
     },
-    deleteFromCart: (productId: number | string) => {
+    deleteFromCart: (item: CartItemState) => {
       if (!isLogin) {
-        dispatch(deleteFromCart(productId.toString()));
+        dispatch(deleteFromCart(item.id));
       } else {
-        removeItemMutation.mutate({ itemId: Number(productId) });
+        removeItemMutation.mutate({ itemId: Number(item.itemId) });
       }
     },
     clearCart: () => {

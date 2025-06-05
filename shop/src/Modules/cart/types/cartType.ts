@@ -1,6 +1,7 @@
 import { AttributeValues } from '@/shared/types/attributeType';
 
 export interface CartItemState {
+  itemId?: number;
   id: number;
   type: 'SIMPLE' | 'VARIABLE';
   title: string;
