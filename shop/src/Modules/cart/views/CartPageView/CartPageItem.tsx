@@ -8,38 +8,43 @@ import CartControls from '../../components/CartControls';
 
 interface CartPageItemProps {
   cartItem: CartItemState;
+  isLast?: boolean; // Added to control border for the last item
 }
 
-function CartPageItem({ cartItem }: CartPageItemProps) {
+function CartPageItem({ cartItem, isLast = false }: CartPageItemProps) {
   const attributes = cartItem.type === 'VARIABLE' && cartItem.attributeValues ? cartItem.attributeValues : [];
 
   return (
-    <li>
-      <div className="py-4 sm:py-6">
-        <div className="grid grid-cols-2 items-center justify-start gap-2 xs:grid-cols-3 xs:gap-6 sm:grid-cols-4 xl:grid-cols-6">
-          <div className="row-span-2 min-w-fit xs:mx-auto">
+    <div className={`py-4 ${!isLast ? 'border-b border-gray-200' : ''}`}>
+      <div className="grid grid-cols-12 gap-6 items-start">
+        <div className="col-span-4 sm:col-span-3 flex flex-col items-center gap-2">
+          <div className="w-24 h-24 sm:w-28 sm:h-28">
             <ProductCartImage thumbnail={cartItem.thumbnail} title={cartItem.title} />
           </div>
-          <div className="row-span-2 space-y-4 xs:col-span-2 sm:col-span-3 xl:col-span-5">
-            <Link href={`/product-detail/`} className="line-clamp-2 h-10 text-md">
-              {cartItem.title}
-            </Link>
-            <div className="flex items-center gap-x-2">
-              <CartItemAttributes count={cartItem.count} type={cartItem.type} attributes={attributes} />
-            </div>
+
+          <div className="w-24 flex justify-center">
+            <CartControls product={cartItem} />
           </div>
-          <div className="flex items-center gap-x-2 xs:justify-center">
-            <div className="flex h-10 w-24 items-center justify-between gap-x-3 rounded-lg border py-1 sm:w-28">
-              <CartControls product={cartItem} />
-            </div>
+        </div>
+
+        <div className="col-span-8 sm:col-span-9 space-y-2">
+          <Link
+            href={`/product-detail/${cartItem.id}`}
+            className="line-clamp-2 text-sm sm:text-base font-semibold text-gray-900 leading-snug hover:text-blue-600"
+          >
+            {cartItem.title}
+          </Link>
+
+          <div className="space-y-1 text-xs text-gray-500">
+            <CartItemAttributes count={cartItem.count} type={cartItem.type} attributes={attributes} />
           </div>
 
-          <div className="text-primary xs:col-span-2 sm:col-span-3 lg:text-lg xl:col-span-5">
+          <div className="text-blue-600 text-sm font-bold pt-1">
             <ProductPriceCard oldPrice={cartItem.basePrice} newPrice={cartItem.salePrice} discount={cartItem.discount} />
           </div>
         </div>
       </div>
-    </li>
+    </div>
   );
 }
 

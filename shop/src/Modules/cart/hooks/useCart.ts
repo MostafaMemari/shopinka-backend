@@ -12,7 +12,7 @@ import { QueryKeys } from '@/shared/types/query-keys';
 import { useAuth } from '@/Modules/auth/hooks/useAuth';
 
 export function useCartData({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
-  const { isLogin } = useAuth();
+  // const { isLogin } = useAuth();
 
   const {
     data: cart,
@@ -22,7 +22,7 @@ export function useCartData({ enabled = true, params = {}, staleTime = 1 * 60 * 
   } = useQuery<CartResponse>({
     queryKey: [QueryKeys.Cart],
     queryFn: getCart,
-    enabled: enabled && isLogin,
+    enabled: enabled,
     staleTime,
   });
 
@@ -35,6 +35,8 @@ export const useCart = () => {
   const { items: reduxCart } = useSelector((state: RootState) => state.cart);
   const { isLogin } = useAuth();
   const { cart, isLoading, error, refetch } = useCartData({});
+
+  // console.log(isLoading);
 
   useEffect(() => {
     if (isLogin && cart) {
@@ -75,6 +77,16 @@ export const useCart = () => {
     },
   });
 
+  const deleteAllItemCart = useMutation({
+    mutationFn: () => clearCart(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    },
+    onError: (error) => {
+      console.error('Failed to clear cart item:', error);
+    },
+  });
+
   const clearCartMutation = useMutation({
     mutationFn: clearCart,
     onSuccess: () => {
@@ -100,6 +112,11 @@ export const useCart = () => {
           productId: item.type === 'SIMPLE' ? item.id : null,
           productVariantId: item.type === 'VARIABLE' ? item.id : null,
         });
+      }
+    },
+    clearAllCartItems: () => {
+      if (isLogin) {
+        deleteAllItemCart.mutate();
       }
     },
     increaseCount: (item: CartItemState) => {

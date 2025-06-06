@@ -11,7 +11,12 @@ import { LuList, LuShoppingCart, LuUser, LuCheck } from 'react-icons/lu';
 import { RiHome3Line } from 'react-icons/ri';
 import { useAuth } from '@/Modules/auth/hooks/useAuth';
 
-const MobileLayout = () => {
+interface MobileLayoutProps {
+  showHeader?: boolean;
+  showNav?: boolean;
+}
+
+const MobileLayout = ({ showHeader = true, showNav = true }: MobileLayoutProps) => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isLogin } = useAuth();
@@ -26,7 +31,7 @@ const MobileLayout = () => {
       icon: (
         <div className="relative">
           <LuUser size={22} />
-          {isLogin && <LuCheck size={14} className="absolute -bottom-1 -right-1 text-primary bg-white rounded-full p-0.5" />}
+          {isLogin && <LuCheck size={14} className="absolute -bottom-1 -right-1 text-blue-600 bg-white rounded-full p-0.5" />}
         </div>
       ),
       label: 'حساب کاربری',
@@ -45,34 +50,38 @@ const MobileLayout = () => {
         />
       )}
 
-      <div className="fixed top-3 right-3 left-3 rounded-2xl z-50 bg-white shadow-md">
-        <div className="flex items-center justify-between py-2 px-4 [60px]">
-          <MobileMenu categories={categories} onToggleMenu={setIsMenuOpen} />
-          <MobileLogo />
-          <PiPhoneCall className="h-6 w-6" />
+      {showHeader && (
+        <div className="fixed top-3 right-3 left-3 rounded-2xl z-50 bg-white shadow-md">
+          <div className="flex items-center justify-between py-2 px-4 h-[60px]">
+            <MobileMenu categories={categories} onToggleMenu={setIsMenuOpen} />
+            <MobileLogo />
+            <PiPhoneCall className="h-6 w-6" />
+          </div>
         </div>
-      </div>
+      )}
 
-      <nav className="fixed bottom-3 right-3 left-3 rounded-2xl z-50 bg-white shadow-md">
-        <ul className="flex justify-between items-center text-xs rtl flex-row-reverse h-[60px]">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <li key={item.href} className="flex-1">
-                <Link
-                  href={item.href}
-                  className={`flex flex-col items-center justify-center py-2 transition-all ${
-                    isActive ? 'text-primary font-bold' : 'text-gray-500'
-                  }`}
-                >
-                  {item.icon}
-                  <span className="mt-1">{item.label}</span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
+      {showNav && (
+        <nav className="fixed bottom-3 right-3 left-3 rounded-2xl z-50 bg-white shadow-md">
+          <ul className="flex justify-between items-center text-xs flex-row-reverse h-[60px]">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <li key={item.href} className="flex-1">
+                  <Link
+                    href={item.href}
+                    className={`flex flex-col items-center justify-center py-2 transition-all ${
+                      isActive ? 'text-blue-600 font-bold' : 'text-gray-500'
+                    }`}
+                  >
+                    {item.icon}
+                    <span className="mt-1">{item.label}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      )}
     </div>
   );
 };

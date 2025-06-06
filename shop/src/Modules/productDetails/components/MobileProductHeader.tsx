@@ -40,8 +40,7 @@ const MobileHeader = ({ productId }: MobileHeaderProps) => {
   };
 
   const handleCart = () => {
-    console.log(`Add product with ID: ${productId} to cart`);
-    // اینجا می‌تونی منطق اضافه کردن به سبد خرید رو پیاده‌سازی کنی
+    router.push('/cart');
   };
 
   return (

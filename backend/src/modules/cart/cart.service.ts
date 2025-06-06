@@ -26,6 +26,9 @@ export class CartService {
       where: { userId },
       include: {
         items: {
+          orderBy: {
+            createdAt: 'desc',
+          },
           include: {
             product: {
               select: { id: true, name: true, type: true, salePrice: true, basePrice: true, mainImage: { select: { fileUrl: true } } },

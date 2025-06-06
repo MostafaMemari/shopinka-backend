@@ -15,9 +15,7 @@ import { FC } from 'react';
 import ProductSku from '../components/ProductSku';
 import ProductCommentCount from '../components/ProductCommentCount';
 import ProductGuaranteeBadge from '../components/ProductGuaranteeBadge';
-import { RiHome3Line } from 'react-icons/ri';
-import { IoIosArrowBack } from 'react-icons/io';
-import { HiOutlineHeart, HiOutlineShare, HiOutlineShoppingCart } from 'react-icons/hi';
+
 import MobileHeader from '../components/MobileProductHeader';
 interface ProductDetailsViewProps {
   product: ProductDetails;

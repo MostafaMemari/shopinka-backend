@@ -10,7 +10,7 @@ interface ProductCartImageProps {
 function ProductCartImage({ title, thumbnail }: ProductCartImageProps) {
   return (
     <Link href={`/product-detail/`}>
-      <Image alt={title} className="h-20 w-20" src={thumbnail} width={80} height={80} loading="lazy" />
+      <Image alt={title} className="h-full w-full" src={thumbnail} width={80} height={80} loading="lazy" />
     </Link>
   );
 }
