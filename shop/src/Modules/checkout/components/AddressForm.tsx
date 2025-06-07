@@ -3,11 +3,9 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useState } from 'react';
-
-interface Option {
-  value: string;
-  label: string;
-}
+import TextInput from '@/shared/components/ui/TextInput';
+import SelectInput from '@/shared/components/ui/SelectInput';
+import { Option } from './AddressFormDrawer';
 
 interface Cities {
   [key: string]: Option[];
@@ -37,6 +35,7 @@ interface AddressFormProps {
   className?: string;
 }
 
+// کامپوننت اصلی فرم
 const AddressForm: React.FC<AddressFormProps> = ({
   provinces,
   cities,
@@ -68,148 +67,51 @@ const AddressForm: React.FC<AddressFormProps> = ({
       plaque: Yup.string(),
     }),
     onSubmit: async (values) => {
-      //   await onSubmit(values);
       console.log(values);
     },
   });
 
-  const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
+  const handleProvinceChange = (selectedOption: Option | null) => {
+    if (!selectedOption) return;
+
+    const value = selectedOption.value;
     setSelectedProvince(value);
     formik.setFieldValue('province', value);
     formik.setFieldValue('city', '');
   };
-
   return (
-    <form onSubmit={formik.handleSubmit} className={`space-y-4 p-4 text-right ${className}`} dir="rtl">
-      <div>
-        <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
-          نام و نام خانوادگی
-        </label>
-        <input
-          id="fullName"
-          name="fullName"
-          type="text"
-          className="w-full p-2 border rounded-md focus:ring focus:ring-primary-300"
-          value={formik.values.fullName}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-        />
-        {formik.touched.fullName && formik.errors.fullName && <p className="text-red-500 text-xs mt-1">{formik.errors.fullName}</p>}
-      </div>
-
-      <div>
-        <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700">
-          کدپستی
-        </label>
-        <input
-          id="postalCode"
-          name="postalCode"
-          type="text"
-          className="w-full p-2 border rounded-md focus:ring focus:ring-primary-300"
-          value={formik.values.postalCode}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-        />
-        {formik.touched.postalCode && formik.errors.postalCode && <p className="text-red-500 text-xs mt-1">{formik.errors.postalCode}</p>}
-      </div>
-
+    <form onSubmit={formik.handleSubmit} className={`space-y-6 p-4 text-right ${className}`} dir="rtl">
+      <TextInput id="fullName" name="fullName" label="نام و نام خانوادگی" formik={formik} />
+      <TextInput id="postalCode" name="postalCode" label="کدپستی" formik={formik} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="province" className="block text-sm font-medium text-gray-700">
-            استان
-          </label>
-          <select
-            id="province"
-            name="province"
-            className="w-full p-2 border rounded-md focus:ring focus:ring-primary-300"
-            value={formik.values.province}
-            onChange={handleProvinceChange}
-            onBlur={formik.handleBlur}
-          >
-            <option value="">انتخاب کنید</option>
-            {provinces.map((p) => (
-              <option key={p.value} value={p.value}>
-                {p.label}
-              </option>
-            ))}
-          </select>
-          {formik.touched.province && formik.errors.province && <p className="text-red-500 text-xs mt-1">{formik.errors.province}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="city" className="block text-sm font-medium text-gray-700">
-            شهر
-          </label>
-          <select
-            id="city"
-            name="city"
-            className="w-full p-2 border rounded-md focus:ring focus:ring-primary-300"
-            value={formik.values.city}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            disabled={!selectedProvince}
-          >
-            <option value="">ابتدا استان را انتخاب کنید</option>
-            {(cities[selectedProvince] || []).map((c) => (
-              <option key={c.value} value={c.value}>
-                {c.label}
-              </option>
-            ))}
-          </select>
-          {formik.touched.city && formik.errors.city && <p className="text-red-500 text-xs mt-1">{formik.errors.city}</p>}
-        </div>
-      </div>
-
-      <div>
-        <label htmlFor="street" className="block text-sm font-medium text-gray-700">
-          خیابان
-        </label>
-        <textarea
-          id="street"
-          name="street"
-          className="w-full p-2 border rounded-md focus:ring focus:ring-primary-300"
-          rows={3}
-          value={formik.values.street}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
+        <SelectInput
+          id="province"
+          name="province"
+          label="استان"
+          formik={formik}
+          options={provinces}
+          placeholder="انتخاب کنید"
+          onChange={handleProvinceChange}
         />
-        {formik.touched.street && formik.errors.street && <p className="text-red-500 text-xs mt-1">{formik.errors.street}</p>}
-      </div>
 
+        <SelectInput
+          id="city"
+          name="city"
+          label="شهر"
+          formik={formik}
+          options={cities[selectedProvince] || []}
+          placeholder="ابتدا استان را انتخاب کنید"
+          isDisabled={!selectedProvince}
+        />
+      </div>
+      <TextInput id="street" name="street" label="خیابان" type="textarea" formik={formik} rows={3} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="unit" className="block text-sm font-medium text-gray-700">
-            واحد
-          </label>
-          <input
-            id="unit"
-            name="unit"
-            type="text"
-            className="w-full p-2 border rounded-md focus:ring focus:ring-primary-300"
-            value={formik.values.unit}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          />
-          {formik.touched.unit && formik.errors.unit && <p className="text-red-500 text-xs mt-1">{formik.errors.unit}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="plaque" className="block text-sm font-medium text-gray-700">
-            پلاک
-          </label>
-          <input
-            id="plaque"
-            name="plaque"
-            type="text"
-            className="w-full p-2 border rounded-md focus:ring focus:ring-primary-300"
-            value={formik.values.plaque}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          />
-          {formik.touched.plaque && formik.errors.plaque && <p className="text-red-500 text-xs mt-1">{formik.errors.plaque}</p>}
-        </div>
+        <TextInput id="unit" name="unit" label="واحد" formik={formik} />
+        <TextInput id="plaque" name="plaque" label="پلاک" formik={formik} />
       </div>
+      {/* <button type="submit" className="w-full rounded-lg bg-emerald-500 text-white p-2.5 hover:bg-emerald-600 transition-colors">
+        ارسال
+      </button> */}
     </form>
   );
 };

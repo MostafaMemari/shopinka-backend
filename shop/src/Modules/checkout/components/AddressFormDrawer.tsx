@@ -4,7 +4,7 @@ import MobileDrawer from '@/shared/components/MobileDrawer';
 import AddressForm from './AddressForm';
 import { MdOutlineAddLocationAlt } from 'react-icons/md';
 
-interface Option {
+export interface Option {
   value: string;
   label: string;
 }
@@ -51,7 +51,6 @@ const AddressFormDrawer: React.FC<AddressFormDrawerProps> = ({ provinces, cities
             await onSubmit(values);
             console.log('آدرس ثبت شد:', values);
           }}
-          className="pb-[100px]"
         />
       </MobileDrawer>
     </div>

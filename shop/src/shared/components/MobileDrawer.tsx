@@ -49,14 +49,13 @@ const MobileDrawer: FC<MobileDrawerProps> = ({ title = 'منو', triggerButton, 
         tabIndex={-1}
         id="mobile-drawer-navigation"
       >
-        {/* هدر */}
+        {/* Header */}
         <div className="flex items-center justify-between gap-x-4 border-b p-4 pb-5 shrink-0">
           <h5 className="text-lg font-medium text-text/90">{title}</h5>
           <button
             className="inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-text/90 hover:bg-zinc-100 hover:text-gray-900 dark:hover:bg-black dark:hover:text-white"
             onClick={handleClose}
             type="button"
-            aria-controls="mobile-drawer-navigation"
             aria-label="بستن منو"
           >
             <FiX className="h-5 w-5" />
@@ -64,13 +63,12 @@ const MobileDrawer: FC<MobileDrawerProps> = ({ title = 'منو', triggerButton, 
           </button>
         </div>
 
-        {/* بدنه */}
-        <div className="flex-1 overflow-y-auto px-4 pb-4">{children}</div>
+        <div className={`flex-1 overflow-y-auto px-4 ${footerActions ? 'pb-1' : 'pb-4'}`}>{children}</div>
 
-        {/* فوتر */}
+        {/* Footer */}
         {footerActions && (
-          <div className="fixed bottom-12 left-0 right-0 flex items-center justify-between border-t bg-muted px-6 py-4 shrink-0">
-            {footerActions}
+          <div className="sticky bottom-0 left-0 right-0 border-t bg-muted px-6 py-4">
+            <div className="flex items-center justify-between">{footerActions}</div>
           </div>
         )}
       </div>
