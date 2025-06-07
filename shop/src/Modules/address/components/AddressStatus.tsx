@@ -39,7 +39,6 @@ const CartStatus: React.FC<CartStatusProps> = ({ isLoading, error, cartItems }) 
             <p className="text-sm text-text/60 text-center">می‌توانید برای مشاهده محصولات بیشتر به صفحات زیر بروید:</p>
             <a href="/shop">
               <PrimaryButton className="flex items-center gap-2">
-                <BiStore className="h-5 w-5" />
                 <span>رفتن به فروشگاه</span>
               </PrimaryButton>
             </a>

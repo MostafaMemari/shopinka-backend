@@ -7,10 +7,10 @@ import PrimaryButton from '@/shared/components/PrimaryButton';
 import { useCart } from '@/modules/cart/hooks/useCart';
 import { calculateTotals } from '@/modules/cart/utils/calculateTotals';
 import CartPageItem from '@/modules/cart/views/CartPageView/CartPageItem';
-import CartStatus from '@/modules/cart/components/CartStatus';
 import Link from 'next/link';
 import showConfirmDialog from '../../components/showConfirmDialog';
 import CartSummary from '../../components/CartSummary';
+import CartStatus from '@/shared/components/CartStatus';
 
 function CartPageView() {
   const { cart: cartItems, isLoading, error, clearAllCartItems } = useCart();
@@ -34,7 +34,16 @@ function CartPageView() {
 
   return (
     <>
-      <CartStatus cartItems={cartItems} error={error} isLoading={isLoading} />
+      <CartStatus
+        cartItems={cartItems}
+        error={error}
+        isLoading={isLoading}
+        emptyMessage="سبد خرید شما خالی است!"
+        errorMessage="خطا در بارگذاری سبد خرید"
+        loadingMessage="در حال بارگذاری سبد خرید..."
+        shopButtonText="رفتن به فروشگاه"
+        shopLink="/shop"
+      />
 
       {!isLoading && cartItems.length > 0 && (
         <>
