@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 import { MdOutlineEditLocation, MdOutlineWrongLocation } from 'react-icons/md';
-import AddressFormModal from './AddressFormModal';
 import CartStatus from '@/shared/components/CartStatus';
 import { useAddress } from '@/shared/hooks/reactQuery/useAddress';
 import { HiDotsVertical } from 'react-icons/hi';
+import AddressFormDrawer from './AddressFormDrawer';
 
 interface AddressItem {
   province: string;
@@ -25,9 +25,25 @@ export default function AddressSection() {
     setOpenDropdown(openDropdown === id ? null : id);
   };
 
+  const provinces = [
+    { value: 'tehran', label: 'تهران' },
+    { value: 'isfahan', label: 'اصفهان' },
+  ];
+
+  const cities = {
+    tehran: [
+      { value: 'tehran', label: 'تهران' },
+      { value: 'rey', label: 'ری' },
+    ],
+    isfahan: [
+      { value: 'isfahan', label: 'اصفهان' },
+      { value: 'kashan', label: 'کاشان' },
+    ],
+  };
+
   return (
     <>
-      {isLoading || error || !addressItems.length ? (
+      {isLoading || error ? (
         <CartStatus
           cartItems={[]}
           error={error}
@@ -44,7 +60,7 @@ export default function AddressSection() {
               <MdOutlineEditLocation className="h-5 w-5 text-primary" />
               آدرس تحویل سفارش
             </h1>
-            <AddressFormModal />
+            <AddressFormDrawer cities={cities} provinces={provinces} onSubmit={() => console.log('object')} />
           </div>
           <fieldset className="space-y-4">
             <legend className="sr-only">Address Options</legend>

@@ -4,7 +4,6 @@ import ResetFilters from '../components/FilterDesktop/ResetFilters';
 import PriceSelector from '../components/PriceSelector';
 import StockStatusFilter from '../components/FilterDesktop/StockStatusFilter';
 import DiscountFilter from '../components/FilterDesktop/DiscountFilter';
-import Accordion from '../shop/Accordion';
 
 const FilterSection = () => {
   return (

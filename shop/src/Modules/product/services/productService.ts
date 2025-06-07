@@ -4,21 +4,23 @@ import { shopApiFetch } from '@/server/api';
 import { revalidateTag, unstable_cache } from 'next/cache';
 import { Pager } from '@/shared/types/pagerType';
 import { Product, ProductParams } from '../types/productType';
+import { ofetch } from 'ofetch';
 
 export const getProducts = unstable_cache(
   async (params?: ProductParams): Promise<{ items: Product[]; pager: Pager }> => {
-    const response = await shopApiFetch('/product', {
+    const response = await ofetch(`/product`, {
+      baseURL: process.env.API_BASE_URL,
+      method: 'GET',
       query: { ...params, includeMainImage: true },
     });
 
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    return response.data;
+    return {
+      items: response.items,
+      pager: response.pager,
+    };
   },
   ['products'],
-  {
-    tags: ['products'],
-  },
+  { tags: ['products'] },
 );
 
 export async function refetchProducts() {

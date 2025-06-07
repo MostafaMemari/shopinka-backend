@@ -8,6 +8,7 @@ import { SearchParams } from 'nuqs';
 import SortBar from '@/modules/shopPage/components/SortBar';
 import FilterSection from '@/modules/shopPage/views/FilterSection';
 import MobileFilterSection from '@/modules/shopPage/components/FilterMobile/MobileFilterSection';
+import { cookies } from 'next/headers';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;

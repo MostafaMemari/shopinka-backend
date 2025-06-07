@@ -1,0 +1,81 @@
+'use client';
+
+import { FC, ReactNode, useState, useEffect } from 'react';
+import { FiX } from 'react-icons/fi';
+
+interface MobileDrawerProps {
+  title?: string;
+  triggerButton: ReactNode;
+  footerActions?: ReactNode;
+  children: ReactNode;
+  className?: string;
+}
+
+const MobileDrawer: FC<MobileDrawerProps> = ({ title = 'منو', triggerButton, footerActions, children, className = '' }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, [isOpen]);
+
+  const handleClose = () => setIsOpen(false);
+
+  return (
+    <>
+      <div
+        role="button"
+        tabIndex={0}
+        className="w-full cursor-pointer outline-none"
+        onClick={() => setIsOpen(true)}
+        onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setIsOpen(true)}
+        aria-controls="mobile-drawer-navigation"
+        aria-expanded={isOpen}
+      >
+        {triggerButton}
+      </div>
+
+      <div
+        className={`fixed inset-0 min-h-screen w-full bg-muted transition-transform duration-300 z-[60] flex flex-col ${
+          isOpen ? 'translate-y-0' : 'translate-y-full'
+        } ${className}`}
+        aria-labelledby="mobile-drawer-navigation-label"
+        tabIndex={-1}
+        id="mobile-drawer-navigation"
+      >
+        {/* هدر */}
+        <div className="flex items-center justify-between gap-x-4 border-b p-4 pb-5 shrink-0">
+          <h5 className="text-lg font-medium text-text/90">{title}</h5>
+          <button
+            className="inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-text/90 hover:bg-zinc-100 hover:text-gray-900 dark:hover:bg-black dark:hover:text-white"
+            onClick={handleClose}
+            type="button"
+            aria-controls="mobile-drawer-navigation"
+            aria-label="بستن منو"
+          >
+            <FiX className="h-5 w-5" />
+            <span className="sr-only">بستن منو</span>
+          </button>
+        </div>
+
+        {/* بدنه */}
+        <div className="flex-1 overflow-y-auto px-4 pb-4">{children}</div>
+
+        {/* فوتر */}
+        {footerActions && (
+          <div className="fixed bottom-12 left-0 right-0 flex items-center justify-between border-t bg-muted px-6 py-4 shrink-0">
+            {footerActions}
+          </div>
+        )}
+      </div>
+    </>
+  );
+};
+
+export default MobileDrawer;
