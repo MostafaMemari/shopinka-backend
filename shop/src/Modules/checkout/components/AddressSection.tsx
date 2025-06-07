@@ -3,8 +3,8 @@
 import { MdOutlineEditLocation, MdOutlineWrongLocation } from 'react-icons/md';
 import { HiDotsVertical } from 'react-icons/hi';
 import AddressFormModal from './AddressFormModal';
-import { useAddress } from '@/modules/address/hooks/useAddress';
 import CartStatus from '@/shared/components/CartStatus';
+import { useAddress } from '@/shared/hooks/reactQuery/useAddress';
 
 export default function AddressSection() {
   const { data, isLoading, error } = useAddress({});
@@ -33,7 +33,7 @@ export default function AddressSection() {
               <input type="radio" name="address" value="address-1" id="address-1" className="peer hidden" />
               <label
                 htmlFor="address-1"
-                className="relative block cursor-pointer rounded-lg border p-4 shadow-base peer-checked:border-emerald-500 hover:border-border/50 dark:peer-checked:border-emerald-400 dark:hover:border-white/10"
+                className="relative block cursor-pointer rounded-lg border border-gray-200 p-4 shadow-base peer-checked:border-primary hover:border-border/50"
               >
                 <div className="mb-4 flex items-center justify-between gap-x-2 sm:mb-2">
                   <p className="line-clamp-2 h-10 text-sm text-text/90 xs:text-base sm:line-clamp-1 sm:h-6">
