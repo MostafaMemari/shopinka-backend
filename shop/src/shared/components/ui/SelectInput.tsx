@@ -19,7 +19,9 @@ const SelectInput: React.FC<SelectInputProps> = ({ id, name, label, formik, opti
   const selectedOption = options.find((opt) => opt.value === formik.values[name]);
 
   const defaultHandleChange = (selected: Option | null) => {
+    console.log('Selected:', selected); // برای دیباگ
     formik.setFieldValue(name, selected?.value || '');
+    formik.setFieldTouched(name, true);
   };
 
   return (
@@ -37,19 +39,27 @@ const SelectInput: React.FC<SelectInputProps> = ({ id, name, label, formik, opti
         placeholder={placeholder}
         isClearable
         isDisabled={isDisabled}
-        classNames={{
-          control: (state) => `border rounded-lg text-sm min-h-[40px]  ${state.isFocused ? 'border-primary shadow' : 'border-gray-300'}`,
-          option: (state) => `text-right py-2 px-3 cursor-pointer ${state.isSelected ? 'bg-primary text-white' : ''}`,
-          menu: () => 'z-50 text-sm',
-        }}
+        isSearchable
         styles={{
+          control: (base, state) => ({
+            ...base,
+            direction: 'rtl',
+            borderRadius: '0.5rem',
+            minHeight: '40px',
+            borderColor: state.isFocused ? '#3B82F6' : '#D1D5DB',
+            boxShadow: state.isFocused ? '0 0 0 1px #3B82F6' : undefined,
+            '&:hover': {
+              borderColor: '#3B82F6',
+            },
+          }),
           input: (base) => ({ ...base, direction: 'rtl' }),
           placeholder: (base) => ({ ...base, textAlign: 'right' }),
           singleValue: (base) => ({ ...base, textAlign: 'right', direction: 'rtl' }),
         }}
-        isSearchable
       />
-      {formik.touched[name] && formik.errors[name] && <p className="text-red-500 text-xs mt-1">{formik.errors[name]}</p>}
+      {formik.touched[name] && formik.errors[name] && formik.submitCount > 0 && (
+        <p className="text-red-500 text-xs mt-1">{formik.errors[name]}</p>
+      )}
     </div>
   );
 };
