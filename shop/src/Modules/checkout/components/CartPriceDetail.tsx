@@ -18,7 +18,7 @@ export default function CartPriceDetail() {
   return (
     <>
       <div className="col-span-12 md:col-span-4">
-        {isLoading && cartItems.length <= 0 ? (
+        {isLoading ? (
           <div className="rounded-lg bg-muted p-4 min-h-[200px]">
             <CartStatus
               cartItems={cartItems}
@@ -35,6 +35,7 @@ export default function CartPriceDetail() {
             totalQuantity={totalQuantity}
             payablePrice={payablePrice}
             totalDiscountPrice={totalDiscountPrice}
+            shippingCost={5000}
             totalPrice={totalPrice}
           >
             <div>

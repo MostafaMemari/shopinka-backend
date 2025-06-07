@@ -30,13 +30,17 @@ const CartSummary: React.FC<CartSummaryProps> = ({
               <span className="text-xs lg:text-sm"> تومان</span>
             </div>
           </div>
-          <div className="flex items-center justify-between gap-x-2 py-6">
-            <div className="text-sm text-text/90 lg:text-base">تخفیف</div>
-            <div className="text-sm font-medium text-primary dark:text-red-400 lg:text-base">
-              <span className="font-bold">{formatPrice(totalDiscountPrice)}</span>
-              <span className="text-xs lg:text-sm"> تومان</span>
+
+          {totalDiscountPrice && (
+            <div className="flex items-center justify-between gap-x-2 py-6">
+              <div className="text-sm text-text/90 lg:text-base">تخفیف</div>
+              <div className="text-sm font-medium text-primary dark:text-red-400 lg:text-base">
+                <span className="font-bold">{formatPrice(totalDiscountPrice)}</span>
+                <span className="text-xs lg:text-sm"> تومان</span>
+              </div>
             </div>
-          </div>
+          )}
+
           {shippingCost !== undefined && (
             <div className="flex items-center justify-between gap-x-2 py-6">
               <div className="text-sm text-text/90 lg:text-base">هزینه ارسال</div>
