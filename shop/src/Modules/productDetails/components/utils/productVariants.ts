@@ -1,5 +1,5 @@
 import { Attribute, AttributeValues } from '@/shared/types/attributeType';
-import { ProductVariant } from '@/Modules/product/types/productType';
+import { ProductVariant } from '@/modules/product/types/productType';
 import { IColor } from '@/lib/types/colors';
 
 export interface TransformedVariants {

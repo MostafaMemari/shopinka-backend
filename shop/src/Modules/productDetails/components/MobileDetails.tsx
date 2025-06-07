@@ -1,10 +1,10 @@
 'use client';
 
-import { ProductDetails } from '@/Modules/product/types/productType';
+import { ProductDetails } from '@/modules/product/types/productType';
 import ProductVariants from './VariantSelector';
 import { HiOutlineShieldCheck } from 'react-icons/hi';
 import PriceDisplay from './PriceDisplay';
-import AddToCartButtonMobile from '@/Modules/cart/components/AddToCartButton/AddToCartButtonMobile';
+import AddToCartButtonMobile from '@/modules/cart/components/AddToCartButton/AddToCartButtonMobile';
 
 interface Props {
   product: ProductDetails;

@@ -1,11 +1,11 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useCategories } from '@/Modules/category/hooks/useCategories';
+import { useCategories } from '@/modules/category/hooks/useCategories';
 import CategoryItem from './CategoryItem';
 import { useQueryState } from 'nuqs';
-import Accordion from '@/Modules/shopPage/shop/Accordion';
-import { Category } from '@/Modules/category/types/categoryType';
+import Accordion from '@/modules/shopPage/shop/Accordion';
+import { Category } from '@/modules/category/types/categoryType';
 
 function CategorySelector() {
   const [categoryIds, setCategoryIds] = useQueryState('categoryIds', {

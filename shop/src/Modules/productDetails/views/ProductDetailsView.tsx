@@ -7,9 +7,9 @@ import ProductGuarantees from '../components/ProductGuarantees';
 
 import ProductImageSwiper from '../components/ProductImageSwiper';
 import ProductVariants from '../components/VariantSelector';
-import AddToCartButtonMobile from '@/Modules/cart/components/AddToCartButton/AddToCartButtonMobile';
+import AddToCartButtonMobile from '@/modules/cart/components/AddToCartButton/AddToCartButtonMobile';
 import ProductProperties from '../components/ProductProperties';
-import AddToCartButtonDesktop from '@/Modules/cart/components/AddToCartButton/AddToCartButtonDesktop';
+import AddToCartButtonDesktop from '@/modules/cart/components/AddToCartButton/AddToCartButtonDesktop';
 import PriceDisplay from '../components/PriceDisplay';
 import { FC } from 'react';
 import ProductSku from '../components/ProductSku';

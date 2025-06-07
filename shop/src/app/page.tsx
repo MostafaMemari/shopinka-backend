@@ -2,8 +2,8 @@ import { Suspense } from 'react';
 import BannerSlider from '@/shared/components/Carousel/BannerSlider';
 import Header from '@/shared/components/header';
 import Footer from '@/shared/components/footer';
-import NewestProductsCarousel from '@/Modules/home/views/newestProductsCarousel';
-import DiscountedProductsCarousel from '@/Modules/home/views/discountedProductsCarousel';
+import NewestProductsCarousel from '@/modules/home/views/newestProductsCarousel';
+import DiscountedProductsCarousel from '@/modules/home/views/discountedProductsCarousel';
 import HomeSkeleton from '@/components/HomeSkeleton';
 import MobileLayout from '@/shared/components/MobileLayout';
 

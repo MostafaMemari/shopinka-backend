@@ -3,7 +3,7 @@
 import { cn } from '@/shared/utils/utils';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { HiOutlineMinus, HiOutlinePlus } from 'react-icons/hi';
-import { CartItemState } from '@/Modules/cart/types/cartType';
+import { CartItemState } from '@/modules/cart/types/cartType';
 import { useCart } from '../hooks/useCart';
 import { PulseLoader } from 'react-spinners';
 

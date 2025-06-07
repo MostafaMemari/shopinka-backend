@@ -4,7 +4,7 @@ import TopbarContainer from './TopbarContainer';
 import { categories } from '@/mock/categories';
 import SearchBarBase from './SearchBar';
 import { mockProductItems } from '@/mock/searchBar';
-import BasketDropdown from '../../../Modules/cart/views/BasketDropdown';
+import BasketDropdown from '../../../modules/cart/views/BasketDropdown';
 import DesktopNavbar from './DesktopNavbar';
 
 function Header() {

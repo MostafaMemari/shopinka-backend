@@ -2,12 +2,12 @@ import { useEffect, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useQueryClient } from '@tanstack/react-query';
 import { loginStart, loginSuccess, loginFailure, logout } from '@/store/slices/authSlice';
-import { User, UserState } from '@/Modules/auth/types/userType';
+import { User, UserState } from '@/modules/auth/types/userType';
 import { getMe } from '../services/user.api';
 import { logout as logoutApi } from '../services/auth.api';
 import { clearCartAction } from '@/store/slices/cartSlice';
 import { QueryKeys } from '@/shared/types/query-keys';
-import { useSyncCart } from '@/Modules/cart/hooks/useSyncCart';
+import { useSyncCart } from '@/modules/cart/hooks/useSyncCart';
 
 export function useAuth() {
   const dispatch = useAppDispatch();

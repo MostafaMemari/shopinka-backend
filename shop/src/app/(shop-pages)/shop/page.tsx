@@ -1,13 +1,13 @@
 import { Suspense } from 'react';
-import ProductListShopClient from '@/Modules/shopPage/views/ProductListShopClient';
-import { getProducts } from '@/Modules/product/services/productService';
-import { loadSearchParams } from '@/Modules/shopPage/utils/loadSearchParams';
-import { parseArrayParam } from '@/Modules/shopPage/utils/parseArrayParam';
-import { ProductParams } from '@/Modules/product/types/productType';
+import ProductListShopClient from '@/modules/shopPage/views/ProductListShopClient';
+import { getProducts } from '@/modules/product/services/productService';
+import { loadSearchParams } from '@/modules/shopPage/utils/loadSearchParams';
+import { parseArrayParam } from '@/modules/shopPage/utils/parseArrayParam';
+import { ProductParams } from '@/modules/product/types/productType';
 import { SearchParams } from 'nuqs';
-import SortBar from '@/Modules/shopPage/components/SortBar';
-import FilterSection from '@/Modules/shopPage/views/FilterSection';
-import MobileFilterSection from '@/Modules/shopPage/components/FilterMobile/MobileFilterSection';
+import SortBar from '@/modules/shopPage/components/SortBar';
+import FilterSection from '@/modules/shopPage/views/FilterSection';
+import MobileFilterSection from '@/modules/shopPage/components/FilterMobile/MobileFilterSection';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;

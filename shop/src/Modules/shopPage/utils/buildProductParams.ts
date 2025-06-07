@@ -1,4 +1,4 @@
-import { ProductParams } from '@/Modules/product/types/productType';
+import { ProductParams } from '@/modules/product/types/productType';
 
 export const buildProductParams = (
   values: {

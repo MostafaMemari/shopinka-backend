@@ -3,7 +3,7 @@
 import { FC, useMemo } from 'react';
 import Link from 'next/link';
 import { HiChevronLeft } from 'react-icons/hi';
-import ProductCard from '@/Modules/product/components/ProductCard';
+import ProductCard from '@/modules/product/components/ProductCard';
 import { productSwiperConfig } from '@/config/swiper';
 import Carousel from '../../../../shared/components/Carousel/Carousel';
 import { Product } from '../../types/productType';

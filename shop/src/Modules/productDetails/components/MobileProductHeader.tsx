@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { IoIosArrowBack } from 'react-icons/io';
 import { RiHome3Line } from 'react-icons/ri';
 import { HiOutlineShare, HiOutlineHeart, HiOutlineShoppingCart } from 'react-icons/hi';
-import { useCart } from '@/Modules/cart/hooks/useCart';
+import { useCart } from '@/modules/cart/hooks/useCart';
 import IconButtonWithBadge from '@/shared/components/IconButtonWithBadge';
 import SkeletonLoader from '@/shared/components/SkeletonLoader';
 

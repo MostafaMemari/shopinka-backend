@@ -7,7 +7,7 @@ import { PaginationDto } from '../../../common/dtos/pagination.dto';
 
 export class QueryAddressDto extends PaginationDto {
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @Transform(({ value }) => value?.trim())
   @ApiProperty({
     type: 'string',
@@ -17,7 +17,7 @@ export class QueryAddressDto extends PaginationDto {
   province?: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @Transform(({ value }) => value?.trim())
   @ApiProperty({
     type: 'string',
@@ -27,7 +27,7 @@ export class QueryAddressDto extends PaginationDto {
   city?: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @Transform(({ value }) => value?.trim())
   @ApiProperty({
     type: 'string',
@@ -37,7 +37,7 @@ export class QueryAddressDto extends PaginationDto {
   address?: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @Transform(({ value }) => value?.trim())
   @ApiProperty({
     type: 'string',
@@ -47,7 +47,7 @@ export class QueryAddressDto extends PaginationDto {
   postalCode?: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @Transform(({ value }) => value?.trim())
   @ApiProperty({
     type: 'string',
@@ -57,7 +57,7 @@ export class QueryAddressDto extends PaginationDto {
   receiverMobile?: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @IsOptional()
   @Transform(({ value }) => value?.trim())
   @ApiProperty({

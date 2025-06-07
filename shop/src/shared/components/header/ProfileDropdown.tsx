@@ -1,7 +1,7 @@
 'use client';
 
-import { useAuth } from '@/Modules/auth/hooks/useAuth';
-import { logout } from '@/Modules/auth/services/auth.api';
+import { useAuth } from '@/modules/auth/hooks/useAuth';
+import { logout } from '@/modules/auth/services/auth.api';
 import Toast from '@/shared/utils/swalToast';
 import Link from 'next/link';
 import {

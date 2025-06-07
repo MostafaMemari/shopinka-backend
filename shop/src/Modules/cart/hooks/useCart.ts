@@ -5,11 +5,11 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setCart, addToCart, increaseCount, decreaseCount, deleteFromCart, clearCartAction } from '@/store/slices/cartSlice';
-import { createCart, getCart, updateQuantityItemCart, removeItemCart, clearCart } from '@/Modules/cart/services/cart.api';
-import { CartResponse, CartData, CartItemState } from '@/Modules/cart/types/cartType';
+import { createCart, getCart, updateQuantityItemCart, removeItemCart, clearCart } from '@/modules/cart/services/cart.api';
+import { CartResponse, CartData, CartItemState } from '@/modules/cart/types/cartType';
 import { QueryOptions } from '@/shared/types/queryOptions';
 import { QueryKeys } from '@/shared/types/query-keys';
-import { useAuth } from '@/Modules/auth/hooks/useAuth';
+import { useAuth } from '@/modules/auth/hooks/useAuth';
 
 export function useCartData({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   // const { isLogin } = useAuth();

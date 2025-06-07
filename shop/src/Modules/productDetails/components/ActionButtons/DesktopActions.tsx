@@ -3,7 +3,7 @@
 import { FC } from 'react';
 import { HiOutlineHeart, HiOutlineAdjustments, HiOutlineShare } from 'react-icons/hi';
 
-import { useProductActions } from '@/Modules/product/hooks/useProductActions';
+import { useProductActions } from '@/modules/product/hooks/useProductActions';
 import ActionButton from '../../../../shared/components/ui/ActionButton';
 
 interface Props {

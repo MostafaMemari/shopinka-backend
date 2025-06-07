@@ -1,8 +1,8 @@
 import Footer from '@/shared/components/footer';
 import Header from '@/shared/components/header';
-import ProductTabs from '@/Modules/product/components/ProductTabs';
+import ProductTabs from '@/modules/product/components/ProductTabs';
 import { mockProductDetails } from '@/mock/productCarousels';
-import NewestProductsCarousel from '@/Modules/home/views/newestProductsCarousel';
+import NewestProductsCarousel from '@/modules/home/views/newestProductsCarousel';
 
 export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   const product = mockProductDetails;

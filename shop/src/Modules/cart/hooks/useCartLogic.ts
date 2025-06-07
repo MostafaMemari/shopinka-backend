@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
 import { setSelectedVariant } from '@/store/slices/productSlice';
-import { CartItemState } from '@/Modules/cart/types/cartType';
+import { CartItemState } from '@/modules/cart/types/cartType';
 import { useCart } from './useCart';
 import { ProductCardLogic } from '../types/productCardLogic';
 

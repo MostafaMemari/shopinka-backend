@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '@/store';
-import { createCartBulk, getCart, updateQuantityItemCart, removeItemCart, clearCart } from '@/Modules/cart/services/cart.api';
-import { CartData, CartItemState, CartState } from '@/Modules/cart/types/cartType';
-import { calculateTotals } from '@/Modules/cart/utils/calculateTotals';
+import { createCartBulk, getCart, updateQuantityItemCart, removeItemCart, clearCart } from '@/modules/cart/services/cart.api';
+import { CartData, CartItemState, CartState } from '@/modules/cart/types/cartType';
+import { calculateTotals } from '@/modules/cart/utils/calculateTotals';
 
 const initialState: CartState = {
   items: [],

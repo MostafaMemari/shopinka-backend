@@ -1,5 +1,5 @@
-import CheckoutProgress from '@/Modules/checkout/components/CheckoutProgress';
-import CheckoutPageView from '@/Modules/checkout/views/CheckoutPageView';
+import CheckoutProgress from '@/modules/checkout/components/CheckoutProgress';
+import CheckoutPageView from '@/modules/checkout/views/CheckoutPageView';
 
 export default function Page() {
   return (

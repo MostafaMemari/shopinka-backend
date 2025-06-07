@@ -8,7 +8,7 @@ import ColorSelector from './ColorSelector';
 import ButtonSelector from './ButtonSelector';
 import { getDefaultSelections, transformVariants } from '../utils/productVariants';
 
-import { ProductVariant } from '@/Modules/product/types/productType';
+import { ProductVariant } from '@/modules/product/types/productType';
 import { findMatchingVariant } from '../utils/productVariants';
 import { Attribute, AttributeValues } from '@/shared/types/attributeType';
 interface Props {

@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ProductListShop from './ProductListShop';
-import { Product, ProductParams } from '@/Modules/product/types/productType';
-import { getProducts } from '@/Modules/product/services/productService';
+import { Product, ProductParams } from '@/modules/product/types/productType';
+import { getProducts } from '@/modules/product/services/productService';
 import LoadingDots from '../components/LoadingDots';
 import { Pager } from '@/shared/types/pagerType';
 import EndMessage from '../components/EndMessage';

@@ -1,5 +1,5 @@
-import ProductCard from '@/Modules/product/components/ProductCard';
-import { Product } from '@/Modules/product/types/productType';
+import ProductCard from '@/modules/product/components/ProductCard';
+import { Product } from '@/modules/product/types/productType';
 import ProductCardSkeleton from '../components/ProductCardSkeleton';
 import MobileFilterSection from './MobileFilterSection';
 

@@ -4,13 +4,13 @@ import React from 'react';
 import { HiOutlineTrash } from 'react-icons/hi';
 
 import PrimaryButton from '@/shared/components/PrimaryButton';
-import { useCart } from '@/Modules/cart/hooks/useCart';
-import { calculateTotals } from '@/Modules/cart/utils/calculateTotals';
-import CartPageItem from '@/Modules/cart/views/CartPageView/CartPageItem';
-import CartStatus from '@/Modules/cart/components/CartStatus';
-import CartSummary from '../../components/CartSummary';
+import { useCart } from '@/modules/cart/hooks/useCart';
+import { calculateTotals } from '@/modules/cart/utils/calculateTotals';
+import CartPageItem from '@/modules/cart/views/CartPageView/CartPageItem';
+import CartStatus from '@/modules/cart/components/CartStatus';
 import Link from 'next/link';
 import showConfirmDialog from '../../components/showConfirmDialog';
+import CartSummary from '../../components/CartSummary';
 
 function CartPageView() {
   const { cart: cartItems, isLoading, error, clearAllCartItems } = useCart();
