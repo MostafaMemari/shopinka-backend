@@ -7,7 +7,7 @@ import { ShippingItem } from '@/shared/types/shipping.type';
 
 export function useShipping({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   return useQuery<{ status: number; data: { items: ShippingItem[]; pager: pager } }>({
-    queryKey: [QueryKeys.Address],
+    queryKey: [QueryKeys.Shipping],
     queryFn: getShipping,
     enabled: enabled,
     staleTime,

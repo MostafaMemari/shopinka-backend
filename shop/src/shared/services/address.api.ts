@@ -12,7 +12,7 @@ import { AddressItem } from '@/modules/address/types/address.type';
 // };
 
 export const getAddress = async (): Promise<{ status: number; data: { items: AddressItem[]; pager: pager } }> => {
-  const res = await shopApiFetch('/shipping', { method: 'GET' });
+  const res = await shopApiFetch('/address', { method: 'GET' });
 
   return {
     ...res,

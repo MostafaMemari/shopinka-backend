@@ -68,7 +68,7 @@ const AddressFormModal: React.FC = () => {
         customClass: {
           popup: 'bg-white rounded-lg shadow-lg',
           title: 'font-bold text-lg',
-          confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded',
+          confirmButton: 'bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded',
         },
       });
     },
@@ -81,18 +81,18 @@ const AddressFormModal: React.FC = () => {
         <form id="address-form" class="space-y-4 p-4 text-right" dir="rtl">
           <div>
             <label for="fullName" class="block text-sm font-medium text-gray-700">نام و نام خانوادگی</label>
-            <input id="fullName" name="fullName" type="text" class="w-full p-2 border rounded-md focus:ring focus:ring-blue-300" />
+            <input id="fullName" name="fullName" type="text" class="w-full p-2 border rounded-md focus:ring focus:ring-primary-300" />
             <p class="text-red-500 text-xs mt-1">${formik.touched.fullName && formik.errors.fullName ? formik.errors.fullName : ''}</p>
           </div>
           <div>
             <label for="postalCode" class="block text-sm font-medium text-gray-700">کدپستی</label>
-            <input id="postalCode" name="postalCode" type="text" class="w-full p-2 border rounded-md focus:ring focus:ring-blue-300" />
+            <input id="postalCode" name="postalCode" type="text" class="w-full p-2 border rounded-md focus:ring focus:ring-primary-300" />
             <p class="text-red-500 text-xs mt-1">${formik.touched.postalCode && formik.errors.postalCode ? formik.errors.postalCode : ''}</p>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label for="province" class="block text-sm font-medium text-gray-700">استان</label>
-              <select id="province" name="province" class="w-full p-2 border rounded-md focus:ring focus:ring-blue-300">
+              <select id="province" name="province" class="w-full p-2 border rounded-md focus:ring focus:ring-primary-300">
                 <option value="">انتخاب کنید</option>
                 ${provinces.map((p) => `<option value="${p.value}">${p.label}</option>`).join('')}
               </select>
@@ -100,7 +100,7 @@ const AddressFormModal: React.FC = () => {
             </div>
             <div>
               <label for="city" class="block text-sm font-medium text-gray-700">شهر</label>
-              <select id="city" name="city" class="w-full p-2 border rounded-md focus:ring focus:ring-blue-300" ${selectedProvince ? '' : 'disabled'}>
+              <select id="city" name="city" class="w-full p-2 border rounded-md focus:ring focus:ring-primary-300" ${selectedProvince ? '' : 'disabled'}>
                 <option value="">ابتدا استان را انتخاب کنید</option>
                 ${(cities[selectedProvince] || []).map((c) => `<option value="${c.value}">${c.label}</option>`).join('')}
               </select>
@@ -109,18 +109,18 @@ const AddressFormModal: React.FC = () => {
           </div>
           <div>
             <label for="street" class="block text-sm font-medium text-gray-700">خیابان</label>
-            <textarea id="street" name="street" class="w-full p-2 border rounded-md focus:ring focus:ring-blue-300" rows="3"></textarea>
+            <textarea id="street" name="street" class="w-full p-2 border rounded-md focus:ring focus:ring-primary-300" rows="3"></textarea>
             <p class="text-red-500 text-xs mt-1">${formik.touched.street && formik.errors.street ? formik.errors.street : ''}</p>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label for="unit" class="block text-sm font-medium text-gray-700">واحد</label>
-              <input id="unit" name="unit" type="text" class="w-full p-2 border rounded-md focus:ring focus:ring-blue-300" />
+              <input id="unit" name="unit" type="text" class="w-full p-2 border rounded-md focus:ring focus:ring-primary-300" />
               <p class="text-red-500 text-xs mt-1">${formik.touched.unit && formik.errors.unit ? formik.errors.unit : ''}</p>
             </div>
             <div>
               <label for="plaque" class="block text-sm font-medium text-gray-700">پلاک</label>
-              <input id="plaque" name="plaque" type="text" class="w-full p-2 border rounded-md focus:ring focus:ring-blue-300" />
+              <input id="plaque" name="plaque" type="text" class="w-full p-2 border rounded-md focus:ring focus:ring-primary-300" />
               <p class="text-red-500 text-xs mt-1">${formik.touched.plaque && formik.errors.plaque ? formik.errors.plaque : ''}</p>
             </div>
           </div>
@@ -132,7 +132,7 @@ const AddressFormModal: React.FC = () => {
       customClass: {
         popup: 'bg-white rounded-lg shadow-lg max-w-lg w-full',
         title: 'font-bold text-lg',
-        confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded',
+        confirmButton: 'bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded',
         cancelButton: 'bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded',
       },
       showClass: {
@@ -183,7 +183,7 @@ const AddressFormModal: React.FC = () => {
   return (
     <button
       onClick={showForm}
-      className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+      className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary-600 focus:outline-none focus:ring focus:ring-primary-300 cursor-pointer"
     >
       <MdOutlineAddLocationAlt className="h-6 w-6" />
       <span>آدرس جدید</span>

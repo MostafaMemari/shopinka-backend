@@ -4,6 +4,7 @@ import React from 'react';
 import { FaTruck, FaMoneyBillWave, FaClock } from 'react-icons/fa';
 import CartStatus from '@/shared/components/CartStatus';
 import { useShipping } from '@/shared/hooks/reactQuery/useShipping';
+import { formatPrice } from '@/shared/utils/formatter';
 
 interface ShippingItem {
   name: string;
@@ -51,7 +52,7 @@ export default function DeliverySection() {
                   </div>
                   <div className="mb-2 flex items-center gap-x-2 text-sm text-primary dark:text-primary">
                     <FaMoneyBillWave className="h-4 w-4" />
-                    <span>{item.price === 0 ? 'رایگان' : `${item.price.toLocaleString('fa-IR')} تومان`}</span>
+                    <span>{item.price === 0 ? 'رایگان' : `${formatPrice(item.price)} تومان`}</span>
                   </div>
                   <div className="flex items-center gap-x-2 text-sm text-gray-500 dark:text-gray-400">
                     <FaClock className="h-4 w-4" />

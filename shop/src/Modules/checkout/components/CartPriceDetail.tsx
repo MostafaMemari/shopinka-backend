@@ -9,6 +9,7 @@ import Link from 'next/link';
 
 export default function CartPriceDetail() {
   const { cart: cartItems, isLoading, error, clearAllCartItems } = useCart();
+
   const totals = calculateTotals(cartItems);
   const totalQuantity = cartItems?.reduce((sum, item) => sum + item.count, 0) || 0;
   const totalPrice = totals.totalPrice;
