@@ -70,7 +70,7 @@ const MobileLayout = ({ showHeader = true, showNav = true }: MobileLayoutProps) 
                   <Link
                     href={item.href}
                     className={`flex flex-col items-center justify-center py-2 transition-all ${
-                      isActive ? 'text-blue-600 font-bold' : 'text-gray-500'
+                      isActive ? 'text-primary font-bold' : 'text-gray-500'
                     }`}
                   >
                     {item.icon}
