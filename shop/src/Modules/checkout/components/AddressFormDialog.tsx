@@ -62,17 +62,15 @@ const AddressFormDialog = () => {
     }
   };
 
-  // آیکون برای دیالوگ
   const icon = (
-    <div className="bg-primary/10 rounded-full">
+    <div className="bg-primary/10 w-full rounded-full">
       <MdOutlineAddLocationAlt className="h-6 w-6 text-primary" />
     </div>
   );
 
-  // دکمه‌های اکشن
   const actions = (
     <>
-      <button className="btn-primary w-full sm:w-auto py-3 text-sm" type="button" onClick={handleSubmit} disabled={isCreateAddressLoading}>
+      <button className="btn-primary w-full py-3 text-sm" type="button" onClick={handleSubmit} disabled={isCreateAddressLoading}>
         {isCreateAddressLoading ? 'در حال ثبت' : 'تأیید و ادامه'}
       </button>
     </>

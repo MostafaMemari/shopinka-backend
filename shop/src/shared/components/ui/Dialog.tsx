@@ -33,6 +33,31 @@ export default function Dialog({
   const dialogRef = useRef<HTMLDivElement>(null);
   const firstFocusableRef = useRef<HTMLElement | null>(null);
 
+  // برای جلوگیری از اسکرول کردن بادی
+  useEffect(() => {
+    if (isOpen) {
+      // ذخیره وضعیت اسکرول فعلی
+      const scrollY = window.scrollY;
+
+      // اضافه کردن استایل به body برای جلوگیری از اسکرول
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+
+      return () => {
+        // بازگرداندن استایل‌های body به حالت عادی
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+
+        // بازگرداندن موقعیت اسکرول
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [isOpen]);
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (closeOnEsc && event.key === 'Escape') {
@@ -93,7 +118,7 @@ export default function Dialog({
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" aria-hidden="true" />
         </TransitionChild>
 
-        <div className="fixed inset-0 overflow-y-auto">
+        <div className="fixed inset-0 overflow-hidden">
           <div className="flex min-h-full items-center justify-center p-4">
             <TransitionChild
               as={Fragment}
@@ -127,7 +152,8 @@ export default function Dialog({
                     </svg>
                   </button>
                 </div>
-                {actions && <div className="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t">{actions}</div>}
+
+                {actions && <div className="bg-gray-50 px-6 py-4 flex gap-3 border-t">{actions}</div>}
               </div>
             </TransitionChild>
           </div>
