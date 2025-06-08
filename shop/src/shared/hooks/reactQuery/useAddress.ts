@@ -1,28 +1,29 @@
 import { QueryOptions } from '@/shared/types/queryOptions';
-import { AddressForm, AddressItem } from '../../../modules/address/types/address.type';
+import { AddressFormType, AddressItem } from '@/modules/address/types/address.type';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from '@/shared/types/query-keys';
 import { pager } from '@/shared/types/paginationType';
-import { createAddress, getAddress } from '@/shared/services/address.api';
+import { createAddress, getAddress, updateAddress, deleteAddress } from '@/shared/services/address.api';
 
 export function useAddress({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error, refetch } = useQuery<{ status: number; data: { items: AddressItem[]; pager: pager } }>({
+  const { data, isLoading, error, refetch } = useQuery<{
+    status: number;
+    data: { items: AddressItem[]; pager: pager };
+  }>({
     queryKey: [QueryKeys.Address],
     queryFn: getAddress,
-    enabled: enabled,
+    enabled,
     staleTime,
   });
 
-  const createAddressMutation = useMutation({
-    mutationFn: (data: AddressForm) => createAddress(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.Address] });
-    },
-    onError: (error) => {
-      console.error('Failed to add to cart via API:', error);
-    },
+  const createMutation = useMutation({ mutationFn: createAddress });
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: AddressFormType }) => updateAddress(id, data),
+  });
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteAddress(id),
   });
 
   return {
@@ -30,9 +31,51 @@ export function useAddress({ enabled = true, params = {}, staleTime = 1 * 60 * 1
     isLoading,
     error,
     refetch,
-    createAddressMutation: (data: AddressForm) => {
-      createAddressMutation.mutate(data);
+
+    createAddress: (data: AddressFormType, onSuccess?: () => void, onError?: (error: any) => void) => {
+      createMutation.mutate(data, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: [QueryKeys.Address] });
+          onSuccess?.();
+        },
+        onError: (error) => {
+          console.error('خطا در افزودن آدرس:', error);
+          onError?.(error);
+        },
+      });
     },
-    isCreateAddressLoading: createAddressMutation.isPending,
+
+    updateAddress: (id: number, data: AddressFormType, onSuccess?: () => void, onError?: (error: any) => void) => {
+      updateMutation.mutate(
+        { id, data },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [QueryKeys.Address] });
+            onSuccess?.();
+          },
+          onError: (error) => {
+            console.error('خطا در ویرایش آدرس:', error);
+            onError?.(error);
+          },
+        },
+      );
+    },
+
+    deleteAddress: (id: number, onSuccess?: () => void, onError?: (error: any) => void) => {
+      deleteMutation.mutate(id, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: [QueryKeys.Address] });
+          onSuccess?.();
+        },
+        onError: (error) => {
+          console.error('خطا در حذف آدرس:', error);
+          onError?.(error);
+        },
+      });
+    },
+
+    isCreateAddressLoading: createMutation.isPending,
+    isUpdateAddressLoading: updateMutation.isPending,
+    isDeleteAddressLoading: deleteMutation.isPending,
   };
 }

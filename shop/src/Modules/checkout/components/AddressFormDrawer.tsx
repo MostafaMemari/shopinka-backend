@@ -4,30 +4,28 @@ import MobileDrawer from '@/shared/components/MobileDrawer';
 import AddressForm from './AddressForm';
 import { MdOutlineAddLocationAlt } from 'react-icons/md';
 import { useRef, useState } from 'react';
+import { useAddress } from '@/shared/hooks/reactQuery/useAddress';
+
+export type AddressFormType = {
+  province: string;
+  city: string;
+  address: string;
+  postalCode: string;
+  receiverMobile: string;
+  description: string;
+};
 
 export interface Option {
   value: string;
   label: string;
 }
 
-interface AddressFormDrawerProps {
-  onSubmit: (values: {
-    fullName: string;
-    postalCode: string;
-    province: string;
-    city: string;
-    street: string;
-    unit: string;
-    plaque: string;
-  }) => void;
-}
-
-const provinces = [
+const provinces: Option[] = [
   { value: 'tehran', label: 'تهران' },
   { value: 'isfahan', label: 'اصفهان' },
 ];
 
-const cities = {
+const cities: { [key: string]: Option[] } = {
   tehran: [
     { value: 'tehran', label: 'تهران' },
     { value: 'rey', label: 'ری' },
@@ -38,27 +36,30 @@ const cities = {
   ],
 };
 
-const AddressFormDrawer: React.FC<AddressFormDrawerProps> = ({ onSubmit }) => {
+const AddressFormDrawer = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const { createAddress, isCreateAddressLoading } = useAddress({});
+
+  const handleFormSubmit = async (values: AddressFormType) => {
+    createAddress(
+      values,
+      () => {
+        setIsOpen(false);
+        if (formRef.current) {
+          formRef.current.reset();
+        }
+      },
+      (error) => {
+        console.error('خطا در ارسال فرم:', error);
+      },
+    );
+  };
 
   const handleSubmit = () => {
     if (formRef.current) {
       formRef.current.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
     }
-  };
-
-  const handleFormSubmit = async (values: {
-    fullName: string;
-    postalCode: string;
-    province: string;
-    city: string;
-    street: string;
-    unit: string;
-    plaque: string;
-  }) => {
-    await onSubmit(values);
-    setIsOpen(false);
   };
 
   return (
@@ -78,12 +79,12 @@ const AddressFormDrawer: React.FC<AddressFormDrawerProps> = ({ onSubmit }) => {
           </button>
         }
         footerActions={
-          <button className="btn-primary w-full py-3 text-sm" type="button" onClick={handleSubmit}>
-            تأیید و ادامه
+          <button className="btn-primary w-full py-3 text-sm" type="button" onClick={handleSubmit} disabled={isCreateAddressLoading}>
+            {isCreateAddressLoading ? 'در حال ثبت' : 'تأیید و ادامه'}
           </button>
         }
       >
-        <AddressForm provinces={provinces} cities={cities} ref={formRef} />
+        <AddressForm provinces={provinces} cities={cities} onSubmit={handleFormSubmit} ref={formRef} />
       </MobileDrawer>
     </div>
   );

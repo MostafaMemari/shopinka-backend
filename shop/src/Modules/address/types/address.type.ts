@@ -1,4 +1,4 @@
-export type AddressForm = {
+export type AddressFormType = {
   province: string;
   city: string;
   address: string;
@@ -6,6 +6,7 @@ export type AddressForm = {
   receiverMobile: string;
   description: string;
 };
+
 export type AddressItem = {
   id: number;
   userId: number;

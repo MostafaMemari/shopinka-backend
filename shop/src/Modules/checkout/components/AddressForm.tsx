@@ -2,14 +2,10 @@
 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useState, forwardRef } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { forwardRef, useState } from 'react';
 import TextInput from '@/shared/components/ui/TextInput';
 import SelectInput from '@/shared/components/ui/SelectInput';
-import { Option } from './AddressFormDrawer';
-import { createAddress } from '@/shared/services/address.api';
-import { QueryKeys } from '@/shared/types/query-keys';
-import { useAddress } from '@/shared/hooks/reactQuery/useAddress';
+import { Option, AddressFormType } from './AddressFormDrawer';
 
 interface Cities {
   [key: string]: Option[];
@@ -18,14 +14,8 @@ interface Cities {
 interface AddressFormProps {
   provinces: Option[];
   cities: Cities;
-  initialValues?: {
-    province: string;
-    city: string;
-    address: string;
-    postalCode: string;
-    receiverMobile: string;
-    description: string;
-  };
+  onSubmit: (values: AddressFormType) => Promise<void>;
+  initialValues?: AddressFormType;
   className?: string;
 }
 
@@ -34,6 +24,7 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
     {
       provinces,
       cities,
+      onSubmit,
       initialValues = {
         province: '',
         city: '',
@@ -46,9 +37,7 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
     },
     ref,
   ) => {
-    const queryClient = useQueryClient();
     const [selectedProvince, setSelectedProvince] = useState(initialValues.province);
-    const { createAddressMutation } = useAddress({});
 
     const formik = useFormik({
       initialValues,
@@ -65,13 +54,7 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
         description: Yup.string().optional(),
       }),
       onSubmit: async (values) => {
-        try {
-          createAddressMutation(values);
-          console.log('آدرس ثبت شد:', values);
-          formik.resetForm();
-        } catch (error) {
-          console.error('خطا در ارسال فرم:', error);
-        }
+        await onSubmit(values);
       },
     });
 

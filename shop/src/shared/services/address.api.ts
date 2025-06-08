@@ -1,11 +1,37 @@
 import { shopApiFetch } from '@/server/api';
 import { pager } from '@/shared/types/paginationType';
-import { AddressForm, AddressItem } from '@/modules/address/types/address.type';
+import { AddressFormType, AddressItem } from '@/modules/address/types/address.type';
 
-export const createAddress = async (data: AddressForm): Promise<{ status: number; data: { message: string; address: AddressItem } }> => {
+export const createAddress = async (data: AddressFormType): Promise<{ message: string; address: AddressItem }> => {
   const res = await shopApiFetch('/address', { method: 'POST', body: { ...data } });
 
-  return { ...res };
+  if (res.status >= 400 || !res.data?.address) {
+    throw new Error(res.data?.message || 'خطا در ایجاد آدرس');
+  }
+
+  return res.data;
+};
+
+export const updateAddress = async (id: number, data: AddressFormType): Promise<{ message: string; address: AddressItem }> => {
+  const res = await shopApiFetch(`/address/${id}`, { method: 'PATCH', body: { ...data } });
+
+  console.log(res);
+
+  if (res.status >= 400 || !res.data?.address) {
+    throw new Error(res.data?.message || 'خطا در ویرایش آدرس');
+  }
+
+  return res.data;
+};
+
+export const deleteAddress = async (id: number): Promise<{ message: string }> => {
+  const res = await shopApiFetch(`/address/${id}`, { method: 'DELETE' });
+
+  if (res.status >= 400) {
+    throw new Error(res.data?.message || 'خطا در حذف آدرس');
+  }
+
+  return res.data;
 };
 
 export const getAddress = async (): Promise<{ status: number; data: { items: AddressItem[]; pager: pager } }> => {
