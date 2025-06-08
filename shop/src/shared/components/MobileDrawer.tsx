@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, ReactNode, useState, useEffect } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 import { FiX } from 'react-icons/fi';
 
 interface MobileDrawerProps {
@@ -9,11 +9,21 @@ interface MobileDrawerProps {
   footerActions?: ReactNode;
   children: ReactNode;
   className?: string;
+  isOpen: boolean;
+  onOpen: () => void;
+  onClose: () => void;
 }
 
-const MobileDrawer: FC<MobileDrawerProps> = ({ title = 'منو', triggerButton, footerActions, children, className = '' }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
+const MobileDrawer: FC<MobileDrawerProps> = ({
+  title = 'منو',
+  triggerButton,
+  footerActions,
+  children,
+  className = '',
+  isOpen,
+  onOpen,
+  onClose,
+}) => {
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add('overflow-hidden');
@@ -25,16 +35,14 @@ const MobileDrawer: FC<MobileDrawerProps> = ({ title = 'منو', triggerButton, 
     };
   }, [isOpen]);
 
-  const handleClose = () => setIsOpen(false);
-
   return (
     <>
       <div
         role="button"
         tabIndex={0}
         className="w-full cursor-pointer outline-none"
-        onClick={() => setIsOpen(true)}
-        onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setIsOpen(true)}
+        onClick={onOpen}
+        onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onOpen()}
         aria-controls="mobile-drawer-navigation"
         aria-expanded={isOpen}
       >
@@ -54,7 +62,7 @@ const MobileDrawer: FC<MobileDrawerProps> = ({ title = 'منو', triggerButton, 
           <h5 className="text-lg font-medium text-text/90">{title}</h5>
           <button
             className="inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-text/90 hover:bg-zinc-100 hover:text-gray-900 dark:hover:bg-black dark:hover:text-white"
-            onClick={handleClose}
+            onClick={onClose}
             type="button"
             aria-label="بستن منو"
           >

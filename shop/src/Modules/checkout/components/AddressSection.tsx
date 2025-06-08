@@ -25,22 +25,6 @@ export default function AddressSection() {
     setOpenDropdown(openDropdown === id ? null : id);
   };
 
-  const provinces = [
-    { value: 'tehran', label: 'تهران' },
-    { value: 'isfahan', label: 'اصفهان' },
-  ];
-
-  const cities = {
-    tehran: [
-      { value: 'tehran', label: 'تهران' },
-      { value: 'rey', label: 'ری' },
-    ],
-    isfahan: [
-      { value: 'isfahan', label: 'اصفهان' },
-      { value: 'kashan', label: 'کاشان' },
-    ],
-  };
-
   return (
     <>
       {isLoading || error ? (
@@ -60,7 +44,7 @@ export default function AddressSection() {
               <MdOutlineEditLocation className="h-5 w-5 text-primary" />
               آدرس تحویل سفارش
             </h1>
-            <AddressFormDrawer cities={cities} provinces={provinces} onSubmit={() => console.log('object')} />
+            <AddressFormDrawer onSubmit={() => console.log('object')} />
           </div>
           <fieldset className="space-y-4">
             <legend className="sr-only">Address Options</legend>
