@@ -3,6 +3,8 @@
 import React, { Fragment, ReactNode, useEffect, useRef } from 'react';
 import { Transition, TransitionChild } from '@headlessui/react';
 
+type DialogSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
 interface DialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -10,10 +12,10 @@ interface DialogProps {
   children: ReactNode;
   actions?: ReactNode;
   icon?: ReactNode;
-  maxWidth?: string;
+  size?: DialogSize;
   closeOnEsc?: boolean;
   closeOnOverlayClick?: boolean;
-  initialFocusRef?: React.RefObject<HTMLElement>; // برای فوکوس اولیه
+  initialFocusRef?: React.RefObject<HTMLElement>;
 }
 
 export default function Dialog({
@@ -23,21 +25,20 @@ export default function Dialog({
   children,
   actions,
   icon,
-  maxWidth = 'sm:max-w-lg',
+  size = 'sm',
   closeOnEsc = true,
   closeOnOverlayClick = true,
-  initialFocusRef, // رفرنس برای المنتی که باید فوکوس بشه
+  initialFocusRef,
 }: DialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const firstFocusableRef = useRef<HTMLElement | null>(null);
 
-  // مدیریت فوکوس و بستن با Esc
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (closeOnEsc && event.key === 'Escape') {
-        onClose(); // بستن dialog
+        onClose();
         if (initialFocusRef?.current) {
-          initialFocusRef.current.focus(); // برگرداندن فوکوس
+          initialFocusRef.current.focus();
         }
       }
     };
@@ -46,14 +47,12 @@ export default function Dialog({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [closeOnEsc, onClose, initialFocusRef]);
 
-  // مدیریت کلیک روی overlay
   const handleOverlayClick = (event: React.MouseEvent) => {
-    if (closeOnOverlayClick && event.target === event.currentTarget) {
+    if (closeOnOverlayClick && dialogRef.current && event.target instanceof Node && !dialogRef.current.contains(event.target)) {
       onClose();
     }
   };
 
-  // پیدا کردن اولین المنت قابل فوکوس در dialog
   useEffect(() => {
     if (isOpen && dialogRef.current) {
       const focusableElements = dialogRef.current.querySelectorAll<HTMLElement>(
@@ -61,7 +60,6 @@ export default function Dialog({
       );
       firstFocusableRef.current = focusableElements[0] || null;
 
-      // اگر initialFocusRef مشخص شده، اولویت با اونه
       const elementToFocus = initialFocusRef?.current || firstFocusableRef.current;
       if (elementToFocus) {
         elementToFocus.focus();
@@ -69,9 +67,20 @@ export default function Dialog({
     }
   }, [isOpen, initialFocusRef]);
 
+  // تعریف کلاس‌های اندازه
+  const sizeClasses: Record<DialogSize, string> = {
+    xs: 'max-w-xs',
+    sm: 'max-w-sm',
+    md: 'max-w-md',
+    lg: 'max-w-lg',
+    xl: 'max-w-xl',
+  };
+
+  const dialogClass = `w-full ${sizeClasses[size]}`;
+
   return (
     <Transition show={isOpen} as={Fragment}>
-      <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+      <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-labelledby="dialog-title" onClick={handleOverlayClick}>
         <TransitionChild
           as={Fragment}
           enter="ease-out duration-200"
@@ -81,7 +90,7 @@ export default function Dialog({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" aria-hidden="true" onClick={handleOverlayClick} />
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" aria-hidden="true" />
         </TransitionChild>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -97,7 +106,7 @@ export default function Dialog({
             >
               <div
                 ref={dialogRef}
-                className={`relative w-full ${maxWidth} rounded-lg bg-white shadow-2xl transform transition-all max-h-[90vh] overflow-y-auto`}
+                className={`relative ${dialogClass} rounded-lg bg-white shadow-2xl transform transition-all max-h-[90vh] overflow-y-auto`}
               >
                 <div className="flex items-start gap-4 p-6">
                   {/* {icon && <div className="flex-shrink-0">{icon}</div>} */}

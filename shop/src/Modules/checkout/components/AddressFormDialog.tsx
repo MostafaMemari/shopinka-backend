@@ -88,14 +88,7 @@ const AddressFormDialog = () => {
         <span>آدرس جدید</span>
       </button>
 
-      <Dialog
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        title="افزودن آدرس جدید"
-        icon={icon}
-        actions={actions}
-        maxWidth="sm:max-w-2xl"
-      >
+      <Dialog isOpen={isOpen} onClose={() => setIsOpen(false)} title="افزودن آدرس جدید" icon={icon} actions={actions} size="md">
         <div className="mt-4">
           <AddressForm provinces={provinces} cities={cities} onSubmit={handleFormSubmit} ref={formRef} />
         </div>

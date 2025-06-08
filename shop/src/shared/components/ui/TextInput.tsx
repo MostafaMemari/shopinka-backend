@@ -11,9 +11,20 @@ interface TextInputProps {
   rows?: number;
   disabled?: boolean;
   placeholder?: string;
+  className?: string;
 }
 
-const TextInput: React.FC<TextInputProps> = ({ id, name, label, type = 'text', formik, rows = 3, disabled = false, placeholder }) => {
+const TextInput: React.FC<TextInputProps> = ({
+  id,
+  name,
+  label,
+  type = 'text',
+  formik,
+  rows = 3,
+  disabled = false,
+  placeholder,
+  className,
+}) => {
   const hasError = formik.touched[name] && formik.errors[name];
 
   const commonProps = {

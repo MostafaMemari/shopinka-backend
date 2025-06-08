@@ -68,8 +68,13 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
     };
 
     return (
-      <form ref={ref} onSubmit={formik.handleSubmit} className={`space-y-6 p-4 text-right ${className}`} dir="rtl">
-        <div className="grid grid-cols-2 gap-4">
+      <form
+        ref={ref}
+        onSubmit={formik.handleSubmit}
+        className={`space-y-6 p-4 text-right ${className} max-h-[70vh] overflow-y-auto`}
+        dir="rtl"
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <SelectInput
             id="province"
             name="province"
@@ -89,11 +94,27 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
             isDisabled={!selectedProvince}
             key={selectedProvince}
           />
+          <TextInput id="postalCode" name="postalCode" label="کدپستی" formik={formik} className="col-span-1" />
+          <TextInput id="receiverMobile" name="receiverMobile" label="شماره موبایل گیرنده" formik={formik} className="col-span-1" />
+          <TextInput
+            id="address"
+            name="address"
+            label="آدرس"
+            type="textarea"
+            formik={formik}
+            rows={3}
+            className="col-span-1 lg:col-span-2"
+          />
+          <TextInput
+            id="description"
+            name="description"
+            label="توضیحات"
+            type="textarea"
+            formik={formik}
+            rows={3}
+            className="col-span-1 lg:col-span-3"
+          />
         </div>
-        <TextInput id="address" name="address" label="آدرس" type="textarea" formik={formik} rows={3} />
-        <TextInput id="postalCode" name="postalCode" label="کدپستی" formik={formik} />
-        <TextInput id="receiverMobile" name="receiverMobile" label="شماره موبایل گیرنده" formik={formik} />
-        <TextInput id="description" name="description" label="توضیحات" type="textarea" formik={formik} rows={3} />
       </form>
     );
   },
