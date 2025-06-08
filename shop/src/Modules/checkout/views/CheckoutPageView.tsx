@@ -9,6 +9,7 @@ function CheckoutPageView() {
       <div className="col-span-12 md:col-span-8">
         <div className="rounded-lg bg-muted p-4">
           <AddressSection />
+
           <DeliverySection />
         </div>
       </div>

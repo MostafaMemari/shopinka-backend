@@ -6,6 +6,7 @@ import CartStatus from '@/shared/components/CartStatus';
 import { useAddress } from '@/shared/hooks/reactQuery/useAddress';
 import AddressFormDrawer from './AddressFormDrawer';
 import AddressItem from './AddressItem';
+import AddressFormDialog from './AddressFormDialog';
 
 export default function AddressSection() {
   const { addressItems, isLoading, error } = useAddress({});
@@ -36,6 +37,7 @@ export default function AddressSection() {
               آدرس تحویل سفارش
             </h1>
             <AddressFormDrawer />
+            <AddressFormDialog />
           </div>
           <fieldset className="space-y-4 grid grid-cols-1 gap-4">
             <legend className="sr-only">Address Options</legend>

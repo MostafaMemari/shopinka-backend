@@ -66,7 +66,7 @@ export default function DeliverySection() {
                       ${isChecked ? 'border-primary bg-primary/10 shadow-md' : 'border-gray-200 bg-white hover:border-gray-300'}
                     `}
                   >
-                    <span className="absolute right-4 top-4 flex items-center justify-center h-6 w-6 z-10">
+                    <span className="absolute right-4 top-4 flex items-center justify-center h-6 w-6">
                       <span
                         className={`
                           flex items-center justify-center rounded-full border-2 h-6 w-6 transition-colors
