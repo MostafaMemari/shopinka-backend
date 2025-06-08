@@ -36,8 +36,13 @@ export default function AddressSection() {
               <MdOutlineEditLocation className="h-5 w-5 text-primary" />
               آدرس تحویل سفارش
             </h1>
-            <AddressFormDrawer />
-            <AddressFormDialog />
+
+            <div className="hidden md:block">
+              <AddressFormDialog />
+            </div>
+            <div className="md:hidden">
+              <AddressFormDrawer />
+            </div>
           </div>
           <fieldset className="space-y-4 grid grid-cols-1 gap-4">
             <legend className="sr-only">Address Options</legend>

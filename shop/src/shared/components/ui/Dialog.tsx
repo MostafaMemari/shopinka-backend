@@ -8,6 +8,7 @@ type DialogSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 interface DialogProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpen?: () => void; // اضافه کردن پراپ onOpen
   title: string;
   children: ReactNode;
   actions?: ReactNode;
@@ -21,6 +22,7 @@ interface DialogProps {
 export default function Dialog({
   isOpen,
   onClose,
+  onOpen, // اضافه کردن به پراپ‌ها
   title,
   children,
   actions,
@@ -57,6 +59,13 @@ export default function Dialog({
       };
     }
   }, [isOpen]);
+
+  // فراخوانی onOpen وقتی دیالوگ باز می‌شود
+  useEffect(() => {
+    if (isOpen && onOpen) {
+      onOpen();
+    }
+  }, [isOpen, onOpen]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

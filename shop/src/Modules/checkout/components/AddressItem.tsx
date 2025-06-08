@@ -1,11 +1,11 @@
 import { type AddressItem } from '@/modules/address/types/address.type';
 import { useAddress } from '@/shared/hooks/reactQuery/useAddress';
 import React, { useEffect, useRef, useState } from 'react';
-import { HiDotsVertical } from 'react-icons/hi';
-import { MdOutlineEditLocation, MdOutlineWrongLocation } from 'react-icons/md';
 import AddressForm from './AddressForm';
 import { AddressFormType, Option } from './AddressFormDrawer';
 import MobileDrawer from '@/shared/components/MobileDrawer';
+import AddressActions from '@/shared/components/ui/DropDownActions';
+import Dialog from '@/shared/components/ui/Dialog';
 
 const provinces: Option[] = [
   { value: 'tehran', label: 'تهران' },
@@ -32,7 +32,8 @@ interface AddressItemProps {
 function AddressItem({ item, selectedAddressId, onSelectAddress }: AddressItemProps) {
   const { deleteAddress, updateAddress, isCreateAddressLoading } = useAddress({});
   const formRef = useRef<HTMLFormElement>(null);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenDrawer, setIsOpenDrawer] = useState(false);
+  const [isOpenDialog, setIsOpenDialog] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -55,7 +56,7 @@ function AddressItem({ item, selectedAddressId, onSelectAddress }: AddressItemPr
       item.id,
       values,
       () => {
-        setIsOpen(false);
+        setIsOpenDrawer(false);
         if (formRef.current) {
           formRef.current.reset();
         }
@@ -72,10 +73,6 @@ function AddressItem({ item, selectedAddressId, onSelectAddress }: AddressItemPr
     }
   };
 
-  const toggleDropdown = (id: string) => {
-    setOpenDropdown(openDropdown === id ? null : id);
-  };
-
   const handleDeleteAddress = (addressId: number) => {
     deleteAddress(addressId);
     if (isSelected) {
@@ -90,6 +87,14 @@ function AddressItem({ item, selectedAddressId, onSelectAddress }: AddressItemPr
       onSelectAddress(item.id);
     }
   };
+
+  const actions = (
+    <>
+      <button className="btn-primary w-full py-3 text-sm" type="button" onClick={handleSubmit} disabled={isCreateAddressLoading}>
+        {isCreateAddressLoading ? 'در حال ثبت' : 'تأیید و ادامه'}
+      </button>
+    </>
+  );
 
   return (
     <div>
@@ -117,79 +122,23 @@ function AddressItem({ item, selectedAddressId, onSelectAddress }: AddressItemPr
           <p className="text-sm text-gray-900 xs:text-base pr-7 dark:text-gray-100 line-clamp-2 sm:line-clamp-2">
             {`${item.province}، ${item.city} - ${item.address} - کد پستی: ${item.postalCode}`}
           </p>
-          <div className="relative">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleDropdown(`address-${item.id}`);
-              }}
-              className="rounded-full p-1 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-            >
-              <HiDotsVertical className="h-6 w-6" />
-            </button>
-            {openDropdown === `address-${item.id}` && (
-              <div
-                ref={dropdownRef}
-                className="absolute left-0 z-10 mt-2 w-48 overflow-hidden rounded-lg border bg-white shadow-lg dark:bg-gray-800 dark:border-gray-700"
-              >
-                <ul className="space-y-1 p-2">
-                  <li>
-                    <button
-                      onClick={() => setIsOpen(true)}
-                      type="button"
-                      className="flex w-full items-center gap-x-2 rounded-lg px-4 py-2 text-sky-500 hover:bg-sky-500/10 dark:text-sky-400 dark:hover:bg-sky-400/10"
-                    >
-                      <MdOutlineEditLocation className="h-5 w-5" />
-                      <span>ویرایش</span>
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteAddress(item.id)}
-                      className="flex w-full items-center gap-x-2 rounded-lg px-4 py-2 text-red-500 hover:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-400/10"
-                    >
-                      <MdOutlineWrongLocation className="h-5 w-5" />
-                      <span>حذف</span>
-                    </button>
-                  </li>
-                </ul>
-              </div>
-            )}
+          <div className="relative hidden md:block">
+            <AddressActions onDelete={() => handleDeleteAddress(item.id)} onEdit={() => setIsOpenDialog(true)} />
           </div>
         </div>
         <div className="flex items-center justify-between gap-x-2">
           <p className="line-clamp-1 text-sm text-gray-500 dark:text-gray-400">{`گیرنده: ${item.receiverMobile}`}</p>
           <div className="flex items-center gap-x-2 md:hidden">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDeleteAddress(item.id);
-              }}
-              className="rounded-md bg-red-100 px-3 py-1 text-sm text-red-600 hover:bg-red-200 dark:bg-red-900/50 dark:text-red-400 dark:hover:bg-red-900"
-            >
-              حذف
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsOpen(true);
-              }}
-              type="button"
-              className="rounded-md bg-sky-100 px-3 py-1 text-sm text-sky-600 hover:bg-sky-200 dark:bg-sky-900/50 dark:text-sky-400 dark:hover:bg-sky-900"
-            >
-              ویرایش
-            </button>
+            <AddressActions onDelete={() => handleDeleteAddress(item.id)} onEdit={() => setIsOpenDrawer(true)} />
           </div>
         </div>
       </div>
 
       <MobileDrawer
         title="ویرایش آدرس"
-        isOpen={isOpen}
-        onOpen={() => setIsOpen(true)}
-        onClose={() => setIsOpen(false)}
+        isOpen={isOpenDrawer}
+        onOpen={() => setIsOpenDrawer(true)}
+        onClose={() => setIsOpenDrawer(false)}
         triggerButton={null}
         footerActions={
           <button className="btn-primary w-full py-3 text-sm" type="button" onClick={handleSubmit} disabled={isCreateAddressLoading}>
@@ -212,6 +161,31 @@ function AddressItem({ item, selectedAddressId, onSelectAddress }: AddressItemPr
           }}
         />
       </MobileDrawer>
+      <Dialog
+        title="ویرایش آدرس"
+        isOpen={isOpenDialog}
+        onOpen={() => setIsOpenDialog(true)}
+        onClose={() => setIsOpenDialog(false)}
+        actions={actions}
+        size="md"
+      >
+        <div className="mt-4">
+          <AddressForm
+            provinces={provinces}
+            cities={cities}
+            onSubmit={handleFormSubmit}
+            ref={formRef}
+            initialValues={{
+              address: item.address,
+              city: item.city,
+              description: item.description,
+              postalCode: item.postalCode,
+              province: item.province,
+              receiverMobile: item.receiverMobile,
+            }}
+          />
+        </div>
+      </Dialog>
     </div>
   );
 }
