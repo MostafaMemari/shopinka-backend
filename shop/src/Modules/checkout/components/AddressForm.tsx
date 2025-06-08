@@ -3,9 +3,13 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useState, forwardRef } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import TextInput from '@/shared/components/ui/TextInput';
 import SelectInput from '@/shared/components/ui/SelectInput';
 import { Option } from './AddressFormDrawer';
+import { createAddress } from '@/shared/services/address.api';
+import { QueryKeys } from '@/shared/types/query-keys';
+import { useAddress } from '@/shared/hooks/reactQuery/useAddress';
 
 interface Cities {
   [key: string]: Option[];
@@ -14,23 +18,13 @@ interface Cities {
 interface AddressFormProps {
   provinces: Option[];
   cities: Cities;
-  onSubmit: (values: {
-    fullName: string;
-    postalCode: string;
-    province: string;
-    city: string;
-    street: string;
-    unit: string;
-    plaque: string;
-  }) => void;
   initialValues?: {
-    fullName: string;
-    postalCode: string;
     province: string;
     city: string;
-    street: string;
-    unit: string;
-    plaque: string;
+    address: string;
+    postalCode: string;
+    receiverMobile: string;
+    description: string;
   };
   className?: string;
 }
@@ -40,39 +34,44 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
     {
       provinces,
       cities,
-      onSubmit,
       initialValues = {
-        fullName: '',
-        postalCode: '',
         province: '',
         city: '',
-        street: '',
-        unit: '',
-        plaque: '',
+        address: '',
+        postalCode: '',
+        receiverMobile: '',
+        description: '',
       },
       className = '',
     },
     ref,
   ) => {
+    const queryClient = useQueryClient();
     const [selectedProvince, setSelectedProvince] = useState(initialValues.province);
+    const { createAddressMutation } = useAddress({});
 
     const formik = useFormik({
       initialValues,
       validationSchema: Yup.object({
-        fullName: Yup.string().required('نام و نام خانوادگی الزامی است'),
-        postalCode: Yup.string()
-          .matches(/^\d{10}$/, 'کدپستی باید ۱۰ رقمی باشد')
-          .required('کدپستی الزامی است'),
         province: Yup.string().required('استان الزامی است'),
         city: Yup.string().required('شهر الزامی است'),
-        street: Yup.string().required('خیابان الزامی است'),
-        unit: Yup.string(),
-        plaque: Yup.string(),
+        address: Yup.string().required('آدرس الزامی است'),
+        postalCode: Yup.string()
+          .matches(/^\d{10}$/, 'کدپستی باید ۱۰ رقمی باشد')
+          .optional(),
+        receiverMobile: Yup.string()
+          .matches(/^09\d{9}$/, 'شماره موبایل باید ۱۱ رقم و با ۰۹ شروع شود')
+          .optional(),
+        description: Yup.string().optional(),
       }),
       onSubmit: async (values) => {
-        await onSubmit(values);
-        console.log('آدرس ثبت شد:', values);
-        formik.resetForm();
+        try {
+          createAddressMutation(values);
+          console.log('آدرس ثبت شد:', values);
+          formik.resetForm();
+        } catch (error) {
+          console.error('خطا در ارسال فرم:', error);
+        }
       },
     });
 
@@ -87,21 +86,16 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
 
     return (
       <form ref={ref} onSubmit={formik.handleSubmit} className={`space-y-6 p-4 text-right ${className}`} dir="rtl">
-        <TextInput id="fullName" name="fullName" label="نام و نام خانوادگی" formik={formik} />
-        <TextInput id="postalCode" name="postalCode" label="کدپستی" formik={formik} />
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <SelectInput
-              id="province"
-              name="province"
-              label="استان"
-              formik={formik}
-              options={provinces}
-              placeholder="انتخاب کنید"
-              onChange={handleProvinceChange}
-            />
-          </div>
-
+          <SelectInput
+            id="province"
+            name="province"
+            label="استان"
+            formik={formik}
+            options={provinces}
+            placeholder="انتخاب کنید"
+            onChange={handleProvinceChange}
+          />
           <SelectInput
             id="city"
             name="city"
@@ -113,12 +107,10 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
             key={selectedProvince}
           />
         </div>
-
-        <TextInput id="street" name="street" label="خیابان" type="textarea" formik={formik} rows={3} />
-        <div className="grid grid-cols-2 gap-4">
-          <TextInput id="unit" name="unit" label="واحد" formik={formik} />
-          <TextInput id="plaque" name="plaque" label="پلاک" formik={formik} />
-        </div>
+        <TextInput id="address" name="address" label="آدرس" type="textarea" formik={formik} rows={3} />
+        <TextInput id="postalCode" name="postalCode" label="کدپستی" formik={formik} />
+        <TextInput id="receiverMobile" name="receiverMobile" label="شماره موبایل گیرنده" formik={formik} />
+        <TextInput id="description" name="description" label="توضیحات" type="textarea" formik={formik} rows={3} />
       </form>
     );
   },

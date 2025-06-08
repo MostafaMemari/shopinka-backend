@@ -16,8 +16,7 @@ interface AddressItem {
 }
 
 export default function AddressSection() {
-  const { data, isLoading, error } = useAddress({});
-  const addressItems: AddressItem[] = data?.data?.items || [];
+  const { addressItems, isLoading, error } = useAddress({});
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
@@ -48,7 +47,7 @@ export default function AddressSection() {
           </div>
           <fieldset className="space-y-4">
             <legend className="sr-only">Address Options</legend>
-            {addressItems.map((item, index) => (
+            {addressItems?.map((item, index) => (
               <div key={index}>
                 <input type="radio" name="address" value={`address-${index}`} id={`address-${index}`} className="peer hidden" />
                 <label

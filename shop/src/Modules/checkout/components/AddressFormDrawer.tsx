@@ -83,7 +83,7 @@ const AddressFormDrawer: React.FC<AddressFormDrawerProps> = ({ onSubmit }) => {
           </button>
         }
       >
-        <AddressForm provinces={provinces} cities={cities} onSubmit={handleFormSubmit} ref={formRef} />
+        <AddressForm provinces={provinces} cities={cities} ref={formRef} />
       </MobileDrawer>
     </div>
   );
