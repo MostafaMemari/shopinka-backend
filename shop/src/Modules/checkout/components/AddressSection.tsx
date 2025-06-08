@@ -37,13 +37,13 @@ export default function AddressSection() {
             </h1>
             <AddressFormDrawer />
           </div>
-          <fieldset className="space-y-4">
+          <fieldset className="space-y-4 grid grid-cols-1 gap-4">
             <legend className="sr-only">Address Options</legend>
             <div className="space-y-4">
               {addressItems?.map((item) => (
                 <AddressItem key={item.id} item={item} selectedAddressId={selectedAddressId} onSelectAddress={handleSelectAddress} />
               ))}
-            </div>{' '}
+            </div>
           </fieldset>
         </div>
       )}
