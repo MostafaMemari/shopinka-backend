@@ -30,5 +30,5 @@ export async function refetchProducts() {
 export async function fetchProductBySlug(slug: string) {
   const response = await shopApiFetch(`/product/by-slug/${slug}`);
 
-  return response.data;
+  return response;
 }

@@ -3,6 +3,7 @@ import { CartData, CartResponse } from '../types/cartType';
 import { mapCartResponseToCartItemState } from '../utils/mapCartResponse';
 
 export const createCart = async ({ cartData }: { cartData?: CartData }): Promise<void> => {
+  console.log(cartData);
   if (cartData) {
     const res = await shopApiFetch('/cart/item', {
       method: 'POST',
@@ -12,6 +13,7 @@ export const createCart = async ({ cartData }: { cartData?: CartData }): Promise
         productVariantId: cartData.productVariantId ?? undefined,
       },
     });
+    console.log(res);
   }
 };
 

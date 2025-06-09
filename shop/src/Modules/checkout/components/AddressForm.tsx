@@ -5,7 +5,8 @@ import * as Yup from 'yup';
 import { forwardRef, useState } from 'react';
 import TextInput from '@/shared/components/ui/TextInput';
 import SelectInput from '@/shared/components/ui/SelectInput';
-import { Option, AddressFormType } from './AddressFormDrawer';
+import { Option } from './AddressFormDrawer';
+import { AddressFormType } from '@/modules/address/types/address.type';
 
 interface Cities {
   [key: string]: Option[];
@@ -26,12 +27,12 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
       cities,
       onSubmit,
       initialValues = {
+        fullName: '',
         province: '',
         city: '',
-        address: '',
+        plate: '',
+        unit: '',
         postalCode: '',
-        receiverMobile: '',
-        description: '',
       },
       className = '',
     },
@@ -42,16 +43,17 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
     const formik = useFormik({
       initialValues,
       validationSchema: Yup.object({
-        province: Yup.string().required('استان الزامی است'),
-        city: Yup.string().required('شهر الزامی است'),
-        address: Yup.string().required('آدرس الزامی است'),
+        fullName: Yup.string().trim().required('نام و نام خانوادگی الزامی است'),
+        province: Yup.string().trim().required('استان الزامی است'),
+        city: Yup.string().trim().required('شهر الزامی است'),
+        plate: Yup.string().trim().required('پلاک الزامی است'),
+        unit: Yup.string().trim().optional(),
         postalCode: Yup.string()
           .matches(/^\d{10}$/, 'کدپستی باید ۱۰ رقمی باشد')
           .optional(),
         receiverMobile: Yup.string()
           .matches(/^09\d{9}$/, 'شماره موبایل باید ۱۱ رقم و با ۰۹ شروع شود')
           .optional(),
-        description: Yup.string().optional(),
       }),
       onSubmit: async (values) => {
         await onSubmit(values);
@@ -68,7 +70,10 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
     };
 
     return (
-      <form ref={ref} onSubmit={formik.handleSubmit} className={`space-y-6 p-4 text-right ${className}`} dir="rtl">
+      <form ref={ref} onSubmit={formik.handleSubmit} className={`space-y-1 p-4 text-right ${className}`.trim()} dir="rtl">
+        <div className="grid grid-cols-1 gap-4">
+          <TextInput id="fullName" name="fullName" label="نام و نام خانوادگی تحویل گیرنده" formik={formik} />
+        </div>
         <div className="grid grid-cols-2 gap-4">
           <SelectInput
             id="province"
@@ -91,12 +96,15 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
           />
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <TextInput id="receiverMobile" name="receiverMobile" label="شماره موبایل گیرنده" formik={formik} />
+          <TextInput id="plate" name="plate" label="پلاک" formik={formik} />
+          <TextInput id="unit" name="unit" label="واحد" formik={formik} />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
           <TextInput id="postalCode" name="postalCode" label="کدپستی" formik={formik} />
         </div>
-
-        <TextInput id="address" name="address" label="آدرس" type="textarea" formik={formik} rows={2} />
-        {/* <TextInput id="description" name="description" label="توضیحات" type="textarea" formik={formik} rows={3} /> */}
+        <div className="grid grid-cols-2 gap-4">
+          <TextInput id="receiverMobile" name="receiverMobile" label="شماره موبایل گیرنده" formik={formik} />
+        </div>
       </form>
     );
   },
