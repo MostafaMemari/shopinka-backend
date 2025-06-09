@@ -1,4 +1,3 @@
-// src/components/ProductCard/ProductCard.tsx
 'use client';
 
 import { FC } from 'react';
@@ -12,16 +11,30 @@ interface Props {
 }
 
 const ProductCard: FC<Props> = ({ product }) => {
-  const imageUrl = product?.mainImage?.fileUrl || '/placeholder-image.jpg';
-  const slug = product?.slug || '#';
-  const productName = product?.name || 'محصول بدون نام';
+  const imageUrl = product.mainImage?.fileUrl ?? '/placeholder-image.jpg';
+  const slug = product.slug ?? '#';
+  const productName = product.name ?? 'محصول بدون نام';
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: productName,
+    image: imageUrl,
+    description: product.name ?? productName,
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'IRR',
+      price: product.salePrice ?? product.basePrice ?? 0,
+      availability: product.quantity && product.quantity > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+    },
+  };
 
   return (
-    <article className="border-gradient group relative rounded-base p-px before:absolute before:-inset-px min-h-[350px] before:h-[calc(100%+2px)] before:w-[calc(100%+2px)] before:rounded-base">
+    <article className="border-gradient group relative rounded-base p-px before:absolute before:-inset-px before:h-[calc(100%+2px)] before:w-[calc(100%+2px)] before:rounded-base">
       <div className="relative rounded-xl bg-muted p-2 shadow-base md:p-5">
         <div className="mb-2 md:mb-5" draggable={false}>
           <Link href={`/product/${slug}`} aria-label={`مشاهده جزئیات ${productName}`}>
-            <ProductImage src={imageUrl} alt={`${productName} || 'تصویر محصول'}`} />
+            <ProductImage src={imageUrl} alt={productName} />
           </Link>
         </div>
         <div className="mb-2">
@@ -29,25 +42,8 @@ const ProductCard: FC<Props> = ({ product }) => {
             <h3 className="text-sm md:text-base">{productName}</h3>
           </Link>
         </div>
-        <ProductPrice salePrice={product?.salePrice} basePrice={product?.basePrice} />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'Product',
-              name: productName,
-              image: imageUrl,
-              description: productName || 'محصول بدون توضیحات',
-              offers: {
-                '@type': 'Offer',
-                priceCurrency: 'IRR',
-                price: product.salePrice || product.basePrice || 0,
-                availability: product.quantity && product.quantity > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-              },
-            }),
-          }}
-        />
+        <ProductPrice salePrice={product.salePrice} basePrice={product.basePrice} />
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </div>
     </article>
   );

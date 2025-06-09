@@ -1,11 +1,13 @@
 'use client';
 
-import { FC, ReactNode, useEffect, useRef } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
+import { FC, ReactNode, useEffect, useRef, useState } from 'react';
+import { Swiper, SwiperSlide, SwiperRef } from 'swiper/react';
 import { Navigation, FreeMode } from 'swiper/modules';
+import { ImSpinner2 } from 'react-icons/im';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/free-mode';
+import './caroucel.css';
 
 interface CarouselProps {
   items: ReactNode[];
@@ -16,10 +18,7 @@ interface CarouselProps {
   freeMode?: boolean;
   className?: string;
   loading?: boolean;
-  skeletonCount?: number;
 }
-
-const SkeletonCard = () => <div className="h-[350px] w-full animate-pulse rounded-lg bg-neutral-200 dark:bg-neutral-700" />;
 
 const Carousel: FC<CarouselProps> = ({
   items,
@@ -30,9 +29,9 @@ const Carousel: FC<CarouselProps> = ({
   freeMode = false,
   className = '',
   loading = false,
-  skeletonCount = 4,
 }) => {
-  const swiperRef = useRef<any>(null);
+  const swiperRef = useRef<SwiperRef>(null);
+  const [swiperReady, setSwiperReady] = useState(true);
 
   useEffect(() => {
     if (swiperRef.current?.swiper) {
@@ -40,47 +39,42 @@ const Carousel: FC<CarouselProps> = ({
     }
   }, [items]);
 
-  const renderItems = loading
-    ? Array(skeletonCount)
-        .fill(null)
-        .map((_, index) => (
-          <SwiperSlide key={`skeleton-${index}`} className="!h-auto">
-            <div className="h-full w-full p-2">
-              <SkeletonCard />
-            </div>
-          </SwiperSlide>
-        ))
-    : items.map((item, index) => (
-        <SwiperSlide key={`slide-${index}`} className="!h-auto">
-          <div className="h-full w-full">{item}</div>
-        </SwiperSlide>
-      ));
+  if (loading) {
+    return (
+      <div className="flex w-full items-center justify-center">
+        <ImSpinner2 className="h-8 w-8 animate-spin text-gray-500 dark:text-gray-300" />
+      </div>
+    );
+  }
 
   return (
-    <Swiper
-      ref={swiperRef}
-      slidesPerView={slidesPerView}
-      spaceBetween={spaceBetween}
-      breakpoints={breakpoints}
-      navigation={navigation ? { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } : undefined}
-      freeMode={freeMode}
-      modules={[Navigation, FreeMode]}
-      className={`${className}`}
-      observer={true}
-      observeParents={true}
-      watchSlidesProgress={true}
-      preventInteractionOnTransition={true}
-      initialSlide={0}
-      style={{ direction: 'rtl' }}
-    >
-      {renderItems}
-      {navigation && !loading && (
-        <>
-          <div className="swiper-button-next after:text-sm after:text-gray-600" />
-          <div className="swiper-button-prev after:text-sm after:text-gray-600" />
-        </>
-      )}
-    </Swiper>
+    <div className="relative">
+      <Swiper
+        ref={swiperRef}
+        slidesPerView={slidesPerView}
+        spaceBetween={spaceBetween}
+        breakpoints={breakpoints}
+        navigation={navigation ? { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } : false}
+        freeMode={freeMode}
+        modules={[Navigation, FreeMode]}
+        className={`${className} transition-opacity duration-300 ${swiperReady ? 'opacity-100' : 'opacity-0'}`}
+        style={{ direction: 'rtl' }}
+        onInit={() => setSwiperReady(true)}
+      >
+        {items.map((item, i) => (
+          <SwiperSlide key={`slide-${i}`} className="!h-auto">
+            <div className="h-full w-full">{item}</div>
+          </SwiperSlide>
+        ))}
+
+        {navigation && (
+          <>
+            <div className="swiper-button-next after:text-sm after:text-gray-600" />
+            <div className="swiper-button-prev after:text-sm after:text-gray-600" />
+          </>
+        )}
+      </Swiper>
+    </div>
   );
 };
 

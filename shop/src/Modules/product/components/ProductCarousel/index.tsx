@@ -1,11 +1,11 @@
 'use client';
 
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import Link from 'next/link';
 import { HiChevronLeft } from 'react-icons/hi';
 import ProductCard from '@/modules/product/components/ProductCard';
 import { productSwiperConfig } from '@/config/swiper';
-import Carousel from '../../../../components/Carousel/Carousel';
+import Carousel from '@/components/Carousel/Carousel';
 import { Product } from '../../types/productType';
 
 interface Props {
@@ -17,32 +17,28 @@ interface Props {
 }
 
 const ProductCarousel: FC<Props> = ({ title, viewAllLink, viewAllText = 'مشاهده همه', products, loading = false }) => {
-  const productItems = useMemo(() => {
-    if (loading) {
-      return Array(4)
-        .fill(null)
-        .map((_, index) => <div key={index} className="p-2"></div>);
-    }
-
-    return products?.map((product) => <ProductCard key={product.id} product={product} />);
-  }, [products, loading]);
+  const productItems = loading
+    ? Array.from({ length: 4 }, (_, i) => <div key={`skeleton-${i}`} className="p-2" />)
+    : products.map((product) => <ProductCard key={product.id} product={product} />);
 
   return (
     <section className="mb-8">
       <div className="container relative">
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="font-medium md:text-lg lg:text-xl">{title}</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="font-medium md:text-lg lg:text-xl mb-2">{title}</h3>
           <Link href={viewAllLink} className="flex items-center gap-x-2 py-2 text-sm text-primary lg:text-base">
             {viewAllText}
             <HiChevronLeft className="h-5 w-5 lg:h-6 lg:w-6" />
           </Link>
         </div>
+
         <Carousel
           items={productItems}
           slidesPerView={productSwiperConfig.slidesPerView}
           spaceBetween={productSwiperConfig.spaceBetween}
           breakpoints={productSwiperConfig.breakpoints}
-          navigation={true}
+          navigation
+          className="product-slider"
           loading={loading}
         />
       </div>
