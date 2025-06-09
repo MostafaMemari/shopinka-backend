@@ -1,8 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsOptional, IsPostalCode, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
 
 export class CreateAddressDto {
+  @IsString()
+  @IsNotEmpty()
+  @Transform(({ value }) => value?.trim())
+  @ApiProperty({
+    type: 'string',
+    required: true,
+    nullable: false,
+  })
+  fullName: string;
+
   @IsString()
   @IsNotEmpty()
   @Transform(({ value }) => value?.trim())
@@ -31,12 +41,23 @@ export class CreateAddressDto {
     required: true,
     nullable: false,
   })
-  address: string;
+  plate: string;
 
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  @IsPostalCode('IR')
+  @Transform(({ value }) => value?.trim())
+  @ApiProperty({
+    type: 'string',
+    required: false,
+    nullable: true,
+  })
+  unit?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^\d{10}$/, { message: 'Postal code must be exactly 10 digits' })
   @Transform(({ value }) => value?.trim())
   @ApiProperty({
     type: 'string',
@@ -44,26 +65,4 @@ export class CreateAddressDto {
     nullable: true,
   })
   postalCode?: string;
-
-  @IsOptional()
-  @IsString()
-  @IsNotEmpty()
-  @Transform(({ value }) => value?.trim())
-  @ApiProperty({
-    type: 'string',
-    required: false,
-    nullable: true,
-  })
-  receiverMobile?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @IsOptional()
-  @Transform(({ value }) => value?.trim())
-  @ApiProperty({
-    type: 'string',
-    required: false,
-    nullable: true,
-  })
-  description?: string;
 }

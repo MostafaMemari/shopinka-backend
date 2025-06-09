@@ -145,18 +145,18 @@ model GalleryItem {
 }
 
 model Address {
-  id             Int      @id() @default(autoincrement())
-  userId         Int
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  province       String
-  city           String
-  address        String
-  postalCode     String?  @unique() @map("postal_code")
-  receiverMobile String?  @map("receiver_mobile")
-  description    String?
-  orders         Order[]
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt()
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName   String
+  province   String
+  city       String
+  plate      String
+  unit       String?
+  postalCode String?  @unique @map("postal_code") @db.VarChar(10)
+  orders     Order[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Attribute {

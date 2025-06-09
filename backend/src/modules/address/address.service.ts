@@ -44,12 +44,9 @@ export class AddressService {
 
     const filters: Prisma.AddressWhereInput = { userId };
 
-    if (address) filters.address = { contains: address, mode: 'insensitive' };
     if (city) filters.city = { contains: city, mode: 'insensitive' };
-    if (receiverMobile) filters.receiverMobile = { contains: receiverMobile, mode: 'insensitive' };
     if (province) filters.province = { contains: province, mode: 'insensitive' };
     if (postalCode) filters.postalCode = { contains: postalCode, mode: 'insensitive' };
-    if (description) filters.description = { contains: description, mode: 'insensitive' };
     if (startDate || endDate) {
       filters.createdAt = {};
       if (startDate) filters.createdAt.gte = new Date(startDate);
