@@ -71,7 +71,7 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
     return (
       <form ref={ref} onSubmit={formik.handleSubmit} className={`space-y-1 p-4 text-right ${className}`.trim()} dir="rtl">
         <div className="grid grid-cols-1 gap-4">
-          <TextInput id="fullName" name="fullName" label="نام و نام خانوادگی تحویل گیرنده" formik={formik} />
+          <TextInput id="fullName" name="fullName" isRequired label="نام و نام خانوادگی تحویل گیرنده" formik={formik} />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <SelectInput
@@ -81,6 +81,7 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
             formik={formik}
             options={provinces}
             placeholder="انتخاب کنید"
+            isRequired
             onChange={handleProvinceChange}
           />
           <SelectInput
@@ -90,13 +91,14 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
             formik={formik}
             options={cities[selectedProvince] || []}
             placeholder=""
+            isRequired
             isDisabled={!selectedProvince}
             key={selectedProvince}
           />
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <TextInput id="plate" name="plate" label="پلاک" formik={formik} />
-          <TextInput id="streetAndAlley" name="streetAndAlley" label="خیابان و کوچه" formik={formik} />
+          <TextInput id="plate" name="plate" label="پلاک" isRequired formik={formik} />
+          <TextInput id="streetAndAlley" name="streetAndAlley" isRequired label="خیابان و کوچه" formik={formik} />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <TextInput id="unit" name="unit" label="واحد" formik={formik} />

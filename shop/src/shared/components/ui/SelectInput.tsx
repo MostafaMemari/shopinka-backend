@@ -12,10 +12,21 @@ interface SelectInputProps {
   options: Option[];
   placeholder: string;
   isDisabled?: boolean;
+  isRequired?: boolean;
   onChange?: (selectedOption: Option | null) => void;
 }
 
-const SelectInput: React.FC<SelectInputProps> = ({ id, name, label, formik, options, placeholder, isDisabled = false, onChange }) => {
+const SelectInput: React.FC<SelectInputProps> = ({
+  id,
+  name,
+  label,
+  formik,
+  options,
+  placeholder,
+  isDisabled = false,
+  isRequired = false,
+  onChange,
+}) => {
   const selectedOption = options.find((opt) => opt.value === formik.values[name]);
 
   const defaultHandleChange = (selected: Option | null) => {
@@ -28,6 +39,7 @@ const SelectInput: React.FC<SelectInputProps> = ({ id, name, label, formik, opti
     <div className="mb-4">
       <label htmlFor={id} className="mb-2 block text-sm font-medium text-gray-700">
         {label}
+        {isRequired && <span className="text-red-500"> *</span>}
       </label>
       <Select
         inputId={id}

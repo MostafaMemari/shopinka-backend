@@ -11,9 +11,20 @@ interface TextInputProps {
   rows?: number;
   disabled?: boolean;
   placeholder?: string;
+  isRequired?: boolean;
 }
 
-const TextInput: React.FC<TextInputProps> = ({ id, name, label, type = 'text', formik, rows = 3, disabled = false, placeholder }) => {
+const TextInput: React.FC<TextInputProps> = ({
+  id,
+  name,
+  label,
+  type = 'text',
+  formik,
+  rows = 3,
+  disabled = false,
+  placeholder,
+  isRequired = false,
+}) => {
   const hasError = formik.touched[name] && formik.errors[name];
 
   const commonProps = {
@@ -34,6 +45,7 @@ const TextInput: React.FC<TextInputProps> = ({ id, name, label, type = 'text', f
     <div className="mb-4 text-right">
       <label htmlFor={id} className="mb-1 block text-sm font-medium text-gray-700">
         {label}
+        {isRequired && <span className="text-red-500"> *</span>}
       </label>
 
       {type === 'textarea' ? <textarea {...commonProps} rows={rows} /> : <input {...commonProps} type={type} />}

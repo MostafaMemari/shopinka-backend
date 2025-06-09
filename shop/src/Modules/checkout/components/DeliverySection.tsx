@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaTruck, FaMoneyBillWave, FaClock } from 'react-icons/fa';
 import CartStatus from '@/shared/components/CartStatus';
 import { useShipping } from '@/shared/hooks/reactQuery/useShipping';
@@ -17,6 +17,14 @@ export default function DeliverySection() {
   const { data, isLoading, error } = useShipping({});
   const shippingItems = data?.data?.items;
   const [selected, setSelected] = useState<string | number | null>(null);
+
+  // Set the first item as selected by default when shippingItems are loaded
+  useEffect(() => {
+    if (shippingItems?.length && selected === null) {
+      const firstItemId = shippingItems[0].id ?? 0;
+      setSelected(firstItemId);
+    }
+  }, [shippingItems, selected]);
 
   const getId = (item: ShippingItem, idx: number) => item.id ?? idx;
 
@@ -42,7 +50,7 @@ export default function DeliverySection() {
           </div>
           <fieldset className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <legend className="sr-only">Delivery Options</legend>
-            {shippingItems?.map((item: ShippingItem, index: number) => {
+            {shippingItems.map((item: ShippingItem, index: number) => {
               const id = getId(item, index);
               const isChecked = selected === id;
               return (
@@ -54,10 +62,7 @@ export default function DeliverySection() {
                     id={`delivery-${id}`}
                     className="peer hidden"
                     checked={isChecked}
-                    onChange={() => {
-                      setSelected(id);
-                      console.log('Selected delivery id:', id);
-                    }}
+                    onChange={() => setSelected(id)}
                   />
                   <label
                     htmlFor={`delivery-${id}`}

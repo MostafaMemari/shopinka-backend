@@ -13,10 +13,11 @@ export type AddressItem = {
   userId: number;
   province: string;
   city: string;
-  address: string;
+  plate: string;
   postalCode: string;
-  receiverMobile: string;
-  description: string;
+  fullName: string;
+  streetAndAlley: string;
+  unit: string | null;
   createdAt: string;
   updatedAt: string;
 };

@@ -1,8 +1,8 @@
-import { type AddressItem } from '@/modules/address/types/address.type';
+import { AddressFormType, type AddressItem } from '@/modules/address/types/address.type';
 import { useAddress } from '@/shared/hooks/reactQuery/useAddress';
 import React, { useEffect, useRef, useState } from 'react';
 import AddressForm from './AddressForm';
-import { AddressFormType, Option } from './AddressFormDrawer';
+import { Option } from './AddressFormDrawer';
 import MobileDrawer from '@/shared/components/MobileDrawer';
 import AddressActions from '@/shared/components/ui/DropDownActions';
 import Dialog from '@/shared/components/ui/Dialog';
@@ -57,6 +57,7 @@ function AddressItem({ item, selectedAddressId, onSelectAddress }: AddressItemPr
       values,
       () => {
         setIsOpenDrawer(false);
+        setIsOpenDialog(false);
         if (formRef.current) {
           formRef.current.reset();
         }
@@ -120,14 +121,14 @@ function AddressItem({ item, selectedAddressId, onSelectAddress }: AddressItemPr
 
         <div className="mb-4 flex items-center justify-between gap-x-2 sm:mb-2">
           <p className="text-sm text-gray-900 xs:text-base pr-7 dark:text-gray-100 line-clamp-2 sm:line-clamp-2">
-            {`${item.province}، ${item.city} - ${item.address} - کد پستی: ${item.postalCode}`}
+            {`${item.province}، ${item.city} - ${item.streetAndAlley} - کد پستی: ${item.postalCode}`}
           </p>
           <div className="relative hidden md:block">
             <AddressActions onDelete={() => handleDeleteAddress(item.id)} onEdit={() => setIsOpenDialog(true)} />
           </div>
         </div>
         <div className="flex items-center justify-between gap-x-2">
-          <p className="line-clamp-1 text-sm text-gray-500 dark:text-gray-400">{`گیرنده: ${item.receiverMobile}`}</p>
+          <p className="line-clamp-1 text-sm text-gray-500 dark:text-gray-400">{`گیرنده: ${item.fullName}`}</p>
           <div className="flex items-center gap-x-2 md:hidden">
             <AddressActions onDelete={() => handleDeleteAddress(item.id)} onEdit={() => setIsOpenDrawer(true)} />
           </div>
@@ -152,12 +153,13 @@ function AddressItem({ item, selectedAddressId, onSelectAddress }: AddressItemPr
           onSubmit={handleFormSubmit}
           ref={formRef}
           initialValues={{
-            address: item.address,
             city: item.city,
-            description: item.description,
             postalCode: item.postalCode,
             province: item.province,
-            receiverMobile: item.receiverMobile,
+            fullName: item.fullName,
+            streetAndAlley: item.streetAndAlley,
+            unit: item.unit,
+            plate: item.plate,
           }}
         />
       </MobileDrawer>
@@ -176,12 +178,13 @@ function AddressItem({ item, selectedAddressId, onSelectAddress }: AddressItemPr
             onSubmit={handleFormSubmit}
             ref={formRef}
             initialValues={{
-              address: item.address,
               city: item.city,
-              description: item.description,
               postalCode: item.postalCode,
               province: item.province,
-              receiverMobile: item.receiverMobile,
+              fullName: item.fullName,
+              plate: item.plate,
+              streetAndAlley: item.streetAndAlley,
+              unit: item.unit,
             }}
           />
         </div>
