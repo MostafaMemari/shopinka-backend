@@ -1,4 +1,4 @@
-import MobileDrawer from '@/shared/components/MobileDrawer';
+import MobileDrawer from '@/components/MobileDrawer';
 import { useState } from 'react';
 import { BiSort } from 'react-icons/bi';
 

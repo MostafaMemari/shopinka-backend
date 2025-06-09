@@ -7,7 +7,7 @@ import PriceSelector from '../PriceSelector';
 import CategorySelector from '../FilterDesktop/CategorySelector';
 import StockStatusFilter from '../FilterDesktop/StockStatusFilter';
 import DiscountFilter from '../FilterDesktop/DiscountFilter';
-import MobileDrawer from '@/shared/components/MobileDrawer';
+import MobileDrawer from '@/components/MobileDrawer';
 
 interface MobileFilterProps {
   totalCount: number;

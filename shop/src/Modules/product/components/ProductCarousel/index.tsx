@@ -43,6 +43,7 @@ const ProductCarousel: FC<Props> = ({ title, viewAllLink, viewAllText = 'مشا�
           spaceBetween={productSwiperConfig.spaceBetween}
           breakpoints={productSwiperConfig.breakpoints}
           navigation={true}
+          loading={loading}
         />
       </div>
     </section>

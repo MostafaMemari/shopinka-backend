@@ -17,7 +17,7 @@ const ProductCard: FC<Props> = ({ product }) => {
   const productName = product?.name || 'محصول بدون نام';
 
   return (
-    <article className="border-gradient group relative rounded-base p-px before:absolute before:-inset-px before:h-[calc(100%+2px)] before:w-[calc(100%+2px)] before:rounded-base">
+    <article className="border-gradient group relative rounded-base p-px before:absolute before:-inset-px min-h-[350px] before:h-[calc(100%+2px)] before:w-[calc(100%+2px)] before:rounded-base">
       <div className="relative rounded-xl bg-muted p-2 shadow-base md:p-5">
         <div className="mb-2 md:mb-5" draggable={false}>
           <Link href={`/product/${slug}`} aria-label={`مشاهده جزئیات ${productName}`}>

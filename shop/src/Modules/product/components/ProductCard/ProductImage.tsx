@@ -17,8 +17,9 @@ const ProductImage = ({ src, alt }: { src: string; alt: string }) => {
         <Image
           src={imgSrc}
           alt={alt}
-          fill
-          className={`object-contain transition-opacity duration-300 ease-in-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+          width={300}
+          height={300}
+          className={`w-full h-full object-contain transition-opacity duration-300 ease-in-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
           onLoad={() => setIsLoaded(true)}
           onError={() => setImgSrc(fallbackSrc)}
           sizes="(max-width: 768px) 50vw, 216px"

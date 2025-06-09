@@ -15,7 +15,11 @@ interface CarouselProps {
   navigation?: boolean;
   freeMode?: boolean;
   className?: string;
+  loading?: boolean;
+  skeletonCount?: number;
 }
+
+const SkeletonCard = () => <div className="h-[350px] w-full animate-pulse rounded-lg bg-neutral-200 dark:bg-neutral-700" />;
 
 const Carousel: FC<CarouselProps> = ({
   items,
@@ -25,15 +29,32 @@ const Carousel: FC<CarouselProps> = ({
   navigation = true,
   freeMode = false,
   className = '',
+  loading = false,
+  skeletonCount = 4,
 }) => {
   const swiperRef = useRef<any>(null);
 
   useEffect(() => {
-    // اطمینان از مقداردهی مجدد Swiper پس از لود کامل محتوا
     if (swiperRef.current?.swiper) {
       swiperRef.current.swiper.update();
     }
   }, [items]);
+
+  const renderItems = loading
+    ? Array(skeletonCount)
+        .fill(null)
+        .map((_, index) => (
+          <SwiperSlide key={`skeleton-${index}`} className="!h-auto">
+            <div className="h-full w-full p-2">
+              <SkeletonCard />
+            </div>
+          </SwiperSlide>
+        ))
+    : items.map((item, index) => (
+        <SwiperSlide key={`slide-${index}`} className="!h-auto">
+          <div className="h-full w-full">{item}</div>
+        </SwiperSlide>
+      ));
 
   return (
     <Swiper
@@ -52,12 +73,8 @@ const Carousel: FC<CarouselProps> = ({
       initialSlide={0}
       style={{ direction: 'rtl' }}
     >
-      {items?.map((item, index) => (
-        <SwiperSlide key={`slide-${index}`} className="!h-auto">
-          <div className="h-full w-full">{item}</div>
-        </SwiperSlide>
-      ))}
-      {navigation && (
+      {renderItems}
+      {navigation && !loading && (
         <>
           <div className="swiper-button-next after:text-sm after:text-gray-600" />
           <div className="swiper-button-prev after:text-sm after:text-gray-600" />
