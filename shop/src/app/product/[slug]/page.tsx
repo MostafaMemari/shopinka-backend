@@ -7,7 +7,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
   const product = await fetchProductBySlug(slug);
 
   if (!product || product.status !== 200 || !product.data) {
-    return notFound(); // این صفحه رو می‌فرسته به /404
+    return notFound();
   }
 
   return <ProductDetailsView product={product.data} />;

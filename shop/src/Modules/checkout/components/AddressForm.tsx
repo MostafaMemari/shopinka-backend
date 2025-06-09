@@ -33,6 +33,7 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
         plate: '',
         unit: '',
         postalCode: '',
+        streetAndAlley: '',
       },
       className = '',
     },
@@ -47,12 +48,10 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
         province: Yup.string().trim().required('استان الزامی است'),
         city: Yup.string().trim().required('شهر الزامی است'),
         plate: Yup.string().trim().required('پلاک الزامی است'),
+        streetAndAlley: Yup.string().trim().required('خیابان و کوچه الزامی است'),
         unit: Yup.string().trim().optional(),
         postalCode: Yup.string()
           .matches(/^\d{10}$/, 'کدپستی باید ۱۰ رقمی باشد')
-          .optional(),
-        receiverMobile: Yup.string()
-          .matches(/^09\d{9}$/, 'شماره موبایل باید ۱۱ رقم و با ۰۹ شروع شود')
           .optional(),
       }),
       onSubmit: async (values) => {
@@ -97,14 +96,13 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
         </div>
         <div className="grid grid-cols-2 gap-4">
           <TextInput id="plate" name="plate" label="پلاک" formik={formik} />
-          <TextInput id="unit" name="unit" label="واحد" formik={formik} />
+          <TextInput id="streetAndAlley" name="streetAndAlley" label="خیابان و کوچه" formik={formik} />
         </div>
         <div className="grid grid-cols-2 gap-4">
+          <TextInput id="unit" name="unit" label="واحد" formik={formik} />
           <TextInput id="postalCode" name="postalCode" label="کدپستی" formik={formik} />
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <TextInput id="receiverMobile" name="receiverMobile" label="شماره موبایل گیرنده" formik={formik} />
-        </div>
+        <div className="grid grid-cols-2 gap-4"></div>
       </form>
     );
   },

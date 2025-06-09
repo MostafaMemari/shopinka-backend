@@ -3,6 +3,7 @@ export type AddressFormType = {
   province: string;
   city: string;
   plate: string;
+  streetAndAlley: string;
   unit: string | null;
   postalCode: string | null;
 };

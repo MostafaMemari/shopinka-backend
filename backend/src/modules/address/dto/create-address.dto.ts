@@ -41,6 +41,16 @@ export class CreateAddressDto {
     required: true,
     nullable: false,
   })
+  streetAndAlley: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Transform(({ value }) => value?.trim())
+  @ApiProperty({
+    type: 'string',
+    required: true,
+    nullable: false,
+  })
   plate: string;
 
   @IsOptional()
