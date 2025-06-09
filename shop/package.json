@@ -18,6 +18,7 @@
     "clsx": "^2.1.1",
     "formik": "^2.4.6",
     "next": "15.3.1",
+    "nextjs-toploader": "^3.8.16",
     "nouislider": "^15.8.1",
     "nuqs": "^2.4.3",
     "ofetch": "^1.4.1",

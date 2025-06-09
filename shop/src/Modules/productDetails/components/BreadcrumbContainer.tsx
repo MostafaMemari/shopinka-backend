@@ -1,6 +1,6 @@
 import { IBreadcrumb } from '@/lib/types/breadcrumb';
-import BoxedBreadcrumb from '../../../shared/components/ui/BoxedBreadcrumb';
-import { CompactBreadcrumb } from '../../../shared/components/ui/breadcrumb';
+import BoxedBreadcrumb from '../../../components/ui/BoxedBreadcrumb';
+import { CompactBreadcrumb } from '../../../components/ui/breadcrumb';
 
 interface Props {
   items: IBreadcrumb[];

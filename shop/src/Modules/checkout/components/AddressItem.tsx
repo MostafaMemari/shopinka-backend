@@ -3,9 +3,9 @@ import { useAddress } from '@/shared/hooks/reactQuery/useAddress';
 import React, { useEffect, useRef, useState } from 'react';
 import AddressForm from './AddressForm';
 import { Option } from './AddressFormDrawer';
-import MobileDrawer from '@/shared/components/MobileDrawer';
-import AddressActions from '@/shared/components/ui/DropDownActions';
-import Dialog from '@/shared/components/ui/Dialog';
+import AddressActions from '@/components/ui/DropDownActions';
+import Dialog from '@/components/ui/Dialog';
+import MobileDrawer from '@/components/MobileDrawer';
 
 const provinces: Option[] = [
   { value: 'tehran', label: 'تهران' },

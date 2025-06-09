@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import DesktopLogo from '@/shared/components/ui/Logo/DesktopLogo';
+import DesktopLogo from '@/components/ui/Logo/DesktopLogo';
 import Toast from '@/shared/utils/swalToast';
 
 import { useOtpTimer } from '../hooks/useOtpTimer';

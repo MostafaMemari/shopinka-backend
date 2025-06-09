@@ -4,8 +4,8 @@ import { FC, useMemo } from 'react';
 import Link from 'next/link';
 import { blogSwiperConfig } from '@/config/swiper';
 import { IBlog } from '@/lib/types/blogs';
-import BlogCard from '../../../../shared/components/Blog';
-import Carousel from '../../../../shared/components/Carousel/Carousel';
+import BlogCard from '../../../../components/Blog';
+import Carousel from '../../../../components/Carousel/Carousel';
 
 interface Props {
   sectionTitle: string;

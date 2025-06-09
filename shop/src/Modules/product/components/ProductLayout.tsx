@@ -9,8 +9,8 @@ import { PiPhoneCall } from 'react-icons/pi';
 import { LuList, LuShoppingCart, LuUser, LuCheck } from 'react-icons/lu';
 import { RiHome3Line } from 'react-icons/ri';
 import { useAuth } from '@/modules/auth/hooks/useAuth';
-import MobileMenu from '@/shared/components/header/MobileMenu';
-import MobileLogo from '@/shared/components/ui/Logo/MobileLogo';
+import MobileMenu from '@/components/header/MobileMenu';
+import MobileLogo from '@/components/ui/Logo/MobileLogo';
 
 const ProductLayout = () => {
   const pathname = usePathname();

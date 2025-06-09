@@ -3,8 +3,8 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { forwardRef, useState } from 'react';
-import TextInput from '@/shared/components/ui/TextInput';
-import SelectInput from '@/shared/components/ui/SelectInput';
+import TextInput from '@/components/ui/TextInput';
+import SelectInput from '@/components/ui/SelectInput';
 import { Option } from './AddressFormDrawer';
 import { AddressFormType } from '@/modules/address/types/address.type';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Drawer from '../../../../shared/components/ui/Drawer';
+import Drawer from '../../../../components/ui/Drawer';
 
 interface Props {
   description: string;

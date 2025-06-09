@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import MobileCommentsSwiper from './MobileCommentsSwiper';
 import { IComment } from '@/lib/types/comments';
 import SuggestionRadio from '@/modules/productDetails/components/Comment/ProductComments/SuggestionRadio';
-import Pagination from '@/shared/components/ui/Pagination';
+import Pagination from '@/components/ui/Pagination';
 import DesktopComments from './DesktopComments';
 
 interface Props {

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { HiChevronLeft } from 'react-icons/hi';
 import ProductCard from '@/modules/product/components/ProductCard';
 import { productSwiperConfig } from '@/config/swiper';
-import Carousel from '../../../../shared/components/Carousel/Carousel';
+import Carousel from '../../../../components/Carousel/Carousel';
 import { Product } from '../../types/productType';
 
 interface Props {
@@ -43,7 +43,6 @@ const ProductCarousel: FC<Props> = ({ title, viewAllLink, viewAllText = 'مشا�
           spaceBetween={productSwiperConfig.spaceBetween}
           breakpoints={productSwiperConfig.breakpoints}
           navigation={true}
-          className="product-slider"
         />
       </div>
     </section>
