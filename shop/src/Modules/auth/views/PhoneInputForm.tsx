@@ -1,4 +1,3 @@
-import PrimaryButton from '@/shared/components/PrimaryButton';
 import Toast from '@/shared/utils/swalToast';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -6,6 +5,7 @@ import { sendOtp } from '../services/auth.api';
 import { handleApiError } from '@/shared/utils/handleApiError';
 import { errorPhoneNumberStepMessages } from '../messages/errorAuthMessages';
 import { validateIranPhoneNumber } from '../utils/validateIranPhoneNumber';
+import PrimaryButton from '@/components/PrimaryButton';
 
 interface PhoneInputFormProps {
   mobile: string;

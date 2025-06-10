@@ -14,6 +14,7 @@ const ProductCard: FC<Props> = ({ product }) => {
   const imageUrl = product.mainImage?.fileUrl ?? '/placeholder-image.jpg';
   const slug = product.slug ?? '#';
   const productName = product.name ?? 'محصول بدون نام';
+  
 
   const jsonLd = {
     '@context': 'https://schema.org',

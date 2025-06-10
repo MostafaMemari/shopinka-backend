@@ -2,7 +2,7 @@ import React from 'react';
 import { FaSpinner } from 'react-icons/fa';
 import { BiStore } from 'react-icons/bi';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
-import PrimaryButton from '@/shared/components/PrimaryButton';
+import PrimaryButton from '@/components/PrimaryButton';
 
 interface CartItem {
   id: string | number;

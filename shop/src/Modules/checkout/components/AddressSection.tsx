@@ -2,11 +2,11 @@
 
 import React, { useState } from 'react';
 import { MdOutlineEditLocation } from 'react-icons/md';
-import CartStatus from '@/shared/components/CartStatus';
 import { useAddress } from '@/shared/hooks/reactQuery/useAddress';
 import AddressFormDrawer from './AddressFormDrawer';
 import AddressItem from './AddressItem';
 import AddressFormDialog from './AddressFormDialog';
+import CartStatus from '@/components/CartStatus copy';
 
 export default function AddressSection() {
   const { addressItems, isLoading, error } = useAddress({});

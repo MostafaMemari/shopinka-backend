@@ -3,4 +3,5 @@ export enum QueryKeys {
   User = 'user',
   Address = 'address',
   Shipping = 'shipping',
+  Categories = 'categories',
 }

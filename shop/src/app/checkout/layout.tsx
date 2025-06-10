@@ -1,6 +1,6 @@
 import Footer from '@/components/footer';
 import Header from '@/components/header';
-import MobileLayout from '@/shared/components/MobileLayout';
+import MobileLayout from '@/components/MobileLayout';
 
 export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

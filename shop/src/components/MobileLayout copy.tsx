@@ -3,13 +3,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import MobileLogo from '../../components/ui/Logo/MobileLogo';
-import MobileMenu from '../../components/header/MobileMenu';
 import { categories } from '@/mock/categories';
 import { PiPhoneCall } from 'react-icons/pi';
 import { LuList, LuShoppingCart, LuUser, LuCheck } from 'react-icons/lu';
 import { RiHome3Line } from 'react-icons/ri';
 import { useAuth } from '@/modules/auth/hooks/useAuth';
+import MobileMenu from './header/MobileMenu';
+import MobileLogo from './ui/Logo/MobileLogo';
 
 interface MobileLayoutProps {
   showHeader?: boolean;

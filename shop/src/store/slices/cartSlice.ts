@@ -150,7 +150,7 @@ const cartSlice = createSlice({
       const totals = calculateTotals(action.payload.items);
       state.totalPrice = totals.totalPrice;
       state.totalDiscountPrice = totals.totalDiscountPrice;
-      state.totalDiscount = totals.totalDiscount;
+      state.totalDiscount = totals.totalDiscountPrice;
     },
   },
   extraReducers: (builder) => {
@@ -168,7 +168,7 @@ const cartSlice = createSlice({
         const totals = calculateTotals(items);
         state.totalPrice = totals.totalPrice;
         state.totalDiscountPrice = totals.totalDiscountPrice;
-        state.totalDiscount = totals.totalDiscount;
+        state.totalDiscount = totals.totalDiscountPrice;
       });
   },
 });

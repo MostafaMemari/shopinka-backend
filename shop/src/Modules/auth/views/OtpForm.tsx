@@ -1,4 +1,3 @@
-import PrimaryButton from '@/shared/components/PrimaryButton';
 import Toast from '@/shared/utils/swalToast';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -9,6 +8,7 @@ import { errorOtpStepMessages, errorPhoneNumberStepMessages } from '../messages/
 import CountdownTimer from '../components/CountdownTimer';
 import { useAuth } from '../hooks/useAuth';
 import { useEffect } from 'react';
+import PrimaryButton from '@/components/PrimaryButton';
 
 interface OtpFormProps {
   mobile: string;

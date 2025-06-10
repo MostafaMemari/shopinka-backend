@@ -6,8 +6,6 @@ import { IoIosArrowBack } from 'react-icons/io';
 import { RiHome3Line } from 'react-icons/ri';
 import { HiOutlineShare, HiOutlineHeart, HiOutlineShoppingCart } from 'react-icons/hi';
 import { useCart } from '@/modules/cart/hooks/useCart';
-import IconButtonWithBadge from '@/shared/components/IconButtonWithBadge';
-import SkeletonLoader from '@/shared/components/SkeletonLoader';
 
 interface MobileHeaderProps {
   productId: number;

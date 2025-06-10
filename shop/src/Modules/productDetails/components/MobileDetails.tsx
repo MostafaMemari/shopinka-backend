@@ -3,7 +3,6 @@
 import { ProductDetails } from '@/modules/product/types/productType';
 import ProductVariants from './VariantSelector';
 import { HiOutlineShieldCheck } from 'react-icons/hi';
-import PriceDisplay from './PriceDisplay';
 import AddToCartButtonMobile from '@/modules/cart/components/AddToCartButton/AddToCartButtonMobile';
 
 interface Props {
@@ -41,7 +40,7 @@ export default function MobileDetails({ product }: Props) {
             تضمین سلامت فیزیکی و اصالت کالا
           </div>
 
-          <AddToCartButtonMobile />
+          {/* <AddToCartButtonMobile product={product} /> */}
         </div>
       </div>
 

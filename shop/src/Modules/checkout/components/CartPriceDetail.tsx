@@ -1,10 +1,10 @@
 'use client';
 
+import CartStatus from '@/components/CartStatus copy';
+import PrimaryButton from '@/components/PrimaryButton';
 import CartSummary from '@/modules/cart/components/CartSummary';
 import { useCart } from '@/modules/cart/hooks/useCart';
 import { calculateTotals } from '@/modules/cart/utils/calculateTotals';
-import CartStatus from '@/shared/components/CartStatus';
-import PrimaryButton from '@/shared/components/PrimaryButton';
 import Link from 'next/link';
 
 export default function CartPriceDetail() {
