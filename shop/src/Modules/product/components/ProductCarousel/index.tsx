@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC, useRef, useEffect } from 'react';
+import React, { FC, useRef, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Swiper, SwiperSlide, SwiperRef } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
@@ -21,12 +21,6 @@ interface ProductCarouselProps {
 const ProductCarousel: FC<ProductCarouselProps> = ({ title, viewAllLink, viewAllText = 'مشاهده همه', products }) => {
   const swiperRef = useRef<SwiperRef>(null);
 
-  useEffect(() => {
-    if (swiperRef.current && swiperRef.current.swiper) {
-      swiperRef.current.swiper.update();
-    }
-  }, [products]);
-
   return (
     <section className="mb-8">
       <div className="container mx-auto px-4">
@@ -34,7 +28,7 @@ const ProductCarousel: FC<ProductCarouselProps> = ({ title, viewAllLink, viewAll
           <h3 className="text-lg font-medium md:text-xl lg:text-2xl">{title}</h3>
           <Link
             href={viewAllLink}
-            className="flex items-center gap-2 py-2 text-sm text-blue-600 hover:text-blue-800 transition-colors lg:text-base"
+            className="flex items-center gap-2 py-2 text-sm text-primary hover:text-blue-800 transition-colors lg:text-base"
           >
             {viewAllText}
             <HiChevronLeft className="h-5 w-5 lg:h-6 lg:w-6" />
@@ -42,7 +36,7 @@ const ProductCarousel: FC<ProductCarouselProps> = ({ title, viewAllLink, viewAll
         </div>
 
         {products.length > 0 ? (
-          <div className="relative overflow-hidden min-h-[200px]">
+          <div className="relative overflow-hidden">
             <Swiper
               ref={swiperRef}
               slidesPerView={productSwiperConfig.slidesPerView}
@@ -53,19 +47,14 @@ const ProductCarousel: FC<ProductCarouselProps> = ({ title, viewAllLink, viewAll
                 prevEl: '.swiper-button-prev',
               }}
               modules={[Navigation]}
-              className="w-full"
               style={{ direction: 'rtl' }}
-              wrapperClass="flex items-stretch"
-              updateOnWindowResize
-              observer
-              observeParents
             >
               {products.map((product) => (
-                <SwiperSlide key={product.id} className="flex justify-center items-stretch">
-                  <div className="w-full max-w-[300px]">
+                <div>
+                  <SwiperSlide key={product.id}>
                     <ProductCard product={product} />
-                  </div>
-                </SwiperSlide>
+                  </SwiperSlide>
+                </div>
               ))}
               <div className="swiper-button-prev absolute top-1/2 -left-4 z-10 -translate-y-1/2 after:text-sm after:text-gray-600" />
               <div className="swiper-button-next absolute top-1/2 -right-4 z-10 -translate-y-1/2 after:text-sm after:text-gray-600" />

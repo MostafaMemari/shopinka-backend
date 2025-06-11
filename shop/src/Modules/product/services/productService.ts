@@ -6,22 +6,39 @@ import { Pager } from '@/shared/types/pagerType';
 import { Product, ProductParams } from '../types/productType';
 import { ofetch } from 'ofetch';
 
-export const getProducts = unstable_cache(
-  async (params?: ProductParams): Promise<{ items: Product[]; pager: Pager }> => {
-    const response = await ofetch(`/product`, {
-      baseURL: process.env.API_BASE_URL,
-      method: 'GET',
-      query: { ...params, includeMainImage: true },
-    });
+// export const getProducts = unstable_cache(
+//   async (params?: ProductParams): Promise<{ items: Product[]; pager: Pager }> => {
+//     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    return {
-      items: response.items,
-      pager: response.pager,
-    };
-  },
-  ['products'],
-  { tags: ['products'] },
-);
+//     const response = await ofetch(`/product`, {
+//       baseURL: process.env.API_BASE_URL,
+//       method: 'GET',
+//       query: { ...params, includeMainImage: true },
+//     });
+
+//     return {
+//       items: response.items,
+//       pager: response.pager,
+//     };
+//   },
+//   ['products'],
+//   { tags: ['products'] },
+// );
+
+export const getProducts = async (params?: ProductParams): Promise<{ items: Product[]; pager: Pager }> => {
+  await new Promise((resolve) => setTimeout(resolve, 2000)); // تأخیر 2 ثانیه
+
+  const response = await ofetch(`/product`, {
+    baseURL: process.env.API_BASE_URL,
+    method: 'GET',
+    query: { ...params, includeMainImage: true },
+  });
+
+  return {
+    items: response.items,
+    pager: response.pager,
+  };
+};
 
 export async function refetchProducts() {
   revalidateTag('products');

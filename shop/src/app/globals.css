@@ -57,26 +57,6 @@ body {
   border: var(--scrollbar-border);
 }
 
-/* Swiper Styles */
-.swiper {
-  direction: rtl !important;
-}
-
-.swiper-slide {
-  display: flex;
-  justify-content: center;
-  align-items: stretch;
-  height: auto !important; /* برای اطمینان از ارتفاع یکسان */
-}
-
-.product-card {
-  width: 100%;
-  max-width: 300px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
 /*Main Loader */
 
 .lds-grid {

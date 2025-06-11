@@ -54,6 +54,7 @@ const MobileLayout = ({ showHeader = true, showNav = true }: MobileLayoutProps) 
         <div className="fixed top-3 right-3 left-3 rounded-2xl z-50 bg-white shadow-md">
           <div className="flex items-center justify-between py-2 px-4 h-[60px]">
             <MobileMenu categories={categories} onToggleMenu={setIsMenuOpen} />
+
             <MobileLogo />
             <PiPhoneCall className="h-6 w-6" />
           </div>
