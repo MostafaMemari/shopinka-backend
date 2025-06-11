@@ -57,6 +57,17 @@ body {
   border: var(--scrollbar-border);
 }
 
+.product-carousel:not(.swiper-initialized) {
+  opacity: 0;
+  visibility: hidden;
+  height: 0;
+}
+.product-carousel.swiper-initialized {
+  opacity: 1;
+  visibility: visible;
+  height: auto;
+}
+
 /*Main Loader */
 
 .lds-grid {

@@ -1,8 +1,6 @@
-import { Suspense } from 'react';
-import BannerSlider from '@/components/Carousel/BannerSlider';
 import { getProducts } from '@/modules/product/services/productService';
 import CarouselProduct from '@/modules/product/components/ProductCarousel';
-import Loader from '@/components/skeleton/Loader';
+import BannerSlider from '@/components/Carousel/BannerSlider';
 
 export default async function Home() {
   const [discountProducts, newestProducts] = await Promise.all([
