@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import { HiOutlineMenu } from 'react-icons/hi';
 import { Category } from '@/types/categoryType';
-import SubCategoryList from './SubCategoryList';
+import SubCategoryList from '../SubCategoryList';
 
 interface CategoryMenuProps {
   categories: Category[];

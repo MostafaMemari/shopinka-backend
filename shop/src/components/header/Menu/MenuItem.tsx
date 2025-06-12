@@ -12,9 +12,10 @@ interface MenuItemProps {
     subItems?: { id: number; name: string; href: string }[];
     color?: { light: string; dark: string };
   };
+  isAlwaysActive?: boolean;
 }
 
-const MenuItem = ({ menu }: MenuItemProps) => {
+const MenuItem = ({ menu, isAlwaysActive = false }: MenuItemProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -22,13 +23,19 @@ const MenuItem = ({ menu }: MenuItemProps) => {
       <div className="relative flex items-center">
         <Link
           href={menu.href}
-          className="flex cursor-pointer items-center gap-x-2 p-2 text-sm text-neutral-600 dark:text-white hover:text-primary"
+          className={`flex cursor-pointer items-center gap-x-2 p-2 text-sm text-neutral-600 dark:text-white hover:text-primary ${
+            isAlwaysActive ? 'text-primary' : ''
+          }`}
           style={menu.color ? ({ '--color-light': menu.color.light, '--color-dark': menu.color.dark } as React.CSSProperties) : undefined}
         >
           {menu.name}
           {menu.name === 'سایر' && <span className="text-primary">...</span>}
         </Link>
-        <span className={`absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-500 ${isHovered ? 'w-full' : 'w-0'}`} />
+        <span
+          className={`absolute bottom-0 right-0 h-0.5 bg-primary transition-all duration-500 ${
+            isAlwaysActive || isHovered ? 'w-full' : 'w-0'
+          }`}
+        />
       </div>
       {menu.subItems && (
         <div className="absolute right-0 top-full hidden w-44 overflow-hidden rounded-b-lg bg-muted shadow-base group-hover:block">

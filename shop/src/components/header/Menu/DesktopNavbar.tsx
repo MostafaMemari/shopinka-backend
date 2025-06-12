@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Category } from '@/types/categoryType';
 import CategoryMenu from './CategoryMenu';
-import MenuItemComponent from './MenuItem';
+import MenuItem from './MenuItem';
 
 interface MenuItem {
   id: number;
@@ -16,12 +16,6 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
   {
-    id: 1,
-    name: 'فروش ویژه',
-    href: './special-sale.html',
-    color: { light: '#ef4444', dark: '#f87171' },
-  },
-  {
     id: 10,
     name: 'فروشگاه',
     href: '/shop',
@@ -29,22 +23,22 @@ const menuItems: MenuItem[] = [
   },
   {
     id: 2,
-    name: 'چرا روتی کالا',
-    href: './why-us.html',
+    name: 'چرا شاپینکا',
+    href: '/',
   },
   {
     id: 3,
     name: 'راهنمای خرید',
-    href: './how-to-buy.html',
+    href: '/',
   },
   {
     id: 4,
     name: 'سایر',
     href: '#',
     subItems: [
-      { id: 1, name: 'تماس با ما', href: './contact.html' },
-      { id: 2, name: 'درباره ما', href: './about.html' },
-      { id: 3, name: 'سوالات متداول', href: './faq.html' },
+      { id: 1, name: 'تماس با ما', href: '/' },
+      { id: 2, name: 'درباره ما', href: '/' },
+      { id: 3, name: 'سوالات متداول', href: '/' },
     ],
   },
 ];
@@ -53,7 +47,7 @@ const MenuItems = () => {
   return (
     <div className="flex items-center gap-x-2">
       {menuItems.map((menu) => (
-        <MenuItemComponent key={menu.id} menu={menu} />
+        <MenuItem key={menu.id} menu={menu} />
       ))}
     </div>
   );
@@ -93,8 +87,14 @@ const DesktopNavbar = ({ categories }: DesktopNavbarProps) => {
       }`}
     >
       <div className="container relative flex max-w-[1640px] items-center gap-x-2">
-        <CategoryMenu categories={categories} />
-        <MenuItems />
+        <div className="flex justify-between items-center w-full">
+          <div className="flex gap-x-2">
+            <CategoryMenu categories={categories} />
+            <MenuItems />
+          </div>
+          <MenuItem menu={{ id: 1, name: 'فروش ویژه', href: './special-sale.html' }} isAlwaysActive />
+        </div>
+
         <div
           id="header-desktop-navbar-indicator"
           className="absolute bottom-0 h-[0.15625rem] z-0 rounded-2xl end-0 transition-all duration-[350ms] w-0"
