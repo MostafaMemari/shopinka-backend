@@ -1,4 +1,4 @@
-import { Category } from '@/modules/category/types/categoryType';
+import { Category } from '@/types/categoryType';
 
 interface Props {
   category: Category;

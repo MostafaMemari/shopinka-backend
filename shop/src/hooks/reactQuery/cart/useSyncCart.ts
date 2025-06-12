@@ -1,10 +1,10 @@
 import { useCallback, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getCart, createCartBulk } from '../services/cart.api';
 import { setCart } from '@/store/slices/cartSlice';
 import { QueryKeys } from '@/shared/types/query-keys';
-import { CartData, CartItemState } from '../types/cartType';
+import { createCartBulk, getCart } from '@/modules/cart/services/cart.api';
+import { CartData, CartItemState } from '@/types/cartType';
 
 export function useSyncCart() {
   const dispatch = useAppDispatch();

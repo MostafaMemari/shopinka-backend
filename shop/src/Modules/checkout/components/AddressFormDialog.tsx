@@ -5,7 +5,7 @@ import { MdOutlineAddLocationAlt } from 'react-icons/md';
 import { useAddress } from '@/shared/hooks/reactQuery/useAddress';
 import AddressForm from './AddressForm';
 import Dialog from '@/components/ui/Dialog';
-import { AddressFormType } from '@/modules/address/types/address.type';
+import { AddressFormType } from '@/types/address.type';
 
 export interface Option {
   value: string;

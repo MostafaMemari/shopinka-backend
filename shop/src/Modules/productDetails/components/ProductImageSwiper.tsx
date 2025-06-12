@@ -8,7 +8,7 @@ import 'swiper/css/pagination';
 import Image from 'next/image';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { ProductGalleriesType } from '../types/productGalleriesType';
+import { ProductGalleriesType } from '../../../types/productGalleriesType';
 
 interface ProductImageSwiperProps {
   product: ProductGalleriesType;

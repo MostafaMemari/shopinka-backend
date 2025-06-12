@@ -1,6 +1,6 @@
 // src/store/slices/productSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ProductVariant } from '@/modules/product/types/productType';
+import { ProductVariant } from '@/types/productType';
 
 interface ProductState {
   selectedVariant: ProductVariant | null;

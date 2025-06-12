@@ -1,4 +1,4 @@
-import { CartItem, CartItemState } from '../types/cartType';
+import { CartItem, CartItemState } from '../../../types/cartType';
 
 export const mapCartResponseToCartItemState = (cartItems: CartItem[]): CartItemState[] => {
   return (

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { IoIosArrowBack } from 'react-icons/io';
 import { RiHome3Line } from 'react-icons/ri';
 import { HiOutlineShare, HiOutlineHeart, HiOutlineShoppingCart } from 'react-icons/hi';
-import { useCart } from '@/modules/cart/hooks/useCart';
+import { useCart } from '@/hooks/reactQuery/cart/useCart';
 
 interface MobileHeaderProps {
   productId: number;
@@ -13,7 +13,7 @@ interface MobileHeaderProps {
 
 const MobileHeader = ({ productId }: MobileHeaderProps) => {
   const router = useRouter();
-  const { cart: cartItems, isLoading } = useCart();
+  const { cart: cartItems } = useCart();
   const totalQuantity = cartItems?.reduce((sum, item) => sum + item.count, 0) || 0;
 
   // منطق دکمه Back: بازگشت به صفحه قبلی

@@ -1,5 +1,5 @@
 import { QueryOptions } from '@/shared/types/queryOptions';
-import { AddressFormType, AddressItem } from '@/modules/address/types/address.type';
+import { AddressFormType, AddressItem } from '@/types/address.type';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from '@/shared/types/query-keys';
 import { pager } from '@/shared/types/paginationType';

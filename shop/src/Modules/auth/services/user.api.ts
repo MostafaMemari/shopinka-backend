@@ -1,7 +1,7 @@
 'use server';
 
 import { shopApiFetch } from '@/server/api';
-import { User } from '../types/userType';
+import { User } from '../../../types/userType';
 import { cookies } from 'next/headers';
 import { COOKIE_NAMES } from '@/shared/types/constants';
 

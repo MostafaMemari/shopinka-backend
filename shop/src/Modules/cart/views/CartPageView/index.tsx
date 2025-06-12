@@ -3,7 +3,6 @@
 import React from 'react';
 import { HiOutlineTrash } from 'react-icons/hi';
 
-import { useCart } from '@/modules/cart/hooks/useCart';
 import { calculateTotals } from '@/modules/cart/utils/calculateTotals';
 import CartPageItem from '@/modules/cart/views/CartPageView/CartPageItem';
 import Link from 'next/link';
@@ -11,6 +10,7 @@ import showConfirmDialog from '../../components/showConfirmDialog';
 import CartSummary from '../../components/CartSummary';
 import CartStatus from '@/components/CartStatus copy';
 import PrimaryButton from '@/components/PrimaryButton';
+import { useCart } from '@/hooks/reactQuery/cart/useCart';
 
 function CartPageView() {
   const { cart: cartItems, isLoading, error, clearAllCartItems } = useCart();

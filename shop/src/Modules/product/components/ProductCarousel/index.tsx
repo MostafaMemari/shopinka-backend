@@ -9,7 +9,7 @@ import ProductCard from '@/modules/product/components/ProductCard';
 import { productSwiperConfig } from '@/config/swiper';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import { Product } from '../../types/productType';
+import { Product } from '../../../../types/productType';
 
 const SkeletonLoader = () => {
   return (

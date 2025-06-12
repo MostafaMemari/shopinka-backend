@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { CartItemState } from '../types/cartType';
+import { CartItemState } from '../../../types/cartType';
 import CartControls from '../components/CartControls';
 import ProductCardImage from '../components/ProductCartImage';
 import CartItemAttributes from '../components/CartItemAttributes';

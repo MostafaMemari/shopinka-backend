@@ -4,7 +4,7 @@ import { FC } from 'react';
 import ProductPrice from './ProductPrice';
 import Link from 'next/link';
 import ProductImage from './ProductImage';
-import { Product } from '../../types/productType';
+import { Product } from '../../../../types/productType';
 
 interface Props {
   product: Product;

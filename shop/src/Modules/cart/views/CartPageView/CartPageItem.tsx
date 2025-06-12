@@ -1,7 +1,7 @@
 import React from 'react';
 import ProductCartImage from '../../components/ProductCartImage';
 import Link from 'next/link';
-import { CartItemState } from '../../types/cartType';
+import { CartItemState } from '../../../../types/cartType';
 import CartItemAttributes from '../../components/CartItemAttributes';
 import ProductPriceCard from '../../components/ProductPriceCart';
 import CartControls from '../../components/CartControls';

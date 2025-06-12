@@ -1,4 +1,4 @@
-import { type ProductDetails } from '../../product/types/productType';
+import { type ProductDetails } from '../../../types/productType';
 
 import BreadcrumbContainer from '../components/BreadcrumbContainer';
 import ProductActions from '../components/ActionButtons';

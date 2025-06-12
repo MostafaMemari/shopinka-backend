@@ -1,4 +1,4 @@
-import { CartItemState, CartState } from '@/modules/cart/types/cartType';
+import { CartItemState, CartState } from '@/types/cartType';
 
 export const calculateDiscount = (oldPrice?: number | null, newPrice?: number | null): number => {
   if (!oldPrice || !newPrice || oldPrice <= newPrice) {

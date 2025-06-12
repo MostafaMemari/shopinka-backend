@@ -4,7 +4,7 @@ import AddressForm from './AddressForm';
 import { MdOutlineAddLocationAlt } from 'react-icons/md';
 import { useRef, useState } from 'react';
 import { useAddress } from '@/shared/hooks/reactQuery/useAddress';
-import { AddressFormType } from '@/modules/address/types/address.type';
+import { AddressFormType } from '@/types/address.type';
 import MobileDrawer from '@/components/MobileDrawer';
 
 export interface Option {

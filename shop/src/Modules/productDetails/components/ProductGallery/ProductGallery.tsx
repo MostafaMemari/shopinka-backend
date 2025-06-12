@@ -6,7 +6,7 @@ import { RootState } from '@/store';
 import MainImage from './MainImage';
 import GalleryImage from './GalleryImage';
 import GalleryModal from './GalleryModal';
-import { ProductGalleriesType } from '../../types/productGalleriesType';
+import { ProductGalleriesType } from '../../../../types/productGalleriesType';
 
 interface ProductGalleryProps {
   product: ProductGalleriesType;

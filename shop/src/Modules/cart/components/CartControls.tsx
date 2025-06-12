@@ -3,9 +3,9 @@
 import { cn } from '@/shared/utils/utils';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { HiOutlineMinus, HiOutlinePlus } from 'react-icons/hi';
-import { CartItemState } from '@/modules/cart/types/cartType';
-import { useCart } from '../hooks/useCart';
+import { CartItemState } from '@/types/cartType';
 import { PulseLoader } from 'react-spinners';
+import { useCart } from '@/hooks/reactQuery/cart/useCart';
 
 interface CartControlsProps {
   product: CartItemState;

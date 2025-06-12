@@ -1,5 +1,5 @@
 import { Attribute, AttributeValues } from '@/shared/types/attributeType';
-import { Category } from '@/modules/category/types/categoryType';
+import { Category } from '@/types/categoryType';
 import { Image } from '@/shared/types/imageType';
 import { SeoMeta } from '@/shared/types/seoMetaType';
 import { user } from '@/shared/types/userType';

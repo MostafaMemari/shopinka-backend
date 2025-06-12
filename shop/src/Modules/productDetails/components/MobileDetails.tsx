@@ -1,6 +1,6 @@
 'use client';
 
-import { ProductDetails } from '@/modules/product/types/productType';
+import { ProductDetails } from '@/types/productType';
 import ProductVariants from './VariantSelector';
 import { HiOutlineShieldCheck } from 'react-icons/hi';
 import AddToCartButtonMobile from '@/modules/cart/components/AddToCartButton/AddToCartButtonMobile';

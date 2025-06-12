@@ -3,7 +3,7 @@ import ProductListShopClient from '@/modules/shopPage/views/ProductListShopClien
 import { getProducts } from '@/modules/product/services/productService';
 import { loadSearchParams } from '@/modules/shopPage/utils/loadSearchParams';
 import { parseArrayParam } from '@/modules/shopPage/utils/parseArrayParam';
-import { ProductParams } from '@/modules/product/types/productType';
+import { ProductParams } from '@/types/productType';
 import { SearchParams } from 'nuqs';
 import SortBar from '@/modules/shopPage/components/SortBar';
 import FilterSection from '@/modules/shopPage/views/FilterSection';

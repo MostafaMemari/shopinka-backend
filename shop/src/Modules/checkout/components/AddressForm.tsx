@@ -6,7 +6,7 @@ import { forwardRef, useState } from 'react';
 import TextInput from '@/components/ui/TextInput';
 import SelectInput from '@/components/ui/SelectInput';
 import { Option } from './AddressFormDrawer';
-import { AddressFormType } from '@/modules/address/types/address.type';
+import { AddressFormType } from '@/types/address.type';
 
 interface Cities {
   [key: string]: Option[];

@@ -1,13 +1,13 @@
 'use client';
 
 import { HiOutlineChevronLeft, HiOutlineShoppingCart } from 'react-icons/hi';
-import { useCart } from '../hooks/useCart';
 import { calculateTotals } from '../utils/calculateTotals';
 import { useDropdown } from '@/shared/hooks/useDropdown';
 import Link from 'next/link';
 import DesktopBasketItem from './DesktopBasketItem';
 import { formatPrice } from '@/shared/utils/formatter';
 import IconButtonWithBadge from '@/components/IconButtonWithBadge';
+import { useCart } from '@/hooks/reactQuery/cart/useCart';
 
 export default function BasketDropdown() {
   const { cart: cartItems, isLoading, error } = useCart();

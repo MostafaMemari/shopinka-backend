@@ -1,4 +1,4 @@
-import { AddressFormType, type AddressItem } from '@/modules/address/types/address.type';
+import { AddressFormType, type AddressItem } from '@/types/address.type';
 import { useAddress } from '@/shared/hooks/reactQuery/useAddress';
 import React, { useEffect, useRef, useState } from 'react';
 import AddressForm from './AddressForm';

@@ -1,5 +1,5 @@
 import { shopApiFetch } from '@/server/api';
-import { CartData, CartResponse } from '../types/cartType';
+import { CartData, CartResponse } from '../../../types/cartType';
 import { mapCartResponseToCartItemState } from '../utils/mapCartResponse';
 
 export const createCart = async ({ cartData }: { cartData?: CartData }): Promise<void> => {

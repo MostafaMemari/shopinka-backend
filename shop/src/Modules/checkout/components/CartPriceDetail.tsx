@@ -2,13 +2,13 @@
 
 import CartStatus from '@/components/CartStatus copy';
 import PrimaryButton from '@/components/PrimaryButton';
+import { useCart } from '@/hooks/reactQuery/cart/useCart';
 import CartSummary from '@/modules/cart/components/CartSummary';
-import { useCart } from '@/modules/cart/hooks/useCart';
 import { calculateTotals } from '@/modules/cart/utils/calculateTotals';
 import Link from 'next/link';
 
 export default function CartPriceDetail() {
-  const { cart: cartItems, isLoading, error, clearAllCartItems } = useCart();
+  const { cart: cartItems, isLoading, error } = useCart();
 
   const totals = calculateTotals(cartItems);
   const totalQuantity = cartItems?.reduce((sum, item) => sum + item.count, 0) || 0;

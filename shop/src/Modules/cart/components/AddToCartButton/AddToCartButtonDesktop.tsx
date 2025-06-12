@@ -1,11 +1,11 @@
 'use client';
 
 import PrimaryButton from '@/components/PrimaryButton';
-import { useCartLogic } from '../../hooks/useCartLogic';
-import { ProductCardLogic } from '../../types/productCardLogic';
+import { ProductCardLogic } from '../../../../types/productCardLogic';
 import CartControls from '../CartControls';
 import Link from 'next/link';
 import { PulseLoader } from 'react-spinners';
+import { useCartLogic } from '@/hooks/reactQuery/cart/useCartLogic';
 
 interface AddToCartButtonDesktopProps {
   product: ProductCardLogic;

@@ -6,7 +6,7 @@ import { verifyOtp, sendOtp } from '../services/auth.api';
 import { handleApiError } from '@/shared/utils/handleApiError';
 import { errorOtpStepMessages, errorPhoneNumberStepMessages } from '../messages/errorAuthMessages';
 import CountdownTimer from '../components/CountdownTimer';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../../../hooks/reactQuery/auth/useAuth';
 import { useEffect } from 'react';
 import PrimaryButton from '@/components/PrimaryButton';
 
