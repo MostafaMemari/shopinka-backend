@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ProductListShop from './ProductListShop';
 import { Product, ProductParams } from '@/types/productType';
-import { getProducts } from '@/server/productService';
+import { getProducts } from '@/service/productService';
 import LoadingDots from '@/components/shopPage/LoadingDots';
 import { Pager } from '@/shared/types/pagerType';
 import EndMessage from '@/components/shopPage/EndMessage';

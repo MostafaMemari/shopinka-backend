@@ -1,10 +1,10 @@
 import Toast from '@/shared/utils/swalToast';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { sendOtp } from '@/server/auth.api';
+import { sendOtp } from '@/service/auth.api';
 import { handleApiError } from '@/shared/utils/handleApiError';
-import { errorPhoneNumberStepMessages } from '../messages/errorAuthMessages';
-import { validateIranPhoneNumber } from '../utils/validateIranPhoneNumber';
+import { errorPhoneNumberStepMessages } from '../../../messages/errorAuthMessages';
+import { validateIranPhoneNumber } from '../../../validation/validateIranPhoneNumber';
 import PrimaryButton from '@/components/PrimaryButton';
 
 interface PhoneInputFormProps {

@@ -1,4 +1,4 @@
-import { fetchProductBySlug } from '@/server/productService';
+import { fetchProductBySlug } from '@/service/productService';
 import ProductDetailsView from '@/components/productDetails/views/ProductDetailsView';
 import { notFound } from 'next/navigation';
 

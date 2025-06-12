@@ -1,4 +1,4 @@
-import { getProducts } from '@/server/productService';
+import { getProducts } from '@/service/productService';
 import CarouselProduct from '@/components/product/ProductCarousel';
 import BannerSlider from '@/components/Carousel/BannerSlider';
 

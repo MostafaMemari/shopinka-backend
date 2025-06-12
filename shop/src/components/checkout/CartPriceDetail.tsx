@@ -4,7 +4,7 @@ import CartStatus from '@/components/CartStatus copy';
 import PrimaryButton from '@/components/PrimaryButton';
 import { useCart } from '@/hooks/reactQuery/cart/useCart';
 import CartSummary from '@/components/cart/CartSummary';
-import { calculateTotals } from '@/modules/cart/utils/calculateTotals';
+import { calculateTotals } from '@/utils/calculateTotals';
 import Link from 'next/link';
 
 export default function CartPriceDetail() {

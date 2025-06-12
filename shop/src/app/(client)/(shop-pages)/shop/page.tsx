@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
 import ProductListShopClient from '@/modules/shopPage/views/ProductListShopClient';
-import { getProducts } from '@/server/productService';
-import { loadSearchParams } from '@/modules/shopPage/utils/loadSearchParams';
-import { parseArrayParam } from '@/modules/shopPage/utils/parseArrayParam';
+import { getProducts } from '@/service/productService';
+import { loadSearchParams } from '@/utils/loadSearchParams';
+import { parseArrayParam } from '@/utils/parseArrayParam';
 import { ProductParams } from '@/types/productType';
 import { SearchParams } from 'nuqs';
 import SortBar from '@/components/shopPage/SortBar';

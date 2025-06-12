@@ -1,4 +1,4 @@
-import { mapCartResponseToCartItemState } from '@/modules/cart/utils/mapCartResponse';
+import { mapCartResponseToCartItemState } from '@/utils/mapCartResponse';
 import { shopApiFetch } from '@/server/api';
 import { CartData, CartResponse } from '@/types/cartType';
 

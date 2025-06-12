@@ -3,11 +3,11 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useQueryClient } from '@tanstack/react-query';
 import { loginStart, loginSuccess, loginFailure, logout } from '@/store/slices/authSlice';
 import { User, UserState } from '@/types/userType';
-import { logout as logoutApi } from '@/server/auth.api';
+import { logout as logoutApi } from '@/service/auth.api';
 import { clearCartAction } from '@/store/slices/cartSlice';
 import { QueryKeys } from '@/shared/types/query-keys';
 import { useSyncCart } from '../reactQuery/cart/useSyncCart';
-import { getMe } from '@/server/user.api';
+import { getMe } from '@/service/user.api';
 
 export function useAuth() {
   const dispatch = useAppDispatch();

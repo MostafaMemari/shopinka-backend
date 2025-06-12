@@ -3,7 +3,7 @@
 import React from 'react';
 import { HiOutlineTrash } from 'react-icons/hi';
 
-import { calculateTotals } from '@/modules/cart/utils/calculateTotals';
+import { calculateTotals } from '@/utils/calculateTotals';
 import CartPageItem from '@/modules/cart/views/CartPageView/CartPageItem';
 import Link from 'next/link';
 import showConfirmDialog from '@/components/cart/showConfirmDialog';

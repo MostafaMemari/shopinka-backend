@@ -1,7 +1,7 @@
 'use client';
 
 import { HiOutlineChevronLeft, HiOutlineShoppingCart } from 'react-icons/hi';
-import { calculateTotals } from '../utils/calculateTotals';
+import { calculateTotals } from '../../../utils/calculateTotals';
 import { useDropdown } from '@/shared/hooks/useDropdown';
 import Link from 'next/link';
 import DesktopBasketItem from './DesktopBasketItem';

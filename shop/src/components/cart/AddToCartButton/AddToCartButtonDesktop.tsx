@@ -2,10 +2,10 @@
 
 import PrimaryButton from '@/components/PrimaryButton';
 import { ProductCardLogic } from '@/types/productCardLogic';
-import CartControls from '@/modules/cart/components/CartControls';
 import Link from 'next/link';
 import { PulseLoader } from 'react-spinners';
 import { useCartLogic } from '@/hooks/reactQuery/cart/useCartLogic';
+import CartControls from '../CartControls';
 
 interface AddToCartButtonDesktopProps {
   product: ProductCardLogic;
