@@ -1,5 +1,5 @@
-import { ICategory } from '@/lib/types/categories';
-import { cn } from '@/shared/utils/utils';
+import { Category } from '@/types/categoryType';
+import { cn } from '@/utils/utils';
 import Link from 'next/link';
 import { useState } from 'react';
 import { FiChevronRight } from 'react-icons/fi';
@@ -9,7 +9,7 @@ interface AccordionState {
 }
 
 interface CategoryAccordionProps {
-  categories: ICategory[];
+  categories: Category[];
   onItemClick: () => void;
 }
 

@@ -1,16 +1,23 @@
 import DesktopLogo from '../ui/Logo/DesktopLogo';
 import ProfileDropdown from './ProfileDropdown';
-import TopbarContainer from './TopbarContainer';
-import { categories } from '@/mock/categories';
 import SearchBarBase from './SearchBar';
 import { mockProductItems } from '@/mock/searchBar';
 import BasketDropdown from '../../modules/cart/views/BasketDropdown';
 import DesktopNavbar from './DesktopNavbar';
+import { getCategoriesCatch } from '@/service/categoryService';
 
-function Header() {
+async function Header() {
+  // const { data, isLoading } = useCategories({});
+
+  // console.log(data);
+
+  const categories = (await getCategoriesCatch({ includeChildren: true })).items;
+
+  console.log(categories);
+
   return (
-    <TopbarContainer>
-      <>
+    <header>
+      <div className="fixed left-0 right-0 top-0 z-30 bg-muted">
         <div className="hidden lg:block">
           <div className="container relative z-30 flex max-w-[1640px] items-center justify-between gap-x-4 bg-muted py-4">
             <div className="flex items-center gap-x-6">
@@ -28,9 +35,8 @@ function Header() {
             <DesktopNavbar categories={categories} />
           </div>
         </div>
-      </>
 
-      {/* <div>
+        {/* <div>
         <div className="lg:hidden">
           <div className="container relative z-30 flex h-16 items-center justify-between gap-x-4 bg-muted">
             <MobileMenu categories={categories} />
@@ -44,7 +50,8 @@ function Header() {
           </div>
         </div>
       </div> */}
-    </TopbarContainer>
+      </div>
+    </header>
   );
 }
 export default Header;

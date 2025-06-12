@@ -1,11 +1,11 @@
 'use client';
 
-import { cn } from '@/shared/utils/utils';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { HiOutlineMinus, HiOutlinePlus } from 'react-icons/hi';
 import { CartItemState } from '@/types/cartType';
 import { PulseLoader } from 'react-spinners';
 import { useCart } from '@/hooks/reactQuery/cart/useCart';
+import { cn } from '@/utils/utils';
 
 interface CartControlsProps {
   product: CartItemState;

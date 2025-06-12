@@ -5,11 +5,11 @@ import Link from 'next/link';
 import { Swiper, SwiperSlide, SwiperRef } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import { HiChevronLeft } from 'react-icons/hi';
-import ProductCard from '@/modules/product/components/ProductCard';
 import { productSwiperConfig } from '@/config/swiper';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { Product } from '@/types/productType';
+import ProductCard from '../ProductCard';
 
 const SkeletonLoader = () => {
   return (

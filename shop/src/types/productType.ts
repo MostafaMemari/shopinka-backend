@@ -2,7 +2,7 @@ import { Attribute, AttributeValues } from '@/types/attributeType';
 import { Category } from '@/types/categoryType';
 import { Image } from '@/types/imageType';
 import { SeoMeta } from '@/types/seoMetaType';
-import { user } from '@/shared/types/userType';
+import { User } from './userType';
 
 export type Product = {
   id: number;
@@ -74,7 +74,7 @@ export interface ProductDetails {
   updatedAt: string;
   galleryImages: Image[] | [];
   mainImage: Image | null;
-  user: user;
+  user: User;
   categories: Category[] | [];
   seoMeta: SeoMeta;
   attributes: Attribute[] | [];

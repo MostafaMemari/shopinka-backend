@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setCart, addToCart, increaseCount, decreaseCount, deleteFromCart, clearCartAction } from '@/store/slices/cartSlice';
-import { createCart, getCart, updateQuantityItemCart, removeItemCart, clearCart } from '@/modules/cart/services/cart.api';
+import { createCart, getCart, updateQuantityItemCart, removeItemCart, clearCart } from '@/service/cart.api';
 import { CartResponse, CartData, CartItemState } from '@/types/cartType';
 import { QueryOptions } from '@/types/queryOptions';
 import { QueryKeys } from '@/types/query-keys';
