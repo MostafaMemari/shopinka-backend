@@ -16,7 +16,7 @@ async function Header() {
           <div className="container relative z-30 flex max-w-[1640px] items-center justify-between gap-x-4 bg-muted py-4">
             <div className="flex items-center gap-x-6">
               <DesktopLogo />
-              <SearchBarBase recentSearchItems={mockProductItems} productItems={mockProductItems} />
+              <SearchBarBase />
             </div>
             <div className="flex items-center gap-x-3">
               <ProfileDropdown />

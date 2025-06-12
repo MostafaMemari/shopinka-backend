@@ -1,25 +1,28 @@
 'use client';
 
-import { HiOutlineClock, HiOutlineSearch, HiOutlineSparkles } from 'react-icons/hi';
+import { HiOutlineSearch } from 'react-icons/hi';
 import { useEffect, useRef, useState } from 'react';
-import CarouselSearchBar from '@/components/Carousel/CarouselSearchBar';
+import { useDebounce } from 'use-debounce';
+import Image from 'next/image';
+import { Product } from '@/types/productType';
+import { formatPrice } from '@/utils/formatter';
+import { useProducts } from '@/hooks/reactQuery/product/useProduct';
+import SearchItem from './SearchItem';
 
-interface SearchItem {
-  id: string;
-  title: string;
-  href: string;
-  image?: string;
-}
-
-interface SearchBarProps {
-  isMobile?: boolean;
-  productItems: SearchItem[];
-  recentSearchItems: SearchItem[];
-}
-
-const SearchBar = ({ isMobile = false, productItems, recentSearchItems }: SearchBarProps) => {
+const SearchBar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
+  const [debouncedSearch] = useDebounce(searchInput.trim(), 500);
+
   const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const { data, isFetching, isLoading } = useProducts({
+    params: { page: 1, take: 10, search: debouncedSearch },
+    enabled: !!debouncedSearch,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const productItems: Product[] = data?.items || [];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
@@ -30,7 +33,6 @@ const SearchBar = ({ isMobile = false, productItems, recentSearchItems }: Search
 
     document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('touchstart', handleClickOutside);
-
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('touchstart', handleClickOutside);
@@ -38,58 +40,42 @@ const SearchBar = ({ isMobile = false, productItems, recentSearchItems }: Search
   }, []);
 
   return (
-    <div ref={wrapperRef} className={`relative ${isMobile ? '' : 'max-w-xl flex-1'}`}>
+    <div ref={wrapperRef} className="relative w-full max-w-3xl flex-1">
       <div
-        className={`flex items-center justify-between rounded-t-lg px-2 transition-all duration-200
-        ${isMobile ? 'bg-background' : 'border-b-transparent bg-background dark:border-white/10'}
-        ${isMobile && isOpen ? 'border border-b-0 border-border bg-white' : ''}
-        `}
+        className={`flex items-center rounded-lg border px-3 py-2 transition-all ${
+          isOpen ? 'border-primary bg-white shadow-md dark:bg-muted' : 'border-border bg-background'
+        }`}
       >
-        <div>
-          <HiOutlineSearch className="h-6 w-6" />
-        </div>
-        <label className="sr-only">search</label>
+        <HiOutlineSearch className="h-6 w-6 text-text/60 flex-shrink-0" />
+        <label htmlFor="search" className="sr-only">
+          جستجو
+        </label>
         <input
-          className={`flex w-[500px] grow rounded-lg border-none px-2 py-3 outline-hidden placeholder:text-sm placeholder:text-text/60 focus:ring-0
-          ${isMobile ? 'bg-red' : 'bg-background text-text/90'}
-          `}
-          placeholder="جستجو کنید ..."
+          id="search"
           type="text"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
           onFocus={() => setIsOpen(true)}
           onClick={() => setIsOpen(true)}
+          placeholder="جستجو کنید ..."
+          className="flex w-[500px] bg-transparent border-none px-3 py-2 outline-none placeholder:text-sm placeholder:text-text/60 focus:ring-0 text-text/90"
         />
       </div>
 
-      {isOpen && (
-        <div
-          className={`absolute inset-x-0 top-full w-full overflow-hidden rounded-b-lg border border-t-transparent bg-muted dark:border-white/10 dark:border-t-transparent`}
-        >
-          <div className="max-h-[600px] overflow-y-auto py-5">
-            {productItems.length > 0 && (
-              <div className="mb-8 px-5">
-                <CarouselSearchBar items={productItems} variant="product" />
-              </div>
+      {isOpen && debouncedSearch && (
+        <div className="absolute inset-x-0 top-full w-full overflow-hidden rounded-b-lg border border-t-transparent bg-muted shadow-lg dark:border-white/10 z-50">
+          <div className="max-h-[400px] overflow-y-auto p-4">
+            {isFetching && isLoading ? (
+              <p className="text-center text-text/60">در حال بارگذاری...</p>
+            ) : productItems.length === 0 ? (
+              <p className="text-center text-text/60">نتیجه‌ای یافت نشد</p>
+            ) : (
+              <ul className="space-y-2">
+                {productItems.map((product) => (
+                  <SearchItem key={product.id} product={product} />
+                ))}
+              </ul>
             )}
-
-            <div className="space-y-6">
-              {recentSearchItems.length > 0 && (
-                <div className="px-5">
-                  <div className="mb-4 flex items-center gap-x-2 text-text/90">
-                    <HiOutlineClock className="h-6 w-6" />
-                    <p>جستجو های اخیر شما</p>
-                  </div>
-                  <CarouselSearchBar items={recentSearchItems} variant="search" />
-                </div>
-              )}
-
-              <div className="px-5">
-                <div className="mb-4 flex items-center gap-x-2 text-text/90">
-                  <HiOutlineSparkles className="h-6 w-6" />
-                  <p>جستجو های پرطرفدار</p>
-                </div>
-                <CarouselSearchBar items={recentSearchItems} variant="search" />
-              </div>
-            </div>
           </div>
         </div>
       )}

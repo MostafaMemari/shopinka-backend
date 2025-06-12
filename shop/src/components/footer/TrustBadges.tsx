@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import Image from 'next/image';
-import { TrustBadge } from '@/lib/types/footer';
+import { TrustBadge } from '@/data/footerData';
 
 interface Props {
   trustBadges: TrustBadge[];
@@ -9,7 +9,7 @@ interface Props {
 const TrustBadges: FC<Props> = ({ trustBadges }) => {
   return (
     <>
-      {trustBadges.map((badge) => (
+      {trustBadges?.map((badge) => (
         <a key={badge.id} href={badge.href} className="relative" target="_blank" rel="noopener noreferrer">
           <Image alt={badge.name} className="h-[130px] w-[130px]" src={badge.imageSrc} width={130} height={130} loading="lazy" />
           {badge.isTest && (

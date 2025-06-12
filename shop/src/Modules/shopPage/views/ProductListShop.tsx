@@ -1,6 +1,6 @@
-import ProductCard from '@/modules/product/components/ProductCard';
 import { Product } from '@/types/productType';
 import ProductCardSkeleton from '@/components/shopPage/ProductCardSkeleton';
+import ProductCard from '@/components/product/ProductCard';
 
 export default function ProductListShop({ products, isLoading }: { products: Product[]; isLoading?: boolean }) {
   if (isLoading) {
