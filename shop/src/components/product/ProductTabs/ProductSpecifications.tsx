@@ -1,4 +1,8 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useRef, useState } from 'react';
+import MobileDrawer from '@/components/MobileDrawer';
+import { IoChevronBack } from 'react-icons/io5';
 
 interface ProductSpecificationsProps {
   specifications: Array<{
@@ -8,15 +12,68 @@ interface ProductSpecificationsProps {
 }
 
 export default function ProductSpecifications({ specifications }: ProductSpecificationsProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [showToggle, setShowToggle] = useState(false);
+  const specsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (specsRef.current) {
+        setShowToggle(specsRef.current.scrollHeight > 500);
+      }
+    };
+    checkOverflow();
+  }, [specifications]);
+
+  const handleDesktopToggle = () => setIsExpanded(!isExpanded);
+
   return (
-    <div className="py-6" id="specs">
-      {/* <div className="relative mb-16 w-fit text-xl font-medium">
-        مشخصات
-        <span className="absolute right-0 top-10 h-[3px] w-full rounded-full bg-primary"></span>
-      </div> */}
-      <div className="mb-6 max-h-[500px] overflow-hidden md:mb-10" id="specsContainer">
-        <ul className="space-y-6 text-sm">
-          {specifications &&
+    <div className="py-2" id="specs">
+      <div className={`mb-6 transition-all duration-300 md:mb-10 ${isExpanded ? '' : 'max-h-[500px] overflow-hidden'}`} id="specsContainer">
+        <div ref={specsRef} className="space-y-6 text-sm">
+          {specifications?.length > 0 ? (
+            <ul>
+              {specifications.map((spec, index) => (
+                <li key={index} className="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
+                  <div className="col-span-1 text-text/60">{spec.title}</div>
+                  <div className="col-span-2 border-b pb-4 text-text/90 lg:col-span-4">
+                    <ul className="space-y-4">{spec.values?.map((value, valueIndex) => <li key={valueIndex}>{value}</li>)}</ul>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-text/60">توضیحاتی برای نمایش وجود ندارد.</p>
+          )}
+        </div>
+      </div>
+
+      {showToggle && (
+        <div className="flex justify-center">
+          {/* Desktop button */}
+          <button onClick={handleDesktopToggle} className="btn-secondary-nobg hidden md:flex" id="toggleSpecsButton">
+            {isExpanded ? 'بستن' : 'مشاهده بیشتر'}
+            <IoChevronBack className="h-5 w-5" />
+          </button>
+
+          {/* Mobile button */}
+          <button id="specsButtonMobile" className="btn-secondary-nobg md:hidden" onClick={() => setIsDrawerOpen(true)}>
+            مشاهده بیشتر
+            <IoChevronBack className="h-5 w-5" />
+          </button>
+        </div>
+      )}
+
+      <MobileDrawer
+        isOpen={isDrawerOpen}
+        onOpen={() => setIsDrawerOpen(true)}
+        onClose={() => setIsDrawerOpen(false)}
+        triggerButton={null}
+        title="مشخصات محصول"
+      >
+        <div className="p-4">
+          {specifications?.length > 0 &&
             specifications.map((spec, index) => (
               <li key={index} className="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
                 <div className="col-span-1 text-text/60">{spec.title}</div>
@@ -29,30 +86,8 @@ export default function ProductSpecifications({ specifications }: ProductSpecifi
                 </div>
               </li>
             ))}
-        </ul>
-      </div>
-      <div className="flex justify-center">
-        <button className="btn-secondary-nobg hidden md:flex" id="toggleSpecsButton">
-          مشاهده بیشتر
-          <svg className="h-5 w-5">
-            <use xlinkHref="#chevron-left" />
-          </svg>
-        </button>
-        <button
-          id="specsButtonMobile"
-          className="btn-secondary-nobg md:hidden"
-          aria-controls="mobile-spec-drawer-navigation"
-          data-drawer-show="mobile-spec-drawer-navigation"
-          data-drawer-placement="bottom"
-          data-drawer-target="mobile-spec-drawer-navigation"
-          type="button"
-        >
-          مشاهده بیشتر
-          <svg className="h-5 w-5">
-            <use xlinkHref="#chevron-left" />
-          </svg>
-        </button>
-      </div>
+        </div>
+      </MobileDrawer>
     </div>
   );
 }

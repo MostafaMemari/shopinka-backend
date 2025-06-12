@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import ProductDescription from './ProductDescription';
-import { IComment } from '@/lib/types/comments';
 import ProductSpecifications from './ProductSpecifications';
 import ProductComments from '@/components/productDetails/Comment/ProductComments';
 
@@ -18,7 +17,7 @@ interface Props {
     title: string;
     values: string[];
   }>;
-  comments: IComment[];
+  comments: Comment[];
 }
 
 export default function ProductTabs({ description, specifications, comments }: Props) {

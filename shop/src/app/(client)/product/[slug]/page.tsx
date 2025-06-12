@@ -1,6 +1,7 @@
 import { fetchProductBySlug } from '@/service/productService';
 import ProductDetailsView from '@/components/productDetails/views/ProductDetailsView';
 import { notFound } from 'next/navigation';
+import ProductTabs from '@/components/product/ProductTabs';
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -10,5 +11,10 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     return notFound();
   }
 
-  return <ProductDetailsView product={product.data} />;
+  return (
+    <>
+      <ProductDetailsView product={product.data} />
+      <ProductTabs description={product.data?.description} specifications={product.data?.properties} comments={product.data?.comments} />
+    </>
+  );
 }

@@ -100,13 +100,6 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
                   </div>
                 </div>
 
-                {product.description && (
-                  <div className="mb-6">
-                    <h2 className="mb-4 text-lg font-semibold text-text">توضیحات محصول</h2>
-                    <div className="prose prose-sm max-w-none text-text/80" dangerouslySetInnerHTML={{ __html: product.description }} />
-                  </div>
-                )}
-
                 <ProductProperties />
               </div>
             </div>
@@ -182,13 +175,6 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
                 </div>
               </div>
             </div>
-
-            {product.description && (
-              <div className="mb-6">
-                <h2 className="mb-4 text-lg font-semibold text-text">توضیحات محصول</h2>
-                <div className="prose prose-sm max-w-none text-text/80" dangerouslySetInnerHTML={{ __html: product.description }} />
-              </div>
-            )}
           </div>
         </div>
       </div>

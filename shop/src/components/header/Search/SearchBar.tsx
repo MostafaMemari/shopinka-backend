@@ -3,9 +3,7 @@
 import { HiOutlineSearch } from 'react-icons/hi';
 import { useEffect, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
-import Image from 'next/image';
 import { Product } from '@/types/productType';
-import { formatPrice } from '@/utils/formatter';
 import { useProducts } from '@/hooks/reactQuery/product/useProduct';
 import SearchItem from './SearchItem';
 

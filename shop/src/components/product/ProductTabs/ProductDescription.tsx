@@ -1,51 +1,72 @@
 'use client';
 
-import React, { useState } from 'react';
-import Drawer from '../../ui/Drawer';
+import React, { useEffect, useRef, useState } from 'react';
+import MobileDrawer from '@/components/MobileDrawer';
+import { IoChevronBack } from 'react-icons/io5';
 
 interface Props {
   description: string;
 }
 
 export default function ProductDescription({ description }: Props) {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isOpenDrawer, setIsOpenDrawer] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showToggle, setShowToggle] = useState(false);
+  const descriptionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (descriptionRef.current) {
+        setShowToggle(descriptionRef.current.scrollHeight > 500);
+      }
+    };
+    checkOverflow();
+  }, [description]);
+
+  const handleDesktopToggle = () => {
+    setIsExpanded(!isExpanded);
+  };
 
   return (
-    <div className="py-6" id="description">
-      {/* <div className="relative mb-16 w-fit text-xl font-medium">
-        معرفی
-        <span className="absolute right-0 top-10 h-[3px] w-full rounded-full bg-primary"></span>
-      </div> */}
-      <div className="mb-6 max-h-[500px] overflow-hidden md:mb-10" id="descriptionContainer">
-        <div className="space-y-4 text-sm leading-loose text-text/90 lg:text-base">{description}</div>
-      </div>
-      <div className="flex justify-center">
-        <button className="btn-secondary-nobg hidden md:flex" id="toggleDescriptionButton">
-          مشاهده بیشتر
-          <svg className="h-5 w-5">
-            <use xlinkHref="#chevron-left" />
-          </svg>
-        </button>
-        <button
-          id="descriptionButtonMobile"
-          aria-controls="mobile-description-drawer-navigation"
-          data-drawer-show="mobile-description-drawer-navigation"
-          data-drawer-placement="bottom"
-          data-drawer-target="mobile-description-drawer-navigation"
-          type="button"
-          onClick={() => setIsDrawerOpen(true)}
-          className="btn-secondary-nobg md:hidden"
-        >
-          مشاهده بیشتر
-          <svg className="h-5 w-5">
-            <use xlinkHref="#chevron-left" />
-          </svg>
-        </button>
+    <div className="py-2" id="description">
+      <div
+        className={`mb-6 transition-all duration-300 md:mb-10 ${isExpanded ? '' : 'max-h-[500px] overflow-hidden'}`}
+        id="descriptionContainer"
+      >
+        <div ref={descriptionRef}>
+          {description ? (
+            <div className="prose prose-sm max-w-none text-text/80" dangerouslySetInnerHTML={{ __html: description }} />
+          ) : (
+            <p className="text-text/60">توضیحاتی برای نمایش وجود ندارد.</p>
+          )}
+        </div>
       </div>
 
-      <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} title="توضیحات محصول">
-        {description}
-      </Drawer>
+      {showToggle && (
+        <div className="flex justify-center">
+          <button className="btn-secondary-nobg hidden md:flex" onClick={handleDesktopToggle}>
+            {isExpanded ? 'بستن' : 'مشاهده بیشتر'}
+            <IoChevronBack className="h-5 w-5" />
+          </button>
+
+          <button type="button" onClick={() => setIsOpenDrawer(true)} className="btn-secondary-nobg md:hidden">
+            مشاهده بیشتر
+            <IoChevronBack className="h-5 w-5" />
+          </button>
+        </div>
+      )}
+
+      <MobileDrawer
+        isOpen={isOpenDrawer}
+        triggerButton={null}
+        onOpen={() => setIsOpenDrawer(true)}
+        onClose={() => setIsOpenDrawer(false)}
+        title="توضیحات محصول"
+      >
+        <div>
+          {description && <div className="prose prose-sm max-w-none text-text/80 p-4" dangerouslySetInnerHTML={{ __html: description }} />}
+        </div>
+      </MobileDrawer>
     </div>
   );
 }

@@ -20,7 +20,7 @@ function SearchItem({ product }: SearchItemProps) {
         />
       )}
       <div className="flex-1 min-w-0">
-        <a href={`/products/${product.slug}`} className="text-text hover:underline truncate block">
+        <a href={`/product/${product.slug}`} className="text-text hover:underline truncate block">
           {product.name}
         </a>
         <div className="text-sm text-text/60 flex items-center gap-2">
