@@ -1,4 +1,4 @@
-import Header from '@/components/header/Menu';
+import Header from '@/components/header';
 import ProfileSidebar from '@/components/profile/ProfileSlider';
 
 export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {

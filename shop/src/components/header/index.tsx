@@ -1,8 +1,8 @@
-import DesktopLogo from '../../ui/Logo/DesktopLogo';
-import ProfileDropdown from '../ProfileDropdown';
-import SearchBarBase from '../SearchBar';
+import DesktopLogo from '../ui/Logo/DesktopLogo';
+import ProfileDropdown from './ProfileDropdown';
+import SearchBarBase from './SearchBar';
 import { mockProductItems } from '@/mock/searchBar';
-import BasketDropdown from '../../../modules/cart/views/BasketDropdown';
+import BasketDropdown from '../../modules/cart/views/BasketDropdown';
 import DesktopNavbar from './DesktopNavbar';
 import { getCategoriesCatch } from '@/service/categoryService';
 
