@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import MobileMenu from './header/MobileMenu';
+import MobileMenu from './mobileLayout/MobileMenu';
 import { categories } from '@/mock/categories';
 import { PiPhoneCall } from 'react-icons/pi';
 import { LuList, LuShoppingCart, LuUser, LuCheck } from 'react-icons/lu';

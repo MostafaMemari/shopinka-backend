@@ -4,16 +4,13 @@ import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 import { HiOutlineXMark } from 'react-icons/hi2';
 import { FiInfo, FiMail, FiHelpCircle } from 'react-icons/fi';
-import CategoryAccordion from './CategoryAccordion';
-import { ICategory } from '@/lib/types/categories';
 import { HiOutlineMenu } from 'react-icons/hi';
 
 interface MobileMenuProps {
-  categories: ICategory[];
   onToggleMenu?: (isOpen: boolean) => void;
 }
 
-const MobileMenu = ({ categories, onToggleMenu }: MobileMenuProps) => {
+const MobileMenu = ({ onToggleMenu }: MobileMenuProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -90,8 +87,6 @@ const MobileMenu = ({ categories, onToggleMenu }: MobileMenuProps) => {
               </Link>
             </li>
           </ul>
-
-          <CategoryAccordion categories={categories} onItemClick={toggleMenu} />
         </div>
       </div>
     </>

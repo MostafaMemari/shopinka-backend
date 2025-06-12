@@ -4,11 +4,9 @@ import { QueryKeys } from '@/types/query-keys';
 import { QueryOptions } from '@/types/queryOptions';
 
 export function useCategories({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
-  const fetchCategory = () => getCategories(params).then((res) => res);
-
   return useQuery<any, Error>({
     queryKey: [QueryKeys.Categories, params],
-    queryFn: fetchCategory,
+    queryFn: () => getCategories(params),
     enabled,
     staleTime,
     refetchOnWindowFocus: false,

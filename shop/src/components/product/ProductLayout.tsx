@@ -9,7 +9,7 @@ import { PiPhoneCall } from 'react-icons/pi';
 import { LuList, LuShoppingCart, LuUser, LuCheck } from 'react-icons/lu';
 import { RiHome3Line } from 'react-icons/ri';
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
-import MobileMenu from '@/components/header/MobileMenu';
+import MobileMenu from '@/components/mobileLayout/MobileMenu';
 import MobileLogo from '@/components/ui/Logo/MobileLogo';
 
 const ProductLayout = () => {

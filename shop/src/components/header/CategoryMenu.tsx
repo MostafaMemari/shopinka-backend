@@ -12,7 +12,7 @@ interface CategoryMenuProps {
 }
 
 const CategoryMenu = ({ categories }: CategoryMenuProps) => {
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(categories[0]?.id || null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
   const selectedCategory = useMemo(
     () => categories.find((cat) => cat.id === selectedCategoryId) || categories[0],

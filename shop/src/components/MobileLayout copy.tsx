@@ -8,7 +8,7 @@ import { PiPhoneCall } from 'react-icons/pi';
 import { LuList, LuShoppingCart, LuUser, LuCheck } from 'react-icons/lu';
 import { RiHome3Line } from 'react-icons/ri';
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
-import MobileMenu from './header/MobileMenu';
+import MobileMenu from './mobileLayout/MobileMenu';
 import MobileLogo from './ui/Logo/MobileLogo';
 
 interface MobileLayoutProps {

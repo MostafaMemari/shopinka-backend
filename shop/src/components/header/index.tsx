@@ -7,13 +7,7 @@ import DesktopNavbar from './DesktopNavbar';
 import { getCategoriesCatch } from '@/service/categoryService';
 
 async function Header() {
-  // const { data, isLoading } = useCategories({});
-
-  // console.log(data);
-
   const categories = (await getCategoriesCatch({ includeChildren: true })).items;
-
-  console.log(categories);
 
   return (
     <header>
