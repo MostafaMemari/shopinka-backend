@@ -72,8 +72,6 @@ export const shopApiFetch = async (path: string, options: FetchOptions = {}): Pr
       retry: 0,
     });
 
-    console.log(data);
-
     return { status: 200, data };
   } catch (error: any) {
     const statusCode = error?.response?.status || 500;

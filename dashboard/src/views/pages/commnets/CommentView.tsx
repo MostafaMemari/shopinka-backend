@@ -37,8 +37,10 @@ const CommentView = () => {
       includeUser: true,
       includeProduct: true
     },
-    staleTime: 5 * 60 * 1000
+    staleTime: 1 * 60 * 1000
   })
+
+  console.log(data)
 
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))

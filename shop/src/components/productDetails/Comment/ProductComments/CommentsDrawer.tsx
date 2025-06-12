@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { AiOutlineLike, AiOutlineDislike, AiOutlineLeft } from 'react-icons/ai';
-import Drawer from '@/components/ui/Drawer';
 import { CommentItem } from '@/types/commentType';
 import MobileDrawer from '@/components/MobileDrawer';
 

@@ -6,6 +6,7 @@ import SuggestionRadio from '@/components/productDetails/Comment/ProductComments
 import Pagination from '@/components/ui/Pagination';
 import DesktopComments from './DesktopComments';
 import { CommentItem } from '@/types/commentType';
+import { useComments } from '@/hooks/reactQuery/useComment';
 
 interface ProductCommentsProps {
   comments: CommentItem[];
@@ -13,6 +14,8 @@ interface ProductCommentsProps {
 
 export default function ProductComments({ comments = [] }: ProductCommentsProps) {
   const [currentPage, setCurrentPage] = useState(1);
+
+  const { data, isLoading } = useComments({});
 
   return (
     <div className="py-2" id="comments">

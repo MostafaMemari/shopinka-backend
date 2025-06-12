@@ -14,7 +14,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   return (
     <>
       <ProductDetailsView product={product.data} />
-      <ProductTabs description={product.data?.description} specifications={product.data?.properties} comments={product.data?.comments} />
+      <ProductTabs description={product.data?.description} specifications={product.data?.properties} productId={product.data.id} />
     </>
   );
 }

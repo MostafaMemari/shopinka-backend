@@ -5,6 +5,7 @@ import ProductDescription from './ProductDescription';
 import ProductSpecifications from './ProductSpecifications';
 import ProductComments from '@/components/productDetails/Comment/ProductComments';
 import { CommentItem } from '@/types/commentType';
+import { useComments } from '@/hooks/reactQuery/useComment';
 
 interface Tab {
   id: string;
@@ -18,14 +19,18 @@ interface Props {
     title: string;
     values: string[];
   }>;
-  comments: CommentItem[];
+  productId: number;
 }
 
-export default function ProductTabs({ description, specifications, comments }: Props) {
+export default function ProductTabs({ description, specifications, productId }: Props) {
+  const { data, isLoading } = useComments({ params: { productId } });
+
+  console.log(data);
+
   const tabs: Tab[] = [
     { id: 'description', title: 'معرفی' },
     { id: 'specs', title: 'مشخصات' },
-    { id: 'comments', title: 'دیدگاه ها', count: comments?.length || 0 },
+    { id: 'comments', title: 'دیدگاه ها', count: data?.pager.totalCount || 0 },
   ];
 
   const [activeTab, setActiveTab] = useState(tabs[0].id);
@@ -37,7 +42,7 @@ export default function ProductTabs({ description, specifications, comments }: P
       case 'specs':
         return <ProductSpecifications specifications={specifications} />;
       case 'comments':
-        return <ProductComments comments={comments} />;
+        return <ProductComments comments={data?.items || []} />;
       default:
         return null;
     }
