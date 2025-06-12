@@ -33,7 +33,7 @@ export default function ProductDescription({ description }: Props) {
         className={`mb-6 transition-all duration-300 md:mb-10 ${isExpanded ? '' : 'max-h-[500px] overflow-hidden'}`}
         id="descriptionContainer"
       >
-        <div ref={descriptionRef}>
+        <div ref={descriptionRef} className="space-y-6 text-sm">
           {description ? (
             <div className="prose prose-sm max-w-none text-text/80" dangerouslySetInnerHTML={{ __html: description }} />
           ) : (

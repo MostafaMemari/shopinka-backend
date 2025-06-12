@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import ProductDescription from './ProductDescription';
 import ProductSpecifications from './ProductSpecifications';
 import ProductComments from '@/components/productDetails/Comment/ProductComments';
+import { CommentItem } from '@/types/commentType';
 
 interface Tab {
   id: string;
@@ -17,7 +18,7 @@ interface Props {
     title: string;
     values: string[];
   }>;
-  comments: Comment[];
+  comments: CommentItem[];
 }
 
 export default function ProductTabs({ description, specifications, comments }: Props) {

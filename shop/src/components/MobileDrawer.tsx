@@ -6,7 +6,7 @@ import { FiX } from 'react-icons/fi';
 
 interface MobileDrawerProps {
   title?: string;
-  triggerButton: ReactNode;
+  triggerButton?: ReactNode;
   footerActions?: ReactNode;
   children: ReactNode;
   className?: string;

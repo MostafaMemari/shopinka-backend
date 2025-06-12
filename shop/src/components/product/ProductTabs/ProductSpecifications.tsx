@@ -51,13 +51,11 @@ export default function ProductSpecifications({ specifications }: ProductSpecifi
 
       {showToggle && (
         <div className="flex justify-center">
-          {/* Desktop button */}
           <button onClick={handleDesktopToggle} className="btn-secondary-nobg hidden md:flex" id="toggleSpecsButton">
             {isExpanded ? 'بستن' : 'مشاهده بیشتر'}
             <IoChevronBack className="h-5 w-5" />
           </button>
 
-          {/* Mobile button */}
           <button id="specsButtonMobile" className="btn-secondary-nobg md:hidden" onClick={() => setIsDrawerOpen(true)}>
             مشاهده بیشتر
             <IoChevronBack className="h-5 w-5" />
@@ -65,13 +63,7 @@ export default function ProductSpecifications({ specifications }: ProductSpecifi
         </div>
       )}
 
-      <MobileDrawer
-        isOpen={isDrawerOpen}
-        onOpen={() => setIsDrawerOpen(true)}
-        onClose={() => setIsDrawerOpen(false)}
-        triggerButton={null}
-        title="مشخصات محصول"
-      >
+      <MobileDrawer isOpen={isDrawerOpen} onOpen={() => setIsDrawerOpen(true)} onClose={() => setIsDrawerOpen(false)} title="مشخصات محصول">
         <div className="p-4">
           {specifications?.length > 0 &&
             specifications.map((spec, index) => (
