@@ -5,7 +5,7 @@ import { loginStart, loginSuccess, loginFailure, logout } from '@/store/slices/a
 import { User, UserState } from '@/types/userType';
 import { logout as logoutApi } from '@/service/auth.api';
 import { clearCartAction } from '@/store/slices/cartSlice';
-import { QueryKeys } from '@/shared/types/query-keys';
+import { QueryKeys } from '@/types/query-keys';
 import { useSyncCart } from '../reactQuery/cart/useSyncCart';
 import { getMe } from '@/service/user.api';
 

@@ -2,7 +2,7 @@
 
 import { shopApiFetch } from '@/server/api';
 import { revalidateTag, unstable_cache } from 'next/cache';
-import { Pager } from '@/shared/types/pagerType';
+import { Pager } from '@/types/pagerType';
 import { Product, ProductParams } from '../types/productType';
 import { ofetch } from 'ofetch';
 

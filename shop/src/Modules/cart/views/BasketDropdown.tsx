@@ -2,10 +2,10 @@
 
 import { HiOutlineChevronLeft, HiOutlineShoppingCart } from 'react-icons/hi';
 import { calculateTotals } from '../../../utils/calculateTotals';
-import { useDropdown } from '@/shared/hooks/useDropdown';
+import { useDropdown } from '@/hooks/useDropdown';
 import Link from 'next/link';
 import DesktopBasketItem from './DesktopBasketItem';
-import { formatPrice } from '@/shared/utils/formatter';
+import { formatPrice } from '@/utils/formatter';
 import IconButtonWithBadge from '@/components/IconButtonWithBadge';
 import { useCart } from '@/hooks/reactQuery/cart/useCart';
 

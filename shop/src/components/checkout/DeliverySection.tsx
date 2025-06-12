@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { FaTruck, FaMoneyBillWave, FaClock } from 'react-icons/fa';
-import { useShipping } from '@/shared/hooks/reactQuery/useShipping';
-import { formatPrice } from '@/shared/utils/formatter';
+import { useShipping } from '@/hooks/reactQuery/useShipping';
+import { formatPrice } from '@/utils/formatter';
 import CartStatus from '@/components/CartStatus copy';
 
 interface ShippingItem {

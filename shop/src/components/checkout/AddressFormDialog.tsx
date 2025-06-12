@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { MdOutlineAddLocationAlt } from 'react-icons/md';
-import { useAddress } from '@/shared/hooks/reactQuery/useAddress';
+import { useAddress } from '@/hooks/reactQuery/useAddress';
 import AddressForm from './AddressForm';
 import Dialog from '@/components/ui/Dialog';
 import { AddressFormType } from '@/types/address.type';

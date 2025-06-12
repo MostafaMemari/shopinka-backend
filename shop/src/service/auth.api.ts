@@ -3,7 +3,7 @@
 import 'server-only';
 import { cookies } from 'next/headers';
 import { shopApiFetch } from '@/server/api';
-import { COOKIE_NAMES } from '@/shared/types/constants';
+import { COOKIE_NAMES } from '@/types/constants';
 
 export const sendOtp = async (mobile: string): Promise<{ status: number; data: any }> => {
   const res = await shopApiFetch('/auth/authenticate', {

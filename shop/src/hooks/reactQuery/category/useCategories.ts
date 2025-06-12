@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getCategories } from '@/service/categoryService';
-import { QueryKeys } from '@/shared/types/query-keys';
-import { QueryOptions } from '@/shared/types/queryOptions';
+import { QueryKeys } from '@/types/query-keys';
+import { QueryOptions } from '@/types/queryOptions';
 
 export function useCategories({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const fetchCategory = () => getCategories(params).then((res) => res);

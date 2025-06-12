@@ -1,8 +1,8 @@
-import Toast from '@/shared/utils/swalToast';
+import Toast from '@/utils/swalToast';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { sendOtp } from '@/service/auth.api';
-import { handleApiError } from '@/shared/utils/handleApiError';
+import { handleApiError } from '@/utils/handleApiError';
 import { errorPhoneNumberStepMessages } from '../../../messages/errorAuthMessages';
 import { validateIranPhoneNumber } from '../../../validation/validateIranPhoneNumber';
 import PrimaryButton from '@/components/PrimaryButton';

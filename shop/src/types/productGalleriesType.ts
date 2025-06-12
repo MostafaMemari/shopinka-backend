@@ -1,4 +1,4 @@
-import { Image } from '@/shared/types/imageType';
+import { Image } from '@/types/imageType';
 
 export interface ProductGalleriesType {
   type: string | null;

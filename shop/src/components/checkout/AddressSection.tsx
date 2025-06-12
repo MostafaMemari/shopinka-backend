@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { MdOutlineEditLocation } from 'react-icons/md';
-import { useAddress } from '@/shared/hooks/reactQuery/useAddress';
+import { useAddress } from '@/hooks/reactQuery/useAddress';
 import AddressFormDrawer from './AddressFormDrawer';
 import AddressItem from './AddressItem';
 import AddressFormDialog from './AddressFormDialog';

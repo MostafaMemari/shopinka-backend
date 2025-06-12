@@ -1,5 +1,5 @@
 import { shopApiFetch } from '@/server/api';
-import { pager } from '@/shared/types/paginationType';
+import { pager } from '@/types/paginationType';
 import { ShippingItem } from '../types/shipping.type';
 
 export const getShipping = async (): Promise<{ status: number; data: { items: ShippingItem[]; pager: pager } }> => {

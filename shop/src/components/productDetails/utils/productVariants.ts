@@ -1,4 +1,4 @@
-import { Attribute, AttributeValues } from '@/shared/types/attributeType';
+import { Attribute, AttributeValues } from '@/types/attributeType';
 import { ProductVariant } from '@/types/productType';
 import { IColor } from '@/lib/types/colors';
 

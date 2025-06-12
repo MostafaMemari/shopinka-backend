@@ -7,8 +7,8 @@ import { RootState, AppDispatch } from '@/store';
 import { setCart, addToCart, increaseCount, decreaseCount, deleteFromCart, clearCartAction } from '@/store/slices/cartSlice';
 import { createCart, getCart, updateQuantityItemCart, removeItemCart, clearCart } from '@/modules/cart/services/cart.api';
 import { CartResponse, CartData, CartItemState } from '@/types/cartType';
-import { QueryOptions } from '@/shared/types/queryOptions';
-import { QueryKeys } from '@/shared/types/query-keys';
+import { QueryOptions } from '@/types/queryOptions';
+import { QueryKeys } from '@/types/query-keys';
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 
 export function useCartData({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {

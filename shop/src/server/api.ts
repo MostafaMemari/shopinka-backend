@@ -3,7 +3,7 @@
 import 'server-only';
 import { ofetch } from 'ofetch';
 import { cookies } from 'next/headers';
-import { COOKIE_NAMES } from '@/shared/types/constants';
+import { COOKIE_NAMES } from '@/types/constants';
 
 interface FetchOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';

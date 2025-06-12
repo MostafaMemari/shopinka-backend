@@ -3,7 +3,7 @@
 import 'server-only';
 import { cookies } from 'next/headers';
 import { shopApiFetch } from '@/server/api';
-import { COOKIE_NAMES } from '@/shared/types/constants';
+import { COOKIE_NAMES } from '@/types/constants';
 
 export const refreshToken = async (): Promise<{ status: number; data: any }> => {
   const cookieStore = await cookies();

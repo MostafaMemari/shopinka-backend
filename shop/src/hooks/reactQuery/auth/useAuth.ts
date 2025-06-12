@@ -6,7 +6,7 @@ import { User, UserState } from '@/types/userType';
 import { getMe } from '@/service/user.api';
 import { logout as logoutApi } from '@/service/auth.api';
 import { clearCartAction } from '@/store/slices/cartSlice';
-import { QueryKeys } from '@/shared/types/query-keys';
+import { QueryKeys } from '@/types/query-keys';
 import { useSyncCart } from '../cart/useSyncCart';
 
 export function useAuth() {

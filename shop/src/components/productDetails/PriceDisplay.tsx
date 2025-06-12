@@ -1,7 +1,7 @@
 // src/components/ProductPrice/ProductPrice.tsx
 'use client';
 
-import { formatPrice } from '@/shared/utils/formatter';
+import { formatPrice } from '@/utils/formatter';
 import { RootState } from '@/store';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';

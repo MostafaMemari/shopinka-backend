@@ -1,6 +1,6 @@
 'use client';
 
-import { formatPrice } from '@/shared/utils/formatter';
+import { formatPrice } from '@/utils/formatter';
 
 interface ProductPriceCartProps {
   newPrice: number;

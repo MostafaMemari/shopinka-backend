@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { HiOutlineShoppingCart, HiOutlineX } from 'react-icons/hi';
 import MobileBasketItem from './MobileBasketItem';
 import { CartItemState } from '@/types/cartType';
-import { formatPrice } from '@/shared/utils/formatter';
+import { formatPrice } from '@/utils/formatter';
 
 interface MobileBasketDrawerProps {
   cartItems: CartItemState[] | [];

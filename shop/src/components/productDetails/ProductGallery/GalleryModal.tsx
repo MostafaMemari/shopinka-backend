@@ -10,7 +10,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/thumbs';
-import { Image as ImageType } from '@/shared/types/imageType';
+import { Image as ImageType } from '@/types/imageType';
 
 interface Props {
   isOpen: boolean;

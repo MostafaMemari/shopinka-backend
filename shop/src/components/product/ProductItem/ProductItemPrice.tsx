@@ -1,4 +1,4 @@
-import { formatPrice } from '@/shared/utils/formatter';
+import { formatPrice } from '@/utils/formatter';
 import { FC } from 'react';
 
 interface Props {

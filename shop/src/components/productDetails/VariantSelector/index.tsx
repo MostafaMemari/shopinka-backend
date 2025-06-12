@@ -10,7 +10,7 @@ import { getDefaultSelections, transformVariants } from '../utils/productVariant
 
 import { ProductVariant } from '@/types/productType';
 import { findMatchingVariant } from '../utils/productVariants';
-import { Attribute, AttributeValues } from '@/shared/types/attributeType';
+import { Attribute, AttributeValues } from '@/types/attributeType';
 interface Props {
   variants: ProductVariant[];
   attributes: Attribute[];

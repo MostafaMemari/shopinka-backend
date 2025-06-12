@@ -6,7 +6,7 @@ import ProductListShop from './ProductListShop';
 import { Product, ProductParams } from '@/types/productType';
 import { getProducts } from '@/service/productService';
 import LoadingDots from '@/components/shopPage/LoadingDots';
-import { Pager } from '@/shared/types/pagerType';
+import { Pager } from '@/types/pagerType';
 import EndMessage from '@/components/shopPage/EndMessage';
 
 interface Props {

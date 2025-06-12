@@ -4,7 +4,7 @@ import { FaChevronLeft } from 'react-icons/fa';
 import Link from 'next/link';
 import { getStatusConfig } from '@/config/orderStatusConfig';
 import { IOrder } from '@/lib/types/orders';
-import { formatRemainingTime } from '@/shared/utils/formatter';
+import { formatRemainingTime } from '@/utils/formatter';
 
 interface OrderCardProps {
   order: IOrder;

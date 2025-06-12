@@ -1,4 +1,4 @@
-import { AttributeValues } from '@/shared/types/attributeType';
+import { AttributeValues } from '@/types/attributeType';
 import React from 'react';
 
 interface CartItemAttributesProps {

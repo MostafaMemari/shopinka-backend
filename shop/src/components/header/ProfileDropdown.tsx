@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 import { logout } from '@/service/auth.api';
-import Toast from '@/shared/utils/swalToast';
+import Toast from '@/utils/swalToast';
 import Link from 'next/link';
 import {
   HiOutlineBell,
@@ -15,7 +15,7 @@ import {
 } from 'react-icons/hi';
 import { BiLogIn } from 'react-icons/bi';
 import { usePathname } from 'next/navigation';
-import { useDropdown } from '@/shared/hooks/useDropdown';
+import { useDropdown } from '@/hooks/useDropdown';
 import SkeletonLoader from '../SkeletonLoader';
 import { useState } from 'react';
 

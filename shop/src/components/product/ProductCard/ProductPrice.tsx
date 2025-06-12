@@ -1,5 +1,5 @@
-import { calculateDiscount } from '@/shared/utils/calculateDiscount';
-import { formatPrice } from '@/shared/utils/formatter';
+import { calculateDiscount } from '@/utils/calculateDiscount';
+import { formatPrice } from '@/utils/formatter';
 import { FC } from 'react';
 
 interface Props {

@@ -1,7 +1,7 @@
-import { Attribute, AttributeValues } from '@/shared/types/attributeType';
+import { Attribute, AttributeValues } from '@/types/attributeType';
 import { Category } from '@/types/categoryType';
-import { Image } from '@/shared/types/imageType';
-import { SeoMeta } from '@/shared/types/seoMetaType';
+import { Image } from '@/types/imageType';
+import { SeoMeta } from '@/types/seoMetaType';
 import { user } from '@/shared/types/userType';
 
 export type Product = {

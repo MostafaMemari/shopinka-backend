@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import DesktopLogo from '@/components/ui/Logo/DesktopLogo';
-import Toast from '@/shared/utils/swalToast';
+import Toast from '@/utils/swalToast';
 
 import { useOtpTimer } from '@/hooks/reactQuery/auth/useOtpTimer';
 import { IoChevronBack } from 'react-icons/io5';

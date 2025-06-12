@@ -3,7 +3,7 @@
 import { shopApiFetch } from '@/server/api';
 import { User } from '../types/userType';
 import { cookies } from 'next/headers';
-import { COOKIE_NAMES } from '@/shared/types/constants';
+import { COOKIE_NAMES } from '@/types/constants';
 
 export const getMe = async (): Promise<{ status: number; data: User | null }> => {
   const cookieStore = await cookies();

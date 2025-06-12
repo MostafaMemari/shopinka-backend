@@ -1,9 +1,9 @@
-import Toast from '@/shared/utils/swalToast';
+import Toast from '@/utils/swalToast';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useRouter } from 'next/navigation';
 import { verifyOtp, sendOtp } from '@/service/auth.api';
-import { handleApiError } from '@/shared/utils/handleApiError';
+import { handleApiError } from '@/utils/handleApiError';
 import { errorOtpStepMessages, errorPhoneNumberStepMessages } from '../../../messages/errorAuthMessages';
 import CountdownTimer from '@/components/auth/CountdownTimer';
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
