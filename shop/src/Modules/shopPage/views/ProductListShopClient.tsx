@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ProductListShop from './ProductListShop';
 import { Product, ProductParams } from '@/types/productType';
-import { getProducts } from '@/modules/product/services/productService';
-import LoadingDots from '../components/LoadingDots';
+import { getProducts } from '@/server/productService';
+import LoadingDots from '@/components/shopPage/LoadingDots';
 import { Pager } from '@/shared/types/pagerType';
-import EndMessage from '../components/EndMessage';
+import EndMessage from '@/components/shopPage/EndMessage';
 
 interface Props {
   query: ProductParams;

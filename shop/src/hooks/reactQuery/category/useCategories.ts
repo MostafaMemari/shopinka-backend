@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCategories } from '../../../modules/category/services/categoryService';
+import { getCategories } from '@/server/categoryService';
 import { QueryKeys } from '@/shared/types/query-keys';
 import { QueryOptions } from '@/shared/types/queryOptions';
 

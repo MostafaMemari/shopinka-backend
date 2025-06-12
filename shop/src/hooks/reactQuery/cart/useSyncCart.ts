@@ -3,8 +3,8 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { setCart } from '@/store/slices/cartSlice';
 import { QueryKeys } from '@/shared/types/query-keys';
-import { createCartBulk, getCart } from '@/modules/cart/services/cart.api';
 import { CartData, CartItemState } from '@/types/cartType';
+import { createCartBulk, getCart } from '@/server/cart.api';
 
 export function useSyncCart() {
   const dispatch = useAppDispatch();

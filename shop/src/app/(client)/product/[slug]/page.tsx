@@ -1,5 +1,5 @@
-import { fetchProductBySlug } from '@/modules/product/services/productService';
-import ProductDetailsView from '@/modules/productDetails/views/ProductDetailsView';
+import { fetchProductBySlug } from '@/server/productService';
+import ProductDetailsView from '@/components/productDetails/views/ProductDetailsView';
 import { notFound } from 'next/navigation';
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {

@@ -1,7 +1,7 @@
 import React from 'react';
-import AddressSection from '../components/AddressSection';
-import DeliverySection from '../components/DeliverySection';
-import CartPriceDetail from '../components/CartPriceDetail';
+import AddressSection from '@/components/checkout/AddressSection';
+import DeliverySection from '@/components/checkout/DeliverySection';
+import CartPriceDetail from '@/components/checkout/CartPriceDetail';
 
 function CheckoutPageView() {
   return (

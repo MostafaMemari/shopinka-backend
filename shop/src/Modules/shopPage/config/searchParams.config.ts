@@ -1,4 +1,3 @@
-// Modules/shopPage/config/searchParams.config.ts
 import { parseAsBoolean, parseAsInteger, parseAsString } from 'nuqs/server';
 
 export const coordinatesSearchParams = {

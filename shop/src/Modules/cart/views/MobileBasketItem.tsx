@@ -1,9 +1,9 @@
 import Link from 'next/link';
-import { CartItemState } from '../../../types/cartType';
-import CartControls from '../components/CartControls';
-import ProductCardImage from '../components/ProductCartImage';
-import CartItemAttributes from '../components/CartItemAttributes';
-import ProductPriceCard from '../components/ProductPriceCart';
+import { CartItemState } from '@/types/cartType';
+import CartControls from '@/components/cart/CartControls';
+import ProductCardImage from '@/components/cart/ProductCartImage';
+import CartItemAttributes from '@/components/cart/CartItemAttributes';
+import ProductPriceCard from '@/components/cart/ProductPriceCart';
 
 interface MobileBasketItemProp {
   item: CartItemState;

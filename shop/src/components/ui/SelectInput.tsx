@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Select from 'react-select';
-import { Option } from '@/modules/checkout/components/AddressFormDrawer';
+import { Option } from '@/components/checkout/AddressFormDrawer';
 
 interface SelectInputProps {
   id: string;

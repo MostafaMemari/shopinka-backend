@@ -1,5 +1,5 @@
-import { getProducts } from '@/modules/product/services/productService';
-import CarouselProduct from '@/modules/product/components/ProductCarousel';
+import { getProducts } from '@/server/productService';
+import CarouselProduct from '@/components/product/ProductCarousel';
 import BannerSlider from '@/components/Carousel/BannerSlider';
 
 export default async function Home() {

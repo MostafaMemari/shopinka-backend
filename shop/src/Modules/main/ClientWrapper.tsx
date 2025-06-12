@@ -2,7 +2,7 @@
 
 import { Suspense } from 'react';
 import BannerSlider from '@/components/Carousel/BannerSlider';
-import CarouselProduct from '@/modules/product/components/ProductCarousel';
+import CarouselProduct from '@/components/product/ProductCarousel';
 import Loader from '@/components/skeleton/Loader';
 import { Product } from '@/types/productType';
 

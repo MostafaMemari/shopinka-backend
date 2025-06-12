@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import DesktopLogo from '@/components/ui/Logo/DesktopLogo';
 import Toast from '@/shared/utils/swalToast';
 
-import { useOtpTimer } from '../../../hooks/reactQuery/auth/useOtpTimer';
+import { useOtpTimer } from '@/hooks/reactQuery/auth/useOtpTimer';
 import { IoChevronBack } from 'react-icons/io5';
 import PhoneInputForm from './PhoneInputForm';
 import OtpForm from './OtpForm';

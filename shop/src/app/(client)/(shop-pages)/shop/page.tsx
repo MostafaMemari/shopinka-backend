@@ -1,13 +1,13 @@
 import { Suspense } from 'react';
 import ProductListShopClient from '@/modules/shopPage/views/ProductListShopClient';
-import { getProducts } from '@/modules/product/services/productService';
+import { getProducts } from '@/server/productService';
 import { loadSearchParams } from '@/modules/shopPage/utils/loadSearchParams';
 import { parseArrayParam } from '@/modules/shopPage/utils/parseArrayParam';
 import { ProductParams } from '@/types/productType';
 import { SearchParams } from 'nuqs';
-import SortBar from '@/modules/shopPage/components/SortBar';
+import SortBar from '@/components/shopPage/SortBar';
 import FilterSection from '@/modules/shopPage/views/FilterSection';
-import MobileFilterSection from '@/modules/shopPage/components/FilterMobile/MobileFilterSection';
+import MobileFilterSection from '@/components/shopPage/FilterMobile/MobileFilterSection';
 import { cookies } from 'next/headers';
 
 type PageProps = {

@@ -1,6 +1,6 @@
 import Footer from '@/components/footer';
 import Header from '@/components/header';
-import ProductTabs from '@/modules/product/components/ProductTabs';
+import ProductTabs from '@/components/product/ProductTabs';
 import { mockProductDetails } from '@/mock/productCarousels';
 import NewestProductsCarousel from '@/modules/home/views/newestProductsCarousel';
 

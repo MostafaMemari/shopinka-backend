@@ -10,7 +10,7 @@ import IconButtonWithBadge from '@/components/IconButtonWithBadge';
 import { useCart } from '@/hooks/reactQuery/cart/useCart';
 
 export default function BasketDropdown() {
-  const { cart: cartItems, isLoading, error } = useCart();
+  const { cart: cartItems, isLoading } = useCart();
   const { isOpen, dropdownRef, handleMouseEnter, handleMouseLeave, closeDropdown } = useDropdown({
     closeOnOutsideClick: false,
     openOnHover: true,

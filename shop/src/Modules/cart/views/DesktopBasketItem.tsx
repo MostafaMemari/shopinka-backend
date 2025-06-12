@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { CartItemState } from '../../../types/cartType';
-import CartControls from '../components/CartControls';
-import CartItemAttributes from '../components/CartItemAttributes';
-import ProductPriceCard from '../components/ProductPriceCart';
+import { CartItemState } from '@/types/cartType';
+import CartControls from '@/components/cart/CartControls';
+import CartItemAttributes from '@/components/cart/CartItemAttributes';
+import ProductPriceCard from '@/components/cart/ProductPriceCart';
 
 export interface ItemCardBasketProp {
   item: CartItemState;

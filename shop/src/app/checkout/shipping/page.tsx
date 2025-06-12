@@ -1,4 +1,4 @@
-import CheckoutProgress from '@/modules/checkout/components/CheckoutProgress';
+import CheckoutProgress from '@/components/checkout/CheckoutProgress';
 import CheckoutPageView from '@/modules/checkout/views/CheckoutPageView';
 
 export default function Page() {

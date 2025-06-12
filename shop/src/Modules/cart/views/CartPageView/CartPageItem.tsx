@@ -1,10 +1,10 @@
 import React from 'react';
-import ProductCartImage from '../../components/ProductCartImage';
+import ProductCartImage from '@/../components/cart/ProductCartImage';
 import Link from 'next/link';
-import { CartItemState } from '../../../../types/cartType';
-import CartItemAttributes from '../../components/CartItemAttributes';
-import ProductPriceCard from '../../components/ProductPriceCart';
-import CartControls from '../../components/CartControls';
+import { CartItemState } from '@/../types/cartType';
+import CartItemAttributes from '@/../components/cart/CartItemAttributes';
+import ProductPriceCard from '@/../components/cart/ProductPriceCart';
+import CartControls from '@/../components/cart/CartControls';
 
 interface CartPageItemProps {
   cartItem: CartItemState;

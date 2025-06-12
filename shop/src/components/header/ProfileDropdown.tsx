@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
-import { logout } from '@/modules/auth/services/auth.api';
+import { logout } from '@/server/auth.api';
 import Toast from '@/shared/utils/swalToast';
 import Link from 'next/link';
 import {
