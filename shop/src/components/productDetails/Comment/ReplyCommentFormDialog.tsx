@@ -10,9 +10,10 @@ import { useComment } from '@/hooks/reactQuery/useComment';
 interface ReplyCommentFormDialogProps {
   productId: number;
   parentId: number;
+  commentTitle: string;
 }
 
-const ReplyCommentFormDialog = ({ productId, parentId }: ReplyCommentFormDialogProps) => {
+const ReplyCommentFormDialog = ({ productId, parentId, commentTitle }: ReplyCommentFormDialogProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const { createComment, isCreateCommentLoading } = useComment({});
@@ -46,9 +47,14 @@ const ReplyCommentFormDialog = ({ productId, parentId }: ReplyCommentFormDialogP
       <Dialog
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        title="ثبت دیدگاه جدید"
+        title={`پاسخ به دیدگاه "${commentTitle}"`}
         actions={
-          <button className="btn-primary w-full py-3 text-sm" type="button" onClick={handleSubmit} disabled={isCreateCommentLoading}>
+          <button
+            className="btn-primary w-full py-3 text-sm cursor-pointer"
+            type="button"
+            onClick={handleSubmit}
+            disabled={isCreateCommentLoading}
+          >
             {isCreateCommentLoading ? 'در حال ثبت' : 'ارسال دیدگاه'}
           </button>
         }

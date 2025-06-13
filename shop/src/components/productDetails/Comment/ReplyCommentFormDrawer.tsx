@@ -9,9 +9,10 @@ import { AiOutlineLeft } from 'react-icons/ai';
 interface ReplyCommentFormDrawerProps {
   productId: number;
   parentId: number;
+  commentTitle: string;
 }
 
-const ReplyCommentFormDrawer = ({ productId, parentId }: ReplyCommentFormDrawerProps) => {
+const ReplyCommentFormDrawer = ({ productId, parentId, commentTitle }: ReplyCommentFormDrawerProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const { createComment, isCreateCommentLoading } = useComment({});
@@ -40,12 +41,12 @@ const ReplyCommentFormDrawer = ({ productId, parentId }: ReplyCommentFormDrawerP
   return (
     <div>
       <MobileDrawer
-        title="ثبت دیدگاه جدید"
+        title={`پاسخ به دیدگاه "${commentTitle}"`}
         isOpen={isOpen}
         onOpen={() => setIsOpen(true)}
         onClose={() => setIsOpen(false)}
         triggerButton={
-          <button type="button" className="btn-secondary-nobg">
+          <button type="button" className="btn-secondary-nobg cursor-pointer">
             پاسخ
             <AiOutlineLeft className="h-5 w-5" />
           </button>

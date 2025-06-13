@@ -44,7 +44,7 @@ function CommentsDrawer({ isOpen, onOpen, onClose }: CommentsDrawerProps) {
                 <div className="mb-4 flex items-center justify-between">
                   <Recommendation isRecommended={comment.isRecommended} />
 
-                  <ReplyCommentFormDrawer productId={comment.productId} parentId={comment.id} />
+                  <ReplyCommentFormDrawer productId={comment.productId} parentId={comment.id} commentTitle={comment.title} />
                 </div>
                 <div className="grow space-y-2">
                   <h5 className="text-sm leading-relaxed">{comment.title}</h5>

@@ -63,6 +63,7 @@ export default function ProductComments({ productId }: Props) {
       {comments?.length !== 0 && (
         <MobileCommentsSwiper onOpen={handleOpenDrawer} onClose={() => setIsSwiperOpen(false)} comments={comments} isOpen={isSwiperOpen} />
       )}
+
       {isLoading && (
         <div className="flex items-center justify-center py-10">
           <div className="text-text/60">در حال بارگذاری دیدگاه ها...</div>

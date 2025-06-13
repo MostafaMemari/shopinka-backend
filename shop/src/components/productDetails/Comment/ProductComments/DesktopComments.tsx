@@ -1,6 +1,5 @@
 'use client';
 
-import { AiOutlineLike, AiOutlineDislike, AiOutlineLeft } from 'react-icons/ai';
 import { CommentItem } from '@/types/commentType';
 import ReplyCommentFormDialog from '../ReplyCommentFormDialog';
 import ReplyCommentFormDrawer from '../ReplyCommentFormDrawer';
@@ -18,10 +17,10 @@ export default function DesktopComments({ comment }: Props) {
           <h5 className="mb-4 leading-relaxed xl:text-lg">{comment.title}</h5>
           <>
             <div className="hidden md:block">
-              <ReplyCommentFormDialog productId={comment.productId} parentId={comment.id} />
+              <ReplyCommentFormDialog productId={comment.productId} parentId={comment.id} commentTitle={comment.title} />
             </div>
             <div className="md:hidden flex justify-between items-center w-full">
-              <ReplyCommentFormDrawer productId={comment.productId} parentId={comment.id} />
+              <ReplyCommentFormDrawer productId={comment.productId} parentId={comment.id} commentTitle={comment.title} />
             </div>
           </>
         </div>
