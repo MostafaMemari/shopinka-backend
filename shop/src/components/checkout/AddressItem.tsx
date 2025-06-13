@@ -1,11 +1,12 @@
 import { AddressFormType, type AddressItem } from '@/types/address.type';
 import { useAddress } from '@/hooks/reactQuery/useAddress';
 import React, { useEffect, useRef, useState } from 'react';
-import AddressForm from './AddressForm';
-import { Option } from './AddressFormDrawer';
+
 import AddressActions from '@/components/ui/DropDownActions';
 import Dialog from '@/components/ui/Dialog';
 import MobileDrawer from '@/components/MobileDrawer';
+import { Option } from './AddressFormDialog';
+import AddressForm from './AddressForm';
 
 const provinces: Option[] = [
   { value: 'tehran', label: 'تهران' },

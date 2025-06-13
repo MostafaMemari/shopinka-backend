@@ -69,7 +69,7 @@ export default function BasketDropdown() {
                   <span className="text-sm"> تومان</span>
                 </div>
               </div>
-              <Link href="/checkout-shipping">
+              <Link href="/checkout/cart">
                 <button className="btn-primary w-32 py-3 text-sm" type="button">
                   ثبت سفارش
                 </button>

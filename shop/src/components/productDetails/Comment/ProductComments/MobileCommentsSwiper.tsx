@@ -5,16 +5,34 @@ import { FreeMode } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/free-mode';
 import CommentsDrawer from './CommentsDrawer';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AiOutlineLike, AiOutlineDislike, AiOutlineLeft } from 'react-icons/ai';
 import { CommentItem } from '@/types/commentType';
 
 interface Props {
   comments: CommentItem[];
+  onOpen?: () => void;
+  onClose?: () => void;
+  isOpen: boolean;
 }
 
-export default function MobileCommentsSwiper({ comments }: Props) {
-  const [isOpenDrawer, setIsOpenDrawer] = useState(false);
+export default function MobileCommentsSwiper({ comments, onOpen, onClose, isOpen }: Props) {
+  const [isOpenDrawer, setIsOpenDrawer] = useState(isOpen);
+
+  useEffect(() => {
+    setIsOpenDrawer(isOpen);
+  }, [isOpen]);
+
+  const drawerHandlers = {
+    onOpen: () => {
+      setIsOpenDrawer(true);
+      if (onOpen) onOpen();
+    },
+    onClose: () => {
+      setIsOpenDrawer(false);
+      if (onClose) onClose();
+    },
+  };
 
   return (
     <div className="md:hidden">
@@ -33,7 +51,7 @@ export default function MobileCommentsSwiper({ comments }: Props) {
           .filter((comment) => comment.isActive)
           .map((comment) => (
             <SwiperSlide key={comment.id}>
-              <div className="flex h-64 flex-col rounded-lg border px-4 py-6">
+              <div className="flex h-52 flex-col rounded-lg border px-4 py-6">
                 <div className="mb-4 flex items-center justify-between gap-2">
                   <div className={`flex items-center gap-x-2 ${comment.isRecommended ? 'text-primary' : 'text-red-500 dark:text-red-400'}`}>
                     {comment.isRecommended ? <AiOutlineLike className="h-5 w-5" /> : <AiOutlineDislike className="h-5 w-5" />}
@@ -55,19 +73,10 @@ export default function MobileCommentsSwiper({ comments }: Props) {
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-x-4">
-                    <button className="relative text-primary">
-                      <AiOutlineLike className="h-6 w-6" />
-                      <span className="absolute -right-2 top-6 text-sm">{comment.rate}</span>
-                    </button>
-                    <button className="relative text-red-500 dark:text-red-400">
-                      <AiOutlineDislike className="h-6 w-6" />
-                      <span className="absolute -right-2 top-6 text-sm">{0}</span>
-                    </button>
+                    <div className="text-xs text-text/60">{comment.userId ? 'خریدار' : 'کاربر'}</div>
                   </div>
                   <div className="flex items-center gap-x-2">
                     <div className="text-xs text-text/60">{new Date(comment.createdAt).toLocaleDateString('fa-IR')}</div>
-                    <span className="h-3 w-px rounded-full bg-background dark:bg-muted/10"></span>
-                    <div className="text-xs text-text/60">{comment.userId ? 'خریدار' : 'کاربر'}</div>
                   </div>
                 </div>
               </div>
@@ -82,10 +91,10 @@ export default function MobileCommentsSwiper({ comments }: Props) {
               data-drawer-placement="bottom"
               data-drawer-target="mobile-comments-drawer-navigation"
               type="button"
-              onClick={() => setIsOpenDrawer(true)}
+              onClick={drawerHandlers.onOpen}
               className="flex flex-col items-center justify-center gap-y-4 text-primary"
             >
-              <div className="rounded-full border border-emerald-500 p-2 dark:border-emerald-400">
+              <div className="rounded-full border border-primary p-2">
                 <AiOutlineLeft className="h-4 w-4" />
               </div>
               <div>مشاهده بیشتر</div>
@@ -94,12 +103,7 @@ export default function MobileCommentsSwiper({ comments }: Props) {
         </SwiperSlide>
       </Swiper>
 
-      <CommentsDrawer
-        isOpen={isOpenDrawer}
-        onOpen={() => setIsOpenDrawer(true)}
-        onClose={() => setIsOpenDrawer(false)}
-        comments={comments}
-      />
+      <CommentsDrawer isOpen={isOpenDrawer} onOpen={drawerHandlers.onOpen} onClose={drawerHandlers.onClose} comments={comments} />
     </div>
   );
 }

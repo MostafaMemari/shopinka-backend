@@ -44,16 +44,6 @@ export default function CommentsDrawer({ isOpen, onOpen, onClose, comments }: Pr
                   <p className="line-clamp-4 text-sm leading-relaxed text-text/90">{comment.content}</p>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-x-4">
-                    <button className="relative text-primary">
-                      <AiOutlineLike className="h-6 w-6" />
-                      <span className="absolute -right-2 top-6 text-sm">{comment.rate}</span>
-                    </button>
-                    <button className="relative text-red-500 dark:text-red-400">
-                      <AiOutlineDislike className="h-6 w-6" />
-                      <span className="absolute -right-2 top-6 text-sm">{0}</span>
-                    </button>
-                  </div>
                   <div className="flex items-center gap-x-2">
                     <div className="text-xs text-text/60">{new Date(comment.createdAt).toLocaleDateString('fa-IR')}</div>
                     <span className="h-3 w-px rounded-full bg-background dark:bg-muted/10"></span>

@@ -12,6 +12,7 @@ interface TextInputProps {
   disabled?: boolean;
   placeholder?: string;
   isRequired?: boolean;
+  className?: string;
 }
 
 const TextInput: React.FC<TextInputProps> = ({
@@ -24,6 +25,7 @@ const TextInput: React.FC<TextInputProps> = ({
   disabled = false,
   placeholder,
   isRequired = false,
+  className = '',
 }) => {
   const hasError = formik.touched[name] && formik.errors[name];
 
@@ -42,7 +44,7 @@ const TextInput: React.FC<TextInputProps> = ({
   };
 
   return (
-    <div className="mb-4 text-right">
+    <div className={`mb-4 text-right ${className}`}>
       <label htmlFor={id} className="mb-1 block text-sm font-medium text-gray-700">
         {label}
         {isRequired && <span className="text-red-500"> *</span>}

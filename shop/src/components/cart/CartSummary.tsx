@@ -31,7 +31,7 @@ const CartSummary: React.FC<CartSummaryProps> = ({
             </div>
           </div>
 
-          {totalDiscountPrice && (
+          {totalDiscountPrice > 0 && (
             <div className="flex items-center justify-between gap-x-2 py-6">
               <div className="text-sm text-text/90 lg:text-base">تخفیف</div>
               <div className="text-sm font-medium text-primary dark:text-red-400 lg:text-base">
@@ -50,6 +50,7 @@ const CartSummary: React.FC<CartSummaryProps> = ({
               </div>
             </div>
           )}
+
           <div className="flex items-center justify-between gap-x-2 py-6">
             <div className="text-sm text-text/90 lg:text-base">مبلغ قابل پرداخت</div>
             <div className="text-sm text-primary lg:text-base">

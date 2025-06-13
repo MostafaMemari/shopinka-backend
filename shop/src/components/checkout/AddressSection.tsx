@@ -3,10 +3,10 @@
 import React, { useState } from 'react';
 import { MdOutlineEditLocation } from 'react-icons/md';
 import { useAddress } from '@/hooks/reactQuery/useAddress';
-import AddressFormDrawer from './AddressFormDrawer';
 import AddressItem from './AddressItem';
-import AddressFormDialog from './AddressFormDialog';
 import CartStatus from '@/components/CartStatus copy';
+import AddressFormDialog from './AddressFormDialog';
+import AddressFormDrawer from './AddressFormDrawer';
 
 export default function AddressSection() {
   const { addressItems, isLoading, error } = useAddress({});
@@ -32,10 +32,10 @@ export default function AddressSection() {
       ) : (
         <div className="mb-6">
           <div className="flex items-center justify-between gap-x-2 pb-4">
-            <h1 className="flex items-center gap-x-2 text-sm xs:text-base md:text-lg font-medium text-gray-800">
+            <h3 className="flex items-center gap-x-2 text-sm xs:text-base md:text-lg font-medium text-gray-800">
               <MdOutlineEditLocation className="h-5 w-5 text-primary" />
               آدرس تحویل سفارش
-            </h1>
+            </h3>
 
             <div className="hidden md:block">
               <AddressFormDialog />

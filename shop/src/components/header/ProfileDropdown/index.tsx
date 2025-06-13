@@ -9,6 +9,8 @@ import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 import ProfileMenu from './ProfileMenu';
 import ProfileButton from './ProfileButton';
 
+import { useEffect, useState } from 'react';
+
 const ProfileDropdown = () => {
   const pathname = usePathname();
   const { isLogin, isLoading } = useAuth();
@@ -16,6 +18,13 @@ const ProfileDropdown = () => {
     closeOnOutsideClick: true,
     openOnHover: false,
   });
+
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null;
 
   if (isLoading) {
     return (

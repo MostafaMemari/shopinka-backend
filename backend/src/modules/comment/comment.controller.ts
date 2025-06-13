@@ -27,6 +27,8 @@ export class CommentController {
   @Get()
   @SkipAuth()
   findAll(@Query() queryCommentDto: QueryCommentDto) {
+    console.log('get comment', new Date().toLocaleString('fa-ir'));
+
     return this.commentService.findAll(queryCommentDto);
   }
 

@@ -1,14 +1,27 @@
+'use client';
+
+import { useComment } from '@/hooks/reactQuery/useComment';
 import React from 'react';
 
 interface ProductCommentCountProps {
-  commentsCount: number;
+  productId: number;
 }
 
-function ProductCommentCount({ commentsCount }: ProductCommentCountProps) {
+function ProductCommentCount({ productId }: ProductCommentCountProps) {
+  const { data, isLoading } = useComment({ params: { productId } });
+
+  const CommentCount = data?.pager.totalCount || 0;
+
   return (
-    <div>
-      <a href="#">{commentsCount} دیدگاه</a>
-    </div>
+    <>
+      {isLoading ? (
+        <div className="animate-pulse rounded-lg bg-gray-200 h-6 w-24" />
+      ) : (
+        <div>
+          <a href="#">{CommentCount} دیدگاه</a>
+        </div>
+      )}
+    </>
   );
 }
 

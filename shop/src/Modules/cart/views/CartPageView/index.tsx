@@ -80,7 +80,7 @@ function CartPageView() {
             totalPrice={totalPrice}
           >
             <div>
-              <Link href="/checkout">
+              <Link href="/checkout/shipping">
                 <PrimaryButton type="submit">ادامه فرایند خرید</PrimaryButton>
               </Link>
             </div>

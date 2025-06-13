@@ -5,14 +5,14 @@ import * as Yup from 'yup';
 import { forwardRef, useState } from 'react';
 import TextInput from '@/components/ui/TextInput';
 import SelectInput from '@/components/ui/SelectInput';
-import { Option } from './AddressFormDrawer';
 import { AddressFormType } from '@/types/address.type';
+import { Option } from './AddressFormDialog';
 
 interface Cities {
   [key: string]: Option[];
 }
 
-interface AddressFormProps {
+interface AddressProps {
   provinces: Option[];
   cities: Cities;
   onSubmit: (values: AddressFormType) => Promise<void>;
@@ -20,7 +20,7 @@ interface AddressFormProps {
   className?: string;
 }
 
-const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
+const AddressForm = forwardRef<HTMLFormElement, AddressProps>(
   (
     {
       provinces,
@@ -109,7 +109,5 @@ const AddressForm = forwardRef<HTMLFormElement, AddressFormProps>(
     );
   },
 );
-
-AddressForm.displayName = 'AddressForm';
 
 export default AddressForm;

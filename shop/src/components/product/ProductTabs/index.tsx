@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 import ProductDescription from './ProductDescription';
 import ProductSpecifications from './ProductSpecifications';
 import ProductComments from '@/components/productDetails/Comment/ProductComments';
-import { CommentItem } from '@/types/commentType';
-import { useComments } from '@/hooks/reactQuery/useComment';
+import { useComment } from '@/hooks/reactQuery/useComment';
 
 interface Tab {
   id: string;
@@ -23,9 +22,7 @@ interface Props {
 }
 
 export default function ProductTabs({ description, specifications, productId }: Props) {
-  const { data, isLoading } = useComments({ params: { productId } });
-
-  console.log(data);
+  const { data, isLoading } = useComment({ params: { productId } });
 
   const tabs: Tab[] = [
     { id: 'description', title: 'معرفی' },
@@ -42,7 +39,7 @@ export default function ProductTabs({ description, specifications, productId }: 
       case 'specs':
         return <ProductSpecifications specifications={specifications} />;
       case 'comments':
-        return <ProductComments comments={data?.items || []} />;
+        return <ProductComments productId={productId} />;
       default:
         return null;
     }
@@ -64,6 +61,9 @@ export default function ProductTabs({ description, specifications, productId }: 
                   }`}
                 >
                   {tab.title}
+                  {isLoading && tab.id === 'comments' ? (
+                    <span className="absolute -left-5 -top-4 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
+                  ) : null}
                   {tab.count !== undefined && tab.count > 0 && (
                     <span className="absolute -left-5 -top-4 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs text-white dark:bg-emerald-600 xs:text-sm">
                       {tab.count}

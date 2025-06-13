@@ -69,17 +69,6 @@ export default function DesktopComments({ comment }: Props) {
                   <div className="mb-6 border-b pb-6">
                     <p className="line-clamp-4 text-sm text-text/90">{reply.content}</p>
                   </div>
-                  <div className="flex items-center justify-end gap-x-8">
-                    <div className="text-sm text-text/60">آیا این دیدگاه برایتان مفید بود؟</div>
-                    <button className="flex items-center gap-x-2 text-primary transition-all duration-200 hover:text-emerald-400 dark:hover:text-primary">
-                      <span className="text-sm">{reply.rate}</span>
-                      <AiOutlineLike className="h-6 w-6" />
-                    </button>
-                    <button className="flex items-center gap-x-2 text-red-500 transition-all duration-200 hover:text-red-400 dark:text-red-400 dark:hover:text-red-500">
-                      <span className="text-sm">{0}</span>
-                      <AiOutlineDislike className="h-6 w-6" />
-                    </button>
-                  </div>
                 </div>
               </li>
             ))}

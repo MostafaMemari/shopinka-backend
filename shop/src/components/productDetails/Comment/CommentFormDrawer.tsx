@@ -1,0 +1,64 @@
+'use client';
+
+import { useRef, useState } from 'react';
+import MobileDrawer from '@/components/MobileDrawer';
+import CommentForm from './CommentForm';
+import { CommentFormType } from '@/types/commentType';
+import { useComment } from '@/hooks/reactQuery/useComment';
+import { AiOutlineComment } from 'react-icons/ai';
+
+const CommentFormDrawer = () => {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const { createComment, isCreateCommentLoading } = useComment({});
+
+  const handleFormSubmit = async (values: CommentFormType) => {
+    createComment(
+      values,
+      () => {
+        setIsOpen(false);
+        if (formRef.current) {
+          formRef.current.reset();
+        }
+      },
+      (error) => {
+        console.error('خطا در ارسال فرم:', error);
+      },
+    );
+  };
+
+  const handleSubmit = () => {
+    if (formRef.current) {
+      formRef.current.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+    }
+  };
+
+  return (
+    <div>
+      <MobileDrawer
+        title="افزودن نظر جدید"
+        isOpen={isOpen}
+        onOpen={() => setIsOpen(true)}
+        onClose={() => setIsOpen(false)}
+        triggerButton={
+          <button
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary-600 focus:outline-none focus:ring focus:ring-primary-300 cursor-pointer"
+            onClick={() => setIsOpen(true)}
+          >
+            <AiOutlineComment className="h-6 w-6" />
+            <span>ثبت دیدگاه جدید</span>
+          </button>
+        }
+        footerActions={
+          <button className="btn-primary w-full py-3 text-sm " type="button" onClick={handleSubmit} disabled={isCreateCommentLoading}>
+            {isCreateCommentLoading ? 'در حال ثبت' : 'ارسال دیدگاه'}
+          </button>
+        }
+      >
+        <CommentForm onSubmit={handleFormSubmit} ref={formRef} />
+      </MobileDrawer>
+    </div>
+  );
+};
+
+export default CommentFormDrawer;

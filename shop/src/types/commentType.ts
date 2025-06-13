@@ -1,10 +1,10 @@
-export interface Comment {
+export interface CommentFormType {
   title: string;
   content: string;
   isRecommended: boolean;
-  rate: number;
+  rate?: number;
   productId: number;
-  parentId: number | null;
+  parentId?: number | null;
 }
 
 export interface CommentItem {

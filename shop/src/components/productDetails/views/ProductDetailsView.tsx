@@ -58,7 +58,7 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
                     <div className="mb-4 flex items-center gap-x-4 text-sm font-light text-primary">
                       <ProductSku sku={product.sku ?? ''} />
                       <span className="h-4 w-px rounded-full bg-background dark:bg-muted/10"></span>
-                      <ProductCommentCount commentsCount={0} />
+                      <ProductCommentCount key={product.id} productId={product.id} />
                     </div>
                   </div>
 
@@ -127,7 +127,7 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
               {product.name && <h1 className="text-lg font-semibold pb-2">{product.name}</h1>}
               <div className="flex gap-x-4 text-sm font-light text-primary md:text-base">
                 <ProductSku sku={product.sku ?? ''} />
-                <ProductCommentCount commentsCount={0} />
+                <ProductCommentCount key={product.id} productId={product.id} />
               </div>
               <div className="my-4 h-px w-full bg-background"></div>
 
