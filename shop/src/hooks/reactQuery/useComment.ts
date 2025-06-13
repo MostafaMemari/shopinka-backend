@@ -1,18 +1,33 @@
-import { QueryOptions } from '@/types/queryOptions';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from '@/types/query-keys';
-import { CommentFormType } from '@/types/commentType';
+import { CommentFormType, CommentParams, CommentResponse } from '@/types/commentType';
 import { createComment, getComments } from '@/service/commentService';
 
-export function useComment({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
+export interface QueryOptions {
+  enabled?: boolean;
+  staleTime?: number;
+  params?: CommentParams;
+  keepPreviousData?: boolean;
+  gcTime?: number;
+  refetchOnWindowFocus?: boolean;
+}
+
+export function useComment({
+  enabled = true,
+  params = {},
+  staleTime = 5 * 60 * 1000,
+  gcTime = 10 * 60 * 1000,
+  refetchOnWindowFocus = false,
+}: QueryOptions) {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error, refetch } = useQuery<any, Error>({
+  const { data, isLoading, error, refetch } = useQuery<CommentResponse, Error>({
     queryKey: [QueryKeys.Comments, params],
     queryFn: () => getComments(params),
     enabled,
     staleTime,
-    refetchOnWindowFocus: false,
+    gcTime,
+    refetchOnWindowFocus,
   });
 
   const createMutation = useMutation({ mutationFn: createComment });

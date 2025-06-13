@@ -1,12 +1,10 @@
 'use server';
 
 import { shopApiFetch } from '@/server/api';
-import { CommentParam } from '@/types/commentParam';
-import { CommentFormType, CommentItem } from '@/types/commentType';
-import { Pager } from '@/types/pagerType';
+import { CommentFormType, CommentItem, CommentParams, CommentResponse } from '@/types/commentType';
 import { ofetch } from 'ofetch';
 
-export const getComments = async (params?: CommentParam): Promise<{ items: CommentItem[]; pager: Pager }> => {
+export const getComments = async (params?: CommentParams): Promise<CommentResponse> => {
   const response = await ofetch(`/comment`, {
     baseURL: process.env.API_BASE_URL,
     method: 'GET',

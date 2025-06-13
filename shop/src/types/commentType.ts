@@ -1,3 +1,5 @@
+import { Pager } from './pagerType';
+
 export interface CommentFormType {
   title: string;
   content: string;
@@ -21,4 +23,19 @@ export interface CommentItem {
   replies?: CommentItem[] | [];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface CommentParams {
+  page?: number;
+  take?: number;
+  isRecommended?: boolean;
+  repliesDepth?: number;
+  blogId?: number;
+  productId?: number;
+  includeUser?: boolean;
+  includeReplies?: boolean;
+}
+export interface CommentResponse {
+  items: CommentItem[];
+  pager: Pager;
 }

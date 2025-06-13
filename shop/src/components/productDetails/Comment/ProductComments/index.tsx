@@ -20,14 +20,21 @@ export default function ProductComments({ productId }: Props) {
   const [isSwiperOpen, setIsSwiperOpen] = useState(false);
 
   const { data, isLoading, error } = useComment({
-    params: { productId, page: currentPage, pageSize: 10 },
-    staleTime: 1 * 60 * 1000,
+    params: { productId, page: currentPage, take: 10, repliesDepth: 1, includeReplies: true },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 
   const comments: CommentItem[] = data?.items || [];
+  const totalPages = data?.pager?.totalPages || 1;
 
   const handleOpenDrawer = () => {
     setIsSwiperOpen(true);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -52,7 +59,7 @@ export default function ProductComments({ productId }: Props) {
               <div>
                 <CommentFormDrawer productId={productId} />
               </div>
-              <div onClick={handleOpenDrawer} className="text-sm flex items-center gap-x-1 text-blue-500 cursor-pointer">
+              <div onClick={handleOpenDrawer} className="text-sm flex items-center gap-x-1 text-primary cursor-pointer">
                 {`مشاهده ${comments.length} دیدگاه`} <AiOutlineLeft className="h-4 w-4" />
               </div>
             </div>
@@ -66,7 +73,7 @@ export default function ProductComments({ productId }: Props) {
 
       {isLoading && (
         <div className="flex items-center justify-center py-10">
-          <div className="text-text/60">در حال بارگذاری دیدگاه ها...</div>
+          <div className="text-text/60">در حال بارگذاری دیدگاه‌ها...</div>
         </div>
       )}
       <div>
@@ -78,10 +85,7 @@ export default function ProductComments({ productId }: Props) {
                 .map((comment) => <DesktopComments key={comment.id} comment={comment} />)}
             </ul>
 
-            <Pagination
-              currentPage={currentPage}
-              totalPages={Math.ceil(comments.filter((c) => c.isActive && c.parentId === null).length / 10)}
-            />
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
           </div>
         </div>
       </div>
