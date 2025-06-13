@@ -24,7 +24,7 @@ export default function DesktopComments({ comment }: Props) {
           </button>
         </div>
         <div className="mb-6 flex items-center gap-x-4 border-b pb-2">
-          <div className={`flex items-center gap-x-2 ${comment.isRecommended ? 'text-primary' : 'text-red-500 dark:text-red-400'}`}>
+          <div className={`flex items-center gap-x-2 ${comment.isRecommended ? 'text-emerald-600' : 'text-red-500 dark:text-red-400'}`}>
             {comment.isRecommended ? <AiOutlineLike className="h-5 w-5" /> : <AiOutlineDislike className="h-5 w-5" />}
             {comment.isRecommended ? 'پیشنهاد میکنم' : 'پیشنهاد نمیکنم'}
           </div>
@@ -36,17 +36,6 @@ export default function DesktopComments({ comment }: Props) {
         </div>
         <div className="mb-6 border-b pb-6">
           <p className="line-clamp-4 text-sm text-text/90">{comment.content}</p>
-        </div>
-        <div className="flex items-center justify-end gap-x-8">
-          <div className="text-sm text-text/60">آیا این دیدگاه برایتان مفید بود؟</div>
-          <button className="flex items-center gap-x-2 text-primary transition-all duration-200 hover:text-emerald-400 dark:hover:text-primary">
-            <span className="text-sm">{comment.rate}</span>
-            <AiOutlineLike className="h-6 w-6" />
-          </button>
-          <button className="flex items-center gap-x-2 text-red-500 transition-all duration-200 hover:text-red-400 dark:text-red-400 dark:hover:text-red-500">
-            <span className="text-sm">{0}</span>
-            <AiOutlineDislike className="h-6 w-6" />
-          </button>
         </div>
       </div>
       {comment.parentId === null && (

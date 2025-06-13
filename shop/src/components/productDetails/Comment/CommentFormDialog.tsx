@@ -2,20 +2,23 @@
 
 import { useRef, useState } from 'react';
 import { MdOutlineAddLocationAlt } from 'react-icons/md';
-import { useAddress } from '@/hooks/reactQuery/useAddress';
-import AddressForm from './CommentForm';
 import Dialog from '@/components/ui/Dialog';
-import { AddressFormType } from '@/types/address.type';
 import { AiOutlineComment } from 'react-icons/ai';
+import CommentForm, { CommentFormikType } from './CommentForm';
+import { useComment } from '@/hooks/reactQuery/useComment';
 
-const CommentFormDialog = () => {
+interface CommentFormDialogProps {
+  productId: number;
+}
+
+const CommentFormDialog = ({ productId }: CommentFormDialogProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const { createAddress, isCreateAddressLoading } = useAddress({});
+  const { createComment, isCreateCommentLoading } = useComment({});
 
-  const handleFormSubmit = async (values: AddressFormType) => {
-    createAddress(
-      values,
+  const handleFormSubmit = async (values: CommentFormikType) => {
+    createComment(
+      { ...values, productId, isRecommended: true },
       () => {
         setIsOpen(false);
         if (formRef.current) {
@@ -42,8 +45,8 @@ const CommentFormDialog = () => {
 
   const actions = (
     <>
-      <button className="btn-primary w-full py-3 text-sm" type="button" onClick={handleSubmit} disabled={isCreateAddressLoading}>
-        {isCreateAddressLoading ? 'در حال ثبت' : 'ارسال دیدگاه'}
+      <button className="btn-primary w-full py-3 text-sm" type="button" onClick={handleSubmit} disabled={isCreateCommentLoading}>
+        {isCreateCommentLoading ? 'در حال ثبت' : 'ارسال دیدگاه'}
       </button>
     </>
   );
@@ -60,7 +63,7 @@ const CommentFormDialog = () => {
 
       <Dialog isOpen={isOpen} onClose={() => setIsOpen(false)} title="افزودن نظر جدید" icon={icon} actions={actions} size="xl">
         <div className="mt-4">
-          <AddressForm onSubmit={handleFormSubmit} ref={formRef} />
+          <CommentForm onSubmit={handleFormSubmit} ref={formRef} />
         </div>
       </Dialog>
     </div>

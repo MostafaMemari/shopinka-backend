@@ -2,19 +2,19 @@
 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { forwardRef, useState } from 'react';
+import { forwardRef } from 'react';
 import TextInput from '@/components/ui/TextInput';
 import SuggestionRadio from './ProductComments/SuggestionRadio';
 
-interface CommentFormType {
+export interface CommentFormikType {
   title: string;
   content: string;
   isRecommended?: boolean;
 }
 
 interface CommentProps {
-  onSubmit: (values: CommentFormType) => Promise<void>;
-  initialValues?: CommentFormType;
+  onSubmit: (values: CommentFormikType) => Promise<void>;
+  initialValues?: CommentFormikType;
   className?: string;
 }
 
@@ -25,7 +25,7 @@ const CommentForm = forwardRef<HTMLFormElement, CommentProps>(
       initialValues = {
         title: '',
         content: '',
-        isRecommended: undefined,
+        isRecommended: true,
       },
       className = '',
     },

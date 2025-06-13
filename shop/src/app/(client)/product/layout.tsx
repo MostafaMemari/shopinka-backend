@@ -8,14 +8,10 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
 
   return (
     <>
-      <Header />
-
       <main className="grow bg-background pb-14 pt-18 lg:pt-36">
         {children}
         {/* <NewestProductsCarousel /> */}
       </main>
-
-      <Footer />
     </>
   );
 }

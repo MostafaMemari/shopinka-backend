@@ -47,11 +47,11 @@ export default function ProductComments({ productId }: Props) {
         <div className="mb-6">
           <div className="flex items-center justify-between gap-x-2 pb-4">
             <div className="hidden md:block">
-              <CommentFormDialog />
+              <CommentFormDialog productId={productId} />
             </div>
             <div className="md:hidden flex justify-between items-center w-full">
               <div>
-                <CommentFormDrawer />
+                <CommentFormDrawer productId={productId} />
               </div>
               <div onClick={handleOpenDrawer} className="text-sm flex items-center gap-x-1 text-blue-500 cursor-pointer">
                 {`مشاهده ${comments.length} دیدگاه`} <AiOutlineLeft className="h-4 w-4" />
