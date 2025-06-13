@@ -1,7 +1,7 @@
 export interface CommentFormType {
   title: string;
   content: string;
-  isRecommended: boolean;
+  isRecommended?: boolean;
   rate?: number;
   productId: number;
   parentId?: number | null;
@@ -15,9 +15,9 @@ export interface CommentItem {
   isRecommended: false;
   rate: number;
   userId: number;
-  productId: number | null;
-  blogId: number | null;
-  parentId: number | null;
+  productId: number;
+  blogId: number;
+  parentId: number;
   replies?: CommentItem[] | [];
   createdAt: string;
   updatedAt: string;

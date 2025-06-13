@@ -9,16 +9,17 @@ import { useComment } from '@/hooks/reactQuery/useComment';
 
 interface ReplyCommentFormDialogProps {
   productId: number;
+  parentId: number;
 }
 
-const ReplyCommentFormDialog = ({ productId }: ReplyCommentFormDialogProps) => {
+const ReplyCommentFormDialog = ({ productId, parentId }: ReplyCommentFormDialogProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const { createComment, isCreateCommentLoading } = useComment({});
 
   const handleFormSubmit = async (values: CommentFormikType) => {
     createComment(
-      { ...values, productId, isRecommended: true },
+      { ...values, productId, isRecommended: true, parentId },
       () => {
         setIsOpen(false);
         if (formRef.current) {

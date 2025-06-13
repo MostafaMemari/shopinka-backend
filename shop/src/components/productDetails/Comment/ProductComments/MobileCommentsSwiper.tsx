@@ -6,7 +6,7 @@ import 'swiper/css';
 import 'swiper/css/free-mode';
 import CommentsDrawer from './CommentsDrawer';
 import { useEffect, useState } from 'react';
-import { AiOutlineLike, AiOutlineDislike, AiOutlineLeft } from 'react-icons/ai';
+import { AiOutlineLeft } from 'react-icons/ai';
 import { CommentItem } from '@/types/commentType';
 import Recommendation from './Recommendation';
 
@@ -92,7 +92,7 @@ export default function MobileCommentsSwiper({ comments, onOpen, onClose, isOpen
         </SwiperSlide>
       </Swiper>
 
-      <CommentsDrawer isOpen={isOpenDrawer} onOpen={drawerHandlers.onOpen} onClose={drawerHandlers.onClose} comments={comments} />
+      <CommentsDrawer isOpen={isOpenDrawer} onOpen={drawerHandlers.onOpen} onClose={drawerHandlers.onClose} />
     </div>
   );
 }

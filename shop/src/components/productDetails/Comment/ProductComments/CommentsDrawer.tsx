@@ -5,15 +5,26 @@ import { CommentItem } from '@/types/commentType';
 import MobileDrawer from '@/components/MobileDrawer';
 import Recommendation from './Recommendation';
 import ReplyCommentFormDrawer from '../ReplyCommentFormDrawer';
+import { useComment } from '@/hooks/reactQuery/useComment';
 
 interface CommentsDrawerProps {
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
-  comments: CommentItem[];
 }
 
-function CommentsDrawer({ isOpen, onOpen, onClose, comments }: CommentsDrawerProps) {
+function CommentsDrawer({ isOpen, onOpen, onClose }: CommentsDrawerProps) {
+  const { data, isLoading } = useComment({});
+
+  const comments: CommentItem[] = data?.items || [];
+  if (isLoading) {
+    return (
+      <MobileDrawer isOpen={isOpen} onClose={onClose} onOpen={onOpen} title="دیدگاه ها">
+        <p className="text-center text-text/60">در حال بارگذاری دیدگاه ها...</p>
+      </MobileDrawer>
+    );
+  }
+
   if (!comments || comments.length === 0) {
     return (
       <MobileDrawer isOpen={isOpen} onClose={onClose} onOpen={onOpen} title="دیدگاه ها">
@@ -33,7 +44,7 @@ function CommentsDrawer({ isOpen, onOpen, onClose, comments }: CommentsDrawerPro
                 <div className="mb-4 flex items-center justify-between">
                   <Recommendation isRecommended={comment.isRecommended} />
 
-                  <ReplyCommentFormDrawer productId={comment.id} />
+                  <ReplyCommentFormDrawer productId={comment.productId} parentId={comment.id} />
                 </div>
                 <div className="grow space-y-2">
                   <h5 className="text-sm leading-relaxed">{comment.title}</h5>

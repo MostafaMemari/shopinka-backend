@@ -8,16 +8,17 @@ import { AiOutlineLeft } from 'react-icons/ai';
 
 interface ReplyCommentFormDrawerProps {
   productId: number;
+  parentId: number;
 }
 
-const ReplyCommentFormDrawer = ({ productId }: ReplyCommentFormDrawerProps) => {
+const ReplyCommentFormDrawer = ({ productId, parentId }: ReplyCommentFormDrawerProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const { createComment, isCreateCommentLoading } = useComment({});
 
   const handleFormSubmit = async (values: CommentFormikType) => {
     createComment(
-      { ...values, productId, isRecommended: true },
+      { ...values, productId, parentId },
       () => {
         setIsOpen(false);
         if (formRef.current) {
