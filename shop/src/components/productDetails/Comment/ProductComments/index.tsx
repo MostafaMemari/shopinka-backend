@@ -6,10 +6,10 @@ import Pagination from '@/components/ui/Pagination';
 import DesktopComments from './DesktopComments';
 import { CommentItem } from '@/types/commentType';
 import { useComment } from '@/hooks/reactQuery/comment/useComment';
-import CartStatus from '@/components/CartStatus copy';
 import CommentFormDialog from '../AddReplyComment/CreateCommentFormDialog';
 import CommentFormDrawer from '../AddReplyComment/CreateCommentFormDrawer';
 import { AiOutlineLeft } from 'react-icons/ai';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 interface Props {
   productId: number;
@@ -35,18 +35,28 @@ export default function ProductComments({ productId }: Props) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  if (comments?.length === 0) {
+    return (
+      <div className="mb-6">
+        <div className="text-center text-gray-600 dark:text-gray-300 mt-10">
+          <p className="mb-4">دیدگاهی برای این محصول ثبت نشده است.</p>
+          <div className="flex justify-center">
+            <div className="hidden md:block">
+              <CommentFormDialog productId={productId} />
+            </div>
+            <div className="md:hidden">
+              <CommentFormDrawer productId={productId} />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="py-2" id="comments">
-      {isLoading || error ? (
-        <CartStatus
-          cartItems={[]}
-          error={error}
-          isLoading={isLoading}
-          emptyMessage="هیچ نظری ثبت نشده است!"
-          errorMessage="خطا در بارگذاری نظرات"
-          shopButtonText="رفتن به فروشگاه"
-          shopLink="/shop"
-        />
+      {isLoading ? (
+        <LoadingSpinner loadingMessage="در حال بارگذاری دیدگاه‌ها..." />
       ) : (
         <div className="mb-6">
           <div className="flex items-center justify-between gap-x-2 pb-4">
@@ -75,11 +85,12 @@ export default function ProductComments({ productId }: Props) {
         />
       )}
 
-      {isLoading && (
-        <div className="flex items-center justify-center py-10">
-          <div className="text-text/60">در حال بارگذاری دیدگاه‌ها...</div>
+      {error && (
+        <div className="text-center text-red-500 py-4">
+          <p>خطا در بارگذاری دیدگاه‌ها: {error.message}</p>
         </div>
       )}
+
       <div>
         <div className="order-first col-span-12 mb-10 md:order-last md:col-span-8 lg:col-span-9" id="commentsContainer">
           <div className="hidden md:block">
@@ -89,7 +100,7 @@ export default function ProductComments({ productId }: Props) {
               ))}
             </ul>
 
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            {comments.length > 0 && <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />}
           </div>
         </div>
       </div>

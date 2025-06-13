@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { FaSpinner } from 'react-icons/fa';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
 import PrimaryButton from './PrimaryButton';
 import Link from 'next/link';
+import LoadingSpinner from './ui/LoadingSpinner';
 
 interface CartItem {
   id: string | number;
@@ -39,10 +39,7 @@ const CartStatus: React.FC<CartStatusProps> = ({
     <div className="col-span-12">
       <div className="rounded-lg p-4 min-h-[200px] flex items-center justify-center">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center gap-4">
-            <FaSpinner className="h-10 w-10 animate-spin text-primary" />
-            {loadingMessage && <p className="text-sm text-gray-500">{loadingMessage}</p>}
-          </div>
+          <LoadingSpinner loadingMessage={loadingMessage} />
         ) : error ? (
           <div className="flex flex-col items-center justify-center gap-4">
             {errorMessage && <p className="text-sm text-red-500">{errorMessage}</p>}
