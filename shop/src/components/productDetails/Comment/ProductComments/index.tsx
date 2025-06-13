@@ -24,7 +24,7 @@ export default function ProductComments({ productId }: Props) {
   });
 
   const comments: CommentItem[] = data?.items || [];
-  const totalPages = data?.pager?.totalPages || 1;
+  const commentPager = data?.pager ?? { totalCount: 0, totalPages: 1 };
 
   const handleOpenDrawer = () => {
     setIsSwiperOpen(true);
@@ -79,7 +79,7 @@ export default function ProductComments({ productId }: Props) {
         <MobileCommentsSwiper
           onOpen={handleOpenDrawer}
           onClose={() => setIsSwiperOpen(false)}
-          comments={comments}
+          comments={comments.slice(0, 5)}
           isOpen={isSwiperOpen}
           productId={productId}
         />
@@ -100,7 +100,9 @@ export default function ProductComments({ productId }: Props) {
               ))}
             </ul>
 
-            {comments.length > 0 && <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />}
+            {commentPager?.totalCount > 0 && commentPager?.totalPages > 1 && (
+              <Pagination currentPage={currentPage} totalPages={commentPager?.totalPages} onPageChange={handlePageChange} />
+            )}
           </div>
         </div>
       </div>

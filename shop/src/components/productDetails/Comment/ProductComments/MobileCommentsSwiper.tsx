@@ -73,10 +73,6 @@ export default function MobileCommentsSwiper({ comments, onOpen, onClose, isOpen
         <SwiperSlide>
           <div className="flex h-56 items-center justify-center">
             <button
-              aria-controls="mobile-comments-drawer-navigation"
-              data-drawer-show="mobile-comments-drawer-navigation"
-              data-drawer-placement="bottom"
-              data-drawer-target="mobile-comments-drawer-navigation"
               type="button"
               onClick={drawerHandlers.onOpen}
               className="flex flex-col items-center justify-center gap-y-2 text-primary"

@@ -2,7 +2,7 @@
 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { forwardRef } from 'react';
+import { forwardRef, useEffect, useRef } from 'react';
 import TextInput from '@/components/ui/TextInput';
 import SuggestionRadio from './AddReplyComment/SuggestionRadio';
 
@@ -43,10 +43,28 @@ const CommentForm = forwardRef<HTMLFormElement, CommentProps>(
       },
     });
 
+    // Ref برای فیلد title
+    const titleInputRef = useRef<HTMLInputElement>(null);
+
+    // فوکوس خودکار روی فیلد title موقع لود
+    useEffect(() => {
+      if (titleInputRef.current) {
+        titleInputRef.current.focus();
+      }
+    }, []);
+
     return (
       <form ref={ref} onSubmit={formik.handleSubmit} className={`space-y-4 p-4 text-right ${className}`.trim()} dir="rtl">
         <div className="grid grid-cols-2 gap-4">
-          <TextInput id="title" name="title" isRequired label="عنوان دیدگاه" formik={formik} className="col-span-2" />
+          <TextInput
+            id="title"
+            name="title"
+            isRequired
+            label="عنوان دیدگاه"
+            formik={formik}
+            className="col-span-2 mb-1"
+            inputRef={titleInputRef}
+          />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="col-span-2">
@@ -60,22 +78,16 @@ const CommentForm = forwardRef<HTMLFormElement, CommentProps>(
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="col-span-2">
-            <label htmlFor="content" className="relative block rounded-lg border shadow-base">
-              <textarea
-                id="content"
-                name="content"
-                rows={3}
-                className="main-scroll peer w-full rounded-lg border-none bg-transparent px-4 py-3 placeholder-transparent focus:outline-hidden focus:ring-0"
-                placeholder="متن دیدگاه"
-                value={formik.values.content}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              ></textarea>
-              <span className="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-muted px-2 py-0.5 text-sm text-text/90 transition-all peer-placeholder-shown:top-6 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm">
-                متن دیدگاه
-              </span>
-            </label>
-            {formik.touched.content && formik.errors.content && <div className="text-red-500 text-sm mt-1">{formik.errors.content}</div>}
+            <TextInput
+              id="content"
+              name="content"
+              type="textarea"
+              label="متن دیدگاه"
+              isRequired
+              rows={3}
+              formik={formik}
+              className="col-span-2 mb-1"
+            />
           </div>
         </div>
       </form>

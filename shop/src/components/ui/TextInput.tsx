@@ -13,6 +13,7 @@ interface TextInputProps {
   placeholder?: string;
   isRequired?: boolean;
   className?: string;
+  inputRef?: React.Ref<HTMLInputElement> | React.Ref<HTMLTextAreaElement>;
 }
 
 const TextInput: React.FC<TextInputProps> = ({
@@ -26,6 +27,7 @@ const TextInput: React.FC<TextInputProps> = ({
   placeholder,
   isRequired = false,
   className = '',
+  inputRef,
 }) => {
   const hasError = formik.touched[name] && formik.errors[name];
 
@@ -44,13 +46,17 @@ const TextInput: React.FC<TextInputProps> = ({
   };
 
   return (
-    <div className={`mb-4 text-right ${className}`}>
+    <div className={`text-right ${className}`}>
       <label htmlFor={id} className="mb-1 block text-sm font-medium text-gray-700">
         {label}
         {isRequired && <span className="text-red-500"> *</span>}
       </label>
 
-      {type === 'textarea' ? <textarea {...commonProps} rows={rows} /> : <input {...commonProps} type={type} />}
+      {type === 'textarea' ? (
+        <textarea ref={inputRef as React.Ref<HTMLTextAreaElement>} {...commonProps} rows={rows} />
+      ) : (
+        <input {...commonProps} ref={inputRef as React.Ref<HTMLInputElement>} type={type} />
+      )}
 
       {hasError && <p className="text-xs text-red-500 mt-1">{formik.errors[name]}</p>}
     </div>
