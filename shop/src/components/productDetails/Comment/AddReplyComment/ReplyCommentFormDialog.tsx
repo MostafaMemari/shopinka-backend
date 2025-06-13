@@ -1,11 +1,10 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { MdOutlineAddLocationAlt } from 'react-icons/md';
 import Dialog from '@/components/ui/Dialog';
-import { AiOutlineComment, AiOutlineLeft } from 'react-icons/ai';
-import CommentForm, { CommentFormikType } from './CommentForm';
-import { useComment } from '@/hooks/reactQuery/useComment';
+import { AiOutlineLeft } from 'react-icons/ai';
+import CommentForm, { CommentFormikType } from '../CommentForm';
+import { useCreateComment } from '@/hooks/reactQuery/comment/useCreateComment';
 
 interface ReplyCommentFormDialogProps {
   productId: number;
@@ -16,7 +15,7 @@ interface ReplyCommentFormDialogProps {
 const ReplyCommentFormDialog = ({ productId, parentId, commentTitle }: ReplyCommentFormDialogProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const { createComment, isCreateCommentLoading } = useComment({});
+  const { createComment, isCreateCommentLoading } = useCreateComment();
 
   const handleFormSubmit = async (values: CommentFormikType) => {
     createComment(

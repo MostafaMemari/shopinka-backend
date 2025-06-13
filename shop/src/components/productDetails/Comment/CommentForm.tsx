@@ -4,7 +4,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { forwardRef } from 'react';
 import TextInput from '@/components/ui/TextInput';
-import SuggestionRadio from './ProductComments/SuggestionRadio';
+import SuggestionRadio from './AddReplyComment/SuggestionRadio';
 
 export interface CommentFormikType {
   title: string;

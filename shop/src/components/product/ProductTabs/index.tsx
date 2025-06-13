@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import ProductDescription from './ProductDescription';
 import ProductSpecifications from './ProductSpecifications';
 import ProductComments from '@/components/productDetails/Comment/ProductComments';
-import { useComment } from '@/hooks/reactQuery/useComment';
+import { useComment } from '@/hooks/reactQuery/comment/useComment';
 
 interface Tab {
   id: string;
@@ -22,7 +22,7 @@ interface Props {
 }
 
 export default function ProductTabs({ description, specifications, productId }: Props) {
-  const { data, isLoading } = useComment({ params: { productId } });
+  const { data, isLoading } = useComment({ params: { productId, page: 1 } });
 
   const tabs: Tab[] = [
     { id: 'description', title: 'معرفی' },

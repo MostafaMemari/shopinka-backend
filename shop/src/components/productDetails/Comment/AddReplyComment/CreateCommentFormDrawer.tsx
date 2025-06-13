@@ -2,9 +2,9 @@
 
 import { useRef, useState } from 'react';
 import MobileDrawer from '@/components/MobileDrawer';
-import CommentForm, { CommentFormikType } from './CommentForm';
-import { useComment } from '@/hooks/reactQuery/useComment';
+import CommentForm, { CommentFormikType } from '../CommentForm';
 import { AiOutlineComment } from 'react-icons/ai';
+import { useCreateComment } from '@/hooks/reactQuery/comment/useCreateComment';
 
 interface CommentFormDrawerProps {
   productId: number;
@@ -13,7 +13,7 @@ interface CommentFormDrawerProps {
 const CommentFormDrawer = ({ productId }: CommentFormDrawerProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const { createComment, isCreateCommentLoading } = useComment({});
+  const { createComment, isCreateCommentLoading } = useCreateComment();
 
   const handleFormSubmit = async (values: CommentFormikType) => {
     createComment(

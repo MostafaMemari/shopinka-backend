@@ -8,7 +8,7 @@ export const getComments = async (params?: CommentParams): Promise<CommentRespon
   const response = await ofetch(`/comment`, {
     baseURL: process.env.API_BASE_URL,
     method: 'GET',
-    query: { ...params },
+    query: { repliesDepth: 1, includeReplies: true, ...params },
   });
 
   return {

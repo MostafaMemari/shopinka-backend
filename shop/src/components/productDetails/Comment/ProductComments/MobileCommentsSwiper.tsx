@@ -16,9 +16,10 @@ interface Props {
   onOpen?: () => void;
   onClose?: () => void;
   isOpen: boolean;
+  productId: number;
 }
 
-export default function MobileCommentsSwiper({ comments, onOpen, onClose, isOpen }: Props) {
+export default function MobileCommentsSwiper({ comments, onOpen, onClose, isOpen, productId }: Props) {
   const [isOpenDrawer, setIsOpenDrawer] = useState(isOpen);
 
   useEffect(() => {
@@ -88,7 +89,8 @@ export default function MobileCommentsSwiper({ comments, onOpen, onClose, isOpen
           </div>
         </SwiperSlide>
       </Swiper>
-      <CommentsDrawer isOpen={isOpenDrawer} onOpen={drawerHandlers.onOpen} onClose={drawerHandlers.onClose} />
+
+      <CommentsDrawer isOpen={isOpenDrawer} onOpen={drawerHandlers.onOpen} onClose={drawerHandlers.onClose} productId={productId} />
     </div>
   );
 }

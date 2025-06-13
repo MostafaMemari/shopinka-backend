@@ -5,10 +5,10 @@ import MobileCommentsSwiper from './MobileCommentsSwiper';
 import Pagination from '@/components/ui/Pagination';
 import DesktopComments from './DesktopComments';
 import { CommentItem } from '@/types/commentType';
-import { useComment } from '@/hooks/reactQuery/useComment';
+import { useComment } from '@/hooks/reactQuery/comment/useComment';
 import CartStatus from '@/components/CartStatus copy';
-import CommentFormDialog from '../CreateCommentFormDialog';
-import CommentFormDrawer from '../CreateCommentFormDrawer';
+import CommentFormDialog from '../AddReplyComment/CreateCommentFormDialog';
+import CommentFormDrawer from '../AddReplyComment/CreateCommentFormDrawer';
 import { AiOutlineLeft } from 'react-icons/ai';
 
 interface Props {
@@ -20,9 +20,7 @@ export default function ProductComments({ productId }: Props) {
   const [isSwiperOpen, setIsSwiperOpen] = useState(false);
 
   const { data, isLoading, error } = useComment({
-    params: { productId, page: currentPage, take: 10, repliesDepth: 1, includeReplies: true },
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
+    params: { productId, page: currentPage },
   });
 
   const comments: CommentItem[] = data?.items || [];
@@ -68,7 +66,13 @@ export default function ProductComments({ productId }: Props) {
       )}
 
       {comments?.length !== 0 && (
-        <MobileCommentsSwiper onOpen={handleOpenDrawer} onClose={() => setIsSwiperOpen(false)} comments={comments} isOpen={isSwiperOpen} />
+        <MobileCommentsSwiper
+          onOpen={handleOpenDrawer}
+          onClose={() => setIsSwiperOpen(false)}
+          comments={comments}
+          isOpen={isSwiperOpen}
+          productId={productId}
+        />
       )}
 
       {isLoading && (

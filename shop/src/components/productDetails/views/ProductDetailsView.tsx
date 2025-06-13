@@ -13,7 +13,7 @@ import AddToCartButtonDesktop from '@/components/cart/AddToCartButton/AddToCartB
 import PriceDisplay from '../PriceDisplay';
 import { FC } from 'react';
 import ProductSku from '../ProductSku';
-import ProductCommentCount from '../ProductCommentCount';
+import ProductCommentCount from '../Comment/ProductComments/ProductCommentCount';
 import ProductGuaranteeBadge from '../ProductGuaranteeBadge';
 
 import MobileHeader from '../MobileProductHeader';

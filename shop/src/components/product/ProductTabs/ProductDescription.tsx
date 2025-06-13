@@ -35,7 +35,7 @@ export default function ProductDescription({ description }: Props) {
       >
         <div ref={descriptionRef} className="space-y-6 text-sm">
           {description ? (
-            <div className="prose prose-sm max-w-none text-text/80" dangerouslySetInnerHTML={{ __html: description }} />
+            <div className="prose prose-sm max-w-none text-text/80 leading-7" dangerouslySetInnerHTML={{ __html: description }} />
           ) : (
             <p className="text-text/60">توضیحاتی برای نمایش وجود ندارد.</p>
           )}

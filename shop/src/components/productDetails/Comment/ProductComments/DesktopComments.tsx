@@ -1,8 +1,8 @@
 'use client';
 
 import { CommentItem } from '@/types/commentType';
-import ReplyCommentFormDialog from '../ReplyCommentFormDialog';
-import ReplyCommentFormDrawer from '../ReplyCommentFormDrawer';
+import ReplyCommentFormDialog from '../AddReplyComment/ReplyCommentFormDialog';
+import ReplyCommentFormDrawer from '../AddReplyComment/ReplyCommentFormDrawer';
 import Recommendation from './Recommendation';
 
 interface Props {
@@ -13,7 +13,6 @@ function CommentBox({
   title,
   content,
   createdAt,
-  userId,
   isRecommended,
   isReply = false,
   replyActions,
