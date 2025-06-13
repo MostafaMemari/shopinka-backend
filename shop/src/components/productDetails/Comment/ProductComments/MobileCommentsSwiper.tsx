@@ -8,6 +8,7 @@ import CommentsDrawer from './CommentsDrawer';
 import { useEffect, useState } from 'react';
 import { AiOutlineLike, AiOutlineDislike, AiOutlineLeft } from 'react-icons/ai';
 import { CommentItem } from '@/types/commentType';
+import Recommendation from './Recommendation';
 
 interface Props {
   comments: CommentItem[];
@@ -53,19 +54,7 @@ export default function MobileCommentsSwiper({ comments, onOpen, onClose, isOpen
             <SwiperSlide key={comment.id}>
               <div className="flex h-52 flex-col rounded-lg border px-4 py-6">
                 <div className="mb-4 flex items-center justify-between gap-2">
-                  <div className={`flex items-center gap-x-2 ${comment.isRecommended ? 'text-primary' : 'text-red-500 dark:text-red-400'}`}>
-                    {comment.isRecommended ? <AiOutlineLike className="h-5 w-5" /> : <AiOutlineDislike className="h-5 w-5" />}
-                    {comment.isRecommended ? 'پیشنهاد میکنم' : 'پیشنهاد نمیکنم'}
-                  </div>
-                  <button
-                    data-modal-target="submit-answers-to-comments-drawer-navigation"
-                    data-modal-toggle="submit-answers-to-comments-drawer-navigation"
-                    type="button"
-                    className="btn-secondary-nobg"
-                  >
-                    پاسخ
-                    <AiOutlineLeft />
-                  </button>
+                  <Recommendation isRecommended={comment.isRecommended} />
                 </div>
                 <div className="grow space-y-2">
                   <h5 className="text-sm leading-relaxed">{comment.title}</h5>

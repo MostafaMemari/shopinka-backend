@@ -2,6 +2,9 @@
 
 import { AiOutlineLike, AiOutlineDislike, AiOutlineLeft } from 'react-icons/ai';
 import { CommentItem } from '@/types/commentType';
+import ReplyCommentFormDialog from '../ReplyCommentFormDialog';
+import ReplyCommentFormDrawer from '../ReplyCommentFormDrawer';
+import Recommendation from './Recommendation';
 
 interface Props {
   comment: CommentItem;
@@ -13,21 +16,17 @@ export default function DesktopComments({ comment }: Props) {
       <div className="py-6">
         <div className="flex items-center justify-between gap-2">
           <h5 className="mb-4 leading-relaxed xl:text-lg">{comment.title}</h5>
-          <button
-            data-modal-target="submit-answers-to-comments-drawer-navigation"
-            data-modal-toggle="submit-answers-to-comments-drawer-navigation"
-            type="button"
-            className="btn-secondary-nobg"
-          >
-            پاسخ
-            <AiOutlineLeft className="h-5 w-5" />
-          </button>
+          <>
+            <div className="hidden md:block">
+              <ReplyCommentFormDialog productId={comment.id} />
+            </div>
+            <div className="md:hidden flex justify-between items-center w-full">
+              <ReplyCommentFormDrawer productId={comment.id} />
+            </div>
+          </>
         </div>
         <div className="mb-6 flex items-center gap-x-4 border-b pb-2">
-          <div className={`flex items-center gap-x-2 ${comment.isRecommended ? 'text-emerald-600' : 'text-red-500 dark:text-red-400'}`}>
-            {comment.isRecommended ? <AiOutlineLike className="h-5 w-5" /> : <AiOutlineDislike className="h-5 w-5" />}
-            {comment.isRecommended ? 'پیشنهاد میکنم' : 'پیشنهاد نمیکنم'}
-          </div>
+          <Recommendation isRecommended={comment.isRecommended} />
           <div className="flex items-center gap-x-2">
             <div className="text-sm text-text/60">{new Date(comment.createdAt).toLocaleDateString('fa-IR')}</div>
             <span className="h-3 w-px rounded-full bg-background dark:bg-muted/10"></span>

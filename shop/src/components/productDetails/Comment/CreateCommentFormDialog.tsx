@@ -32,24 +32,8 @@ const CommentFormDialog = ({ productId }: CommentFormDialogProps) => {
   };
 
   const handleSubmit = () => {
-    if (formRef.current) {
-      formRef.current.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-    }
+    if (formRef.current) formRef.current.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
   };
-
-  const icon = (
-    <div className="bg-primary/10 w-full rounded-full">
-      <MdOutlineAddLocationAlt className="h-6 w-6 text-primary" />
-    </div>
-  );
-
-  const actions = (
-    <>
-      <button className="btn-primary w-full py-3 text-sm" type="button" onClick={handleSubmit} disabled={isCreateCommentLoading}>
-        {isCreateCommentLoading ? 'در حال ثبت' : 'ارسال دیدگاه'}
-      </button>
-    </>
-  );
 
   return (
     <div>
@@ -61,7 +45,22 @@ const CommentFormDialog = ({ productId }: CommentFormDialogProps) => {
         <span>ثبت دیدگاه جدید</span>
       </button>
 
-      <Dialog isOpen={isOpen} onClose={() => setIsOpen(false)} title="افزودن نظر جدید" icon={icon} actions={actions} size="xl">
+      <Dialog
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        title="افزودن نظر جدید"
+        icon={
+          <div className="bg-primary/10 w-full rounded-full">
+            <MdOutlineAddLocationAlt className="h-6 w-6 text-primary" />
+          </div>
+        }
+        actions={
+          <button className="btn-primary w-full py-3 text-sm" type="button" onClick={handleSubmit} disabled={isCreateCommentLoading}>
+            {isCreateCommentLoading ? 'در حال ثبت' : 'ارسال دیدگاه'}
+          </button>
+        }
+        size="xl"
+      >
         <div className="mt-4">
           <CommentForm onSubmit={handleFormSubmit} ref={formRef} />
         </div>

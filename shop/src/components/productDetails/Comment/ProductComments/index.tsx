@@ -7,9 +7,8 @@ import DesktopComments from './DesktopComments';
 import { CommentItem } from '@/types/commentType';
 import { useComment } from '@/hooks/reactQuery/useComment';
 import CartStatus from '@/components/CartStatus copy';
-import { MdOutlineComment } from 'react-icons/md';
-import CommentFormDialog from '../CommentFormDialog';
-import CommentFormDrawer from '../CommentFormDrawer';
+import CommentFormDialog from '../CreateCommentFormDialog';
+import CommentFormDrawer from '../CreateCommentFormDrawer';
 import { AiOutlineLeft } from 'react-icons/ai';
 
 interface Props {
