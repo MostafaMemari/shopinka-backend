@@ -20,7 +20,7 @@ export interface CommentItem {
   productId: number;
   blogId: number;
   parentId: number;
-  replies?: CommentItem[] | [];
+  replies: CommentItem[] | [];
   createdAt: string;
   updatedAt: string;
 }

@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { AiOutlineLeft } from 'react-icons/ai';
 import { CommentItem } from '@/types/commentType';
 import Recommendation from './Recommendation';
+import { FaUserCircle } from 'react-icons/fa';
 
 interface Props {
   comments: CommentItem[];
@@ -52,28 +53,24 @@ export default function MobileCommentsSwiper({ comments, onOpen, onClose, isOpen
           .filter((comment) => comment.isActive)
           .map((comment) => (
             <SwiperSlide key={comment.id}>
-              <div className="flex h-52 flex-col rounded-lg border px-4 py-6">
-                <div className="mb-4 flex items-center justify-between gap-2">
+              <div className="flex flex-col h-56 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-5 shadow-md transition hover:shadow-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <FaUserCircle className="text-gray-400 dark:text-zinc-500 w-6 h-6" />
+                    <span className="bg-gray-100 text-xs rounded-full px-2 py-0.5 flex items-center gap-1">{'کاربر'}</span>
+                  </div>
                   <Recommendation isRecommended={comment.isRecommended} />
                 </div>
-                <div className="grow space-y-2">
-                  <h5 className="text-sm leading-relaxed">{comment.title}</h5>
-                  <p className="line-clamp-4 text-sm leading-relaxed text-text/90">{comment.content}</p>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-x-4">
-                    <div className="text-xs text-text/60">{comment.userId ? 'خریدار' : 'کاربر'}</div>
-                  </div>
-                  <div className="flex items-center gap-x-2">
-                    <div className="text-xs text-text/60">{new Date(comment.createdAt).toLocaleDateString('fa-IR')}</div>
-                  </div>
+                <h5 className="text-base font-bold text-primary mb-1 truncate">{comment.title}</h5>
+                <p className="line-clamp-4 text-sm text-text/90 mb-2">{comment.content}</p>
+                <div className="flex items-center justify-between mt-auto pt-3 border-t border-dashed border-zinc-200 dark:border-zinc-700">
+                  <span className="text-xs text-text/60">{new Date(comment.createdAt).toLocaleDateString('fa-IR')}</span>
                 </div>
               </div>
             </SwiperSlide>
           ))}
-
         <SwiperSlide>
-          <div className="flex h-64 items-center justify-center">
+          <div className="flex h-56 items-center justify-center">
             <button
               aria-controls="mobile-comments-drawer-navigation"
               data-drawer-show="mobile-comments-drawer-navigation"
@@ -81,17 +78,16 @@ export default function MobileCommentsSwiper({ comments, onOpen, onClose, isOpen
               data-drawer-target="mobile-comments-drawer-navigation"
               type="button"
               onClick={drawerHandlers.onOpen}
-              className="flex flex-col items-center justify-center gap-y-4 text-primary"
+              className="flex flex-col items-center justify-center gap-y-2 text-primary"
             >
-              <div className="rounded-full border border-primary p-2">
+              <div className="rounded-full border border-primary p-2 bg-primary/10">
                 <AiOutlineLeft className="h-4 w-4" />
               </div>
-              <div>مشاهده بیشتر</div>
+              <div className="text-sm font-semibold">مشاهده بیشتر</div>
             </button>
           </div>
         </SwiperSlide>
       </Swiper>
-
       <CommentsDrawer isOpen={isOpenDrawer} onOpen={drawerHandlers.onOpen} onClose={drawerHandlers.onClose} />
     </div>
   );

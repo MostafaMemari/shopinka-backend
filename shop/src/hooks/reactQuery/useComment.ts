@@ -21,7 +21,7 @@ export function useComment({
 }: QueryOptions) {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error, refetch } = useQuery<CommentResponse, Error>({
+  const { data, isLoading, error, refetch, isFetching } = useQuery<CommentResponse, Error>({
     queryKey: [QueryKeys.Comments, params],
     queryFn: () => getComments(params),
     enabled,
@@ -36,6 +36,7 @@ export function useComment({
     data,
     isLoading,
     error,
+    isFetching,
     refetch,
 
     createComment: (data: CommentFormType, onSuccess?: () => void, onError?: (error: any) => void) => {

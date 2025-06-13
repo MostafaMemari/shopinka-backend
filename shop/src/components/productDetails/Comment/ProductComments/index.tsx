@@ -80,9 +80,9 @@ export default function ProductComments({ productId }: Props) {
         <div className="order-first col-span-12 mb-10 md:order-last md:col-span-8 lg:col-span-9" id="commentsContainer">
           <div className="hidden md:block">
             <ul className="mb-8 space-y-4 divide-gray-200 dark:divide-white/10">
-              {comments
-                ?.filter((comment) => comment.isActive && comment.parentId === null)
-                .map((comment) => <DesktopComments key={comment.id} comment={comment} />)}
+              {comments.map((comment) => (
+                <DesktopComments key={comment.id} comment={comment} />
+              ))}
             </ul>
 
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
