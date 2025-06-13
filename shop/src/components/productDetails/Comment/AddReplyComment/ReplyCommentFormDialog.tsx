@@ -5,6 +5,9 @@ import Dialog from '@/components/ui/Dialog';
 import { AiOutlineLeft } from 'react-icons/ai';
 import CommentForm, { CommentFormikType } from '../CommentForm';
 import { useCreateComment } from '@/hooks/reactQuery/comment/useCreateComment';
+import { usePathname } from 'next/navigation';
+import { useAuth } from '@/hooks/auth/useAuth';
+import Link from 'next/link';
 
 interface ReplyCommentFormDialogProps {
   productId: number;
@@ -16,6 +19,9 @@ const ReplyCommentFormDialog = ({ productId, parentId, commentTitle }: ReplyComm
   const formRef = useRef<HTMLFormElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const { createComment, isCreateCommentLoading } = useCreateComment();
+
+  const pathname = usePathname();
+  const { isLogin } = useAuth();
 
   const handleFormSubmit = async (values: CommentFormikType) => {
     createComment(
@@ -38,10 +44,19 @@ const ReplyCommentFormDialog = ({ productId, parentId, commentTitle }: ReplyComm
 
   return (
     <div>
-      <button type="button" onClick={() => setIsOpen(true)} className="btn-secondary-nobg cursor-pointer">
-        پاسخ
-        <AiOutlineLeft className="h-5 w-5" />
-      </button>
+      {isLogin ? (
+        <button type="button" onClick={() => setIsOpen(true)} className="btn-secondary-nobg cursor-pointer">
+          پاسخ
+          <AiOutlineLeft className="h-5 w-5" />
+        </button>
+      ) : (
+        <Link href={`/login/?backUrl=${pathname}`}>
+          <button type="button" onClick={() => setIsOpen(true)} className="btn-secondary-nobg cursor-pointer">
+            پاسخ
+            <AiOutlineLeft className="h-5 w-5" />
+          </button>
+        </Link>
+      )}
 
       <Dialog
         isOpen={isOpen}

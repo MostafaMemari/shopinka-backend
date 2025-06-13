@@ -5,6 +5,9 @@ import MobileDrawer from '@/components/MobileDrawer';
 import CommentForm, { CommentFormikType } from '../CommentForm';
 import { AiOutlineLeft } from 'react-icons/ai';
 import { useCreateComment } from '@/hooks/reactQuery/comment/useCreateComment';
+import { usePathname } from 'next/navigation';
+import { useAuth } from '@/hooks/auth/useAuth';
+import Link from 'next/link';
 
 interface ReplyCommentFormDrawerProps {
   productId: number;
@@ -16,6 +19,9 @@ const ReplyCommentFormDrawer = ({ productId, parentId, commentTitle }: ReplyComm
   const formRef = useRef<HTMLFormElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const { createComment, isCreateCommentLoading } = useCreateComment();
+
+  const pathname = usePathname();
+  const { isLogin } = useAuth();
 
   const handleFormSubmit = async (values: CommentFormikType) => {
     createComment(
@@ -46,10 +52,21 @@ const ReplyCommentFormDrawer = ({ productId, parentId, commentTitle }: ReplyComm
         onOpen={() => setIsOpen(true)}
         onClose={() => setIsOpen(false)}
         triggerButton={
-          <button type="button" className="btn-secondary-nobg cursor-pointer">
-            پاسخ
-            <AiOutlineLeft className="h-5 w-5" />
-          </button>
+          <>
+            {isLogin ? (
+              <button onClick={() => setIsOpen(true)} type="button" className="btn-secondary-nobg cursor-pointer">
+                پاسخ
+                <AiOutlineLeft className="h-5 w-5" />
+              </button>
+            ) : (
+              <Link href={`/login/?backUrl=${pathname}`}>
+                <button type="button" className="btn-secondary-nobg cursor-pointer">
+                  پاسخ
+                  <AiOutlineLeft className="h-5 w-5" />
+                </button>
+              </Link>
+            )}
+          </>
         }
         footerActions={
           <button className="btn-primary w-full py-3 text-sm " type="button" onClick={handleSubmit} disabled={isCreateCommentLoading}>

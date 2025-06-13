@@ -6,6 +6,9 @@ import Dialog from '@/components/ui/Dialog';
 import { AiOutlineComment } from 'react-icons/ai';
 import CommentForm, { CommentFormikType } from '../CommentForm';
 import { useCreateComment } from '@/hooks/reactQuery/comment/useCreateComment';
+import { useAuth } from '@/hooks/auth/useAuth';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 interface CommentFormDialogProps {
   productId: number;
@@ -15,6 +18,9 @@ const CommentFormDialog = ({ productId }: CommentFormDialogProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const { createComment, isCreateCommentLoading } = useCreateComment();
+
+  const pathname = usePathname();
+  const { isLogin } = useAuth();
 
   const handleFormSubmit = async (values: CommentFormikType) => {
     createComment(
@@ -37,13 +43,22 @@ const CommentFormDialog = ({ productId }: CommentFormDialogProps) => {
 
   return (
     <div>
-      <button
-        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary-600 focus:outline-none focus:ring focus:ring-primary-300 cursor-pointer"
-        onClick={() => setIsOpen(true)}
-      >
-        <AiOutlineComment className="h-6 w-6" />
-        <span>ثبت دیدگاه جدید</span>
-      </button>
+      {isLogin ? (
+        <button
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary-600 focus:outline-none focus:ring focus:ring-primary-300 cursor-pointer"
+          onClick={() => setIsOpen(true)}
+        >
+          <AiOutlineComment className="h-6 w-6" />
+          <span>ثبت دیدگاه جدید</span>
+        </button>
+      ) : (
+        <Link href={`/login/?backUrl=${pathname}`}>
+          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary-600 focus:outline-none focus:ring focus:ring-primary-300 cursor-pointer">
+            <AiOutlineComment className="h-6 w-6" />
+            <span>ثبت دیدگاه جدید</span>
+          </button>
+        </Link>
+      )}
 
       <Dialog
         isOpen={isOpen}
