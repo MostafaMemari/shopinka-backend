@@ -6,6 +6,7 @@ import { IoIosArrowBack } from 'react-icons/io';
 import { RiHome3Line } from 'react-icons/ri';
 import { HiOutlineShare, HiOutlineHeart, HiOutlineShoppingCart } from 'react-icons/hi';
 import { useCart } from '@/hooks/reactQuery/cart/useCart';
+import FavoriteProductAction from './ActionButtons/FavoriteProductAction';
 
 interface MobileHeaderProps {
   productId: number;
@@ -16,25 +17,20 @@ const MobileHeader = ({ productId }: MobileHeaderProps) => {
   const { cart: cartItems } = useCart();
   const totalQuantity = cartItems?.reduce((sum, item) => sum + item.count, 0) || 0;
 
-  // منطق دکمه Back: بازگشت به صفحه قبلی
   const handleBack = () => {
     router.back();
   };
 
-  // منطق دکمه Home: هدایت به صفحه اصلی
   const handleHome = () => {
     router.push('/');
   };
 
-  // منطق‌های موقتی برای دکمه‌های دیگر
   const handleShare = () => {
     console.log(`Share product with ID: ${productId}`);
-    // اینجا می‌تونی منطق share رو پیاده‌سازی کنی (مثلاً کپی لینک)
   };
 
   const handleLike = () => {
     console.log(`Like product with ID: ${productId}`);
-    // اینجا می‌تونی منطق like رو پیاده‌سازی کنی
   };
 
   const handleCart = () => {
@@ -54,14 +50,12 @@ const MobileHeader = ({ productId }: MobileHeaderProps) => {
           </button>
         </div>
 
-        <div className="flex bg-white rounded-lg shadow-md cursor-pointer">
+        <div className="flex bg-white items-center rounded-lg shadow-md cursor-pointer">
           <button onClick={handleShare} className="p-3 cursor-pointer" aria-label="Share">
             <HiOutlineShare size={22} />
           </button>
 
-          <button onClick={handleLike} className="p-3 cursor-pointer" aria-label="Like">
-            <HiOutlineHeart size={22} />
-          </button>
+          <FavoriteProductAction productId={productId} className="p-3 cursor-pointer" />
 
           <button onClick={handleCart} className="p-3 cursor-pointer relative" aria-label="Add to Cart">
             <HiOutlineShoppingCart size={22} />

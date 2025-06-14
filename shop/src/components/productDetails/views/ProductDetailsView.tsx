@@ -1,7 +1,6 @@
 import { type ProductDetails } from '@/types/productType';
 
 import BreadcrumbContainer from '../BreadcrumbContainer';
-import ProductActions from '../ActionButtons';
 import ProductGallery from '../ProductGallery/ProductGallery';
 import ProductGuarantees from '../ProductGuarantees';
 
@@ -16,13 +15,14 @@ import ProductSku from '../ProductSku';
 import ProductCommentCount from '../Comment/ProductComments/ProductCommentCount';
 import ProductGuaranteeBadge from '../ProductGuaranteeBadge';
 
-import MobileHeader from '../MobileProductHeader';
+import FavoriteProductAction from '../ActionButtons/FavoriteProductAction';
+import ShareProductAction from '../ActionButtons/ShareProductAction';
 interface ProductDetailsViewProps {
   product: ProductDetails;
 }
 
 const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
-  const isVariableProduct = product.variants.length > 0;
+  const isVariableProduct = product?.variants?.length > 0;
 
   const breadcrumbItems = [
     { label: 'روتی کالا', href: '/' },
@@ -37,7 +37,13 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
         <div className="mb-6 rounded-lg bg-muted p-6 shadow-base">
           <div className="mb-10 grid grow grid-cols-12 gap-4">
             <div className="col-span-4">
-              <ProductActions productId={product.id} />
+              <div className="hidden lg:block py-2">
+                <div className="flex items-center gap-x-4 ">
+                  <FavoriteProductAction productId={product.id} isTooltip />
+                  <ShareProductAction />
+                </div>
+              </div>
+
               <ProductGallery
                 product={{
                   type: product.type,
