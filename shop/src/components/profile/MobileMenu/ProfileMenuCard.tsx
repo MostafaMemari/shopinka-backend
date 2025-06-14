@@ -33,7 +33,7 @@ function ProfileMenuCard() {
 
       <MobileDrawer title="منوی پنل کاربری" isOpen={isOpen} onOpen={() => setIsOpen(true)} onClose={() => setIsOpen(false)}>
         <div className="pt-3">
-          <ProfileMenu />
+          <ProfileMenu onClose={() => setIsOpen(false)} />
         </div>
       </MobileDrawer>
     </>

@@ -1,78 +1,133 @@
-'use client';
+import React, { useRef } from 'react';
+import AddressActions from '@/components/ui/DropDownActions';
+import MobileDrawer from '@/components/MobileDrawer';
+import AddressForm from '@/components/checkout/AddressForm';
+import Dialog from '@/components/ui/Dialog';
+import { Option } from '@/components/checkout/AddressFormDrawer';
+import { AddressFormType } from '@/types/address.type';
 
-import { useState } from 'react';
-import { FaEllipsisV, FaEdit, FaTrash } from 'react-icons/fa';
+type AddressItemProps = {
+  item: any;
+  provinces: Option[];
+  cities: Record<string, Option[]>;
+  isEditing: boolean;
+  isDrawer: boolean;
+  onEdit: (useDrawer: boolean) => void;
+  onCloseEdit: () => void;
+  onDelete: () => void;
+  onSubmit: (values: AddressFormType) => Promise<void>;
+  isLoading: boolean;
+};
 
-interface Address {
-  id: string;
-  fullAddress: string;
-  receiverName: string;
-}
+const AddressItem: React.FC<AddressItemProps> = ({
+  item,
+  provinces,
+  cities,
+  isEditing,
+  isDrawer,
+  onEdit,
+  onCloseEdit,
+  onDelete,
+  onSubmit,
+  isLoading,
+}) => {
+  const formRef = useRef<HTMLFormElement>(null);
 
-interface AddressItemProps {
-  address: Address;
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => void;
-}
+  const triggerFormSubmit = () => {
+    formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+  };
 
-const AddressItem: React.FC<AddressItemProps> = ({ address, onEdit, onDelete }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const ConfirmButton = (
+    <button className="btn-primary w-full py-3 text-sm" type="button" onClick={triggerFormSubmit} disabled={isLoading}>
+      {isLoading ? 'در حال ثبت' : 'تأیید و ادامه'}
+    </button>
+  );
 
   return (
-    <div className="block rounded-lg border p-4 shadow-base hover:border-border/50 dark:hover:border-white/10">
-      <div className="mb-4 flex items-center justify-between gap-x-2 sm:mb-2">
-        <p className="line-clamp-2 h-10 text-sm text-text/90 xs:text-base sm:line-clamp-1 sm:h-6">{address.fullAddress}</p>
-        <div className="hidden md:block relative">
-          <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="rounded-full p-1 text-text/90 hover:bg-background">
-            <FaEllipsisV className="h-6 w-6" />
-          </button>
-          {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-50 overflow-hidden rounded-lg border bg-muted z-10">
-              <ul className="space-y-2 p-2">
-                <li>
-                  <button
-                    onClick={() => {
-                      onEdit(address.id);
-                      setIsDropdownOpen(false);
-                    }}
-                    className="flex w-full items-center justify-between rounded-lg px-4 py-3 text-sky-500 hover:bg-sky-500/10 dark:text-sky-400 dark:hover:bg-sky-400/10"
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <FaEdit className="h-6 w-6" />
-                      <span>ویرایش</span>
-                    </div>
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => {
-                      onDelete(address.id);
-                      setIsDropdownOpen(false);
-                    }}
-                    className="flex w-full items-center justify-between rounded-lg px-4 py-3 text-red-500 hover:bg-warning/10 dark:text-red-400 dark:hover:bg-red-400/10"
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <FaTrash className="h-6 w-6" />
-                      <span>حذف</span>
-                    </div>
-                  </button>
-                </li>
-              </ul>
-            </div>
-          )}
+    <div
+      className={`relative rounded-lg p-4 transition-shadow border dark:border-gray-700 ${
+        isEditing ? 'shadow-lg border-primary dark:border-primary' : 'hover:shadow-md'
+      } bg-white dark:bg-gray-900`}
+      key={item.id}
+    >
+      <div className="flex items-center justify-between gap-x-4 mb-1">
+        <div className="flex-1">
+          <p className="font-semibold text-base text-gray-800 dark:text-white mb-1 line-clamp-2">
+            {`${item.province}، ${item.city} - ${item.streetAndAlley}`}
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">کد پستی: {item.postalCode}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            گیرنده: <span className="font-medium">{item.fullName}</span>
+          </p>
+        </div>
+        <div className="flex-shrink-0 flex items-center gap-x-2">
+          <div className="hidden md:block">
+            <AddressActions onDelete={onDelete} onEdit={() => onEdit(false)} />
+          </div>
+          <div className="md:hidden">
+            <AddressActions onDelete={onDelete} onEdit={() => onEdit(true)} />
+          </div>
         </div>
       </div>
-      <div className="flex items-center justify-between gap-x-2">
-        <p className="line-clamp-1 text-sm text-text/60">{address.receiverName}</p>
-        <div className="flex items-center gap-x-2 md:hidden">
-          <button onClick={() => onDelete(address.id)} className="btn-red-nobg px-3 py-1 text-sm xs:px-4 xs:py-2">
-            حذف
-          </button>
-          <button onClick={() => onEdit(address.id)} className="btn-secondary-nobg px-3 py-1 text-sm xs:px-4 xs:py-2">
-            ویرایش
-          </button>
+      {(item.unit || item.plate) && (
+        <p className="text-xs text-gray-400 mt-2">
+          {item.plate && `پلاک: ${item.plate}`} {item.unit && `واحد: ${item.unit}`}
+        </p>
+      )}
+
+      {/* Mobile Edit Drawer */}
+      <MobileDrawer
+        title="ویرایش آدرس"
+        isOpen={isEditing && isDrawer}
+        onOpen={() => onEdit(true)}
+        onClose={onCloseEdit}
+        triggerButton={null}
+        footerActions={ConfirmButton}
+      >
+        <AddressForm
+          provinces={provinces}
+          cities={cities}
+          onSubmit={onSubmit}
+          ref={formRef}
+          initialValues={{
+            city: item.city,
+            postalCode: item.postalCode,
+            province: item.province,
+            fullName: item.fullName,
+            streetAndAlley: item.streetAndAlley,
+            unit: item.unit,
+            plate: item.plate,
+          }}
+        />
+      </MobileDrawer>
+
+      {/* Desktop Edit Dialog */}
+      <Dialog
+        title="ویرایش آدرس"
+        isOpen={isEditing && !isDrawer}
+        onOpen={() => onEdit(false)}
+        onClose={onCloseEdit}
+        actions={ConfirmButton}
+        size="md"
+      >
+        <div className="mt-4">
+          <AddressForm
+            provinces={provinces}
+            cities={cities}
+            onSubmit={onSubmit}
+            ref={formRef}
+            initialValues={{
+              city: item.city,
+              postalCode: item.postalCode,
+              province: item.province,
+              fullName: item.fullName,
+              streetAndAlley: item.streetAndAlley,
+              unit: item.unit,
+              plate: item.plate,
+            }}
+          />
         </div>
-      </div>
+      </Dialog>
     </div>
   );
 };

@@ -6,7 +6,11 @@ import { usePathname } from 'next/navigation';
 import React from 'react';
 import { BiExit } from 'react-icons/bi';
 
-function ProfileMenu() {
+type ProfileMenuProps = {
+  onClose?: () => void;
+};
+
+function ProfileMenu({ onClose }: ProfileMenuProps) {
   const pathname = usePathname();
 
   return (
@@ -18,6 +22,7 @@ function ProfileMenu() {
             className={`profile-menu flex items-center justify-between rounded-lg px-2 py-4 xl:px-4 ${
               pathname === item.href ? 'profile-menu-active' : ''
             }`}
+            onClick={onClose}
           >
             <div className="flex items-center gap-x-4">
               <item.icon className="h-6 w-6" />
