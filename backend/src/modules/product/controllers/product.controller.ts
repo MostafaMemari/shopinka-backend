@@ -41,6 +41,12 @@ export class ProductController {
     return this.productService.setDefaultVariant(user.id, id, defaultVariantDto);
   }
 
+  @Get(':id/favorite')
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  async getFavorite(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.productService.getFavorite(user.id, id);
+  }
+
   @Get('admin')
   findAllAdmin(@Query() queryProductDto: QueryProductDto) {
     return this.productService.findAllAdmin(queryProductDto);

@@ -59,3 +59,13 @@ export async function favoriteToggle(productId: number) {
 
   return res;
 }
+
+export async function isFavorite(productId: number) {
+  const res = await shopApiFetch(`/product/${productId}/favorite`, {
+    method: 'GET',
+  });
+
+  if (res.status !== 200) throw new Error('Failed to check favorite status');
+
+  return res.data === 'true' ? true : false;
+}

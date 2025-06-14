@@ -245,6 +245,14 @@ export class ProductService {
     };
   }
 
+  async getFavorite(userId: number, productId: number): Promise<boolean> {
+    await this.productRepository.findOneOrThrow({ where: { id: productId } });
+
+    const existingFavorite = await this.favoriteRepository.findOne({ where: { productId, userId } });
+
+    return existingFavorite ? true : false;
+  }
+
   async findAllAdmin({ page, take, ...queryProductDto }: QueryProductDto): Promise<unknown> {
     const paginationDto = { page, take };
     const {
