@@ -62,6 +62,7 @@ export class UserService {
   async findAllFavorites(userId: number, paginationDto: PaginationDto): Promise<unknown> {
     const favorites = await this.favoriteRepository.findAll({
       where: { userId },
+      orderBy: { createdAt: 'desc' },
       include: { product: { select: { id: true, name: true, slug: true, quantity: true, mainImage: { select: { fileUrl: true } } } } },
     });
     return pagination(paginationDto, favorites);
