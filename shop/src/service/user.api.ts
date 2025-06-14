@@ -4,6 +4,7 @@ import { shopApiFetch } from '@/server/api';
 import { User } from '../types/userType';
 import { cookies } from 'next/headers';
 import { COOKIE_NAMES } from '@/types/constants';
+import { FavoriteResponse } from '@/types/favoriteType';
 
 export const getMe = async (): Promise<{ status: number; data: User | null }> => {
   const cookieStore = await cookies();
@@ -16,4 +17,10 @@ export const getMe = async (): Promise<{ status: number; data: User | null }> =>
   return {
     ...res,
   };
+};
+
+export const getFavorites = async (params: { page: number; take: number }): Promise<FavoriteResponse> => {
+  const res = await shopApiFetch('/user/favorites', { method: 'GET', query: { ...params } });
+
+  return res.data;
 };

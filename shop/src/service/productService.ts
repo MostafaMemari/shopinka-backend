@@ -49,3 +49,11 @@ export async function fetchProductBySlug(slug: string) {
 
   return response;
 }
+
+export async function favoriteToggle(productId: number) {
+  const response = await shopApiFetch(`/product/favorite-toggle/${productId}`, {
+    method: 'POST',
+  });
+
+  return response;
+}

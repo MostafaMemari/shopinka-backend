@@ -6,4 +6,5 @@ export enum QueryKeys {
   Shipping = 'shipping',
   Categories = 'categories',
   Comments = 'comments',
+  Favorites = 'favorites',
 }

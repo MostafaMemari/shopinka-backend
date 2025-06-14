@@ -12,12 +12,10 @@ export function useCreateComment() {
     createComment: (data: CommentFormType, onSuccess?: () => void, onError?: (error: any) => void) => {
       createMutation.mutate(data, {
         onSuccess: () => {
-          console.log('نظر با موفقیت اضافه شد');
           queryClient.invalidateQueries({ queryKey: [QueryKeys.Comments] });
           onSuccess?.();
         },
         onError: (error) => {
-          console.error('خطا در افزودن نظر:', error);
           onError?.(error);
         },
       });
