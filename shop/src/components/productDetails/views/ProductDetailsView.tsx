@@ -31,8 +31,7 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
   ];
 
   return (
-    <div className="container">
-      {/* <MobileHeader productId={product.id} /> */}
+    <>
       <div className="hidden lg:block">
         <BreadcrumbContainer variant="boxed" items={breadcrumbItems} />
         <div className="mb-6 rounded-lg bg-muted p-6 shadow-base">
@@ -178,7 +177,7 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

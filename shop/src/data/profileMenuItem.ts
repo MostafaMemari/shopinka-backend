@@ -5,7 +5,7 @@ import { IoMdNotificationsOutline } from 'react-icons/io';
 import { GrLocation } from 'react-icons/gr';
 import { RiAccountCircle2Line } from 'react-icons/ri';
 
-export const menuItems = [
+export const profileMenuItem = [
   { href: '/profile', icon: TbSmartHome, label: 'پیشخوان' },
   { href: '/profile/orders', icon: HiOutlineShoppingBag, label: 'سفارش ها' },
   { href: '/profile/favorite', icon: HiOutlineHeart, label: 'علاقه‌مندی ها' },
@@ -14,7 +14,6 @@ export const menuItems = [
     href: '/profile/notification',
     icon: IoMdNotificationsOutline,
     label: 'پیام ها',
-    hasBadge: true,
   },
   { href: '/profile/address', icon: GrLocation, label: 'آدرس ها' },
   {

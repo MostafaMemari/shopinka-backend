@@ -1,6 +1,6 @@
 import DashboardHeader from '@/components/profile/DashboardHeader';
 import TabContent from '@/components/profile/Order/TabContent';
-import { cn } from '@/shared/utils/utils';
+import { cn } from '@/utils/utils';
 import Link from 'next/link';
 
 const OrderTabs = async ({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) => {

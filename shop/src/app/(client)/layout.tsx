@@ -7,7 +7,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <>
       <Header />
       <MobileLayout />
-      {children}
+      <main className="grow bg-background pb-14 pt-18 lg:pt-36">{children}</main>
       <Footer />
     </>
   );

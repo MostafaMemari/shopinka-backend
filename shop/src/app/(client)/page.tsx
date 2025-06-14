@@ -11,13 +11,11 @@ export default async function Home() {
   return (
     <>
       <div className="fixed inset-x-0 top-1/3 mx-auto h-1/3 w-1/4 bg-primary/50 blur-[400px]" />
-      <main className="grow bg-background pb-14 pt-22 lg:pt-36">
-        <div className="w-full max-w-screen-xl mx-auto px-4">
-          <BannerSlider />
-        </div>
-        <CarouselProduct title="فروش ویژه" products={discountProducts.items} viewAllLink="/shop?hasDiscount=true" />
-        <CarouselProduct title="جدیدترین محصولات" products={newestProducts.items} viewAllLink="/shop?sortBy=newest" />
-      </main>
+      <div className="w-full max-w-screen-xl mx-auto px-4">
+        <BannerSlider />
+      </div>
+      <CarouselProduct title="فروش ویژه" products={discountProducts.items} viewAllLink="/shop?hasDiscount=true" />
+      <CarouselProduct title="جدیدترین محصولات" products={newestProducts.items} viewAllLink="/shop?sortBy=newest" />
     </>
   );
 }

@@ -68,7 +68,6 @@ export const profileMenuItems: ProfileMenuItem[] = [
   },
 ];
 
-// منوی فروش ویژه به صورت جداگانه برای استفاده در DesktopNavbar
 export const specialSaleMenuItem: MenuItem = {
   id: 1,
   name: 'فروش ویژه',

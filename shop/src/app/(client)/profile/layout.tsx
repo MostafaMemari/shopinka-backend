@@ -1,25 +1,30 @@
-import Header from '@/components/header';
-import ProfileSidebar from '@/components/profile/ProfileSlider';
+import ProfileMenuDrawer from '@/components/profile/MobileMenu/ProfileMenuCard';
+import ProfileHeader from '@/components/profile/ProfileHeader';
+import ProfileMenu from '@/components/profile/ProfileMenu';
 
 export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <>
-      <Header />
-      <main className="grow bg-background pb-14 pt-36 xs:pt-36">
-        <div className="container">
-          <div className="grid grid-cols-12 gap-4">
-            <div className="col-span-12 lg:col-span-3">
-              {/* <!-- Desktop sidebar --> */}
-              <ProfileSidebar fullName="مصطفی معماری" notificationCount={10} profileImage="/images/user.png" phoneNumber="09388366510" />
-            </div>
-            <div className="col-span-12 lg:col-span-9">
-              <div className="col-span-12 lg:col-span-9">
-                <div className="rounded-lg bg-muted p-5 shadow-base">{children}</div>
+      <div className="container">
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-12 lg:col-span-3">
+            <div className="sticky top-32 hidden w-full overflow-hidden rounded-lg bg-muted shadow-base lg:block">
+              <div dir="ltr" className="max-h-[calc(90vh_-_100px)] overflow-y-auto p-4 xl:p-6">
+                <div dir="rtl">
+                  <ProfileHeader fullName="مصطفی معماری" profileImage="/images/user.png" phoneNumber="09388366510" />
+                  <ProfileMenu />
+                </div>
               </div>
             </div>
           </div>
+          <div className="col-span-12 lg:col-span-9">
+            <ProfileMenuDrawer />
+            <div className="col-span-12 lg:col-span-9">
+              <div className="rounded-lg bg-muted p-5 shadow-base">{children}</div>
+            </div>
+          </div>
         </div>
-      </main>
+      </div>
     </>
   );
 }
