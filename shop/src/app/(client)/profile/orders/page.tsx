@@ -3,44 +3,57 @@ import TabContent from '@/components/profile/Order/TabContent';
 import { cn } from '@/utils/utils';
 import Link from 'next/link';
 
+const TABS = [
+  { id: 'current', label: 'فعلی', count: 5 },
+  { id: 'delivered', label: 'تحویل شده', count: 10 },
+  { id: 'canceled', label: 'لغو شده', count: 15 },
+] as const;
+
+type TabId = (typeof TABS)[number]['id'];
+const DEFAULT_TAB: TabId = 'current';
+
 const OrderTabs = async ({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) => {
   const currSearchParams = await searchParams;
-
-  const tabs = [
-    { id: 'current', label: 'فعلی', count: 5 },
-    { id: 'delivered', label: 'تحویل شده', count: 10 },
-    { id: 'canceled', label: 'لغو شده', count: 15 },
-  ];
-
-  const tabsIds = tabs.map((tab) => tab.id);
-  const activeTab = currSearchParams?.activeTab;
-  const tabId = (typeof activeTab === 'string' && tabsIds.includes(activeTab) ? activeTab : 'current') as
-    | 'current'
-    | 'delivered'
-    | 'canceled';
+  const activeTabParam = currSearchParams?.activeTab;
+  const isValidTab = typeof activeTabParam === 'string' && TABS.some((tab) => tab.id === activeTabParam);
+  const tabId: TabId = isValidTab ? (activeTabParam as TabId) : DEFAULT_TAB;
 
   return (
     <div>
       <DashboardHeader title="سفارشات" />
 
-      <ul className="mt-10 flex gap-x-4 overflow-x-auto text-sm font-medium xs:text-base" role="tablist">
-        {tabs.map((tab) => (
-          <li key={tab.id} role="presentation">
-            <Link
+      <nav
+        className="mt-10 flex gap-x-2 sm:gap-x-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-zinc-800"
+        role="tablist"
+        aria-label="سفارشات"
+      >
+        {TABS.map((tab) => (
+          <Link
+            key={tab.id}
+            href={`?activeTab=${tab.id}`}
+            className={cn(
+              'flex items-center gap-x-2 min-w-max px-2 py-2 rounded-t-lg text-sm xs:text-base font-medium border-b-2 transition-all duration-150',
+              tabId === tab.id
+                ? 'border-primary bg-primary/5 text-primary shadow-[0_3px_12px_0_rgba(0,0,0,0.05)]'
+                : 'border-transparent text-gray-500 hover:text-primary/90 hover:border-primary/40',
+            )}
+            role="tab"
+            aria-selected={tabId === tab.id}
+            tabIndex={tabId === tab.id ? 0 : -1}
+          >
+            {tab.label}
+            <span
               className={cn(
-                'flex items-center gap-x-2 rounded-t-lg border-b-2 px-2 pb-2 hover:text-text/90 dark:hover:text-zinc-300',
-                tabId === tab.id ? 'border-primary text-text/90' : 'border-transparent',
+                'inline-flex h-6 w-6 items-center justify-center rounded bg-primary/90 text-white text-xs font-bold transition-all duration-150',
+                tabId === tab.id ? 'scale-110 shadow' : 'bg-primary/40',
               )}
-              href={`?activeTab=${tab.id}`}
             >
-              {tab.label}
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-base text-white dark:bg-emerald-600">
-                {tab.count}
-              </span>
-            </Link>
-          </li>
+              {tab.count}
+            </span>
+          </Link>
         ))}
-      </ul>
+      </nav>
+
       <TabContent tabId={tabId} initialOrders={[]} pendingOrders={[]} />
     </div>
   );

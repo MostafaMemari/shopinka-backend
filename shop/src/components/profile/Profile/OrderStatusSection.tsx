@@ -1,5 +1,6 @@
 import { FaShoppingBag, FaTruck, FaTimesCircle, FaUndo, FaChevronLeft } from 'react-icons/fa';
 import Link from 'next/link';
+import CardBox from '@/components/ui/CardBox';
 
 interface OrderStatusSectionProps {
   currentOrders: number;
@@ -8,69 +9,69 @@ interface OrderStatusSectionProps {
   returnedOrders: number;
 }
 
-const OrderStatusSection: React.FC<OrderStatusSectionProps> = ({ currentOrders, deliveredOrders, canceledOrders, returnedOrders }) => (
-  <div className="mb-8">
-    <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-      <h3 className="flex items-center gap-x-4 text-lg text-text/90">
-        <span className="h-2 w-2 rounded-full bg-primary" />
-        وضعیت سفارش های شما
+const statusConfig = [
+  {
+    key: 'current',
+    title: 'فعلی',
+    icon: <FaShoppingBag />,
+    color: 'from-sky-400 via-sky-500 to-sky-600',
+  },
+  {
+    key: 'delivered',
+    title: 'تحویل شده',
+    icon: <FaTruck />,
+    color: 'from-green-400 via-emerald-500 to-emerald-600',
+  },
+  {
+    key: 'canceled',
+    title: 'لغو شده',
+    icon: <FaTimesCircle />,
+    color: 'from-rose-400 via-rose-500 to-red-500',
+  },
+  {
+    key: 'returned',
+    title: 'مرجوع شده',
+    icon: <FaUndo />,
+    color: 'from-yellow-400 via-yellow-500 to-amber-500',
+  },
+];
+
+const getValue = (key: string, props: OrderStatusSectionProps) => {
+  switch (key) {
+    case 'current':
+      return props.currentOrders;
+    case 'delivered':
+      return props.deliveredOrders;
+    case 'canceled':
+      return props.canceledOrders;
+    case 'returned':
+      return props.returnedOrders;
+    default:
+      return 0;
+  }
+};
+
+const OrderStatusSection: React.FC<OrderStatusSectionProps> = (props) => (
+  <section className="mb-10">
+    <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-gray-200 dark:border-white/10 mb-8">
+      <h3 className="flex items-center gap-x-4 text-xl font-semibold text-gray-700 dark:text-white">
+        <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+        وضعیت سفارش‌های شما
       </h3>
-      <Link href="/profile-orders" className="btn-primary-nobg text-base">
+      <Link
+        href="/profile-orders"
+        className="flex items-center gap-2 rounded-xl px-4 py-2 border border-primary text-primary transition hover:bg-primary hover:text-white hover:shadow-lg duration-150"
+      >
         مشاهده همه
-        <FaChevronLeft className="h-5 w-5 lg:h-6 lg:w-6" />
+        <FaChevronLeft className="h-5 w-5" />
       </Link>
     </div>
-    <div className="grid grid-cols-2 gap-4 md:gap-6 xl:grid-cols-4">
-      <div className="flex flex-col items-center gap-4 rounded-base bg-sky-500 p-2 dark:bg-sky-600 md:flex-row">
-        <div className="relative rounded-base bg-sky-600/50 p-2 dark:bg-sky-500/50">
-          <FaShoppingBag className="h-10 w-10 text-white" />
-          <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-sky-600 text-sm font-medium text-white dark:bg-sky-500 md:hidden">
-            {currentOrders}
-          </span>
-        </div>
-        <div className="flex flex-col gap-y-1">
-          <div className="hidden font-medium text-white md:block">{currentOrders} سفارش</div>
-          <div className="text-white">فعلی</div>
-        </div>
-      </div>
-      <div className="flex flex-col items-center gap-4 rounded-base bg-primary p-2 dark:bg-emerald-600 md:flex-row">
-        <div className="relative rounded-base bg-emerald-600/50 p-2 dark:bg-primary/50">
-          <FaTruck className="h-10 w-10 text-white" />
-          <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-emerald-600 text-sm font-medium text-white dark:bg-primary md:hidden">
-            {deliveredOrders}
-          </span>
-        </div>
-        <div className="flex flex-col gap-y-1">
-          <div className="hidden font-medium text-white md:block">{deliveredOrders} سفارش</div>
-          <div className="text-white">تحویل شده</div>
-        </div>
-      </div>
-      <div className="flex flex-col items-center gap-4 rounded-base bg-warning p-2 dark:bg-red-400 md:flex-row">
-        <div className="relative rounded-base bg-red-400/50 p-2">
-          <FaTimesCircle className="h-10 w-10 text-white" />
-          <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-400 text-sm font-medium text-white md:hidden">
-            {canceledOrders}
-          </span>
-        </div>
-        <div className="flex flex-col gap-y-1">
-          <div className="hidden font-medium text-white md:block">{canceledOrders} سفارش</div>
-          <div className="text-white">لغو شده</div>
-        </div>
-      </div>
-      <div className="flex flex-col items-center gap-4 rounded-base bg-yellow-500 p-2 dark:bg-yellow-600 md:flex-row">
-        <div className="relative rounded-base bg-yellow-600/50 p-2 dark:bg-yellow-500/50">
-          <FaUndo className="h-10 w-10 text-white" />
-          <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-yellow-600 text-sm font-medium text-white dark:bg-yellow-500 md:hidden">
-            {returnedOrders}
-          </span>
-        </div>
-        <div className="flex flex-col gap-y-1">
-          <div className="hidden font-medium text-white md:block">{returnedOrders} سفارش</div>
-          <div className="text-white">مرجوع شده</div>
-        </div>
-      </div>
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+      {statusConfig.map((status) => (
+        <CardBox key={status.key} icon={status.icon} color={status.color} title={status.title} value={getValue(status.key, props)} />
+      ))}
     </div>
-  </div>
+  </section>
 );
 
 export default OrderStatusSection;

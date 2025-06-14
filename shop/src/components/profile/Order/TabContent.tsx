@@ -8,6 +8,7 @@ import EmptyState from '../EmptyState';
 import ErrorState from '../ErrorState';
 import Pagination from '../Pagination';
 import OrderList from './OrderList';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 interface TabContentProps {
   tabId: 'current' | 'delivered' | 'canceled';
@@ -63,11 +64,17 @@ const TabContent: React.FC<TabContentProps> = ({ tabId, initialOrders, pendingOr
     <div id={`filter-${tabId}`} role="tabpanel" aria-labelledby={`filter-${tabId}-tab`}>
       <div className="mb-8 space-y-4">
         {loading ? (
-          <LoadingState />
+          <div className="mt-8">
+            <LoadingSpinner />
+          </div>
         ) : error ? (
-          <ErrorState message={error} />
+          <div className="mt-8">
+            <ErrorState message={error} />
+          </div>
         ) : displayOrders.length === 0 ? (
-          <EmptyState />
+          <div className="mt-8">
+            <EmptyState />
+          </div>
         ) : (
           <OrderList orders={displayOrders} retryPayment={tabId === 'current'} />
         )}

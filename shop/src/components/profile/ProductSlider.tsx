@@ -17,24 +17,33 @@ interface ProductSliderProps {
 }
 
 const ProductSlider: React.FC<ProductSliderProps> = ({ products }) => (
-  <div className="orders-product-swiper p-4">
+  <div className="orders-product-swiper px-2 mb-4">
     <Swiper
       slidesPerView={1.1}
-      spaceBetween={10}
-      freeMode={true}
+      spaceBetween={12}
+      freeMode
       modules={[FreeMode]}
       breakpoints={{
-        360: { slidesPerView: 1.2, spaceBetween: 10 },
-        460: { slidesPerView: 1.6, spaceBetween: 10 },
-        640: { slidesPerView: 2.2, spaceBetween: 10 },
-        1380: { slidesPerView: 3.1, spaceBetween: 10 },
+        360: { slidesPerView: 1.2, spaceBetween: 12 },
+        460: { slidesPerView: 1.6, spaceBetween: 14 },
+        640: { slidesPerView: 2.2, spaceBetween: 14 },
+        1000: { slidesPerView: 3.2, spaceBetween: 16 },
+        1380: { slidesPerView: 4.1, spaceBetween: 18 },
       }}
     >
       {products.map((product) => (
         <SwiperSlide key={product.id}>
-          <Link href={product.link} className="flex items-center gap-x-2 rounded-lg border p-2">
-            <img alt={product.name} className="w-20" src={product.image} />
-            <p className="line-clamp-2 text-sm">{product.name}</p>
+          <Link
+            href={product.link}
+            className="
+              flex items-center gap-x-3 rounded-xl border border-gray-100 bg-white
+              px-2 py-2 shadow-sm transition hover:shadow-lg hover:border-primary
+            "
+          >
+            <div className="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center">
+              <img alt={product.name} src={product.image} className="object-contain w-14 h-14" loading="lazy" />
+            </div>
+            <p className="line-clamp-2 text-xs sm:text-sm text-gray-700 font-medium">{product.name}</p>
           </Link>
         </SwiperSlide>
       ))}
