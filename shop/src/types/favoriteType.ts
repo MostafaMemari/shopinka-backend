@@ -9,6 +9,7 @@ export interface FavoriteItem {
     id: number;
     name: string;
     slug: string;
+    quantity: number;
     mainImage: {
       fileUrl: string;
     };

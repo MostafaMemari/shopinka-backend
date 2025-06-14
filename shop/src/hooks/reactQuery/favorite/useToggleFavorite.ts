@@ -20,6 +20,6 @@ export function useToggleFavorite() {
       });
     },
 
-    isCreateCommentLoading: createMutation.isPending,
+    isToggleFavoriteLoading: createMutation.isPending,
   };
 }

@@ -1,45 +1,43 @@
 'use client';
 
-import { useState } from 'react';
 import { FaHeartBroken } from 'react-icons/fa';
 import DashboardHeader from '../DashboardHeader';
 import PreviewCard from '../PreviewCard';
 import Pagination from '../Pagination';
+import { useFavorite } from '@/hooks/reactQuery/favorite/useFavorite';
+import { useToggleFavorite } from '@/hooks/reactQuery/favorite/useToggleFavorite';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { useState } from 'react';
 
-interface Favorite {
-  id: string;
-  image: string;
-  title: string;
-  link: string;
-  isAvailable: boolean;
-}
+const FavoriteActions = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const { favoriteToggle, isToggleFavoriteLoading } = useToggleFavorite();
 
-interface FavoriteActionsProps {
-  favorites: Favorite[];
-}
+  const { data, isLoading } = useFavorite({
+    params: { page: currentPage },
+  });
 
-const FavoriteActions: React.FC<FavoriteActionsProps> = ({ favorites: initialFavorites }) => {
-  const [favorites, setFavorites] = useState(initialFavorites);
+  const favorites = data?.items || [];
+  const favoritePager = data?.pager ?? { totalCount: 0, totalPages: 1 };
 
-  const handleDeleteAll = () => {
-    setFavorites([]);
-    // می‌تونی اینجا API کال بزنی برای حذف همه
+  const handleFavoriteToggle = (productId: number) => {
+    favoriteToggle(productId);
   };
 
-  const handleDelete = (id: string) => {
-    setFavorites(favorites.filter((favorite) => favorite.id !== id));
-    // می‌تونی اینجا API کال بزنی برای حذف یه آیتم
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
     <div className="col-span-12 lg:col-span-9">
       <div className="mb-10 flex flex-col items-center justify-between gap-y-8 xs:flex-row">
         <DashboardHeader title="علاقه‌مندی های شما" />
-        <button className="btn-red w-full px-4 py-2 xs:w-fit" onClick={handleDeleteAll}>
-          حذف همه
-        </button>
       </div>
-      {favorites.length === 0 ? (
+
+      {isLoading || isToggleFavoriteLoading ? (
+        <LoadingSpinner loadingMessage="در حال بارگذاری علاقه‌مندی ها..." />
+      ) : favorites.length === 0 ? (
         <div className="flex justify-center">
           <div className="flex flex-col items-center justify-center gap-y-4 text-text/60">
             <FaHeartBroken className="h-20 w-20" />
@@ -50,17 +48,19 @@ const FavoriteActions: React.FC<FavoriteActionsProps> = ({ favorites: initialFav
         <>
           <div className="mb-8 grid grid-cols-2 gap-1 gap-y-2 xs:gap-4 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {favorites.map((favorite) => (
-              <PreviewCard key={favorite.id} favorite={favorite} onDelete={handleDelete} />
+              <PreviewCard
+                key={favorite.id}
+                name={favorite.product.name}
+                imageUrl={favorite.product.mainImage.fileUrl}
+                quantity={favorite.product.quantity}
+                slug={favorite.product.slug}
+                onClick={() => handleFavoriteToggle(favorite.productId)}
+              />
             ))}
           </div>
-          <Pagination
-            currentPage={1}
-            onPageChange={() => {
-              console.log('change pagination');
-            }}
-            itemsPerPage={5}
-            totalItems={10}
-          />
+          {favoritePager?.totalCount > 0 && favoritePager?.totalPages > 1 && (
+            <Pagination currentPage={currentPage} totalPages={favoritePager?.totalPages} onPageChange={handlePageChange} />
+          )}
         </>
       )}
     </div>

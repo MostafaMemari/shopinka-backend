@@ -1,16 +1,14 @@
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 interface PaginationProps {
-  totalItems: number;
-  itemsPerPage: number;
+  totalPages: number;
   currentPage: number;
   onPageChange: (page: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => {
-  if (totalItems < 10) return null;
+const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage, onPageChange }) => {
+  if (totalPages < 2) return null;
 
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
   const pagesToShow = 3;
   const pages: (number | string)[] = [];
 

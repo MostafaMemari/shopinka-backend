@@ -51,9 +51,11 @@ export async function fetchProductBySlug(slug: string) {
 }
 
 export async function favoriteToggle(productId: number) {
-  const response = await shopApiFetch(`/product/favorite-toggle/${productId}`, {
-    method: 'POST',
+  const res = await shopApiFetch(`/product/favorite-toggle/${productId}`, {
+    method: 'PATCH',
   });
 
-  return response;
+  if (res.status !== 200) throw new Error('Failed to toggle favorite');
+
+  return res;
 }

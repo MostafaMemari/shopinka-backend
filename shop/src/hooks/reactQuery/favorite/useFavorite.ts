@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 export interface QueryOptions {
   enabled?: boolean;
   staleTime?: number;
-  params?: { page: number; take: number };
+  params?: { page?: number; take?: number };
   keepPreviousData?: boolean;
   gcTime?: number;
   refetchOnWindowFocus?: boolean;
@@ -14,7 +14,7 @@ export interface QueryOptions {
 
 export function useFavorite({
   enabled = true,
-  params = { page: 1, take: 10 },
+  params = {},
   staleTime = 5 * 60 * 1000,
   gcTime = 10 * 60 * 1000,
   refetchOnWindowFocus = false,

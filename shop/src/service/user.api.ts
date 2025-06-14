@@ -19,7 +19,7 @@ export const getMe = async (): Promise<{ status: number; data: User | null }> =>
   };
 };
 
-export const getFavorites = async (params: { page: number; take: number }): Promise<FavoriteResponse> => {
+export const getFavorites = async (params: { page?: number; take?: number }): Promise<FavoriteResponse> => {
   const res = await shopApiFetch('/user/favorites', { method: 'GET', query: { ...params } });
 
   return res.data;
