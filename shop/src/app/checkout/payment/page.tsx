@@ -13,13 +13,9 @@ type PageProps = {
 async function page({ searchParams }: PageProps) {
   const { Authority, Status } = await searchParams;
 
-  const { redirectUrl, payment, message, status } = await verifyPayment({ Authority: Authority as string, Status: Status as string });
+  const { payment, message, status } = await verifyPayment({ Authority: Authority as string, Status: Status as string });
 
-  console.log(redirectUrl, payment, message, status);
-
-  // if (redirectUrl) {
-  //   redirect(redirectUrl);
-  // }
+  console.log(payment, message, status);
 
   return (
     <>
