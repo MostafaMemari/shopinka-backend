@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { MdOutlineAddLocationAlt, MdOutlineEditLocation } from 'react-icons/md';
 import { useAddress } from '@/hooks/reactQuery/useAddress';
 import ErrorState from '../profile/ErrorState';
@@ -72,18 +72,19 @@ export default function AddressSection({ onAddressSelect }: AddressSectionProps)
     }
   };
 
-  const icon = (
-    <div className="bg-primary/10 w-full rounded-full">
-      <MdOutlineAddLocationAlt className="h-6 w-6 text-primary" />
-    </div>
-  );
+  useEffect(() => {
+    if (isLoading) return;
+    if (addresses.length === 0) {
+      setModalState(true);
+    } else if (addresses.length > 0 && selectedAddressId === null) {
+      handleSelectAddress(addresses[0].id);
+    }
+  }, [addresses, isLoading, selectedAddressId]);
 
   const actions = (
-    <>
-      <button className="btn-primary w-full py-3 text-sm" type="button" onClick={handleSubmit} disabled={isCreateAddressLoading}>
-        {isCreateAddressLoading ? 'در حال ثبت' : 'تأیید و ادامه'}
-      </button>
-    </>
+    <button className="btn-primary w-full py-3 text-sm" type="button" onClick={handleSubmit} disabled={isCreateAddressLoading}>
+      {isCreateAddressLoading ? 'در حال ثبت' : 'تأیید و ادامه'}
+    </button>
   );
 
   return (
@@ -103,19 +104,13 @@ export default function AddressSection({ onAddressSelect }: AddressSectionProps)
             </h3>
             <button
               className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary-600 focus:outline-none focus:ring focus:ring-primary-300 cursor-pointer"
-              onClick={() => setModalState({ type: 'add', isOpen: true })}
+              onClick={() => setModalState(true)}
             >
               <MdOutlineAddLocationAlt className="h-6 w-6" />
               <span>آدرس جدید</span>
             </button>
-            {/* <div className="hidden md:block">
-              <AddressFormDialog />
-            </div>
-            <div className="md:hidden">
-              <AddressFormDrawer />
-            </div> */}
           </div>
-          <fieldset className="space-y-4 grid grid-cols-1 gap-4">
+          <fieldset className="space-y-4 grid grid-cols-1">
             {addresses.length ? (
               addresses.map((item) => (
                 <AddressItem key={item.id} item={item} selectedAddressId={selectedAddressId} onSelectAddress={handleSelectAddress} />
@@ -126,7 +121,7 @@ export default function AddressSection({ onAddressSelect }: AddressSectionProps)
           </fieldset>
 
           {isMdUp ? (
-            <Dialog isOpen={modalState} onClose={() => setModalState(false)} title="افزودن آدرس جدید" icon={icon} actions={[]} size="xl">
+            <Dialog isOpen={modalState} onClose={() => setModalState(false)} title="افزودن آدرس جدید" actions={actions} size="xl">
               <div className="mt-4">
                 <AddressForm provinces={provinces} cities={cities} onSubmit={handleFormSubmit} ref={formRef} />
               </div>
@@ -137,20 +132,7 @@ export default function AddressSection({ onAddressSelect }: AddressSectionProps)
               isOpen={modalState}
               onOpen={() => setModalState(true)}
               onClose={() => setModalState(false)}
-              triggerButton={
-                <button
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary-600 focus:outline-none focus:ring focus:ring-primary-300 cursor-pointer"
-                  onClick={() => setModalState(true)}
-                >
-                  <MdOutlineAddLocationAlt className="h-6 w-6" />
-                  <span>آدرس جدید</span>
-                </button>
-              }
-              footerActions={
-                <button className="btn-primary w-full py-3 text-sm" type="button" onClick={handleSubmit} disabled={isCreateAddressLoading}>
-                  {isCreateAddressLoading ? 'در حال ثبت' : 'تأیید و ادامه'}
-                </button>
-              }
+              footerActions={actions}
             >
               <AddressForm provinces={provinces} cities={cities} onSubmit={handleFormSubmit} ref={formRef} />
             </MobileDrawer>

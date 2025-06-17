@@ -5,8 +5,9 @@ import React, { useRef, useState } from 'react';
 import AddressActions from '@/components/ui/DropDownActions';
 import Dialog from '@/components/ui/Dialog';
 import MobileDrawer from '@/components/MobileDrawer';
-import { Option } from './AddressFormDialog';
 import AddressForm from './AddressForm';
+import { Option } from './AddressSection';
+import useIsMdUp from '@/hooks/useIsMdUp';
 
 const provinces: Option[] = [
   { value: 'tehran', label: 'تهران' },
@@ -27,14 +28,15 @@ const cities: Record<string, Option[]> = {
 interface AddressItemProps {
   item: AddressItemType;
   selectedAddressId: number | null;
-  onSelectAddress: (id: number | null) => void;
+  onSelectAddress: (id: number) => void;
 }
 
 const AddressItem: React.FC<AddressItemProps> = ({ item, selectedAddressId, onSelectAddress }) => {
   const { deleteAddress, updateAddress, isCreateAddressLoading } = useAddress({});
   const formRef = useRef<HTMLFormElement>(null);
-  const [isOpenDrawer, setIsOpenDrawer] = useState(false);
-  const [isOpenDialog, setIsOpenDialog] = useState(false);
+  const [modalState, setModalState] = useState<boolean>(false);
+
+  const isMdUp = useIsMdUp();
 
   const isSelected = selectedAddressId === item.id;
 
@@ -43,8 +45,7 @@ const AddressItem: React.FC<AddressItemProps> = ({ item, selectedAddressId, onSe
       item.id,
       values,
       () => {
-        setIsOpenDrawer(false);
-        setIsOpenDialog(false);
+        setModalState(false);
         formRef.current?.reset();
       },
       (error) => {
@@ -53,18 +54,18 @@ const AddressItem: React.FC<AddressItemProps> = ({ item, selectedAddressId, onSe
     );
   };
 
-  // For imperative submit from outside the form
   const triggerFormSubmit = () => {
     formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
   };
 
   const handleDeleteAddress = (addressId: number) => {
     deleteAddress(addressId);
-    if (isSelected) onSelectAddress(null);
   };
 
   const handleSelect = () => {
-    onSelectAddress(isSelected ? null : item.id);
+    if (!isSelected) {
+      onSelectAddress(item.id);
+    }
   };
 
   const formInitialValues = {
@@ -77,14 +78,12 @@ const AddressItem: React.FC<AddressItemProps> = ({ item, selectedAddressId, onSe
     plate: item.plate,
   };
 
-  // Button for both Dialog and Drawer
   const ConfirmButton = (
     <button className="btn-primary w-full py-3 text-sm" type="button" onClick={triggerFormSubmit} disabled={isCreateAddressLoading}>
       {isCreateAddressLoading ? 'در حال ثبت' : 'تأیید و ادامه'}
     </button>
   );
 
-  // Address summary for main card
   const addressSummary = `${item.province}، ${item.city} - ${item.streetAndAlley} - کد پستی: ${item.postalCode}`;
 
   return (
@@ -117,41 +116,49 @@ const AddressItem: React.FC<AddressItemProps> = ({ item, selectedAddressId, onSe
           <p className="text-sm text-gray-900 xs:text-base pr-7 dark:text-gray-100 line-clamp-2">{addressSummary}</p>
 
           <div className="relative hidden md:block">
-            <AddressActions onDelete={() => handleDeleteAddress(item.id)} onEdit={() => setIsOpenDialog(true)} />
+            <AddressActions onDelete={() => handleDeleteAddress(item.id)} onEdit={() => setModalState(true)} />
           </div>
         </div>
 
         <div className="flex items-center justify-between gap-x-2">
           <p className="line-clamp-1 text-sm text-gray-500 dark:text-gray-400">{`گیرنده: ${item.fullName}`}</p>
           <div className="flex items-center gap-x-2 md:hidden">
-            <AddressActions onDelete={() => handleDeleteAddress(item.id)} onEdit={() => setIsOpenDrawer(true)} />
+            <AddressActions onDelete={() => handleDeleteAddress(item.id)} onEdit={() => setModalState(true)} />
           </div>
         </div>
       </div>
 
-      <MobileDrawer
-        title="ویرایش آدرس"
-        isOpen={isOpenDrawer}
-        onOpen={() => setIsOpenDrawer(true)}
-        onClose={() => setIsOpenDrawer(false)}
-        triggerButton={null}
-        footerActions={ConfirmButton}
-      >
-        <AddressForm provinces={provinces} cities={cities} onSubmit={handleFormSubmit} ref={formRef} initialValues={formInitialValues} />
-      </MobileDrawer>
-
-      <Dialog
-        title="ویرایش آدرس"
-        isOpen={isOpenDialog}
-        onOpen={() => setIsOpenDialog(true)}
-        onClose={() => setIsOpenDialog(false)}
-        actions={ConfirmButton}
-        size="md"
-      >
-        <div className="mt-4">
+      {isMdUp ? (
+        <Dialog
+          title="ویرایش آدرس"
+          isOpen={modalState}
+          onOpen={() => setModalState(true)}
+          onClose={() => setModalState(false)}
+          actions={ConfirmButton}
+          size="md"
+        >
+          <div className="mt-4">
+            <AddressForm
+              provinces={provinces}
+              cities={cities}
+              onSubmit={handleFormSubmit}
+              ref={formRef}
+              initialValues={formInitialValues}
+            />
+          </div>
+        </Dialog>
+      ) : (
+        <MobileDrawer
+          title="ویرایش آدرس"
+          isOpen={modalState}
+          onOpen={() => setModalState(true)}
+          onClose={() => setModalState(false)}
+          triggerButton={null}
+          footerActions={ConfirmButton}
+        >
           <AddressForm provinces={provinces} cities={cities} onSubmit={handleFormSubmit} ref={formRef} initialValues={formInitialValues} />
-        </div>
-      </Dialog>
+        </MobileDrawer>
+      )}
     </div>
   );
 };
