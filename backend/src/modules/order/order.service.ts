@@ -118,8 +118,6 @@ export class OrderService {
   }
 
   async create(userId: number, cart: IGetCart, paymentDto: PaymentDto): Promise<Order> {
-    console.log(userId, cart, paymentDto);
-
     const { addressId, shippingId } = paymentDto;
     let { items, payablePrice } = cart;
 

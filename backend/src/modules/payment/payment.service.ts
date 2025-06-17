@@ -1,7 +1,7 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { ZarinpalService } from '../http/zarinpal.service';
 import { PaymentRepository } from './payment.repository';
-import { OrderItem, OrderStatus, Prisma, Transaction, TransactionStatus } from '@prisma/client';
+import { Order, OrderItem, OrderStatus, Prisma, Transaction, TransactionStatus } from '@prisma/client';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { IVerifyPayment } from '../../common/interfaces/payment.interface';
 import { PaymentMessages } from './enums/payment.messages';
@@ -106,27 +106,23 @@ export class PaymentService {
 
       const isSuccess = status === 'OK' && code === 100;
 
-      const updatedOrder = await this.updateOrderStatus(payment.orderId, isSuccess);
+      await this.updateOrderStatus(payment.orderId, isSuccess);
       await this.updatePaymentStatus(payment.id, isSuccess, sessionId);
       payment = { ...payment, status: isSuccess ? TransactionStatus.SUCCESS : TransactionStatus.FAILED, sessionId };
-
-      if (!isSuccess) {
-        await this.restoreCart(payment.userId, updatedOrder['items']);
-      }
 
       return {
         redirectUrl: `${baseUrl}?status=${isSuccess ? 'success' : 'failed'}`,
         payment,
+        status: isSuccess ? 'success' : 'failed',
         message: PaymentMessages.VerifiedSuccess,
       };
     } catch (error) {
       if (payment?.id && payment.status === TransactionStatus.PENDING) {
-        const updatedOrder = await this.updateOrderStatus(payment.orderId, false);
+        await this.updateOrderStatus(payment.orderId, false);
         await this.updatePaymentStatus(payment.id, false);
-        await this.restoreCart(payment.userId, updatedOrder['items']);
       }
 
-      throw new HttpException(error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException({ message: error.message, status: 'failed', payment }, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
