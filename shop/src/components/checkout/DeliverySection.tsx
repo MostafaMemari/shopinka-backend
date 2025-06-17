@@ -4,44 +4,40 @@ import React, { useState, useEffect } from 'react';
 import { FaTruck, FaMoneyBillWave, FaClock } from 'react-icons/fa';
 import { useShipping } from '@/hooks/reactQuery/useShipping';
 import { formatPrice } from '@/utils/formatter';
-import CartStatus from '@/components/CartStatus copy';
+import LoadingSpinner from '../ui/LoadingSpinner';
+import { ShippingItem } from '@/types/shipping.type';
 
-interface ShippingItem {
-  name: string;
-  price: number;
-  estimatedDays: number;
-  id?: string | number;
+interface DeliverySectionProps {
+  onShippingSelect: (shippingSelectedItem: ShippingItem | null) => void;
 }
 
-export default function DeliverySection() {
+export default function DeliverySection({ onShippingSelect }: DeliverySectionProps) {
   const { data, isLoading, error } = useShipping({});
-  const shippingItems = data?.data?.items;
+  const shippingItems: ShippingItem[] = data?.data?.items || [];
   const [selected, setSelected] = useState<string | number | null>(null);
 
-  // Set the first item as selected by default when shippingItems are loaded
   useEffect(() => {
-    if (shippingItems?.length && selected === null) {
-      const firstItemId = shippingItems[0].id ?? 0;
-      setSelected(firstItemId);
+    if (shippingItems.length && selected === null) {
+      const firstItem = shippingItems[0];
+      setSelected(firstItem.id);
+      onShippingSelect(firstItem);
     }
-  }, [shippingItems, selected]);
-
-  const getId = (item: ShippingItem, idx: number) => item.id ?? idx;
+  }, [shippingItems, selected, onShippingSelect]);
 
   return (
-    <>
-      {isLoading || error || !shippingItems?.length ? (
-        <CartStatus
-          cartItems={shippingItems || []}
-          error={error}
-          isLoading={isLoading}
-          errorMessage="خطا در بارگذاری روش‌های ارسال"
-          shopButtonText="رفتن به فروشگاه"
-          shopLink="/shop"
-          emptyMessage="هیچ روش ارسالی در دسترس نیست"
-        />
+    <div>
+      {isLoading || error || !shippingItems.length ? (
+        <div className="flex justify-center items-center rounded-lg bg-muted p-4 min-h-[140px]">
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : error ? (
+            <p className="text-sm text-red-500">خطا در بارگذاری شیوه‌های ارسال</p>
+          ) : (
+            <p className="text-sm text-gray-500">هیچ شیوه ارسالی موجود نیست.</p>
+          )}
+        </div>
       ) : (
-        <div>
+        <>
           <div className="flex items-center justify-between gap-x-2 pb-4">
             <h2 className="flex items-center gap-x-2 text-sm xs:text-base md:text-lg font-medium text-gray-800">
               <FaTruck className="h-5 w-5 text-primary" />
@@ -49,23 +45,24 @@ export default function DeliverySection() {
             </h2>
           </div>
           <fieldset className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <legend className="sr-only">Delivery Options</legend>
-            {shippingItems.map((item: ShippingItem, index: number) => {
-              const id = getId(item, index);
-              const isChecked = selected === id;
+            {shippingItems.map((item) => {
+              const isChecked = selected === item.id;
               return (
-                <div key={id} className="relative">
+                <div key={item.id} className="relative">
                   <input
                     type="radio"
                     name="delivery"
-                    value={id}
-                    id={`delivery-${id}`}
+                    value={item.id}
+                    id={`delivery-${item.id}`}
                     className="peer hidden"
                     checked={isChecked}
-                    onChange={() => setSelected(id)}
+                    onChange={() => {
+                      setSelected(item.id);
+                      onShippingSelect(item);
+                    }}
                   />
                   <label
-                    htmlFor={`delivery-${id}`}
+                    htmlFor={`delivery-${item.id}`}
                     className={`
                       relative block h-[140px] cursor-pointer rounded-lg border p-4 shadow-sm transition-all
                       ${isChecked ? 'border-primary bg-primary/10 shadow-md' : 'border-gray-200 bg-white hover:border-gray-300'}
@@ -75,7 +72,7 @@ export default function DeliverySection() {
                       <span
                         className={`
                           flex items-center justify-center rounded-full border-2 h-6 w-6 transition-colors
-                          ${isChecked ? 'border-primary bg-primary' : 'border-gray-300 bg-white dark:bg-gray-800'}
+                          ${isChecked ? 'border-primary bg-primary' : 'border-gray-300 bg-white'}
                         `}
                       >
                         {isChecked && (
@@ -85,16 +82,15 @@ export default function DeliverySection() {
                         )}
                       </span>
                     </span>
-
                     <div className="mb-4 flex items-center justify-between gap-x-2">
-                      <p className="line-clamp-1 pr-9 text-sm font-medium text-gray-900 xs:text-base dark:text-gray-100">{item.name}</p>
+                      <p className="line-clamp-1 pr-9 text-sm font-medium text-gray-900 xs:text-base">{item.name}</p>
                       <FaTruck className="h-6 w-6 text-primary" />
                     </div>
-                    <div className="mb-2 flex items-center gap-x-2 text-sm text-primary dark:text-primary">
+                    <div className="mb-2 flex items-center gap-x-2 text-sm text-primary">
                       <FaMoneyBillWave className="h-4 w-4" />
                       <span>{item.price === 0 ? 'رایگان' : `${formatPrice(item.price)} تومان`}</span>
                     </div>
-                    <div className="flex items-center gap-x-2 text-sm text-gray-500 dark:text-gray-400">
+                    <div className="flex items-center gap-x-2 text-sm text-gray-500">
                       <FaClock className="h-4 w-4" />
                       <span>تحویل در {item.estimatedDays} روز</span>
                     </div>
@@ -103,8 +99,8 @@ export default function DeliverySection() {
               );
             })}
           </fieldset>
-        </div>
+        </>
       )}
-    </>
+    </div>
   );
 }
