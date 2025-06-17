@@ -1,4 +1,7 @@
-import { HiOutlineBell, HiOutlineClock, HiOutlineHeart } from 'react-icons/hi';
+import { GrLocation } from 'react-icons/gr';
+import { HiOutlineBell, HiOutlineClock, HiOutlineHeart, HiOutlineShoppingBag } from 'react-icons/hi';
+import { RiAccountCircle2Line } from 'react-icons/ri';
+import { TbSmartHome } from 'react-icons/tb';
 
 export interface MenuItem {
   id: number;
@@ -24,7 +27,7 @@ export const navbarMenuItems: MenuItem[] = [
   },
   {
     id: 2,
-    name: 'چرا روتی کالا',
+    name: 'چرا شاپینکا',
     href: './why-us.html',
   },
   {
@@ -45,26 +48,13 @@ export const navbarMenuItems: MenuItem[] = [
 ];
 
 export const profileMenuItems: ProfileMenuItem[] = [
+  { href: '/profile', icon: TbSmartHome, label: 'پیشخوان' },
+  { href: '/profile/orders', icon: HiOutlineShoppingBag, label: 'سفارش ها' },
+  { href: '/profile/favorite', icon: HiOutlineHeart, label: 'علاقه‌مندی ها' },
   {
-    href: '/profile-orders',
-    icon: HiOutlineClock,
-    label: 'سفارش‌ها',
-  },
-  {
-    href: '/profile-favorite',
-    icon: HiOutlineHeart,
-    label: 'علاقه‌مندی‌ها',
-  },
-  {
-    href: '/profile-notification',
-    icon: HiOutlineBell,
-    label: 'پیام‌ها',
-    badge: (
-      <span className="relative flex h-5 w-5">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-        <span className="relative inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-sm text-white">2</span>
-      </span>
-    ),
+    href: '/profile/personal-info',
+    icon: RiAccountCircle2Line,
+    label: 'حساب کاربری',
   },
 ];
 

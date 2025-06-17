@@ -12,14 +12,14 @@ export class UpdateUserDto {
   })
   fullName?: string;
 
-  @IsString()
-  @IsOptional()
-  @IsNotEmpty()
-  @IsPhoneNumber('IR')
-  @ApiPropertyOptional({
-    type: 'string',
-    required: false,
-    nullable: true,
-  })
-  mobile?: string;
+  // @IsString()
+  // @IsOptional()
+  // @IsNotEmpty()
+  // @IsPhoneNumber('IR')
+  // @ApiPropertyOptional({
+  //   type: 'string',
+  //   required: false,
+  //   nullable: true,
+  // })
+  // mobile?: string;
 }

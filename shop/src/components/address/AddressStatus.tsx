@@ -3,6 +3,7 @@ import { FaSpinner } from 'react-icons/fa';
 import { BiStore } from 'react-icons/bi';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
 import PrimaryButton from '@/components/PrimaryButton';
+import Link from 'next/link';
 
 interface CartItem {
   id: string | number;
@@ -37,11 +38,11 @@ const CartStatus: React.FC<CartStatusProps> = ({ isLoading, error, cartItems }) 
             <HiOutlineShoppingCart className="h-16 w-16 text-text/30" />
             <p className="text-lg text-text/80 font-medium">سبد خرید شما خالی است!</p>
             <p className="text-sm text-text/60 text-center">می‌توانید برای مشاهده محصولات بیشتر به صفحات زیر بروید:</p>
-            <a href="/shop">
+            <Link href="/shop">
               <PrimaryButton className="flex items-center gap-2">
                 <span>رفتن به فروشگاه</span>
               </PrimaryButton>
-            </a>
+            </Link>
           </div>
         )}
       </div>

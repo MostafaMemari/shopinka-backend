@@ -24,3 +24,13 @@ export const getFavorites = async (params: { page?: number; take?: number }): Pr
 
   return res.data;
 };
+
+export const updateFullName = async (data: { fullName: string }): Promise<{ message: string; user: User }> => {
+  const res = await shopApiFetch(`/user/profile`, { method: 'PATCH', body: { ...data } });
+
+  if (res.status >= 400 || !res.data?.user) {
+    throw new Error(res.data?.message || 'خطا در ویرایش آدرس');
+  }
+
+  return res.data;
+};

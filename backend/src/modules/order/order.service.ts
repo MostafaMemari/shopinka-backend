@@ -4,7 +4,7 @@ import { PaymentDto } from '../payment/dto/payment.dto';
 import { AddressRepository } from '../address/address.repository';
 import { CartItem, Order, OrderItem, OrderStatus, Prisma } from '@prisma/client';
 import { OrderRepository } from './repositories/order.repository';
-import { QueryOrderDto } from './dto/query-order.dto';
+import { QueryMyOrderDto, QueryOrderDto } from './dto/query-order.dto';
 import { CacheService } from '../cache/cache.service';
 import { sortObject } from '../../common/utils/functions.utils';
 import { CacheKeys } from '../../common/enums/cache.enum';
@@ -18,6 +18,7 @@ import { ProductRepository } from '../product/repositories/product.repository';
 import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 import { ShippingRepository } from '../shipping/repositories/shipping.repository';
 import { UpdateOrderStatusDto } from './dto/update-status-order.dto';
+import { QueryOrderStatus } from './enums/order-sort-by.enum';
 
 @Injectable()
 export class OrderService {
@@ -117,30 +118,32 @@ export class OrderService {
   }
 
   async create(userId: number, cart: IGetCart, paymentDto: PaymentDto): Promise<Order> {
-    const { addressId, shippingId } = paymentDto;
-    let { cartItems, finalPrice } = cart;
+    console.log(userId, cart, paymentDto);
 
-    if (!cartItems.length) {
+    const { addressId, shippingId } = paymentDto;
+    let { items, payablePrice } = cart;
+
+    if (!items.length) {
       throw new BadRequestException('Your cart list is empty.');
     }
 
     const shipping = await this.shippingRepository.findOneOrThrow({ where: { id: shippingId } });
-    finalPrice += shipping.price;
+    payablePrice += shipping.price;
 
     await this.addressRepository.findOneOrThrow({ where: { userId, id: addressId } });
 
     const orderNumber = this.generateOrderNumber();
-    const orderItems = this.mapCartItemsToOrderItems(cartItems);
+    const orderItems = this.mapCartItemsToOrderItems(items);
 
     const newOrder = await this.orderRepository.create({
       data: {
         addressId,
         shippingId,
         orderNumber,
-        totalPrice: finalPrice,
+        totalPrice: payablePrice,
         status: OrderStatus.PENDING,
         userId,
-        quantity: cartItems.length,
+        quantity: items.length,
         items: { create: orderItems },
       },
       include: { items: true, user: true },
@@ -205,14 +208,66 @@ export class OrderService {
     return { ...pagination(paginationDto, orders) };
   }
 
-  async findAllForUser(userId: number, paginationDto: PaginationDto): Promise<unknown> {
+  async findAllForUser(userId: number, queryMyOrderDto: QueryMyOrderDto): Promise<unknown> {
+    const { page, take, status } = queryMyOrderDto;
+
+    const orderStatusFilter =
+      status === QueryOrderStatus.CURRENT
+        ? { in: [OrderStatus.PENDING, OrderStatus.PROCESSING] }
+        : status === QueryOrderStatus.DELIVERED
+          ? OrderStatus.DELIVERED
+          : status === QueryOrderStatus.CANCELLED
+            ? OrderStatus.CANCELLED
+            : undefined;
+
+    const whereCondition: any = { userId };
+    if (orderStatusFilter) {
+      whereCondition.status = orderStatusFilter;
+    }
+
     const orders = await this.orderRepository.findAll({
-      where: { userId },
+      where: whereCondition,
       orderBy: { createdAt: 'desc' },
-      include: { address: true, items: true, shippingInfo: true, shipping: true },
+      include: {
+        address: true,
+        items: {
+          include: {
+            product: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                type: true,
+                salePrice: true,
+                basePrice: true,
+                mainImage: { select: { fileUrl: true } },
+              },
+            },
+            productVariant: {
+              select: {
+                id: true,
+                salePrice: true,
+                basePrice: true,
+                product: {
+                  select: {
+                    name: true,
+                    type: true,
+                    mainImage: { select: { fileUrl: true } },
+                  },
+                },
+                attributeValues: {
+                  select: { name: true, colorCode: true, buttonLabel: true },
+                },
+              },
+            },
+          },
+        },
+        shippingInfo: true,
+        shipping: true,
+      },
     });
 
-    return pagination(paginationDto, orders);
+    return pagination({ page, take }, orders);
   }
 
   async findAllItemsForUser(userId: number, paginationDto: PaginationDto): Promise<unknown> {

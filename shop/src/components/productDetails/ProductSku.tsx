@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 interface ProductSkuProps {
@@ -9,7 +10,7 @@ function ProductSku({ sku }: ProductSkuProps) {
     <div>
       {sku && (
         <div>
-          <a href="#">کد کالا {sku}</a>
+          <Link href="#">کد کالا {sku}</Link>
         </div>
       )}
     </div>

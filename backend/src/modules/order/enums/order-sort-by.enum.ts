@@ -4,3 +4,9 @@ export enum OrderSortBy {
   TotalPrice = 'totalPrice',
   Quantity = 'quantity',
 }
+
+export enum QueryOrderStatus {
+  CURRENT = 'current',
+  DELIVERED = 'delivered',
+  CANCELLED = 'canceled',
+}

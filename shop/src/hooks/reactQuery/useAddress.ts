@@ -27,7 +27,7 @@ export function useAddress({ enabled = true, params = {}, staleTime = 1 * 60 * 1
   });
 
   return {
-    addressItems: data?.data.items,
+    data,
     isLoading,
     error,
     refetch,

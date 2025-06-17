@@ -33,6 +33,7 @@ export interface CartItem {
     name: string;
     salePrice: number | null;
     basePrice: number | null;
+    slug: string;
     type: 'SIMPLE' | 'VARIABLE';
     mainImage: { fileUrl: string | null } | null;
   } | null;
@@ -53,6 +54,9 @@ export interface CartResponse {
   userId: number;
   createdAt: string;
   updatedAt: string;
+  totalPrice: number;
+  totalDiscountPrice: number;
+  payablePrice: number;
   items: CartItemState[];
 }
 

@@ -24,9 +24,9 @@ const ProfileDropdown = () => {
     setIsMounted(true);
   }, []);
 
-  if (!isMounted) return null;
+  // if (!isMounted) return null;
 
-  if (isLoading) {
+  if (!isMounted) {
     return (
       <div className="flex h-9 items-center justify-center gap-2 rounded-md border border-gray-300 px-4">
         <SkeletonLoader width="2rem" height="1.5rem" className="rounded-md" />

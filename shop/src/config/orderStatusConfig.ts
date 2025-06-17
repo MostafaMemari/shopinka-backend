@@ -1,7 +1,6 @@
+import { OrderStatus } from '@/types/orderType';
 import React from 'react';
 import { FaExclamationTriangle, FaCheckCircle, FaHourglassHalf, FaCog, FaTruck, FaBoxOpen, FaClock, FaTimes } from 'react-icons/fa';
-
-export type OrderStatus = 'pending' | 'paid' | 'awaiting-confirmation' | 'processing' | 'shipped' | 'delivered' | 'canceled';
 
 interface StatusConfig {
   headerLabel: string;
@@ -16,7 +15,7 @@ interface StatusConfig {
 }
 
 export const getStatusConfig = (status: OrderStatus): StatusConfig => {
-  const isPendingOrCanceled = status === 'pending' || status === 'canceled';
+  const isPendingOrCanceled = status === 'PENDING' || status === 'CANCELLED';
   const headerLabel = isPendingOrCanceled ? 'در انتظار پرداخت' : 'پرداخت شده';
   const headerColor = isPendingOrCanceled ? 'text-yellow-500 dark:text-yellow-400' : 'text-green-500 dark:text-green-400';
   const headerIcon = isPendingOrCanceled
@@ -24,7 +23,7 @@ export const getStatusConfig = (status: OrderStatus): StatusConfig => {
     : React.createElement(FaCheckCircle, { className: 'h-6 w-6' });
 
   switch (status) {
-    case 'pending':
+    case 'PENDING':
       return {
         headerLabel,
         headerColor,
@@ -36,7 +35,7 @@ export const getStatusConfig = (status: OrderStatus): StatusConfig => {
         statusColor: 'text-yellow-500 dark:text-yellow-400',
         progressColor: 'bg-yellow-500 dark:bg-yellow-400',
       };
-    case 'canceled':
+    case 'CANCELLED':
       return {
         headerLabel,
         headerColor,
@@ -48,32 +47,32 @@ export const getStatusConfig = (status: OrderStatus): StatusConfig => {
         statusColor: 'text-red-500 dark:text-red-400',
         progressColor: 'bg-red-500 dark:bg-red-400',
       };
-    case 'paid':
-    case 'awaiting-confirmation':
-      return {
-        headerLabel,
-        headerColor,
-        headerIcon,
-        showProgress: true,
-        progress: 20,
-        statusLabel: 'در انتظار تایید',
-        statusIcon: React.createElement(FaHourglassHalf, { className: 'h-5 w-5 md:h-6 md:w-6' }),
-        statusColor: 'text-orange-500 dark:text-orange-400',
-        progressColor: 'bg-orange-500 dark:bg-orange-400',
-      };
-    case 'processing':
-      return {
-        headerLabel,
-        headerColor,
-        headerIcon,
-        showProgress: true,
-        progress: 50,
-        statusLabel: 'در حال پردازش',
-        statusIcon: React.createElement(FaCog, { className: 'h-5 w-5 md:h-6 md:w-6' }),
-        statusColor: 'text-yellow-500 dark:text-yellow-400',
-        progressColor: 'bg-yellow-500 dark:bg-yellow-400',
-      };
-    case 'shipped':
+    // case 'paid':
+    // case 'awaiting-confirmation':
+    //   return {
+    //     headerLabel,
+    //     headerColor,
+    //     headerIcon,
+    //     showProgress: true,
+    //     progress: 20,
+    //     statusLabel: 'در انتظار تایید',
+    //     statusIcon: React.createElement(FaHourglassHalf, { className: 'h-5 w-5 md:h-6 md:w-6' }),
+    //     statusColor: 'text-orange-500 dark:text-orange-400',
+    //     progressColor: 'bg-orange-500 dark:bg-orange-400',
+    //   };
+    // case 'processing':
+    //   return {
+    //     headerLabel,
+    //     headerColor,
+    //     headerIcon,
+    //     showProgress: true,
+    //     progress: 50,
+    //     statusLabel: 'در حال پردازش',
+    //     statusIcon: React.createElement(FaCog, { className: 'h-5 w-5 md:h-6 md:w-6' }),
+    //     statusColor: 'text-yellow-500 dark:text-yellow-400',
+    //     progressColor: 'bg-yellow-500 dark:bg-yellow-400',
+    //   };
+    case 'SHIPPED':
       return {
         headerLabel,
         headerColor,
@@ -85,7 +84,7 @@ export const getStatusConfig = (status: OrderStatus): StatusConfig => {
         statusColor: 'text-blue-500 dark:text-blue-400',
         progressColor: 'bg-blue-500 dark:bg-blue-400',
       };
-    case 'delivered':
+    case 'PROCESSING':
       return {
         headerLabel,
         headerColor,

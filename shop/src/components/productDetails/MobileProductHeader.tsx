@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { IoIosArrowBack } from 'react-icons/io';
 import { RiHome3Line } from 'react-icons/ri';
-import { HiOutlineShare, HiOutlineHeart, HiOutlineShoppingCart } from 'react-icons/hi';
+import { HiOutlineShare, HiOutlineShoppingCart } from 'react-icons/hi';
 import { useCart } from '@/hooks/reactQuery/cart/useCart';
 import FavoriteProductAction from './ActionButtons/FavoriteProductAction';
 
@@ -34,11 +34,11 @@ const MobileHeader = ({ productId }: MobileHeaderProps) => {
   };
 
   const handleCart = () => {
-    router.push('/cart');
+    router.push('/checkout/cart');
   };
 
   return (
-    <div className="fixed top-1 right-0 z-50 lg:hidden w-full">
+    <div className="fixed top-3 right-0 z-50 lg:hidden w-full">
       <div className="flex items-center justify-between py-2 px-4">
         <div className="flex gap-2">
           <button onClick={handleBack} className="bg-white p-3 rounded-lg shadow-md cursor-pointer" aria-label="Back">

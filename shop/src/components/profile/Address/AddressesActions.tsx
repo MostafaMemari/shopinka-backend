@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MdOutlineEditLocation } from 'react-icons/md';
 import { useAddress } from '@/hooks/reactQuery/useAddress';
-import CartStatus from '@/components/CartStatus copy';
-import AddressFormDialog from '@/components/checkout/AddressFormDialog';
-import AddressFormDrawer, { Option } from '@/components/checkout/AddressFormDrawer';
+import { Option } from '@/components/checkout/AddressFormDrawer';
 import AddressItem from './AddressItem';
 import { AddressFormType } from '@/types/address.type';
-import DashboardHeader from '../DashboardHeader';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import ErrorState from '../ErrorState';
+import EmptyState from '../EmptyState';
+import { GrLocation } from 'react-icons/gr';
 
 const provinces: Option[] = [
   { value: 'tehran', label: 'تهران' },
@@ -27,25 +27,23 @@ const cities: Record<string, Option[]> = {
 };
 
 export default function AddressSection() {
-  const { addressItems, isLoading, error } = useAddress({});
+  const { data, isLoading, error } = useAddress({});
   const { deleteAddress, updateAddress, isCreateAddressLoading } = useAddress({});
 
-  // State for current edit dialog/drawer per address
+  const addresses = data?.data.items || [];
+
   const [editingId, setEditingId] = useState<number | null>(null);
   const [isDrawer, setIsDrawer] = useState(false);
 
-  // Open edit for specific address (per device)
   const openEdit = (id: number, useDrawer: boolean) => {
     setEditingId(id);
     setIsDrawer(useDrawer);
   };
 
-  // Close edit
   const closeEdit = () => {
     setEditingId(null);
   };
 
-  // Handle update
   const handleFormSubmit = async (values: AddressFormType) => {
     if (editingId != null) {
       updateAddress(
@@ -61,40 +59,23 @@ export default function AddressSection() {
     }
   };
 
-  // Handle delete
   const handleDeleteAddress = (addressId: number) => {
     deleteAddress(addressId);
   };
 
   return (
     <>
-      {isLoading || error ? (
-        <CartStatus
-          cartItems={[]}
-          error={error}
-          isLoading={isLoading}
-          emptyMessage="هیچ آدرسی ثبت نشده است!"
-          errorMessage="خطا در بارگذاری آدرس‌ها"
-          shopButtonText="رفتن به فروشگاه"
-          shopLink="/shop"
-        />
-      ) : (
-        <div className="col-span-12 lg:col-span-9">
-          <div className="mb-10 flex flex-col items-center justify-between gap-y-8 xs:flex-row">
-            <DashboardHeader title="آدرس تحویل سفارش" />
-            <>
-              <div className="hidden md:block">
-                <AddressFormDialog />
-              </div>
-              <div className="md:hidden">
-                <AddressFormDrawer />
-              </div>
-            </>
-          </div>
+      <div className="mb-8 space-y-4">
+        {isLoading || isCreateAddressLoading ? (
+          <LoadingSpinner />
+        ) : error ? (
+          <ErrorState message={error.message} />
+        ) : addresses.length === 0 ? (
+          <EmptyState icon={<GrLocation className="w-full h-full" />} />
+        ) : (
           <fieldset className="grid grid-cols-1 gap-4">
-            <legend className="sr-only">Address Options</legend>
             <div className="space-y-4">
-              {addressItems?.map((item) => (
+              {addresses?.map((item) => (
                 <AddressItem
                   key={item.id}
                   item={item}
@@ -111,8 +92,8 @@ export default function AddressSection() {
               ))}
             </div>
           </fieldset>
-        </div>
-      )}
+        )}
+      </div>
     </>
   );
 }

@@ -4,7 +4,7 @@ import { OrderService } from './order.service';
 import { AuthDecorator } from '../../common/decorators/auth.decorator';
 import { GetUser } from '../../common/decorators/get-user.decorator';
 import { Role, User } from '@prisma/client';
-import { QueryOrderDto } from './dto/query-order.dto';
+import { QueryMyOrderDto, QueryOrderDto } from './dto/query-order.dto';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { Roles } from '../../common/decorators/role.decorator';
 import { UpdateOrderStatusDto } from './dto/update-status-order.dto';
@@ -23,8 +23,8 @@ export class OrderController {
   }
 
   @Get('my')
-  findAllForUser(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
-    return this.orderService.findAllForUser(user.id, paginationDto);
+  findAllForUser(@Query() queryMyOrderDto: QueryMyOrderDto, @GetUser() user: User) {
+    return this.orderService.findAllForUser(user.id, queryMyOrderDto);
   }
 
   @Get('item')

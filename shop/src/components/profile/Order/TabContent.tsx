@@ -1,60 +1,26 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { IOrder } from '@/lib/types/orders';
-import { fetchOrdersByTab } from '@/mock/orders';
-import LoadingState from '../LoadingState';
+import { useState, useCallback } from 'react';
+
 import EmptyState from '../EmptyState';
 import ErrorState from '../ErrorState';
 import Pagination from '../Pagination';
-import OrderList from './OrderList';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { useOrder } from '@/hooks/reactQuery/order/useOrder';
+import OrderCard from './OrderCard';
+import { FaBoxOpen } from 'react-icons/fa';
 
 interface TabContentProps {
   tabId: 'current' | 'delivered' | 'canceled';
-  initialOrders: IOrder[];
-  pendingOrders: IOrder[];
 }
 
-const useOrders = (tabId: TabContentProps['tabId'], currentPage: number, itemsPerPage: number) => {
-  const [orders, setOrders] = useState<IOrder[]>([]);
-  const [totalItems, setTotalItems] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+const TabContent: React.FC<TabContentProps> = ({ tabId }) => {
+  const { data, isLoading, error } = useOrder({ params: { status: tabId } });
 
-  const loadOrders = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const { orders: fetchedOrders, total } = await fetchOrdersByTab(tabId, currentPage, itemsPerPage);
-      setOrders(fetchedOrders);
-      setTotalItems(total);
-    } catch (err) {
-      setError('خطا در بارگذاری سفارش‌ها');
-    } finally {
-      setLoading(false);
-    }
-  }, [tabId, currentPage, itemsPerPage]);
-
-  useEffect(() => {
-    loadOrders();
-  }, [loadOrders]);
-
-  return { orders, totalItems, loading, error };
-};
-
-const TabContent: React.FC<TabContentProps> = ({ tabId, initialOrders, pendingOrders }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
 
-  const { orders, totalItems, loading, error } = useOrders(tabId, currentPage, itemsPerPage);
-
-  const displayOrders = useMemo(() => {
-    if (tabId === 'current') {
-      return [...pendingOrders, ...orders];
-    }
-    return orders;
-  }, [tabId, orders, pendingOrders]);
+  let orders = data?.items || [];
+  const orderPager = data?.pager ?? { totalCount: 0, totalPages: 1 };
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
@@ -63,23 +29,24 @@ const TabContent: React.FC<TabContentProps> = ({ tabId, initialOrders, pendingOr
   return (
     <div id={`filter-${tabId}`} role="tabpanel" aria-labelledby={`filter-${tabId}-tab`}>
       <div className="mb-8 space-y-4">
-        {loading ? (
-          <div className="mt-8">
-            <LoadingSpinner />
-          </div>
+        {isLoading ? (
+          <LoadingSpinner />
         ) : error ? (
-          <div className="mt-8">
-            <ErrorState message={error} />
-          </div>
-        ) : displayOrders.length === 0 ? (
-          <div className="mt-8">
-            <EmptyState />
-          </div>
+          <ErrorState message={error.message} />
+        ) : orderPager?.totalCount === 0 ? (
+          <EmptyState icon={<FaBoxOpen className="w-full h-full" />} />
         ) : (
-          <OrderList orders={displayOrders} retryPayment={tabId === 'current'} />
+          <div className="space-y-4">
+            {orders.map((order) => (
+              <OrderCard key={order.id} order={order} />
+            ))}
+          </div>
         )}
       </div>
-      <Pagination totalItems={totalItems} itemsPerPage={itemsPerPage} currentPage={currentPage} onPageChange={handlePageChange} />
+
+      {orderPager?.totalCount > 0 && orderPager?.totalPages > 1 && (
+        <Pagination currentPage={currentPage} totalPages={orderPager?.totalPages} onPageChange={handlePageChange} />
+      )}
     </div>
   );
 };

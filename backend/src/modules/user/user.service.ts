@@ -72,42 +72,56 @@ export class UserService {
     return this.userRepository.findOneOrThrow({ where: { id } });
   }
 
-  async update(id: number, { fullName, mobile }: UpdateUserDto): Promise<{ message: string; user: User }> {
-    const existingUser = await this.userRepository.findOne({ where: { OR: [{ mobile }], NOT: { id } } });
-
-    if (existingUser) {
-      throw new ConflictException(UserMessages.AlreadyExistsUser);
-    }
-
-    const currentUser = await this.userRepository.findOneOrThrow({ where: { id } });
-
-    const isMobileChanged = mobile && mobile !== currentUser.mobile;
-
-    const HOURS_LIMIT = 24;
-    const timeSinceLastMobileChange = Date.now() - new Date(currentUser.lastMobileChange).getTime();
-
-    //* Allow mobile number change only if 24 hours have passed since the last change
-    if (isMobileChanged && currentUser.lastMobileChange) {
-      if (timeSinceLastMobileChange < HOURS_LIMIT * 60 * 60 * 1000) {
-        throw new ForbiddenException(UserMessages.MobileChangeLimit);
-      }
-    }
-
-    if (isMobileChanged) await this.authService.sendOtp({ mobile });
+  async update(id: number, { fullName }: UpdateUserDto): Promise<{ message: string; user: User }> {
+    await this.userRepository.findOneOrThrow({ where: { id } });
 
     const updatedUser = await this.userRepository.update({
       where: { id },
       data: {
         fullName,
-        mobile,
-        isVerifiedMobile: !isMobileChanged,
-        perviousMobile: isMobileChanged ? currentUser.mobile : undefined,
         updatedAt: new Date(),
       },
     });
 
     return { message: UserMessages.UpdatedUserSuccess, user: updatedUser };
   }
+
+  // async update(id: number, { fullName, mobile }: UpdateUserDto): Promise<{ message: string; user: User }> {
+  //   const existingUser = await this.userRepository.findOne({ where: { OR: [{ mobile }], NOT: { id } } });
+
+  //   if (existingUser) {
+  //     throw new ConflictException(UserMessages.AlreadyExistsUser);
+  //   }
+
+  //   const currentUser = await this.userRepository.findOneOrThrow({ where: { id } });
+
+  //   const isMobileChanged = mobile && mobile !== currentUser.mobile;
+
+  //   const HOURS_LIMIT = 24;
+  //   const timeSinceLastMobileChange = Date.now() - new Date(currentUser.lastMobileChange).getTime();
+
+  //   //* Allow mobile number change only if 24 hours have passed since the last change
+  //   if (isMobileChanged && currentUser.lastMobileChange) {
+  //     if (timeSinceLastMobileChange < HOURS_LIMIT * 60 * 60 * 1000) {
+  //       throw new ForbiddenException(UserMessages.MobileChangeLimit);
+  //     }
+  //   }
+
+  //   if (isMobileChanged) await this.authService.sendOtp({ mobile });
+
+  //   const updatedUser = await this.userRepository.update({
+  //     where: { id },
+  //     data: {
+  //       fullName,
+  //       mobile,
+  //       isVerifiedMobile: !isMobileChanged,
+  //       perviousMobile: isMobileChanged ? currentUser.mobile : undefined,
+  //       updatedAt: new Date(),
+  //     },
+  //   });
+
+  //   return { message: UserMessages.UpdatedUserSuccess, user: updatedUser };
+  // }
 
   async remove(id: number): Promise<{ message: string; user: User }> {
     await this.userRepository.findOneOrThrow({ where: { id } });

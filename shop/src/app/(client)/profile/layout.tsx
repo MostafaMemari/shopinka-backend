@@ -11,7 +11,7 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
             <div className="sticky top-32 hidden w-full overflow-hidden rounded-lg bg-muted shadow-base lg:block">
               <div dir="ltr" className="max-h-[calc(90vh_-_100px)] overflow-y-auto p-4 xl:p-6">
                 <div dir="rtl">
-                  <ProfileHeader fullName="مصطفی معماری" profileImage="/images/user.png" phoneNumber="09388366510" />
+                  <ProfileHeader />
                   <ProfileMenu />
                 </div>
               </div>

@@ -8,11 +8,17 @@ import CartPageItem from '@/modules/cart/views/CartPageView/CartPageItem';
 import Link from 'next/link';
 import showConfirmDialog from '@/components/cart/showConfirmDialog';
 import CartSummary from '@/components/cart/CartSummary';
-import CartStatus from '@/components/CartStatus copy';
 import PrimaryButton from '@/components/PrimaryButton';
 import { useCart } from '@/hooks/reactQuery/cart/useCart';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import ErrorState from '@/components/profile/ErrorState';
+import EmptyState from '@/components/profile/EmptyState';
+import { PiBasketFill } from 'react-icons/pi';
+import { useAuth } from '@/hooks/auth/useAuth';
 
 function CartPageView() {
+  const { isLogin } = useAuth();
+
   const { cart: cartItems, isLoading, error, clearAllCartItems } = useCart();
   const totals = calculateTotals(cartItems);
   const totalQuantity = cartItems?.reduce((sum, item) => sum + item.count, 0) || 0;
@@ -34,18 +40,25 @@ function CartPageView() {
 
   return (
     <>
-      <CartStatus
-        cartItems={cartItems}
-        error={error}
-        isLoading={isLoading}
-        emptyMessage="سبد خرید شما خالی است!"
-        errorMessage="خطا در بارگذاری سبد خرید"
-        loadingMessage="در حال بارگذاری سبد خرید..."
-        shopButtonText="رفتن به فروشگاه"
-        shopLink="/shop"
-      />
-
-      {!isLoading && cartItems.length > 0 && (
+      {isLoading ? (
+        <div className="col-span-12">
+          <div className="rounded-lg bg-muted p-4 min-h-[300px] flex items-center justify-center">
+            <LoadingSpinner />
+          </div>
+        </div>
+      ) : error ? (
+        <div className="col-span-12">
+          <div className="rounded-lg bg-muted p-4 min-h-[300px] flex items-center justify-center">
+            <ErrorState message={error.message} />
+          </div>
+        </div>
+      ) : cartItems.length === 0 ? (
+        <div className="col-span-12">
+          <div className="rounded-lg bg-muted p-4 min-h-[300px] flex items-center justify-center">
+            <EmptyState icon={<PiBasketFill className="w-full h-full" />} message="سبد خرید خالی می‌باشد" />
+          </div>
+        </div>
+      ) : (
         <>
           <div className="col-span-12 md:col-span-8">
             <div className="rounded-lg bg-muted p-4 min-h-[300px]">
@@ -80,7 +93,7 @@ function CartPageView() {
             totalPrice={totalPrice}
           >
             <div>
-              <Link href="/checkout/shipping">
+              <Link href={isLogin ? '/checkout/shipping' : '/login?backUrl=/checkout/shipping'} className="w-full">
                 <PrimaryButton type="submit">ادامه فرایند خرید</PrimaryButton>
               </Link>
             </div>

@@ -114,6 +114,7 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
           </div>
         </div>
       </div>
+
       <div className="lg:hidden">
         <div className="mb-6 relative rounded-lg bg-muted p-4 shadow-base">
           <div className="mb-4">

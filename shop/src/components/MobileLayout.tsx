@@ -35,8 +35,8 @@ const MobileLayout = ({ showHeader = true, showNav = true }: MobileLayoutProps) 
       ),
       label: 'حساب کاربری',
     },
-    { href: '/cart', icon: <LuShoppingCart size={22} />, label: 'سبد خرید' },
-    { href: '/categories', icon: <LuList size={22} />, label: 'دسته‌بندی' },
+    { href: '/checkout/cart', icon: <LuShoppingCart size={22} />, label: 'سبد خرید' },
+    { href: '/shop', icon: <LuList size={22} />, label: 'دسته‌بندی' },
     { href: '/', icon: <RiHome3Line size={22} />, label: 'خانه' },
   ];
 

@@ -39,7 +39,6 @@ function FavoriteProductAction({ productId, isTooltip = false, className }: Favo
             'opacity-60 cursor-not-allowed': isFavoriteLoading || isToggleFavoriteLoading,
             className,
           })}
-          aria-label="افزودن به علاقه‌مندی‌ها"
         >
           {isFavoriteLoading || isToggleFavoriteLoading ? (
             <FaSpinner className="h-6 w-6" />
@@ -51,11 +50,7 @@ function FavoriteProductAction({ productId, isTooltip = false, className }: Favo
         </button>
       ) : (
         <Link href={`/login/?backUrl=${pathname}`}>
-          <button
-            type="button"
-            className="text-gray-700 hover:text-red-500 dark:text-white transition-colors duration-200 cursor-pointer"
-            aria-label="افزودن به علاقه‌مندی‌ها"
-          >
+          <button type="button" className="text-gray-700 hover:text-red-500 dark:text-white transition-colors duration-200 cursor-pointer">
             <HiOutlineHeart className="h-6 w-6" />
           </button>
         </Link>

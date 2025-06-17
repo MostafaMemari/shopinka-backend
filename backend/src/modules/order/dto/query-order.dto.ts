@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsNumber, IsPositive, IsBoolean, IsDate, IsString, IsEnum, Max, Min } from 'class-validator';
 import { SortOrder } from 'src/common/enums/shared.enum';
 import { Transform } from 'class-transformer';
-import { OrderSortBy } from '../enums/order-sort-by.enum';
+import { OrderSortBy, QueryOrderStatus } from '../enums/order-sort-by.enum';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
 
 export class QueryOrderDto extends PaginationDto {
@@ -113,4 +113,10 @@ export class QueryOrderDto extends PaginationDto {
     enum: SortOrder,
   })
   sortDirection?: SortOrder;
+}
+export class QueryMyOrderDto extends PaginationDto {
+  @IsOptional()
+  @IsEnum(QueryOrderStatus)
+  @ApiProperty({ enum: QueryOrderStatus, type: 'string', required: false, nullable: true })
+  status?: QueryOrderStatus;
 }

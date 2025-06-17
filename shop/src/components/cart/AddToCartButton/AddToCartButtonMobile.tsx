@@ -26,7 +26,7 @@ export default function AddToCartButtonMobile({ product }: AddToCartButtonMobile
           {existingProduct && <CartControls product={existingProduct} />}
           <div className="hidden lg:flex flex-col items-start text-sm">
             <span className="text-primary font-medium">در سبد شما</span>
-            <Link href="/cart" className="text-blue-600 hover:underline text-sm font-normal mt-1">
+            <Link href="/checkout/cart" className="text-blue-600 hover:underline text-sm font-normal mt-1">
               مشاهده سبد خرید
             </Link>
           </div>

@@ -1,6 +1,7 @@
 import { Product } from '@/types/productType';
 import { formatPrice } from '@/utils/formatter';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 
 interface SearchItemProps {
@@ -9,7 +10,7 @@ interface SearchItemProps {
 
 function SearchItem({ product }: SearchItemProps) {
   return (
-    <li key={product.id} className="flex items-center gap-3 rounded-md p-2 hover:bg-background/80 transition-colors">
+    <li className="flex items-center gap-3 rounded-md p-2 hover:bg-background/80 transition-colors">
       {product.mainImage && (
         <Image
           src={product.mainImage.fileUrl}
@@ -20,9 +21,9 @@ function SearchItem({ product }: SearchItemProps) {
         />
       )}
       <div className="flex-1 min-w-0">
-        <a href={`/product/${product.slug}`} className="text-text hover:underline truncate block">
+        <Link href={`/product/${product.slug}`} className="text-text hover:underline truncate block">
           {product.name}
-        </a>
+        </Link>
         <div className="text-sm text-text/60 flex items-center gap-2">
           {product.salePrice ? (
             <>

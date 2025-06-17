@@ -10,6 +10,7 @@ import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { pagination } from '../../common/utils/pagination.utils';
 import { PrismaService } from '../prisma/prisma.service';
+import { calculateCartTotals } from 'src/common/utils/functions.utils';
 
 @Injectable()
 export class CartService {
@@ -26,20 +27,34 @@ export class CartService {
       where: { userId },
       include: {
         items: {
-          orderBy: {
-            createdAt: 'desc',
-          },
+          orderBy: { createdAt: 'desc' },
           include: {
             product: {
-              select: { id: true, name: true, type: true, salePrice: true, basePrice: true, mainImage: { select: { fileUrl: true } } },
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                type: true,
+                salePrice: true,
+                basePrice: true,
+                mainImage: { select: { fileUrl: true } },
+              },
             },
             productVariant: {
               select: {
                 id: true,
                 salePrice: true,
                 basePrice: true,
-                product: { select: { name: true, type: true, mainImage: { select: { fileUrl: true } } } },
-                attributeValues: { select: { name: true, colorCode: true, buttonLabel: true } },
+                product: {
+                  select: {
+                    name: true,
+                    type: true,
+                    mainImage: { select: { fileUrl: true } },
+                  },
+                },
+                attributeValues: {
+                  select: { name: true, colorCode: true, buttonLabel: true },
+                },
               },
             },
           },
@@ -47,7 +62,14 @@ export class CartService {
       },
     });
 
-    return { ...cart };
+    if (!cart) return null;
+
+    const totals = calculateCartTotals(cart.items);
+
+    return {
+      ...cart,
+      ...totals,
+    };
   }
 
   async clear(userId: number): Promise<Cart> {

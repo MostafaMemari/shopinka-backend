@@ -4,9 +4,9 @@ import { cn } from '@/utils/utils';
 import Link from 'next/link';
 
 const TABS = [
-  { id: 'current', label: 'فعلی', count: 5 },
-  { id: 'delivered', label: 'تحویل شده', count: 10 },
-  { id: 'canceled', label: 'لغو شده', count: 15 },
+  { id: 'current', label: 'جاری' },
+  { id: 'delivered', label: 'تحویل شده' },
+  { id: 'canceled', label: 'لغو شده' },
 ] as const;
 
 type TabId = (typeof TABS)[number]['id'];
@@ -15,17 +15,19 @@ const DEFAULT_TAB: TabId = 'current';
 const OrderTabs = async ({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) => {
   const currSearchParams = await searchParams;
   const activeTabParam = currSearchParams?.activeTab;
+
   const isValidTab = typeof activeTabParam === 'string' && TABS.some((tab) => tab.id === activeTabParam);
   const tabId: TabId = isValidTab ? (activeTabParam as TabId) : DEFAULT_TAB;
 
   return (
-    <div>
-      <DashboardHeader title="سفارشات" />
+    <>
+      <div className="mb-10 flex flex-col items-center justify-between gap-y-8 xs:flex-row">
+        <DashboardHeader title="سفارشات" />
+      </div>
 
       <nav
-        className="mt-10 flex gap-x-2 sm:gap-x-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-zinc-800"
+        className="mt-10 flex gap-x-6 sm:gap-x-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-zinc-800"
         role="tablist"
-        aria-label="سفارشات"
       >
         {TABS.map((tab) => (
           <Link
@@ -42,20 +44,12 @@ const OrderTabs = async ({ searchParams }: { searchParams: Promise<{ [key: strin
             tabIndex={tabId === tab.id ? 0 : -1}
           >
             {tab.label}
-            <span
-              className={cn(
-                'inline-flex h-6 w-6 items-center justify-center rounded bg-primary/90 text-white text-xs font-bold transition-all duration-150',
-                tabId === tab.id ? 'scale-110 shadow' : 'bg-primary/40',
-              )}
-            >
-              {tab.count}
-            </span>
           </Link>
         ))}
       </nav>
 
-      <TabContent tabId={tabId} initialOrders={[]} pendingOrders={[]} />
-    </div>
+      <TabContent tabId={tabId} />
+    </>
   );
 };
 

@@ -8,9 +8,12 @@ import DesktopBasketItem from './DesktopBasketItem';
 import { formatPrice } from '@/utils/formatter';
 import IconButtonWithBadge from '@/components/IconButtonWithBadge';
 import { useCart } from '@/hooks/reactQuery/cart/useCart';
+import { useAuth } from '@/hooks/auth/useAuth';
 
 export default function BasketDropdown() {
   const { cart: cartItems, isLoading } = useCart();
+  const { isLogin } = useAuth();
+
   const { isOpen, dropdownRef, handleMouseEnter, handleMouseLeave, closeDropdown } = useDropdown({
     closeOnOutsideClick: false,
     openOnHover: true,
@@ -39,7 +42,7 @@ export default function BasketDropdown() {
           >
             <div className="flex items-center justify-between p-5 pb-2">
               <div className="text-sm text-text/90">{cartItems?.length} مورد</div>
-              <Link className="flex items-center gap-x-1 text-sm text-primary" href="/checkout-cart">
+              <Link className="flex items-center gap-x-1 text-sm text-primary" href="/checkout/cart">
                 <div>مشاهده سبد خرید</div>
                 <div>
                   <HiOutlineChevronLeft className="h-5 w-5" />
@@ -69,8 +72,8 @@ export default function BasketDropdown() {
                   <span className="text-sm"> تومان</span>
                 </div>
               </div>
-              <Link href="/checkout/cart">
-                <button className="btn-primary w-32 py-3 text-sm" type="button">
+              <Link href={isLogin ? '/checkout/shipping' : '/checkout/cart'}>
+                <button className="btn-primary w-32 py-3 text-sm cursor-pointer" type="button">
                   ثبت سفارش
                 </button>
               </Link>

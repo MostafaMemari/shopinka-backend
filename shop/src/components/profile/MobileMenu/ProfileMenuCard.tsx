@@ -5,9 +5,11 @@ import React, { useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { IoIosMenu } from 'react-icons/io';
 import ProfileMenu from '../ProfileMenu';
+import { useAuth } from '@/hooks/auth/useAuth';
 
 function ProfileMenuCard() {
   const [isOpen, setIsOpen] = useState(false);
+  const { isLoading, user } = useAuth();
 
   return (
     <>

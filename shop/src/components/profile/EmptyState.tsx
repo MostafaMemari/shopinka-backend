@@ -1,11 +1,23 @@
-import { FaBoxOpen } from 'react-icons/fa';
+import { ReactNode } from 'react';
 
-const EmptyState: React.FC = () => {
+interface EmptyStateProps {
+  icon?: ReactNode;
+  message?: string;
+  iconSize?: string;
+  className?: string;
+}
+
+const EmptyState: React.FC<EmptyStateProps> = ({
+  icon,
+  message = 'هیچ آیتمی برای نمایش وجود ندارد',
+  iconSize = 'w-16 h-16',
+  className = '',
+}) => {
   return (
-    <div className="flex justify-center">
-      <div className="flex flex-col items-center justify-center gap-y-4 text-text/60">
-        <FaBoxOpen className="h-20 w-20" />
-        <p className="md:text-xl">لیست سفارش‌های شما خالی می‌باشد</p>
+    <div className={`flex justify-center items-center p-6 ${className}`}>
+      <div className="flex flex-col items-center justify-center gap-y-4 text-text/60 p-8 transition-all">
+        <div className={`text-primary ${iconSize}`}>{icon}</div>
+        <p className="text-center text-base md:text-xl font-medium">{message}</p>
       </div>
     </div>
   );

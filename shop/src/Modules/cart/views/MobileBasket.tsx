@@ -82,7 +82,7 @@ export default function MobileBasketDrawer({ cartItems, totalPrice }: MobileBask
               <span className="text-sm">تومان</span>
             </div>
           </div>
-          <Link href="/checkout-cart" className="btn-primary w-32 py-3 text-sm text-center">
+          <Link href="/checkout/cart" className="btn-primary w-32 py-3 text-sm text-center">
             مشاهده سبد خرید
           </Link>
         </div>
