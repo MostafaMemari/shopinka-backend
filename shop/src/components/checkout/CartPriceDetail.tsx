@@ -7,6 +7,7 @@ import CartSummary from '@/components/cart/CartSummary';
 import { calculateTotals } from '@/utils/calculateTotals';
 import LoadingSpinner from '../ui/LoadingSpinner';
 import { ShippingItem } from '@/types/shipping.type';
+import { useCreatePayment } from '@/hooks/reactQuery/payment/useCreatePayment';
 
 interface CartPriceDetailProps {
   selectedAddressId: number | null;
@@ -23,9 +24,19 @@ export default function CartPriceDetail({ selectedAddressId, selectedShippingIte
   const isCheckoutDisabled = !selectedAddressId || !selectedShippingItem;
   const shippingPrice = selectedShippingItem?.price ?? 0;
 
-  const handlePayment = () => {
-    console.log('selectedAddressId', selectedAddressId);
-    console.log('selectedShippingId', selectedShippingItem);
+  const { createPayment, isCreatePaymentLoading } = useCreatePayment();
+
+  const handleCreatePayment = () => {
+    createPayment(
+      {
+        addressId: selectedAddressId ?? 0,
+        shippingId: selectedShippingItem?.id ?? 0,
+        description: 'testtttt',
+      },
+      () => {
+        console.log('Payment created successfully');
+      },
+    );
   };
 
   return (
@@ -43,11 +54,9 @@ export default function CartPriceDetail({ selectedAddressId, selectedShippingIte
           totalPrice={totalPrice}
         >
           <div>
-            {/* <Link href={isCheckoutDisabled ? '#' : '/checkout'}> */}
-            <PrimaryButton type="submit" disabled={isCheckoutDisabled} onClick={handlePayment}>
+            <PrimaryButton type="submit" disabled={isCheckoutDisabled} onClick={handleCreatePayment} isLoading={isCreatePaymentLoading}>
               {isCheckoutDisabled ? 'لطفاً آدرس و شیوه ارسال را انتخاب کنید' : 'پرداخت'}
             </PrimaryButton>
-            {/* </Link> */}
           </div>
         </CartSummary>
       )}
