@@ -75,7 +75,6 @@ const AddressItem: React.FC<AddressItemProps> = ({
         </p>
       )}
 
-      {/* Mobile Edit Drawer */}
       <MobileDrawer
         title="ویرایش آدرس"
         isOpen={isEditing && isDrawer}
@@ -101,7 +100,6 @@ const AddressItem: React.FC<AddressItemProps> = ({
         />
       </MobileDrawer>
 
-      {/* Desktop Edit Dialog */}
       <Dialog
         title="ویرایش آدرس"
         isOpen={isEditing && !isDrawer}

@@ -12,6 +12,7 @@ export function useToggleFavorite() {
       createMutation.mutate(productId, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: [QueryKeys.Favorites] });
+          queryClient.invalidateQueries({ queryKey: [QueryKeys.ProductFavorite] });
           onSuccess?.();
         },
         onError: (error) => {
