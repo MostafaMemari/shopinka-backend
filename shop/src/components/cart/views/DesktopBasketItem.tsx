@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { CartItemState } from '@/types/cartType';
 import CartControls from '@/components/cart/CartControls';
 import CartItemAttributes from '@/components/cart/CartItemAttributes';
-import ProductPriceCard from '@/components/cart/ProductPriceCart';
+import ProductPrice from '@/components/productDetails/PriceDisplay';
 
 export interface ItemCardBasketProp {
   item: CartItemState;
@@ -30,7 +30,7 @@ export default function DesktopBasketItem({ item }: ItemCardBasketProp) {
         </div>
 
         <div className="flex items-center justify-between gap-x-2">
-          <ProductPriceCard oldPrice={item.basePrice} newPrice={item.salePrice} discount={item.discount} />
+          <ProductPrice product={{ basePrice: item.basePrice, salePrice: item.salePrice, type: item.type }} />
 
           <div className="w-28">
             <CartControls product={item} />

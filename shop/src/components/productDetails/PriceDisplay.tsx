@@ -25,6 +25,7 @@ export function ProductPrice({ product }: ProductPriceProps) {
     if (typeof salePrice === 'number' && typeof basePrice === 'number' && basePrice > 0) {
       return Math.round(((basePrice - salePrice) / basePrice) * 100);
     }
+
     return 0;
   }, [salePrice, basePrice]);
 
@@ -33,12 +34,12 @@ export function ProductPrice({ product }: ProductPriceProps) {
 
   return (
     <div className="space-y-1" aria-live="polite">
-      {discount > 0 && basePrice != null ? (
+      {discount > 0 && basePrice != null && salePrice ? (
         <>
           <div className="flex items-center gap-x-2">
-            {salePrice != null && (
+            {basePrice != null && (
               <div>
-                <del className="text-xs text-text/60 decoration-warning md:text-sm">{formatPrice(salePrice)}</del>
+                <del className="text-xs text-text/60 decoration-warning md:text-sm">{formatPrice(basePrice)}</del>
               </div>
             )}
             <div className="flex w-8 items-center justify-center rounded-full bg-warning py-0.5 text-xs font-bold text-white dark:bg-red-600">
@@ -46,7 +47,7 @@ export function ProductPrice({ product }: ProductPriceProps) {
             </div>
           </div>
           <div className="text-primary">
-            <span className="text-base font-semibold lg:text-lg lg:font-bold">{formatPrice(basePrice)}</span>
+            <span className="text-base font-semibold lg:text-lg lg:font-bold">{formatPrice(salePrice)}</span>
             <span className="text-xs font-light lg:text-sm lg:font-medium"> تومان</span>
           </div>
         </>

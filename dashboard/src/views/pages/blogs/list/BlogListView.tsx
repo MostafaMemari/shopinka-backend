@@ -50,9 +50,6 @@ const BlogListView = () => {
   const blogs: Blog[] = useMemo(() => data?.data?.items || [], [data])
   const paginationData = useMemo(() => data?.data?.pager || { currentPage: 1, totalPages: 1, totalCount: 0 }, [data])
 
-  if (isLoading || isFetching) return <LoadingSpinner />
-  if (error) return <ErrorState onRetry={() => refetch()} />
-
   return (
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, p: 6 }}>
@@ -62,7 +59,11 @@ const BlogListView = () => {
 
         <CustomTextField id='form-props-search' placeholder='جستجوی وبلاگ' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
       </Box>
-      {blogs.length === 0 ? (
+      {isLoading || isFetching ? (
+        <LoadingSpinner />
+      ) : error ? (
+        <ErrorState onRetry={() => refetch()} />
+      ) : blogs.length === 0 ? (
         <EmptyBlogState isSearch={!!search} searchQuery={search} />
       ) : (
         <>

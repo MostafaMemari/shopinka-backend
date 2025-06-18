@@ -40,16 +40,11 @@ const CommentView = () => {
     staleTime: 1 * 60 * 1000
   })
 
-  console.log(data)
-
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   const comments: Comment[] = useMemo(() => data?.data?.items || [], [data])
   const paginationData = useMemo(() => data?.data?.pager || { currentPage: 1, totalPages: 1, totalCount: 0 }, [data])
-
-  if (isLoading || isFetching) return <LoadingSpinner />
-  if (error) return <ErrorState onRetry={() => refetch()} />
 
   return (
     <Card sx={{ bgcolor: 'background.paper', borderColor: 'divider' }}>
@@ -58,7 +53,11 @@ const CommentView = () => {
 
         <CustomTextField id='form-props-search' placeholder='جستجوی کامنت' type='search' value={inputValue} onChange={e => setInputValue(e.target.value)} />
       </Box>
-      {comments.length === 0 ? (
+      {isLoading || isFetching ? (
+        <LoadingSpinner />
+      ) : error ? (
+        <ErrorState onRetry={() => refetch()} />
+      ) : comments.length === 0 ? (
         <EmptyCommentState isSearch={!!search} searchQuery={search} />
       ) : (
         <>

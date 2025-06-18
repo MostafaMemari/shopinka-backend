@@ -179,7 +179,7 @@ export class OrderService {
     if (cachedOrders) return { ...pagination(paginationDto, cachedOrders) };
 
     const filters: Prisma.OrderWhereInput = {
-      OR: [{ user: { products: { some: { userId } } } }, { user: { productVariants: { some: { userId } } } }],
+      // OR: [{ user: { products: { some: { userId } } } }, { user: { productVariants: { some: { userId } } } }],
     };
 
     if (addressId) filters.addressId = addressId;
