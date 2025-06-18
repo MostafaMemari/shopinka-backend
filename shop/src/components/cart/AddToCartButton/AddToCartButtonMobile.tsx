@@ -17,7 +17,7 @@ export default function AddToCartButtonMobile({ product }: AddToCartButtonMobile
     product,
   });
 
-  if (!product || !newPrice) return null;
+  // if (!product || !newPrice) return null;
 
   return (
     <>
@@ -36,7 +36,6 @@ export default function AddToCartButtonMobile({ product }: AddToCartButtonMobile
           <PrimaryButton
             type="submit"
             onClick={addToCart}
-            aria-label={isVariableProduct && !isVariantSelected ? 'لطفاً گزینه‌های محصول را انتخاب کنید' : 'افزودن به سبد خرید'}
             isLoading={isAddingToCart}
             disabled={(isVariableProduct && !isVariantSelected) || isAddingToCart}
           >
@@ -45,7 +44,7 @@ export default function AddToCartButtonMobile({ product }: AddToCartButtonMobile
                 <PulseLoader color="#ffffff" size={6} loading aria-label="در حال بارگذاری" />
               </div>
             ) : isVariableProduct && !isVariantSelected ? (
-              'لطفاً گزینه‌های محصول را انتخاب کنید'
+              'لطفاً یک گزینه انتخاب کنید'
             ) : (
               'افزودن به سبد خرید'
             )}

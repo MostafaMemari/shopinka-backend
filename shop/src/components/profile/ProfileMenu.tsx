@@ -2,7 +2,7 @@
 
 import { profileMenuItem } from '@/data/profileMenuItem';
 import { useAuth } from '@/hooks/auth/useAuth';
-import { logout } from '@/service/auth.api';
+import { logout } from '@/service/authService';
 import Toast from '@/utils/swalToast';
 import { cn } from '@/utils/utils';
 import Link from 'next/link';

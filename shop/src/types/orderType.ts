@@ -1,7 +1,7 @@
-import { AddressItem } from './address.type';
+import { AddressItem } from './addressType';
 import { AttributeValues } from './attributeType';
 import { Pager } from './pagerType';
-import { ShippingItem } from './shipping.type';
+import { ShippingItem } from './shippingType';
 
 export interface Order {
   pager: Pager;

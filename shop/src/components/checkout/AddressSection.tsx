@@ -5,7 +5,7 @@ import { MdOutlineAddLocationAlt, MdOutlineEditLocation } from 'react-icons/md';
 import { useAddress } from '@/hooks/reactQuery/useAddress';
 import ErrorState from '../profile/ErrorState';
 import LoadingSpinner from '../ui/LoadingSpinner';
-import { AddressFormType, AddressItem as AddressItemType } from '@/types/address.type';
+import { AddressFormType, AddressItem as AddressItemType } from '@/types/addressType';
 import AddressItem from './AddressItem';
 import useIsMdUp from '@/hooks/useIsMdUp';
 import Dialog from '../ui/Dialog';

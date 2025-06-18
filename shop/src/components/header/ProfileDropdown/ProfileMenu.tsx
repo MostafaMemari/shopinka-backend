@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { HiOutlineLogout } from 'react-icons/hi';
 import { usePathname } from 'next/navigation';
 import Toast from '@/utils/swalToast';
-import { logout } from '@/service/auth.api';
+import { logout } from '@/service/authService';
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 import { useState } from 'react';
 import { profileMenuItems } from '@/data/menuData';

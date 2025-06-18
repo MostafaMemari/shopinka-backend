@@ -1,9 +1,9 @@
 import { QueryOptions } from '@/types/queryOptions';
-import { AddressFormType, AddressItem } from '@/types/address.type';
+import { AddressFormType, AddressItem } from '@/types/addressType';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from '@/types/query-keys';
 import { pager } from '@/types/paginationType';
-import { createAddress, getAddress, updateAddress, deleteAddress } from '@/service/address.api';
+import { createAddress, getAddress, updateAddress, deleteAddress } from '@/service/addressService';
 
 export function useAddress({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const queryClient = useQueryClient();

@@ -50,14 +50,13 @@ const MobileMenu = ({ onToggleMenu }: MobileMenuProps) => {
 
   return (
     <>
-      <div ref={menuRef} className="mt-2">
+      <div className="mt-2">
         <button onClick={toggleMenu} className="cursor-pointer">
           {isMenuOpen ? <HiOutlineXMark className="h-6 w-6" /> : <HiOutlineMenu className="h-6 w-6" />}
         </button>
       </div>
 
       <div
-        ref={menuRef}
         className={`fixed w-[265px] top-[5rem] bottom-[5rem] right-3 rounded-2xl z-40 bg-white shadow-md transition-transform duration-300 ${
           isMenuOpen ? 'translate-x-0' : 'translate-x-[110%]'
         }`}

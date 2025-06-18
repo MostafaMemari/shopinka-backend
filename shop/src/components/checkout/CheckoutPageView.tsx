@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import AddressSection from '@/components/checkout/AddressSection';
 import DeliverySection from '@/components/checkout/DeliverySection';
 import CartPriceDetail from '@/components/checkout/CartPriceDetail';
-import { ShippingItem } from '@/types/shipping.type';
+import { ShippingItem } from '@/types/shippingType';
 
 function CheckoutPageView() {
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);

@@ -1,6 +1,6 @@
 'use server';
 
-import { shopApiFetch } from '@/server/api';
+import { shopApiFetch } from '@/service/api';
 import { CommentFormType, CommentItem, CommentParams, CommentResponse } from '@/types/commentType';
 import { ofetch } from 'ofetch';
 

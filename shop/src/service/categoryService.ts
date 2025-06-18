@@ -1,4 +1,4 @@
-import { shopApiFetch } from '@/server/api';
+import { shopApiFetch } from '@/service/api';
 import { Category, CategoryParams } from '../types/categoryType';
 import { unstable_cache } from 'next/cache';
 import { ofetch } from 'ofetch';

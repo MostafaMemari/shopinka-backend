@@ -1,7 +1,7 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { ZarinpalService } from '../http/zarinpal.service';
 import { PaymentRepository } from './payment.repository';
-import { Order, OrderItem, OrderStatus, Prisma, Transaction, TransactionStatus } from '@prisma/client';
+import { Order, OrderItem, OrderStatus, Prisma, Transaction, TransactionStatus, User } from '@prisma/client';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { IVerifyPayment } from '../../common/interfaces/payment.interface';
 import { PaymentMessages } from './enums/payment.messages';
@@ -20,6 +20,7 @@ import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
 import { ProductRepository } from '../product/repositories/product.repository';
 import { CartRepository } from '../cart/repositories/cart.repository';
+import { AddressRepository } from '../address/address.repository';
 
 @Injectable()
 export class PaymentService {
@@ -62,30 +63,34 @@ export class PaymentService {
     }
   }
 
-  async getGatewayUrl(userId: number, paymentDto: PaymentDto) {
-    const cart = await this.cartService.me(userId);
-    const order = await this.orderService.create(userId, cart, paymentDto);
+  async getGatewayUrl(user: User, paymentDto: PaymentDto) {
+    const cart = await this.cartService.me(user.id);
 
     try {
       const { authority, code, gatewayURL } = await this.zarinpalService.sendRequest({
         amount: cart.payablePrice * 10,
         description: paymentDto.description ?? 'PAYMENT ORDER',
-        user: { email: 'example@gmail.com', mobile: order['user']?.mobile },
+        user: { email: 'example@gmail.com', mobile: user.mobile },
       });
 
-      await this.paymentRepository.create({
-        data: {
-          amount: cart.payablePrice * 10,
-          userId,
-          authority,
-          orderId: order.id,
-          invoiceNumber: new Date().getTime().toString(),
-        },
-      });
+      if (authority && code && gatewayURL) {
+        const order = await this.orderService.create(user.id, cart, paymentDto);
+        await this.paymentRepository.create({
+          data: {
+            amount: cart.payablePrice * 10,
+            userId: user.id,
+            authority,
+            orderId: order.id,
+            invoiceNumber: new Date().getTime().toString(),
+          },
+        });
 
-      return { authority, code, gatewayURL };
+        return { authority, code, gatewayURL };
+      } else {
+        throw new BadRequestException(PaymentMessages.FailPayment);
+      }
     } catch (error) {
-      await this.orderRepository.delete({ where: { id: order.id } });
+      // await this.orderRepository.delete({ where: { id: order.id } });
       throw error;
     }
   }
@@ -99,31 +104,65 @@ export class PaymentService {
 
       if (payment.status !== TransactionStatus.PENDING) throw new BadRequestException(PaymentMessages.FailedOrVerified);
 
-      const { code, sessionId } = await this.zarinpalService.verifyRequest({
-        authority,
-        amount: payment.amount,
-      });
-
-      const isSuccess = status === 'OK' && code === 100;
-
-      await this.updateOrderStatus(payment.orderId, isSuccess);
-      await this.updatePaymentStatus(payment.id, isSuccess, sessionId);
-      payment = { ...payment, status: isSuccess ? TransactionStatus.SUCCESS : TransactionStatus.FAILED, sessionId };
-
-      return {
-        redirectUrl: `${baseUrl}?status=${isSuccess ? 'success' : 'failed'}`,
-        payment,
-        status: isSuccess ? 'success' : 'failed',
-        message: PaymentMessages.VerifiedSuccess,
-      };
-    } catch (error) {
-      if (payment?.id && payment.status === TransactionStatus.PENDING) {
-        await this.updateOrderStatus(payment.orderId, false);
-        await this.updatePaymentStatus(payment.id, false);
+      if (status === 'NOK') {
+        await this.failPayment(payment);
+        return this.buildResponse(baseUrl, 'failed', PaymentMessages.VerifiedFailed, {
+          ...payment,
+          status: TransactionStatus.FAILED,
+        });
       }
 
-      throw new HttpException({ message: error.message, status: 'failed', payment }, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
+      if (status === 'OK') {
+        const { code, sessionId } = await this.zarinpalService.verifyRequest({
+          authority,
+          amount: payment.amount,
+        });
+
+        const isSuccess = code === 100 || code === 101;
+
+        await this.updateOrderStatus(payment.orderId, isSuccess);
+        await this.updatePaymentStatus(payment.id, isSuccess, sessionId);
+
+        return this.buildResponse(
+          baseUrl,
+          isSuccess ? 'success' : 'failed',
+          isSuccess ? PaymentMessages.VerifiedSuccess : PaymentMessages.VerifiedFailed,
+          {
+            ...payment,
+            sessionId,
+            status: isSuccess ? TransactionStatus.SUCCESS : TransactionStatus.FAILED,
+          },
+        );
+      }
+
+      throw new BadRequestException(PaymentMessages.UnknownStatus);
+    } catch (error) {
+      if (payment?.id && payment.status === TransactionStatus.PENDING) {
+        await this.failPayment(payment);
+      }
+
+      throw new HttpException(
+        {
+          message: error.message || 'Unexpected error occurred',
+          status: 'failed',
+        },
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
+  }
+
+  private async failPayment(payment: Transaction) {
+    await this.updateOrderStatus(payment.orderId, false);
+    await this.updatePaymentStatus(payment.id, false);
+  }
+
+  private buildResponse(baseUrl: string, redirectStatus: 'success' | 'failed', message: string, payment: Transaction) {
+    return {
+      redirectUrl: `${baseUrl}?status=${redirectStatus}&orderId=${payment.orderId}`,
+      payment,
+      status: redirectStatus,
+      message,
+    };
   }
 
   async refund(transactionId: number, refundPaymentDto: RefundPaymentDto) {

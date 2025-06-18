@@ -8,7 +8,7 @@ type DialogSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 interface DialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onOpen?: () => void; // اضافه کردن پراپ onOpen
+  onOpen?: () => void;
   title: string;
   children: ReactNode;
   actions?: ReactNode;
@@ -22,7 +22,7 @@ interface DialogProps {
 export default function Dialog({
   isOpen,
   onClose,
-  onOpen, // اضافه کردن به پراپ‌ها
+  onOpen,
   title,
   children,
   actions,
@@ -35,32 +35,26 @@ export default function Dialog({
   const dialogRef = useRef<HTMLDivElement>(null);
   const firstFocusableRef = useRef<HTMLElement | null>(null);
 
-  // برای جلوگیری از اسکرول کردن بادی
   useEffect(() => {
     if (isOpen) {
-      // ذخیره وضعیت اسکرول فعلی
       const scrollY = window.scrollY;
 
-      // اضافه کردن استایل به body برای جلوگیری از اسکرول
       document.body.style.position = 'fixed';
       document.body.style.top = `-${scrollY}px`;
       document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
 
       return () => {
-        // بازگرداندن استایل‌های body به حالت عادی
         document.body.style.position = '';
         document.body.style.top = '';
         document.body.style.width = '';
         document.body.style.overflow = '';
 
-        // بازگرداندن موقعیت اسکرول
         window.scrollTo(0, scrollY);
       };
     }
   }, [isOpen]);
 
-  // فراخوانی onOpen وقتی دیالوگ باز می‌شود
   useEffect(() => {
     if (isOpen && onOpen) {
       onOpen();

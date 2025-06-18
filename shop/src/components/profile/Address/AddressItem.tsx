@@ -4,7 +4,7 @@ import MobileDrawer from '@/components/MobileDrawer';
 import AddressForm from '@/components/checkout/AddressForm';
 import Dialog from '@/components/ui/Dialog';
 import { Option } from '@/components/checkout/AddressFormDrawer';
-import { AddressFormType } from '@/types/address.type';
+import { AddressFormType } from '@/types/addressType';
 
 type AddressItemProps = {
   item: any;

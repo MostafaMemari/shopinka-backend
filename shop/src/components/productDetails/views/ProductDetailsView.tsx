@@ -17,6 +17,7 @@ import ProductGuaranteeBadge from '../ProductGuaranteeBadge';
 
 import FavoriteProductAction from '../ActionButtons/FavoriteProductAction';
 import ShareProductAction from '../ActionButtons/ShareProductAction';
+import CartMobileFixContainer from '@/components/CartMobileFixContainer';
 interface ProductDetailsViewProps {
   product: ProductDetails;
 }
@@ -151,34 +152,32 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
 
                 <ProductGuaranteeBadge />
 
-                <div className="fixed bottom-3 right-3 left-3 rounded-2xl z-50 bg-white shadow-md">
-                  <div className="flex justify-between items-center text-xs rtl flex-row-reverse h-[60px]">
-                    <div className="flex justify-between items-center w-full">
-                      <div className="w-1/2 p-3">
-                        <AddToCartButtonMobile
-                          key={product.id}
-                          product={{
-                            id: product.id,
-                            name: product.name,
-                            basePrice: product.basePrice ?? 0,
-                            salePrice: product.salePrice ?? 0,
-                            mainImageUrl: product.mainImage?.fileUrl ?? null,
-                            type: product.type,
-                          }}
-                        />
-                      </div>
-                      <div className="p-2">
-                        <PriceDisplay
-                          product={{
-                            type: product.type,
-                            basePrice: product.basePrice ?? 0,
-                            salePrice: product.salePrice,
-                          }}
-                        />
-                      </div>
+                <CartMobileFixContainer>
+                  <div className="flex justify-between items-center w-full">
+                    <div className="w-1/2 p-3">
+                      <AddToCartButtonMobile
+                        key={product.id}
+                        product={{
+                          id: product.id,
+                          name: product.name,
+                          basePrice: product.basePrice ?? 0,
+                          salePrice: product.salePrice ?? 0,
+                          mainImageUrl: product.mainImage?.fileUrl ?? null,
+                          type: product.type,
+                        }}
+                      />
+                    </div>
+                    <div className="p-2">
+                      <PriceDisplay
+                        product={{
+                          type: product.type,
+                          basePrice: product.basePrice ?? 0,
+                          salePrice: product.salePrice,
+                        }}
+                      />
                     </div>
                   </div>
-                </div>
+                </CartMobileFixContainer>
               </div>
             </div>
           </div>

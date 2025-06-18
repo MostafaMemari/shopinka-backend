@@ -1,6 +1,6 @@
-import { shopApiFetch } from '@/server/api';
+import { shopApiFetch } from '@/service/api';
 import { pager } from '@/types/paginationType';
-import { AddressFormType, AddressItem } from '@/types/address.type';
+import { AddressFormType, AddressItem } from '@/types/addressType';
 
 export const createAddress = async (data: AddressFormType): Promise<{ message: string; address: AddressItem }> => {
   const res = await shopApiFetch('/address', { method: 'POST', body: { ...data } });

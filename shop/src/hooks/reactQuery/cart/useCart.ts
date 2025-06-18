@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setCart, addToCart, increaseCount, decreaseCount, deleteFromCart, clearCartAction } from '@/store/slices/cartSlice';
-import { createCart, getCart, updateQuantityItemCart, removeItemCart, clearCart } from '@/service/cart.api';
-import { CartResponse, CartData, CartItemState } from '@/types/cartType';
+import { createCart, getCart, updateQuantityItemCart, removeItemCart, clearCart } from '@/service/cartService';
+import { CartResponse, CartData, CartItemState, CartState } from '@/types/cartType';
 import { QueryOptions } from '@/types/queryOptions';
 import { QueryKeys } from '@/types/query-keys';
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
@@ -14,38 +14,32 @@ import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 export function useCartData({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   // const { isLogin } = useAuth();
 
-  const {
-    data: cart,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery<CartResponse>({
+  const { data, isLoading, error, refetch } = useQuery<CartState>({
     queryKey: [QueryKeys.Cart],
     queryFn: getCart,
     enabled: enabled,
     staleTime,
   });
 
-  return { cart, isLoading, error, refetch };
+  return { data, isLoading, error, refetch };
 }
 
-export const useCart = () => {
+export const useCart = (isLogin: boolean) => {
   const dispatch = useDispatch<AppDispatch>();
   const queryClient = useQueryClient();
-  const { items: reduxCart } = useSelector((state: RootState) => state.cart);
-  const { isLogin } = useAuth();
-  const { cart, isLoading, error, refetch } = useCartData({});
+  const { items: reduxCart, payablePrice, totalDiscountPrice, totalPrice } = useSelector((state: RootState) => state.cart);
+  const { data, isLoading, error, refetch } = useCartData({});
 
   // console.log(isLoading);
 
   useEffect(() => {
-    if (isLogin && cart) {
-      dispatch(setCart({ items: cart.items }));
+    if (isLogin && data) {
+      dispatch(setCart({ items: data.items }));
     } else {
       const localCart = JSON.parse(localStorage.getItem('cart') ?? '[]');
       dispatch(setCart({ items: localCart }));
     }
-  }, [cart, dispatch, isLogin]);
+  }, [data, dispatch, isLogin]);
 
   const addToCartMutation = useMutation({
     mutationFn: (cartData: CartData) => createCart({ cartData }),
@@ -97,7 +91,7 @@ export const useCart = () => {
     },
   });
 
-  const currentCart = isLogin && cart?.items ? cart.items : reduxCart;
+  const currentCart: CartState = isLogin && data?.items ? data : { items: reduxCart, payablePrice, totalDiscountPrice, totalPrice };
 
   return {
     cart: currentCart,

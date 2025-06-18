@@ -5,7 +5,7 @@ import { FaTruck, FaMoneyBillWave, FaClock } from 'react-icons/fa';
 import { useShipping } from '@/hooks/reactQuery/useShipping';
 import { formatPrice } from '@/utils/formatter';
 import LoadingSpinner from '../ui/LoadingSpinner';
-import { ShippingItem } from '@/types/shipping.type';
+import { ShippingItem } from '@/types/shippingType';
 
 interface DeliverySectionProps {
   onShippingSelect: (shippingSelectedItem: ShippingItem | null) => void;

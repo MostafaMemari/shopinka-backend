@@ -1,4 +1,4 @@
-import { AddressFormType, type AddressItem as AddressItemType } from '@/types/address.type';
+import { AddressFormType, type AddressItem as AddressItemType } from '@/types/addressType';
 import { useAddress } from '@/hooks/reactQuery/useAddress';
 import React, { useRef, useState } from 'react';
 

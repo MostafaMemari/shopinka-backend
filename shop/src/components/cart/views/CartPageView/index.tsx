@@ -1,11 +1,10 @@
 'use client';
 
 import React from 'react';
+import { PiBasketFill } from 'react-icons/pi';
 import { HiOutlineTrash } from 'react-icons/hi';
 
-import { calculateTotals } from '@/utils/calculateTotals';
-import CartPageItem from '@/modules/cart/views/CartPageView/CartPageItem';
-import Link from 'next/link';
+import CartPageItem from '@/components/cart/views/CartPageView/CartPageItem';
 import showConfirmDialog from '@/components/cart/showConfirmDialog';
 import CartSummary from '@/components/cart/CartSummary';
 import PrimaryButton from '@/components/PrimaryButton';
@@ -13,18 +12,20 @@ import { useCart } from '@/hooks/reactQuery/cart/useCart';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import ErrorState from '@/components/profile/ErrorState';
 import EmptyState from '@/components/profile/EmptyState';
-import { PiBasketFill } from 'react-icons/pi';
 import { useAuth } from '@/hooks/auth/useAuth';
+import CartMobileFixContainer from '@/components/CartMobileFixContainer';
+import { formatPrice } from '@/utils/formatter';
+import { useRouter } from 'next/navigation';
 
 function CartPageView() {
+  const router = useRouter();
+
   const { isLogin } = useAuth();
 
-  const { cart: cartItems, isLoading, error, clearAllCartItems } = useCart();
-  const totals = calculateTotals(cartItems);
+  const { cart, isLoading, error, clearAllCartItems } = useCart(isLogin);
+  const { items: cartItems, payablePrice, totalDiscountPrice, totalPrice } = cart;
+
   const totalQuantity = cartItems?.reduce((sum, item) => sum + item.count, 0) || 0;
-  const totalPrice = totals.totalPrice;
-  const totalDiscountPrice = totals.totalDiscountPrice;
-  const payablePrice = totals.payablePrice;
 
   const handleDeleteAll = async () => {
     const result = await showConfirmDialog({
@@ -36,6 +37,11 @@ function CartPageView() {
     if (result.isConfirmed) {
       clearAllCartItems();
     }
+  };
+
+  const handleNextCartShipping = async () => {
+    if (isLogin) router.push('/checkout/shipping');
+    else router.push('/login?backUrl=/checkout/shipping');
   };
 
   return (
@@ -60,6 +66,22 @@ function CartPageView() {
         </div>
       ) : (
         <>
+          <CartMobileFixContainer>
+            <div className="flex justify-between items-center w-full">
+              <div className="w-1/2 p-3">
+                <PrimaryButton onClick={handleNextCartShipping} type="submit">
+                  ادامه فرایند خرید
+                </PrimaryButton>
+              </div>
+              <div className="p-2 flex flex-col justify-between items-center">
+                <div className="text-xs font-light text-text/70 lg:text-base">مبلغ قابل پرداخت</div>
+                <div className="text-primary">
+                  <span className="text-base font-semibold lg:text-lg lg:font-bold">{formatPrice(cart.payablePrice)}</span>
+                  <span className="text-xs font-light lg:text-sm lg:font-medium"> تومان</span>
+                </div>
+              </div>
+            </div>
+          </CartMobileFixContainer>
           <div className="col-span-12 md:col-span-8">
             <div className="rounded-lg bg-muted p-4 min-h-[300px]">
               <div className="flex items-center justify-between gap-x-2 pb-4">
@@ -92,11 +114,9 @@ function CartPageView() {
             totalDiscountPrice={totalDiscountPrice}
             totalPrice={totalPrice}
           >
-            <div>
-              <Link href={isLogin ? '/checkout/shipping' : '/login?backUrl=/checkout/shipping'} className="w-full">
-                <PrimaryButton type="submit">ادامه فرایند خرید</PrimaryButton>
-              </Link>
-            </div>
+            <PrimaryButton onClick={handleNextCartShipping} type="submit">
+              ادامه فرایند خرید
+            </PrimaryButton>
           </CartSummary>
         </>
       )}

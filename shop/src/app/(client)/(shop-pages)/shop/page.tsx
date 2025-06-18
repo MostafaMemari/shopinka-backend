@@ -1,12 +1,12 @@
 import { Suspense } from 'react';
-import ProductListShopClient from '@/modules/shopPage/views/ProductListShopClient';
+import ProductListShopClient from '@/components/shopPage/views/ProductListShopClient';
 import { getProducts } from '@/service/productService';
 import { loadSearchParams } from '@/utils/loadSearchParams';
 import { parseArrayParam } from '@/utils/parseArrayParam';
 import { ProductParams } from '@/types/productType';
 import { SearchParams } from 'nuqs';
 import SortBar from '@/components/shopPage/SortBar';
-import FilterSection from '@/modules/shopPage/views/FilterSection';
+import FilterSection from '@/components/shopPage/views/FilterSection';
 import MobileFilterSection from '@/components/shopPage/FilterMobile/MobileFilterSection';
 import { cookies } from 'next/headers';
 

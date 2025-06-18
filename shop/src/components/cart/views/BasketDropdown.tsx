@@ -11,8 +11,9 @@ import { useCart } from '@/hooks/reactQuery/cart/useCart';
 import { useAuth } from '@/hooks/auth/useAuth';
 
 export default function BasketDropdown() {
-  const { cart: cartItems, isLoading } = useCart();
   const { isLogin } = useAuth();
+  const { cart, isLoading } = useCart(isLogin);
+  const cartItems = cart.items;
 
   const { isOpen, dropdownRef, handleMouseEnter, handleMouseLeave, closeDropdown } = useDropdown({
     closeOnOutsideClick: false,

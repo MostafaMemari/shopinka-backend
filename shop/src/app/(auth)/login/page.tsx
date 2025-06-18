@@ -1,4 +1,4 @@
-import AuthPage from '@/modules/auth/views/AuthPage';
+import AuthPage from '@/components/auth/AuthPage';
 
 export default function Page() {
   return (

@@ -15,9 +15,9 @@ export interface CartItemState {
 
 export interface CartState {
   items: CartItemState[];
-  totalPrice: number;
+  payablePrice: number;
   totalDiscountPrice: number;
-  totalDiscount: number;
+  totalPrice: number;
 }
 
 export interface CartItem {
@@ -54,9 +54,9 @@ export interface CartResponse {
   userId: number;
   createdAt: string;
   updatedAt: string;
-  totalPrice: number;
-  totalDiscountPrice: number;
   payablePrice: number;
+  totalDiscountPrice: number;
+  totalPrice: number;
   items: CartItemState[];
 }
 

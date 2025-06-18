@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import MobileMenu from './mobileLayout/MobileMenu';
 import { PiPhoneCall } from 'react-icons/pi';
 import { LuList, LuShoppingCart, LuUser, LuCheck } from 'react-icons/lu';
 import { RiHome3Line } from 'react-icons/ri';
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 import MobileLogo from './ui/Logo/MobileLogo';
+import { Transition, TransitionChild } from '@headlessui/react';
 
 interface MobileLayoutProps {
   showHeader?: boolean;
@@ -43,10 +44,24 @@ const MobileLayout = ({ showHeader = true, showNav = true }: MobileLayoutProps) 
   return (
     <div className="lg:hidden">
       {isMenuOpen && (
-        <div
-          className="fixed inset-0 bg-[rgba(0,0,0,0.3)] backdrop-blur-md z-30 transition-opacity duration-300"
-          onClick={() => setIsMenuOpen(false)}
-        />
+        // <div
+        //   className="fixed inset-0 bg-[rgba(0,0,0,0.3)] backdrop-blur-md z-50 transition-opacity duration-300"
+        //   onClick={() => setIsMenuOpen(false)}
+        // />
+
+        <Transition show={isMenuOpen} as={Fragment}>
+          <TransitionChild
+            as={Fragment}
+            enter="ease-out duration-200"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-150"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity z-50" aria-hidden="true" />
+          </TransitionChild>
+        </Transition>
       )}
 
       {showHeader && (

@@ -1,4 +1,4 @@
-import { shopApiFetch } from '@/server/api';
+import { shopApiFetch } from '@/service/api';
 import { PaymentFormType, PaymentResponse, VerifyPaymentFormType, VerifyPaymentResponse } from '@/types/paymentType';
 
 export const paymentCart = async (data: PaymentFormType): Promise<PaymentResponse> => {

@@ -1,4 +1,4 @@
-import { getFavorites } from '@/service/user.api';
+import { getFavorites } from '@/service/userService';
 import { FavoriteResponse } from '@/types/favoriteType';
 import { QueryKeys } from '@/types/query-keys';
 import { useQuery } from '@tanstack/react-query';

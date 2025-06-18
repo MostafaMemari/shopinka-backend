@@ -1,5 +1,4 @@
 import React, { Children, ReactNode } from 'react';
-import Link from 'next/link';
 import { formatPrice } from '@/utils/formatter';
 
 interface CartSummaryProps {

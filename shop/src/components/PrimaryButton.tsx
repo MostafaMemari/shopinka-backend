@@ -4,6 +4,8 @@ import { BeatLoader } from 'react-spinners';
 interface PrimaryButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   isLoading?: boolean;
+  disabled?: boolean;
+  onClick?: () => void;
 }
 
 export default function PrimaryButton({ children, isLoading = false, disabled, onClick, ...props }: PrimaryButtonProps) {

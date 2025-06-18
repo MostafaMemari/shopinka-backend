@@ -21,10 +21,11 @@ export function useProducts({
   });
 }
 
-export function useProductFavorite({ productId }: { productId: number }) {
+export function useProductFavorite({ productId, isLogin }: { productId: number; isLogin?: boolean }) {
   return useQuery<any, Error>({
     queryKey: [QueryKeys.ProductFavorite, productId],
     queryFn: () => isFavorite(productId || 0),
+    enabled: isLogin,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     refetchOnWindowFocus: false,

@@ -2,13 +2,13 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '@/store';
 import { CartData, CartItemState, CartState } from '@/types/cartType';
 import { calculateTotals } from '@/utils/calculateTotals';
-import { clearCart, createCartBulk, getCart, removeItemCart, updateQuantityItemCart } from '@/service/cart.api';
+import { clearCart, createCartBulk, getCart, removeItemCart, updateQuantityItemCart } from '@/service/cartService';
 
 const initialState: CartState = {
   items: [],
   totalPrice: 0,
   totalDiscountPrice: 0,
-  totalDiscount: 0,
+  payablePrice: 0,
 };
 
 export const addToCart = createAsyncThunk('cart/addToCart', async (item: CartItemState, { getState, dispatch }) => {
@@ -38,6 +38,7 @@ export const addToCart = createAsyncThunk('cart/addToCart', async (item: CartIte
       productId: item.type === 'SIMPLE' ? (item.id ? Number(item.id) : undefined) : undefined,
       productVariantId: item.type === 'VARIABLE' ? (item.id ? Number(item.id) : undefined) : undefined,
     };
+
     await createCartBulk({ items: [payload] });
     const updatedCart = await getCart();
     const items = updatedCart.items;
@@ -150,7 +151,7 @@ const cartSlice = createSlice({
       const totals = calculateTotals(action.payload.items);
       state.totalPrice = totals.totalPrice;
       state.totalDiscountPrice = totals.totalDiscountPrice;
-      state.totalDiscount = totals.totalDiscountPrice;
+      state.payablePrice = totals.payablePrice;
     },
   },
   extraReducers: (builder) => {
@@ -159,7 +160,7 @@ const cartSlice = createSlice({
         state.items = [];
         state.totalPrice = 0;
         state.totalDiscountPrice = 0;
-        state.totalDiscount = 0;
+        state.payablePrice = 0;
       })
       .addCase('auth/logout/fulfilled', (state) => {
         const cartDataLS = localStorage.getItem('cart');
@@ -168,7 +169,7 @@ const cartSlice = createSlice({
         const totals = calculateTotals(items);
         state.totalPrice = totals.totalPrice;
         state.totalDiscountPrice = totals.totalDiscountPrice;
-        state.totalDiscount = totals.totalDiscountPrice;
+        state.payablePrice = totals.payablePrice;
       });
   },
 });

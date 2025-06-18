@@ -2,7 +2,7 @@
 
 import 'server-only';
 import { cookies } from 'next/headers';
-import { shopApiFetch } from '@/server/api';
+import { shopApiFetch } from '@/service/api';
 import { COOKIE_NAMES } from '@/types/constants';
 
 export const refreshToken = async (): Promise<{ status: number; data: any }> => {

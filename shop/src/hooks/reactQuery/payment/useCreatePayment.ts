@@ -14,7 +14,6 @@ export function useCreatePayment() {
     createPayment: (data: PaymentFormType, onSuccess?: () => void, onError?: (error: any) => void) => {
       createMutation.mutate(data, {
         onSuccess: (res) => {
-          console.log(res);
           router.push(res.gatewayURL);
           queryClient.invalidateQueries({ queryKey: [QueryKeys.Orders, QueryKeys.Cart] });
           onSuccess?.();

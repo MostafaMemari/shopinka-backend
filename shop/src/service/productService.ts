@@ -1,6 +1,6 @@
 'use server';
 
-import { shopApiFetch } from '@/server/api';
+import { shopApiFetch } from '@/service/api';
 import { revalidateTag, unstable_cache } from 'next/cache';
 import { Pager } from '@/types/pagerType';
 import { Product, ProductParams } from '../types/productType';

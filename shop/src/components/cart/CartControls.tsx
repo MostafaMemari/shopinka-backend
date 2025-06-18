@@ -6,6 +6,7 @@ import { CartItemState } from '@/types/cartType';
 import { PulseLoader } from 'react-spinners';
 import { useCart } from '@/hooks/reactQuery/cart/useCart';
 import { cn } from '@/utils/utils';
+import { useAuth } from '@/hooks/auth/useAuth';
 
 interface CartControlsProps {
   product: CartItemState;
@@ -13,7 +14,8 @@ interface CartControlsProps {
 }
 
 export function CartControls({ product, className }: CartControlsProps) {
-  const { increaseCount, decreaseCount, deleteFromCart, isUpdatingQuantity, isRemovingItem } = useCart();
+  const { isLogin } = useAuth();
+  const { increaseCount, decreaseCount, deleteFromCart, isUpdatingQuantity, isRemovingItem } = useCart(isLogin);
 
   const isLoading = isUpdatingQuantity || isRemovingItem;
 

@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useCategories } from '@/hooks/reactQuery/category/useCategories';
 import CategoryItem from './CategoryItem';
 import { useQueryState } from 'nuqs';
-import Accordion from '@/modules/shopPage/shop/Accordion';
+import Accordion from '@/components/shopPage/shop/Accordion';
 import { Category } from '@/types/categoryType';
 
 function CategorySelector() {

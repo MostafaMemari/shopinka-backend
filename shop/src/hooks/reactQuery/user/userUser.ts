@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from '@/types/query-keys';
-import { getMe, updateFullName } from '@/service/user.api';
+import { getMe, updateFullName } from '@/service/userService';
 import { User } from '@/types/userType';
 
 export function useChangeFullName() {

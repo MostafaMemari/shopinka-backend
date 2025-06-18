@@ -38,5 +38,5 @@ export interface VerifyPaymentResponse {
 }
 export interface VerifyPaymentFormType {
   Authority: string;
-  Status: string;
+  Status: 'OK' | 'NOK';
 }

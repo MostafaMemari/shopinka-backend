@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { forwardRef, useState } from 'react';
 import TextInput from '@/components/ui/TextInput';
 import SelectInput from '@/components/ui/SelectInput';
-import { AddressFormType } from '@/types/address.type';
+import { AddressFormType } from '@/types/addressType';
 import { Option } from './AddressFormDialog';
 
 interface Cities {

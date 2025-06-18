@@ -1,11 +1,18 @@
 import Toast from '@/utils/swalToast';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { sendOtp } from '@/service/auth.api';
+import { sendOtp } from '@/service/authService';
 import { handleApiError } from '@/utils/handleApiError';
-import { errorPhoneNumberStepMessages } from '../../../messages/errorAuthMessages';
-import { validateIranPhoneNumber } from '../../../validation/validateIranPhoneNumber';
+import { validateIranPhoneNumber } from '../../validation/validateIranPhoneNumber';
 import PrimaryButton from '@/components/PrimaryButton';
+
+export const errorPhoneNumberStepMessages: Record<number, string> = {
+  400: 'شماره نامعتبر است',
+  403: 'درخواست زیاد بود، بعداً تلاش کنید',
+  409: 'کد قبلاً ارسال شده است',
+  429: 'تعداد درخواست بیش از حد مجاز بود',
+  500: 'خطای سرور',
+};
 
 interface PhoneInputFormProps {
   mobile: string;

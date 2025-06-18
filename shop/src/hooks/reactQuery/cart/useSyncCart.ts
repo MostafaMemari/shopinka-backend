@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { setCart } from '@/store/slices/cartSlice';
 import { QueryKeys } from '@/types/query-keys';
 import { CartData, CartItemState } from '@/types/cartType';
-import { createCartBulk, getCart } from '@/service/cart.api';
+import { createCartBulk, getCart } from '@/service/cartService';
 
 export function useSyncCart() {
   const dispatch = useAppDispatch();

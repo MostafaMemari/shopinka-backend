@@ -1,126 +1,114 @@
 import CheckoutProgress from '@/components/checkout/CheckoutProgress';
 import { verifyPayment } from '@/service/paymentService';
 import Link from 'next/link';
-import { SearchParams } from 'nuqs';
-import React from 'react';
 import { BiCheckCircle, BiXCircle } from 'react-icons/bi';
 import { PiWarningCircleDuotone } from 'react-icons/pi';
 
-type PageProps = {
-  searchParams: Promise<SearchParams>;
+const formatAmount = (amount: number) => {
+  return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' تومان';
 };
 
-async function page({ searchParams }: PageProps) {
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('fa-IR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
+
+type PageProps = {
+  searchParams: Promise<{ Authority: string; Status: 'OK' | 'NOK' }>;
+};
+
+export default async function Page({ searchParams }: PageProps) {
   const { Authority, Status } = await searchParams;
 
-  const { payment, message, status } = await verifyPayment({ Authority: Authority as string, Status: Status as string });
+  const res = await verifyPayment({ Authority, Status });
 
-  console.log(payment, message, status);
+  const isSuccess = Status === 'OK' && res.status === 'success';
+  const payment = res.payment || {};
+  const orderId = payment.orderId || '---';
+  const trackingCode = payment.invoiceNumber || '---';
+  const paymentDate = payment.createdAt ? formatDate(payment.createdAt) : '---';
+  const amount = payment.amount ? formatAmount(payment.amount) : '---';
 
   return (
     <>
       <CheckoutProgress currentStep="payment" />
-
       <div className="col-span-12">
-        <div className="rounded-lg bg-muted p-4 min-h-[300px] flex items-center justify-center">
-          {status === 'success' ? (
-            <div className="mx-auto rounded-lg bg-muted p-5">
-              <div className="flex flex-col items-center justify-center gap-y-4">
-                <div>
-                  <BiCheckCircle className="h-20 w-20 text-success" />
-                </div>
-                <h1 className="mb-8 text-center text-base text-success md:text-lg lg:text-xl">پرداخت سفارش 203040 موفق بود!</h1>
-              </div>
+        <div className="rounded-lg bg-muted p-6 min-h-[320px] flex items-center justify-center">
+          <div className="mx-auto w-full max-w-xl rounded-lg bg-background shadow p-6 flex flex-col items-center gap-y-8">
+            <div className="flex flex-col items-center gap-3">
+              {isSuccess ? <BiCheckCircle className="h-20 w-20 text-success" /> : <BiXCircle className="h-20 w-20 text-destructive" />}
 
-              <div className="mb-6 flex items-center justify-center text-sm">
-                <div className="flex flex-col items-center gap-y-2 md:gap-y-4">
-                  <p className="font-medium md:text-lg">جرئیات پرداخت</p>
-                  <div className="flex items-center gap-x-4">
-                    <p className="text-text/90">
-                      شماره پیگیری : <span className="tracking-wider">24431531</span>
-                    </p>
-                    <p className="text-text/90">
-                      تاریخ : <span> 10 / مهر / ۱۴۰۲</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="flex gap-x-4">
-                <div className="w-full">
-                  <Link href="#" className="btn-primary py-3">
-                    پیگیری سفارش
-                  </Link>
-                </div>
-                <div className="w-full">
-                  <Link href="/" className="btn-secondary py-3">
-                    برگشت
-                  </Link>
-                </div>
+              <h1 className={`text-center font-bold text-lg md:text-xl ${isSuccess ? 'text-success' : 'text-destructive'}`}>
+                پرداخت سفارش {orderId} {isSuccess ? 'موفق' : 'ناموفق'} بود
+              </h1>
+
+              <p className="text-center text-muted-foreground">
+                {isSuccess ? 'پرداخت با موفقیت انجام شد. سفارش شما در حال پردازش است.' : 'پرداخت ناموفق بود. لطفاً دوباره تلاش کنید.'}
+              </p>
+            </div>
+
+            <div className="w-full rounded border p-4 bg-muted/70 flex flex-col gap-y-3">
+              <span className="font-medium text-base md:text-lg mb-2">جزئیات پرداخت</span>
+              <div className="flex flex-col md:flex-row items-center justify-between gap-2 text-sm md:text-base">
+                <span>
+                  شماره پیگیری: <span className="font-mono tracking-wider">{trackingCode}</span>
+                </span>
+                <span>
+                  تاریخ: <span>{paymentDate}</span>
+                </span>
+                <span>
+                  مبلغ: <span>{amount}</span>
+                </span>
               </div>
             </div>
-          ) : (
-            <div className="mx-auto max-w-[500px] rounded-lg bg-muted p-5">
-              <div className="flex flex-col items-center justify-center gap-y-4">
-                <div>
-                  <BiXCircle className="h-20 w-20 text-red-500 dark:text-red-400" />
-                </div>
-                <h1 className="mb-8 text-center text-base text-red-500 dark:text-red-400 md:text-lg lg:text-xl">
-                  پرداخت سفارش {payment?.orderId} {status === 'success' ? 'موفق' : 'ناموفق'} بود!
-                </h1>
-              </div>
 
-              <div className="mb-10 space-y-6">
-                <div className="flex gap-x-2">
-                  <div>
-                    <PiWarningCircleDuotone className="h-6 w-6 text-red-500 dark:text-red-400" />
-                  </div>
-                  <p className="text-sm leading-loose text-text/90 md:text-base">
-                    سفارش شما تا
-                    <span className="text-red-500 dark:text-red-400">35</span> دقیقه دیگر حذف خواهد شد. برای تکمیل نهایی سفارش، نسبت به
-                    پرداخت اقدام نمایید
-                  </p>
+            {!isSuccess && (
+              <div className="w-full flex flex-col gap-y-3">
+                <div className="flex items-center gap-2 bg-yellow-50 dark:bg-yellow-900/30 rounded-md px-3 py-2">
+                  <PiWarningCircleDuotone className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+                  <span className="text-xs md:text-sm text-yellow-700 dark:text-yellow-100">
+                    سفارش شما تا <b className="text-destructive">۳۵</b> دقیقه دیگر حذف خواهد شد. برای تکمیل سفارش، پرداخت را انجام دهید.
+                  </span>
                 </div>
+                <div className="flex items-center gap-2 bg-gray-50 dark:bg-slate-700/50 rounded-md px-3 py-2">
+                  <PiWarningCircleDuotone className="h-6 w-6 text-gray-400" />
+                  <span className="text-xs md:text-sm text-muted-foreground">
+                    در صورت کسر مبلغ، تا ۲۴ ساعت آینده به حساب شما بازمی‌گردد.
+                  </span>
+                </div>
+              </div>
+            )}
 
-                <div className="flex gap-x-2">
-                  <div>
-                    <PiWarningCircleDuotone className="h-6 w-6 text-red-500 dark:text-red-400" />
-                  </div>
-                  <p className="text-sm leading-loose text-text/90 md:text-base">
-                    چنانچه مبلغی از حساب شما کسر شده است، تا ۲۴ ساعت آینده به حساب شما باز خواهد گشت.
-                  </p>
-                </div>
-              </div>
-              <div className="mb-6 flex items-center justify-center text-sm">
-                <div className="flex flex-col items-center gap-y-2 md:gap-y-4">
-                  <p className="font-medium md:text-lg">جرئیات پرداخت</p>
-                  <div className="flex items-center gap-x-4">
-                    <p className="text-text/90">
-                      شماره پیگیری : <span className="tracking-wider">24431531</span>
-                    </p>
-                    <p className="text-text/90">
-                      تاریخ : <span> 10 / مهر / ۱۴۰۲</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="flex gap-x-4">
-                <div className="w-full">
-                  <a href="#" className="btn-primary py-3">
+            <div className="flex w-full gap-3 mt-3">
+              {isSuccess ? (
+                <>
+                  <Link href={`/orders/${orderId}`} className="btn-primary w-full py-3 text-center">
+                    مشاهده سفارش
+                  </Link>
+                  <Link href="/" className="btn-secondary w-full py-3 text-center">
+                    بازگشت به خانه
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href={`/checkout/payment?order=${orderId}`} className="btn-primary w-full py-3 text-center">
                     پرداخت مجدد
-                  </a>
-                </div>
-                <div className="w-full">
-                  <a href="#" className="btn-secondary py-3">
-                    برگشت
-                  </a>
-                </div>
-              </div>
+                  </Link>
+                  <Link href="/" className="btn-secondary w-full py-3 text-center">
+                    بازگشت
+                  </Link>
+                </>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
     </>
   );
 }
-
-export default page;

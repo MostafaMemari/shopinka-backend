@@ -2,13 +2,21 @@ import Toast from '@/utils/swalToast';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useRouter } from 'next/navigation';
-import { verifyOtp, sendOtp } from '@/service/auth.api';
+import { verifyOtp, sendOtp } from '@/service/authService';
 import { handleApiError } from '@/utils/handleApiError';
-import { errorOtpStepMessages, errorPhoneNumberStepMessages } from '../../../messages/errorAuthMessages';
 import CountdownTimer from '@/components/auth/CountdownTimer';
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 import { useEffect } from 'react';
 import PrimaryButton from '@/components/PrimaryButton';
+import { errorPhoneNumberStepMessages } from './PhoneInputForm';
+
+export const errorOtpStepMessages: Record<number, string> = {
+  400: 'کد وارد شده نادرست است.',
+  403: 'تلاش بیش‌از‌حد. بعداً امتحان کنید.',
+  409: 'کد قبلاً ارسال شده است.',
+  429: 'درخواست زیاد بود. بعداً تلاش کنید.',
+  500: 'خطای سرور. دوباره امتحان کنید.',
+};
 
 interface OtpFormProps {
   mobile: string;
