@@ -9,5 +9,6 @@ export enum QueryKeys {
   Comments = 'comments',
   Blogs = 'blogs',
   Tags = 'tags',
+  Orders = 'orders',
   Shippings = 'shippings'
 }

@@ -7,7 +7,6 @@ export interface Order {
   pager: Pager;
   items: OrderItem[];
 }
-
 export type OrderStatus = 'PENDING' | 'PROCESSING' | 'SHIPPED' | 'CANCELLED';
 
 export interface OrderItem {
