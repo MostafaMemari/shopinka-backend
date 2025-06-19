@@ -30,7 +30,7 @@ const MobileFilter: FC<MobileFilterProps> = ({ totalCount }) => {
           </div>
         }
         footerActions={
-          <button className="btn-primary w-full py-3 text-sm" type="button">
+          <button onClick={() => setIsOpenDrawer(false)} className="btn-primary w-full py-3 text-sm" type="button">
             مشاهده {totalCount} محصول
           </button>
         }

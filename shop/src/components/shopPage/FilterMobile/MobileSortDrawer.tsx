@@ -28,11 +28,11 @@ function MobileSortDrawer() {
         isOpen={isOpenDrawer}
         onOpen={() => setIsOpenDrawer(true)}
         onClose={() => setIsOpenDrawer(false)}
-        title="فیلتر محصولات"
+        title="مرتب سازی"
         triggerButton={
           <div className="flex w-full cursor-pointer items-center gap-x-4 rounded-lg bg-muted px-4 py-3 text-sm xs:text-base">
             <BiSort className="h-6 w-6" />
-            <div>مرتب‌سازی محصولات</div>
+            <div>مرتب سازی</div>
           </div>
         }
       >

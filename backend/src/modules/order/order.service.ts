@@ -168,6 +168,7 @@ export class OrderService {
       minPrice,
       quantity,
       includeTransaction,
+      includeShippingInfo,
     } = queryOrderDto;
 
     const sortedDto = sortObject(queryOrderDto);
@@ -198,7 +199,7 @@ export class OrderService {
     const orders = await this.orderRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { items: includeItems, address: includeAddress, transaction: includeTransaction },
+      include: { items: includeItems, address: includeAddress, transaction: includeTransaction, shippingInfo: includeShippingInfo },
     });
 
     await this.cacheService.set(cacheKey, orders, this.CACHE_EXPIRE_TIME);

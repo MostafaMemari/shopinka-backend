@@ -63,6 +63,7 @@ const ShippingView = () => {
       ) : (
         <>
           {!isMobile && <DesktopShippingTable data={shippings} />}
+
           <TablePaginationComponent
             currentPage={page}
             totalPages={paginationData.totalPages}

@@ -9,8 +9,6 @@ export async function getCategories(params?: CategoryParams) {
     query: { ...params },
   });
 
-  console.log(response);
-
   return response.data;
 }
 

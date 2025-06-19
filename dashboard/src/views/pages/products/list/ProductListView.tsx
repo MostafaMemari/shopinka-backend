@@ -39,7 +39,7 @@ const ProductListView = () => {
       page,
       take: size,
       includeMainImage: true,
-      name: search ?? undefined
+      name: search ? search : undefined
     },
     staleTime: 5 * 60 * 1000
   })

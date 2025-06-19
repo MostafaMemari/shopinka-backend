@@ -1,4 +1,5 @@
 import { Address } from './address.type'
+import { ShippingInfo } from './shippingInfo.type'
 import { Transaction } from './transaction.type'
 
 export type Order = {
@@ -14,4 +15,5 @@ export type Order = {
   updatedAt: string
   address?: Address
   transaction?: Transaction
+  shippingInfo?: ShippingInfo
 }

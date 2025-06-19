@@ -28,7 +28,7 @@ function ProfileMenuCard() {
               <FaUserCircle className="h-20 w-20 only:rounded-full" />
             </div>
             <div>
-              <p className="line-clamp-1">{user?.full_name}</p>
+              <p className="line-clamp-1">{!!user?.full_name ? user.full_name : 'کاربر گرامی'}</p>
               <p className="text-text/60">{user?.mobile}</p>
             </div>
             <div>

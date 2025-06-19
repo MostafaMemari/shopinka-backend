@@ -6,6 +6,7 @@ import tableStyles from '@core/styles/table.module.css'
 import RemoveProductModal from './RemoveOrderModal'
 import { useState } from 'react'
 import { Order } from '@/types/app/order.type'
+import ShippingInfoModal from './ShippingInfoModal'
 
 const DesktopOrderTable = ({ orders }: { orders: Order[] }) => {
   const router = useRouter()
@@ -108,6 +109,11 @@ const DesktopOrderTable = ({ orders }: { orders: Order[] }) => {
                 <td>{order.transaction?.amount}</td>
                 <td>
                   <Box display='flex' alignItems='center' gap={2}>
+                    <ShippingInfoModal id={order.id} shippingInfo={order.shippingInfo}>
+                      <IconButton size='small'>
+                        <i className='tabler-car text-gray-500 text-lg' />
+                      </IconButton>
+                    </ShippingInfoModal>
                     <IconButton size='small' onClick={() => handleEditProduct(order.id)} disabled={isNavigating === order.id}>
                       {isNavigating === order.id ? <CircularProgress size={20} /> : <i className='tabler-edit text-gray-500 text-lg' />}
                     </IconButton>

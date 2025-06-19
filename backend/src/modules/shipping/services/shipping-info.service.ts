@@ -53,7 +53,7 @@ export class ShippingInfoService {
   }
 
   async update(userId: number, shippingInfoId: number, updateShippingInfoDto: UpdateShippingInfoDto) {
-    const { orderId, trackingCode } = updateShippingInfoDto;
+    const { trackingCode } = updateShippingInfoDto;
 
     const shippingInfo = await this.shippingInfoRepository.findOneOrThrow({ where: { id: shippingInfoId } });
 
@@ -63,17 +63,17 @@ export class ShippingInfoService {
       if (existingShippingInfo) throw new ConflictException(ShippingInfoMessages.AlreadyExistsShippingInfo);
     }
 
-    if (orderId) {
-      await this.orderRepository.findOneOrThrow({ where: { id: orderId } });
+    // if (orderId) {
+    //   await this.orderRepository.findOneOrThrow({ where: { id: orderId } });
 
-      const product = await this.productRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } });
-      const productVariant = await this.productVariantRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } });
+    //   const product = await this.productRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } });
+    //   const productVariant = await this.productVariantRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } });
 
-      if (!product && !productVariant) throw new BadRequestException(ShippingInfoMessages.NoAccessToCreateShippingInfo);
+    //   if (!product && !productVariant) throw new BadRequestException(ShippingInfoMessages.NoAccessToCreateShippingInfo);
 
-      await this.orderRepository.update({ where: { id: orderId }, data: { status: OrderStatus.SHIPPED } });
-      await this.orderRepository.update({ where: { id: shippingInfo.orderId }, data: { status: OrderStatus.PROCESSING } });
-    }
+    //   await this.orderRepository.update({ where: { id: orderId }, data: { status: OrderStatus.SHIPPED } });
+    //   await this.orderRepository.update({ where: { id: shippingInfo.orderId }, data: { status: OrderStatus.PROCESSING } });
+    // }
 
     const updatedShippingInfo = this.shippingInfoRepository.update({ where: { id: shippingInfoId }, data: updateShippingInfoDto });
 
