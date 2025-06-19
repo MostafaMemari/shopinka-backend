@@ -3,12 +3,12 @@ import ProductCartImage from '@/components/cart/ProductCartImage';
 import Link from 'next/link';
 import { CartItemState } from '@/types/cartType';
 import CartItemAttributes from '@/components/cart/CartItemAttributes';
-import ProductPriceCard from '@/components/cart/ProductPriceCart';
 import CartControls from '@/components/cart/CartControls';
+import ProductPrice from '@/components/productDetails/PriceDisplay';
 
 interface CartPageItemProps {
   cartItem: CartItemState;
-  isLast?: boolean; // Added to control border for the last item
+  isLast?: boolean;
 }
 
 function CartPageItem({ cartItem, isLast = false }: CartPageItemProps) {
@@ -40,7 +40,7 @@ function CartPageItem({ cartItem, isLast = false }: CartPageItemProps) {
           </div>
 
           <div className="text-blue-600 text-sm font-bold pt-1">
-            <ProductPriceCard oldPrice={cartItem.basePrice} newPrice={cartItem.salePrice} discount={cartItem.discount} />
+            <ProductPrice product={{ basePrice: cartItem.basePrice, salePrice: cartItem.salePrice, type: cartItem.type }} />
           </div>
         </div>
       </div>

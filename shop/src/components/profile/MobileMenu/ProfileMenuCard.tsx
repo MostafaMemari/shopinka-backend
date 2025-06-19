@@ -1,7 +1,7 @@
 'use client';
 
 import MobileDrawer from '@/components/MobileDrawer';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { IoIosMenu } from 'react-icons/io';
 import ProfileMenu from '../ProfileMenu';
@@ -10,6 +10,14 @@ import { useAuth } from '@/hooks/auth/useAuth';
 function ProfileMenuCard() {
   const [isOpen, setIsOpen] = useState(false);
   const { isLoading, user } = useAuth();
+
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null;
 
   return (
     <>
@@ -20,8 +28,8 @@ function ProfileMenuCard() {
               <FaUserCircle className="h-20 w-20 only:rounded-full" />
             </div>
             <div>
-              <p className="line-clamp-1">تایماز اکبری</p>
-              <p className="text-text/60">09000000000</p>
+              <p className="line-clamp-1">{user?.full_name}</p>
+              <p className="text-text/60">{user?.mobile}</p>
             </div>
             <div>
               <button onClick={() => setIsOpen(true)} className="btn-primary px-4 py-2" type="button">

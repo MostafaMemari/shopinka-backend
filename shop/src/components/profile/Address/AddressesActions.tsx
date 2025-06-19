@@ -2,13 +2,13 @@
 
 import React, { useState } from 'react';
 import { useAddress } from '@/hooks/reactQuery/useAddress';
-import { Option } from '@/components/checkout/AddressFormDrawer';
 import AddressItem from './AddressItem';
 import { AddressFormType } from '@/types/addressType';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import ErrorState from '../ErrorState';
 import EmptyState from '../EmptyState';
 import { GrLocation } from 'react-icons/gr';
+import { Option } from '@/components/checkout/AddressSection';
 
 const provinces: Option[] = [
   { value: 'tehran', label: 'تهران' },

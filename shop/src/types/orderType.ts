@@ -1,7 +1,9 @@
 import { AddressItem } from './addressType';
 import { AttributeValues } from './attributeType';
 import { Pager } from './pagerType';
+import { Product, ProductVariant } from './productType';
 import { ShippingItem } from './shippingType';
+import { Transaction } from './transactionType';
 
 export interface Order {
   pager: Pager;
@@ -24,36 +26,19 @@ export interface OrderItem {
   items: OrderProductItem[] | [];
   shippingInfo: null;
   shipping: ShippingItem;
+  transaction: Transaction;
 }
 
 export interface OrderProductItem {
   id: number;
   orderId: number;
   productId: number;
-  productVariantId: number | null;
+  productVariantId: null;
   price: number;
   quantity: number;
   createdAt: string;
-  product: {
-    id: number;
-    name: string;
-    salePrice: number | null;
-    basePrice: number | null;
-    slug: string;
-    type: 'SIMPLE' | 'VARIABLE';
-    mainImage: { fileUrl: string | null } | null;
-  };
-  productVariant: {
-    id: number;
-    salePrice: number;
-    basePrice: number;
-    product: {
-      name: string;
-      mainImage: { fileUrl: string } | null;
-      type: 'SIMPLE' | 'VARIABLE';
-    };
-    attributeValues: AttributeValues[] | [];
-  } | null;
+  product: Product;
+  productVariant: ProductVariant | null;
 }
 
 export interface OrderResponse {

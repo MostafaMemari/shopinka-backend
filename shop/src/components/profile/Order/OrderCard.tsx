@@ -15,14 +15,11 @@ interface OrderCardProps {
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
-  const config = getStatusConfig(order.status);
-
-  const detailHref =
-    order.status === 'PENDING' || order.status === 'CANCELLED' ? '/profile-orders-detail-pending' : '/profile-orders-detail';
+  const config = getStatusConfig(order.status, order.transaction.status);
 
   return (
     <div className="rounded-2xl bg-white/90 dark:bg-zinc-900 border border-gray-100 dark:border-white/10 shadow-md hover:shadow-lg transition-shadow duration-200 mt-6">
-      <Link href={detailHref} aria-label={`مشاهده جزئیات سفارش ${order.orderNumber}`} className="block px-4 pt-4 pb-2">
+      <Link href={`/profile/orders/${order.id}`} aria-label={`مشاهده جزئیات سفارش ${order.orderNumber}`} className="block px-4 pt-4 pb-2">
         <div className="flex items-center justify-between gap-2 pb-4 border-b border-gray-100 dark:border-white/10">
           <div className={`flex items-center gap-x-2 ${config.headerColor}`}>
             {config.headerIcon}

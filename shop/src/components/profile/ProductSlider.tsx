@@ -28,9 +28,9 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ orderProductItems }) => {
         }}
       >
         {orderProductItems.map((orderProductItem) => (
-          <SwiperSlide key={orderProductItem.product?.id}>
+          <SwiperSlide key={orderProductItem?.id}>
             <Link
-              href={`/product/${orderProductItem.product?.slug}`}
+              href={`/product/${orderProductItem.product.slug}`}
               className="
               flex items-center gap-x-3 rounded-xl border border-gray-100 bg-white
               px-2 py-2 shadow-sm transition hover:shadow-lg hover:border-primary
@@ -38,14 +38,14 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ orderProductItems }) => {
             >
               <div className="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center">
                 <Image
-                  alt={orderProductItem.product?.name}
+                  alt={orderProductItem.product.name}
                   src={orderProductItem.product?.mainImage?.fileUrl || '/images/no-image.webp'}
                   className="object-contain w-14 h-14"
                   width={60}
                   height={60}
                 />
               </div>
-              <p className="line-clamp-2 text-xs sm:text-sm text-gray-700 font-medium">{orderProductItem.product?.name}</p>
+              <p className="line-clamp-2 text-xs sm:text-sm text-gray-700 font-medium">{orderProductItem.product.name}</p>
             </Link>
           </SwiperSlide>
         ))}

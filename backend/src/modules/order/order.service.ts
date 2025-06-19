@@ -228,6 +228,7 @@ export class OrderService {
       orderBy: { createdAt: 'desc' },
       include: {
         address: true,
+        transaction: true,
         items: {
           include: {
             product: {
@@ -298,7 +299,44 @@ export class OrderService {
   findOneForUser(userId: number, orderId: number): Promise<Order> {
     return this.orderRepository.findOneOrThrow({
       where: { userId, id: orderId },
-      include: { address: true, items: true, shipping: true, shippingInfo: true, transaction: true },
+      include: {
+        address: true,
+        items: {
+          include: {
+            product: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                type: true,
+                salePrice: true,
+                basePrice: true,
+                mainImage: { select: { fileUrl: true } },
+              },
+            },
+            productVariant: {
+              select: {
+                id: true,
+                salePrice: true,
+                basePrice: true,
+                product: {
+                  select: {
+                    name: true,
+                    type: true,
+                    mainImage: { select: { fileUrl: true } },
+                  },
+                },
+                attributeValues: {
+                  select: { name: true, colorCode: true, buttonLabel: true },
+                },
+              },
+            },
+          },
+        },
+        shipping: true,
+        shippingInfo: true,
+        transaction: true,
+      },
     });
   }
 

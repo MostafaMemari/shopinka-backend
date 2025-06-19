@@ -20,6 +20,7 @@ const TabContent: React.FC<TabContentProps> = ({ tabId }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   let orders = data?.items || [];
+
   const orderPager = data?.pager ?? { totalCount: 0, totalPages: 1 };
 
   const handlePageChange = useCallback((page: number) => {

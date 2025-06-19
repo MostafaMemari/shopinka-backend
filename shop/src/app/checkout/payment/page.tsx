@@ -56,15 +56,18 @@ export default async function Page({ searchParams }: PageProps) {
             <div className="w-full rounded border p-4 bg-muted/70 flex flex-col gap-y-3">
               <span className="font-medium text-base md:text-lg mb-2">جزئیات پرداخت</span>
               <div className="flex flex-col md:flex-row items-center justify-between gap-2 text-sm md:text-base">
-                <span>
-                  شماره پیگیری: <span className="font-mono tracking-wider">{trackingCode}</span>
-                </span>
-                <span>
-                  تاریخ: <span>{paymentDate}</span>
-                </span>
-                <span>
-                  مبلغ: <span>{amount}</span>
-                </span>
+                <div className="flex flex-col items-center gap-1">
+                  <span>شماره پیگیری</span>
+                  <span className="font-mono tracking-wider">{trackingCode}</span>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <span>تاریخ پرداخت</span>
+                  <span>{paymentDate}</span>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <span>مبلغ</span>
+                  <span>{amount}</span>
+                </div>
               </div>
             </div>
 
@@ -88,7 +91,7 @@ export default async function Page({ searchParams }: PageProps) {
             <div className="flex w-full gap-3 mt-3">
               {isSuccess ? (
                 <>
-                  <Link href={`/orders/${orderId}`} className="btn-primary w-full py-3 text-center">
+                  <Link href={`/profile/orders/${orderId}`} className="btn-primary w-full py-3 text-center">
                     مشاهده سفارش
                   </Link>
                   <Link href="/" className="btn-secondary w-full py-3 text-center">

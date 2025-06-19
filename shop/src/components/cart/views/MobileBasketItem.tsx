@@ -3,7 +3,7 @@ import { CartItemState } from '@/types/cartType';
 import CartControls from '@/components/cart/CartControls';
 import ProductCardImage from '@/components/cart/ProductCartImage';
 import CartItemAttributes from '@/components/cart/CartItemAttributes';
-import ProductPriceCard from '@/components/cart/ProductPriceCart';
+import ProductPrice from '@/components/productDetails/PriceDisplay';
 
 interface MobileBasketItemProp {
   item: CartItemState;
@@ -26,7 +26,7 @@ export default function MobileBasketItem({ item }: MobileBasketItemProp) {
           <CartItemAttributes count={item.count} type={item.type} attributes={attributes} />
         </div>
         <div className="flex items-center justify-between gap-x-2">
-          <ProductPriceCard oldPrice={item.basePrice} newPrice={item.salePrice} discount={item.discount} />
+          <ProductPrice product={{ basePrice: item.basePrice, salePrice: item.salePrice, type: item.type }} />
 
           <CartControls product={item} />
         </div>
