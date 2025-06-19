@@ -15,7 +15,7 @@ export default function DesktopBasketItem({ item }: ItemCardBasketProp) {
   return (
     <div className="flex gap-x-2 py-5">
       <div className="relative min-w-fit">
-        <Link href={`/product-detail/${item.id}`}>
+        <Link href={`/product/${item.id}`}>
           <Image alt={item.title} className="h-[120px] w-[120px]" src={item?.thumbnail ?? ''} width={120} height={120} loading="lazy" />
         </Link>
       </div>

@@ -12,3 +12,14 @@ export const getOrders = async (params?: Record<string, string>): Promise<Respon
     ...res
   }
 }
+
+export const changeStatusOrder = async (orderId: number, status: 'CANCELLED' | 'DELIVERED'): Promise<Response<Order[]>> => {
+  const res = await serverApiFetch(`/order/status/${orderId}`, {
+    method: 'PATCH',
+    body: { status }
+  })
+
+  return {
+    ...res
+  }
+}

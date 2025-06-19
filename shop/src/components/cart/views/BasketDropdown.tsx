@@ -6,9 +6,9 @@ import { useDropdown } from '@/hooks/useDropdown';
 import Link from 'next/link';
 import DesktopBasketItem from './DesktopBasketItem';
 import { formatPrice } from '@/utils/formatter';
-import IconButtonWithBadge from '@/components/IconButtonWithBadge';
 import { useCart } from '@/hooks/reactQuery/cart/useCart';
 import { useAuth } from '@/hooks/auth/useAuth';
+import CartIconTotalQuantity from '../CartIconTotalQuantity';
 
 export default function BasketDropdown() {
   const { isLogin } = useAuth();
@@ -21,20 +21,19 @@ export default function BasketDropdown() {
   });
 
   const totals = calculateTotals(cartItems);
-  const totalQuantity = cartItems?.reduce((sum, item) => sum + item.count, 0) || 0;
   const totalPrice = totals.totalPrice;
 
   return (
     <div className="relative">
       <div className="relative hidden md:block">
         <div className="relative" ref={dropdownRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-          <IconButtonWithBadge
-            icon={<HiOutlineShoppingCart className="h-6 w-6 cursor-pointer" />}
-            badgeCount={totalQuantity}
+          <button
+            className="rounded-full p-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
             onClick={closeDropdown}
-            ariaLabel="باز کردن سبد خرید"
-            isLoading={isLoading}
-          />
+            aria-label="باز کردن سبد خرید"
+          >
+            <CartIconTotalQuantity isLogin={isLogin} />
+          </button>
 
           <div
             className={`absolute left-0 z-10 w-[400px] rounded-lg border-t-2 border-t-primary bg-muted shadow-lg dark:bg-gray-800 transition-all duration-200 origin-top ${

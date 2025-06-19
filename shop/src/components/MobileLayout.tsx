@@ -5,11 +5,12 @@ import { usePathname } from 'next/navigation';
 import { Fragment, useState } from 'react';
 import MobileMenu from './mobileLayout/MobileMenu';
 import { PiPhoneCall } from 'react-icons/pi';
-import { LuList, LuShoppingCart, LuUser, LuCheck } from 'react-icons/lu';
+import { LuList, LuUser, LuCheck } from 'react-icons/lu';
 import { RiHome3Line } from 'react-icons/ri';
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 import MobileLogo from './ui/Logo/MobileLogo';
 import { Transition, TransitionChild } from '@headlessui/react';
+import CartIconTotalQuantity from './cart/CartIconTotalQuantity';
 
 interface MobileLayoutProps {
   showHeader?: boolean;
@@ -36,7 +37,11 @@ const MobileLayout = ({ showHeader = true, showNav = true }: MobileLayoutProps) 
       ),
       label: 'حساب کاربری',
     },
-    { href: '/checkout/cart', icon: <LuShoppingCart size={22} />, label: 'سبد خرید' },
+    {
+      href: '/checkout/cart',
+      icon: <CartIconTotalQuantity isLogin={isLogin} />,
+      label: 'سبد خرید',
+    },
     { href: '/shop', icon: <LuList size={22} />, label: 'دسته‌بندی' },
     { href: '/', icon: <RiHome3Line size={22} />, label: 'خانه' },
   ];
@@ -44,11 +49,6 @@ const MobileLayout = ({ showHeader = true, showNav = true }: MobileLayoutProps) 
   return (
     <div className="lg:hidden">
       {isMenuOpen && (
-        // <div
-        //   className="fixed inset-0 bg-[rgba(0,0,0,0.3)] backdrop-blur-md z-50 transition-opacity duration-300"
-        //   onClick={() => setIsMenuOpen(false)}
-        // />
-
         <Transition show={isMenuOpen} as={Fragment}>
           <TransitionChild
             as={Fragment}

@@ -63,7 +63,7 @@ const OrderListView = () => {
         <EmptyOrderState isSearch={!!search} searchQuery={search} />
       ) : (
         <>
-          {!isMobile && <DesktopOrderTable orders={orders} />}
+          {!isMobile && <DesktopOrderTable orders={orders} refetch={refetch} />}
           <TablePaginationComponent
             currentPage={page}
             totalPages={paginationData.totalPages}

@@ -3,7 +3,6 @@ import ProductDetailsView from '@/components/productDetails/views/ProductDetails
 import { notFound } from 'next/navigation';
 import ProductTabs from '@/components/product/ProductTabs';
 import MobileHeader from '@/components/productDetails/MobileProductHeader';
-import { Suspense } from 'react';
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

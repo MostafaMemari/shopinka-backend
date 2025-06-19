@@ -4,12 +4,13 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { IoIosArrowBack } from 'react-icons/io';
 import { RiHome3Line } from 'react-icons/ri';
-import { HiOutlineShare, HiOutlineShoppingCart } from 'react-icons/hi';
+import { HiOutlineShare } from 'react-icons/hi';
 import { useCart } from '@/hooks/reactQuery/cart/useCart';
 import FavoriteProductAction from './ActionButtons/FavoriteProductAction';
-import { FaSpinner } from 'react-icons/fa';
 import { useAuth } from '@/hooks/auth/useAuth';
 import SkeletonLoader from '../SkeletonLoader';
+import { LuShoppingCart } from 'react-icons/lu';
+import CartIconTotalQuantity from '../cart/CartIconTotalQuantity';
 
 interface MobileHeaderProps {
   productId: number;
@@ -17,11 +18,8 @@ interface MobileHeaderProps {
 
 const MobileHeader = ({ productId }: MobileHeaderProps) => {
   const { isLogin } = useAuth();
-  const { cart } = useCart(isLogin);
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
-
-  const totalQuantity = cart.items?.reduce((sum, item) => sum + item.count, 0) || 0;
 
   useEffect(() => {
     setIsMounted(true);
@@ -74,14 +72,8 @@ const MobileHeader = ({ productId }: MobileHeaderProps) => {
 
               <FavoriteProductAction productId={productId} className="p-3 cursor-pointer" />
 
-              <button onClick={handleCart} className="p-3 cursor-pointer relative" aria-label="Add to Cart">
-                <HiOutlineShoppingCart size={22} />
-
-                <span
-                  className={`absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-md bg-primary-btn text-sm font-bold text-white border border-white`}
-                >
-                  {totalQuantity}
-                </span>
+              <button onClick={handleCart} className="p-3 cursor-pointer" aria-label="Add to Cart">
+                <CartIconTotalQuantity isLogin={isLogin} />
               </button>
             </div>
           </>

@@ -7,14 +7,20 @@ import RemoveProductModal from './RemoveOrderModal'
 import { useState } from 'react'
 import { Order } from '@/types/app/order.type'
 import ShippingInfoModal from './ShippingInfoModal'
+import { changeStatusOrder } from '@/libs/api/order.api'
 
-const DesktopOrderTable = ({ orders }: { orders: Order[] }) => {
+const DesktopOrderTable = ({ orders, refetch }: { orders: Order[]; refetch: () => void }) => {
   const router = useRouter()
   const [isNavigating, setIsNavigating] = useState<number | null>(null)
 
-  const handleEditProduct = (id: number) => {
-    setIsNavigating(id)
-    router.push(`/products/edit?id=${id}`)
+  const handleCancelledProduct = async (id: number) => {
+    const res = await changeStatusOrder(id, 'CANCELLED')
+    if (res.status === 200) refetch()
+  }
+
+  const handleDeliveredProduct = async (id: number) => {
+    const res = await changeStatusOrder(id, 'DELIVERED')
+    if (res.status === 200) refetch()
   }
 
   return (
@@ -114,8 +120,11 @@ const DesktopOrderTable = ({ orders }: { orders: Order[] }) => {
                         <i className='tabler-car text-gray-500 text-lg' />
                       </IconButton>
                     </ShippingInfoModal>
-                    <IconButton size='small' onClick={() => handleEditProduct(order.id)} disabled={isNavigating === order.id}>
-                      {isNavigating === order.id ? <CircularProgress size={20} /> : <i className='tabler-edit text-gray-500 text-lg' />}
+                    <IconButton size='small' onClick={() => handleCancelledProduct(order.id)} disabled={isNavigating === order.id}>
+                      {isNavigating === order.id ? <CircularProgress size={20} /> : <i className='tabler-x text-gray-500 text-lg' />}
+                    </IconButton>
+                    <IconButton size='small' onClick={() => handleDeliveredProduct(order.id)} disabled={isNavigating === order.id}>
+                      {isNavigating === order.id ? <CircularProgress size={20} /> : <i className='tabler-check text-gray-500 text-lg' />}
                     </IconButton>
                     <RemoveProductModal id={order.id}>
                       <IconButton size='small'>

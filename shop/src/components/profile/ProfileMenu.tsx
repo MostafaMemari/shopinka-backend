@@ -61,13 +61,12 @@ function ProfileMenu({ onClose }: ProfileMenuProps) {
       <li>
         <button
           onClick={handleUserLogout}
-          className="flex items-center justify-between w-full rounded-lg p-4 text-red-500 hover:bg-warning/10 cursor-pointer"
+          className="w-full flex items-center gap-x-2 rounded-lg p-4 text-red-500 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/20 transition group cursor-pointer"
           aria-label="خروج از حساب کاربری"
+          disabled={isLoggingOut}
         >
-          <div className="flex items-center gap-x-2">
-            <HiOutlineLogout className="h-6 w-6" />
-            <span>{isLoggingOut ? 'در حال خروج...' : 'خروج'}</span>
-          </div>
+          <HiOutlineLogout className="h-6 w-6 group-hover:text-red-600 dark:group-hover:text-red-300" />
+          <span className="group-hover:text-red-600 dark:group-hover:text-red-300">{isLoggingOut ? 'در حال خروج...' : 'خروج'}</span>
         </button>
       </li>
     </ul>

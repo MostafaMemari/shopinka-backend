@@ -13,6 +13,7 @@ interface CartPageItemProps {
 
 function CartPageItem({ cartItem, isLast = false }: CartPageItemProps) {
   const attributes = cartItem.type === 'VARIABLE' && cartItem.attributeValues ? cartItem.attributeValues : [];
+  const cosnt = cartItem.count;
 
   return (
     <div className={`py-4 ${!isLast ? 'border-b border-gray-200' : ''}`}>
@@ -40,7 +41,7 @@ function CartPageItem({ cartItem, isLast = false }: CartPageItemProps) {
           </div>
 
           <div className="text-blue-600 text-sm font-bold pt-1">
-            <ProductPrice product={{ basePrice: cartItem.basePrice, salePrice: cartItem.salePrice, type: cartItem.type }} />
+            <ProductPrice product={{ basePrice: cartItem.basePrice * cosnt, salePrice: cartItem.salePrice * cosnt, type: cartItem.type }} />
           </div>
         </div>
       </div>

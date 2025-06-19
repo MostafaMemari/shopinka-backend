@@ -72,7 +72,7 @@ export function useAuth() {
       await logoutApi();
       await dispatch(clearCartAction());
       dispatch(logout());
-      queryClient.removeQueries({ queryKey: [QueryKeys.User] });
+      queryClient.removeQueries({ queryKey: [QueryKeys.User, QueryKeys.Cart] });
     } catch (err) {
       dispatch(loginFailure('Logout failed'));
       console.error('Logout error:', err);
