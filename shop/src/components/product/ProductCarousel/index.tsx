@@ -14,17 +14,15 @@ import ProductCard from '../ProductCard';
 const SkeletonLoader = () => {
   return (
     <div className="animate-pulse relative overflow-hidden">
-      <div className="flex space-x-4 rtl:space-x-reverse" style={{ gap: `${10}px` }}>
+      <div className="flex space-x-2 rtl:space-x-reverse" style={{ gap: `${10}px` }}>
         {[...Array(6)].map((_, index) => (
-          <div key={index} className="w-64 h-96 bg-gray-200 rounded-lg p-4 flex-shrink-0">
+          <div key={index} className="w-56 h-80 bg-gray-200 rounded-lg p-4 flex-shrink-0">
             <div className="w-full h-40 bg-gray-300 rounded-md mb-4"></div>
             <div className="h-6 bg-gray-300 rounded w-3/4 mb-2"></div>
             <div className="h-4 bg-gray-300 rounded w-1/2"></div>
           </div>
         ))}
       </div>
-      <div className="absolute top-1/2 -left-4 z-10 -translate-y-1/2 w-8 h-8 bg-gray-200 rounded-full"></div>
-      <div className="absolute top-1/2 -right-4 z-10 -translate-y-1/2 w-8 h-8 bg-gray-200 rounded-full"></div>
     </div>
   );
 };
@@ -37,8 +35,11 @@ interface ProductCarouselProps {
 }
 
 const ProductCarousel: FC<ProductCarouselProps> = ({ title, viewAllLink, viewAllText = 'مشاهده همه', products }) => {
-  const swiperRef = useRef<SwiperRef>(null);
-  const [isSwiperInitialized, setIsSwiperInitialized] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
     <section className="mb-8">
@@ -56,9 +57,8 @@ const ProductCarousel: FC<ProductCarouselProps> = ({ title, viewAllLink, viewAll
 
         {products && products.length > 0 ? (
           <div className="relative overflow-hidden">
-            {!isSwiperInitialized && <SkeletonLoader />}
+            {!isMounted && <SkeletonLoader />}
             <Swiper
-              ref={swiperRef}
               slidesPerView={productSwiperConfig.slidesPerView}
               spaceBetween={productSwiperConfig.spaceBetween}
               breakpoints={productSwiperConfig.breakpoints}
@@ -69,7 +69,7 @@ const ProductCarousel: FC<ProductCarouselProps> = ({ title, viewAllLink, viewAll
               }}
               modules={[Navigation]}
               style={{ direction: 'rtl' }}
-              onInit={() => setIsSwiperInitialized(true)}
+              onInit={() => setIsMounted(true)}
             >
               {products.map((product) => (
                 <SwiperSlide key={product.id}>

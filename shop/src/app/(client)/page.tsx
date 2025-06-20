@@ -1,17 +1,17 @@
 import { getProducts } from '@/service/productService';
 import CarouselProduct from '@/components/product/ProductCarousel';
 import BannerSlider from '@/components/Carousel/BannerSlider';
-import CategoryCirclesBanners from '@/components/CategoryBanners';
-import { getCategories } from '@/service/categoryService';
+import CarouselBlog from '@/components/blog/CarouselBlog';
+import { getBlogs } from '@/service/blogService';
 
 export default async function Home() {
-  const [discountProducts, newestProducts, categories] = await Promise.all([
+  const [discountProducts, newestProducts, blogs] = await Promise.all([
     getProducts({ take: 14, hasDiscount: true }),
     getProducts({ take: 14, sortBy: 'newest' }),
-    getCategories({ includeThumbnailImage: true }),
+    getBlogs({ take: 14 }),
   ]);
 
-  console.log(categories);
+  console.log(blogs);
 
   return (
     <>
@@ -22,6 +22,7 @@ export default async function Home() {
       </div>
       <CarouselProduct title="فروش ویژه" products={discountProducts.items} viewAllLink="/shop?hasDiscount=true" />
       <CarouselProduct title="جدیدترین محصولات" products={newestProducts.items} viewAllLink="/shop?sortBy=newest" />
+      <CarouselBlog title="آخرین مقالات" blogs={blogs.items} viewAllLink="/shop?sortBy=newest" />
       {/* <CategoryCirclesBanners categories={categories.items} /> */}
     </>
   );

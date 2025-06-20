@@ -9,4 +9,5 @@ export enum QueryKeys {
   Favorites = 'favorites',
   ProductFavorite = 'productFavorite',
   Orders = 'orders',
+  Blogs = 'blogs',
 }
