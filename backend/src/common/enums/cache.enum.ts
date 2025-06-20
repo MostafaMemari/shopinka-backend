@@ -14,4 +14,5 @@ export enum CacheKeys {
   Blogs = 'blogs',
   Tags = 'tags',
   Shippings = 'shippings',
+  Pages = 'pages',
 }
