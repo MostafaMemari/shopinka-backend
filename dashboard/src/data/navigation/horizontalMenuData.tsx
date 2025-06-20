@@ -50,6 +50,11 @@ const horizontalMenuData = (): HorizontalMenuDataType[] => [
     href: '/media'
   },
   {
+    label: 'برگه ها',
+    icon: 'tabler-eye',
+    href: '/pages'
+  },
+  {
     label: 'دسته بندی‌ها',
     icon: 'tabler-category',
     href: '/categories'
