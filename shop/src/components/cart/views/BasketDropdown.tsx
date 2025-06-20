@@ -1,7 +1,6 @@
 'use client';
 
-import { HiOutlineChevronLeft, HiOutlineShoppingCart } from 'react-icons/hi';
-import { calculateTotals } from '../../../utils/calculateTotals';
+import { HiOutlineChevronLeft } from 'react-icons/hi';
 import { useDropdown } from '@/hooks/useDropdown';
 import Link from 'next/link';
 import DesktopBasketItem from './DesktopBasketItem';
@@ -12,16 +11,13 @@ import CartIconTotalQuantity from '../CartIconTotalQuantity';
 
 export default function BasketDropdown() {
   const { isLogin } = useAuth();
-  const { cart, isLoading } = useCart(isLogin);
-  const cartItems = cart.items;
+  const { cart } = useCart(isLogin);
+  const { items: cartItems, payablePrice } = cart;
 
   const { isOpen, dropdownRef, handleMouseEnter, handleMouseLeave, closeDropdown } = useDropdown({
     closeOnOutsideClick: false,
     openOnHover: true,
   });
-
-  const totals = calculateTotals(cartItems);
-  const totalPrice = totals.totalPrice;
 
   return (
     <div className="relative">
@@ -68,7 +64,7 @@ export default function BasketDropdown() {
               <div className="flex flex-col items-center gap-y-1">
                 <div className="text-sm text-text/60">مبلغ قابل پرداخت</div>
                 <div className="text-text/90">
-                  <span className="font-bold">{formatPrice(totalPrice)}</span>
+                  <span className="font-bold">{formatPrice(payablePrice)}</span>
                   <span className="text-sm"> تومان</span>
                 </div>
               </div>

@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { CartItemState } from '@/types/cartType';
 import CartControls from '@/components/cart/CartControls';
-import ProductCardImage from '@/components/cart/ProductCartImage';
 import CartItemAttributes from '@/components/cart/CartItemAttributes';
 import ProductPrice from '@/components/productDetails/PriceDisplay';
+import Image from 'next/image';
 
 interface MobileBasketItemProp {
   item: CartItemState;
@@ -11,15 +11,18 @@ interface MobileBasketItemProp {
 
 export default function MobileBasketItem({ item }: MobileBasketItemProp) {
   const attributes = item.type === 'VARIABLE' && item.attributeValues ? item.attributeValues : [];
+  const productUrl = `/product/${item.slug}`;
 
   return (
     <div className="flex gap-x-2 py-5">
       <div className="relative min-w-fit">
-        <ProductCardImage title={item.title} thumbnail={item.thumbnail} />
+        <Link href={productUrl}>
+          <Image alt={item.title} className="h-full w-full" src={item.thumbnail} width={80} height={80} loading="lazy" />
+        </Link>
       </div>
 
       <div className="w-full space-y-1.5">
-        <Link href={`/product-detail/`} className="line-clamp-2 h-10 text-sm">
+        <Link href={productUrl} className="line-clamp-2 h-10 text-sm">
           {item.title}
         </Link>
         <div className="flex items-center gap-x-2 text-xs text-text/60">

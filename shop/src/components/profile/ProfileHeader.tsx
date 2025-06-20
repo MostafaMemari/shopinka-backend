@@ -3,7 +3,7 @@
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useEffect, useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
-import SkeletonLoader from '../SkeletonLoader';
+import SkeletonLoader from '../ui/SkeletonLoader';
 
 function ProfileHeader() {
   const { user, isLoading } = useAuth();

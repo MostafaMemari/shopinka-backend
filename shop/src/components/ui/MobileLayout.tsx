@@ -3,14 +3,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Fragment, useState } from 'react';
-import MobileMenu from './mobileLayout/MobileMenu';
+import MobileMenu from '../mobileLayout/MobileMenu';
 import { PiPhoneCall } from 'react-icons/pi';
 import { LuList, LuUser, LuCheck } from 'react-icons/lu';
 import { RiHome3Line } from 'react-icons/ri';
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
-import MobileLogo from './ui/Logo/MobileLogo';
+import MobileLogo from './Logo/MobileLogo';
 import { Transition, TransitionChild } from '@headlessui/react';
-import CartIconTotalQuantity from './cart/CartIconTotalQuantity';
+import CartIconTotalQuantity from '../cart/CartIconTotalQuantity';
 
 interface MobileLayoutProps {
   showHeader?: boolean;

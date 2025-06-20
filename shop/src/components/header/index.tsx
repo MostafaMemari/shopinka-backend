@@ -28,21 +28,6 @@ async function Header() {
             <DesktopNavbar categories={categories} />
           </div>
         </div>
-
-        {/* <div>
-        <div className="lg:hidden">
-          <div className="container relative z-30 flex h-16 items-center justify-between gap-x-4 bg-muted">
-            <MobileMenu categories={categories} />
-
-            <MobileLogo />
-          </div>
-          <div className="absolute left-0 right-0 top-full z-20 bg-muted pb-4 transition-transform duration-300" id="mobile-header-bottom">
-            <div className="container">
-              <SearchBarBase isMobile recentSearchItems={mockProductItems} productItems={mockProductItems} />
-            </div>
-          </div>
-        </div>
-      </div> */}
       </div>
     </header>
   );

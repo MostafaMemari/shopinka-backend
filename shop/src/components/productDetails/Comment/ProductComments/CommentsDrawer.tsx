@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { CommentItem } from '@/types/commentType';
-import MobileDrawer from '@/components/MobileDrawer';
+import MobileDrawer from '@/components/ui/MobileDrawer';
 import Recommendation from './Recommendation';
 import ReplyCommentFormDrawer from '../AddReplyComment/ReplyCommentFormDrawer';
 import { useComment } from '@/hooks/reactQuery/comment/useComment';

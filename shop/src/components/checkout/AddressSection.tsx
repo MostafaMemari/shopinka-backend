@@ -30,8 +30,7 @@ export default function AddressSection({ onAddressSelect }: AddressSectionProps)
 
   useEffect(() => {
     if (isLoading) return;
-    if (addresses.length === 0) {
-    } else if (addresses.length > 0 && selectedAddressId === null) {
+    else if (addresses.length > 0 && selectedAddressId === null) {
       handleSelectAddress(addresses[0].id);
     }
   }, [addresses, isLoading, selectedAddressId]);

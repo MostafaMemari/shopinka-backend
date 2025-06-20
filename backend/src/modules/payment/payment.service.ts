@@ -1,7 +1,7 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { ZarinpalService } from '../http/zarinpal.service';
 import { PaymentRepository } from './payment.repository';
-import { Order, OrderItem, OrderStatus, Prisma, Transaction, TransactionStatus, User } from '@prisma/client';
+import { OrderItem, OrderStatus, Prisma, Transaction, TransactionStatus, User } from '@prisma/client';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { IVerifyPayment } from '../../common/interfaces/payment.interface';
 import { PaymentMessages } from './enums/payment.messages';
@@ -20,7 +20,7 @@ import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
 import { ProductRepository } from '../product/repositories/product.repository';
 import { CartRepository } from '../cart/repositories/cart.repository';
-import { AddressRepository } from '../address/address.repository';
+import { ShippingRepository } from '../shipping/repositories/shipping.repository';
 
 @Injectable()
 export class PaymentService {
@@ -33,6 +33,7 @@ export class PaymentService {
     private readonly cacheService: CacheService,
     private readonly cartService: CartService,
     private readonly orderService: OrderService,
+    private readonly shippingRepository: ShippingRepository,
     private readonly orderRepository: OrderRepository,
     private readonly cartItemRepository: CartItemRepository,
     private readonly cartRepository: CartRepository,
@@ -65,10 +66,13 @@ export class PaymentService {
 
   async getGatewayUrl(user: User, paymentDto: PaymentDto) {
     const cart = await this.cartService.me(user.id);
+    const shipping = await this.shippingRepository.findOneOrThrow({ where: { id: paymentDto.shippingId } });
+
+    const amountPrice = (cart.payablePrice + shipping.price) * 10;
 
     try {
       const { authority, code, gatewayURL } = await this.zarinpalService.sendRequest({
-        amount: cart.payablePrice * 10,
+        amount: amountPrice,
         description: paymentDto.description ?? 'PAYMENT ORDER',
         user: { email: 'example@gmail.com', mobile: user.mobile },
       });
@@ -77,7 +81,7 @@ export class PaymentService {
         const order = await this.orderService.create(user.id, cart, paymentDto);
         await this.paymentRepository.create({
           data: {
-            amount: cart.payablePrice * 10,
+            amount: amountPrice,
             userId: user.id,
             authority,
             orderId: order.id,

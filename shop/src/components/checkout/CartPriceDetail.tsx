@@ -1,14 +1,14 @@
 'use client';
 
 import React from 'react';
-import PrimaryButton from '@/components/PrimaryButton';
+import PrimaryButton from '@/components/ui/PrimaryButton';
 import { useCart } from '@/hooks/reactQuery/cart/useCart';
 import CartSummary from '@/components/cart/CartSummary';
 import LoadingSpinner from '../ui/LoadingSpinner';
 import { ShippingItem } from '@/types/shippingType';
 import { useCreatePayment } from '@/hooks/reactQuery/payment/useCreatePayment';
 import { useAuth } from '@/hooks/auth/useAuth';
-import CartMobileFixContainer from '../CartMobileFixContainer';
+import CartMobileFixContainer from '../ui/CartMobileFixContainer';
 import { formatPrice } from '@/utils/formatter';
 
 interface CartPriceDetailProps {

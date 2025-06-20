@@ -4,7 +4,7 @@ import React, { useRef, useState } from 'react';
 
 import AddressActions from '@/components/ui/DropDownActions';
 import Dialog from '@/components/ui/Dialog';
-import MobileDrawer from '@/components/MobileDrawer';
+import MobileDrawer from '@/components/ui/MobileDrawer';
 import AddressForm from './AddressForm';
 import { Option } from './AddressSection';
 import useIsMdUp from '@/hooks/useIsMdUp';

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import MobileDrawer from '@/components/MobileDrawer';
+import MobileDrawer from '@/components/ui/MobileDrawer';
 import { IoChevronBack } from 'react-icons/io5';
 
 interface Props {

@@ -1,6 +1,6 @@
 'use client';
 
-import ImageLoader from '@/components/ImageLoader';
+import ImageLoader from '@/components/ui/ImageLoader';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 

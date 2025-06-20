@@ -11,17 +11,18 @@ export interface ItemCardBasketProp {
 
 export default function DesktopBasketItem({ item }: ItemCardBasketProp) {
   const attributes = item.type === 'VARIABLE' && item.attributeValues ? item.attributeValues : [];
+  const productUrl = `/product/${item.slug}`;
 
   return (
     <div className="flex gap-x-2 py-5">
       <div className="relative min-w-fit">
-        <Link href={`/product/${item.id}`}>
+        <Link href={productUrl}>
           <Image alt={item.title} className="h-[120px] w-[120px]" src={item?.thumbnail ?? ''} width={120} height={120} loading="lazy" />
         </Link>
       </div>
 
       <div className="w-full space-y-1.5">
-        <Link className="line-clamp-2 h-12" href={`/product-detail/${item.id}`}>
+        <Link className="line-clamp-2 h-12" href={productUrl}>
           {item.title}
         </Link>
 

@@ -8,8 +8,8 @@ import useIsMdUp from '@/hooks/useIsMdUp';
 import ErrorState from '../ErrorState';
 import Dialog from '@/components/ui/Dialog';
 import AddressForm from '@/components/checkout/AddressForm';
-import MobileDrawer from '@/components/MobileDrawer';
-import SkeletonLoader from '@/components/SkeletonLoader';
+import MobileDrawer from '@/components/ui/MobileDrawer';
+import SkeletonLoader from '@/components/ui/SkeletonLoader';
 
 export interface Option {
   value: string;

@@ -7,7 +7,7 @@ import { handleApiError } from '@/utils/handleApiError';
 import CountdownTimer from '@/components/auth/CountdownTimer';
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 import { useEffect } from 'react';
-import PrimaryButton from '@/components/PrimaryButton';
+import PrimaryButton from '@/components/ui/PrimaryButton';
 import { errorPhoneNumberStepMessages } from './PhoneInputForm';
 
 export const errorOtpStepMessages: Record<number, string> = {

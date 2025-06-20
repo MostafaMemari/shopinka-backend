@@ -10,7 +10,7 @@ import { RiHome3Line } from 'react-icons/ri';
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 import MobileMenu from '@/components/mobileLayout/MobileMenu';
 import MobileLogo from '@/components/ui/Logo/MobileLogo';
-import CartMobileFixContainer from '../CartMobileFixContainer';
+import CartMobileFixContainer from '../ui/CartMobileFixContainer';
 
 const ProductLayout = () => {
   const pathname = usePathname();

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import MobileDrawer from '@/components/MobileDrawer';
+import MobileDrawer from '@/components/ui/MobileDrawer';
 import CommentForm, { CommentFormikType } from '../CommentForm';
 import { AiOutlineComment } from 'react-icons/ai';
 import { useCreateComment } from '@/hooks/reactQuery/comment/useCreateComment';

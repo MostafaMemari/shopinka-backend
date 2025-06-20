@@ -8,7 +8,7 @@ import { HiOutlineShare } from 'react-icons/hi';
 import { useCart } from '@/hooks/reactQuery/cart/useCart';
 import FavoriteProductAction from './ActionButtons/FavoriteProductAction';
 import { useAuth } from '@/hooks/auth/useAuth';
-import SkeletonLoader from '../SkeletonLoader';
+import SkeletonLoader from '../ui/SkeletonLoader';
 import { LuShoppingCart } from 'react-icons/lu';
 import CartIconTotalQuantity from '../cart/CartIconTotalQuantity';
 

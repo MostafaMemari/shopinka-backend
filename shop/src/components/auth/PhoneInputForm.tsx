@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import { sendOtp } from '@/service/authService';
 import { handleApiError } from '@/utils/handleApiError';
 import { validateIranPhoneNumber } from '../../validation/validateIranPhoneNumber';
-import PrimaryButton from '@/components/PrimaryButton';
+import PrimaryButton from '@/components/ui/PrimaryButton';
 
 export const errorPhoneNumberStepMessages: Record<number, string> = {
   400: 'شماره نامعتبر است',

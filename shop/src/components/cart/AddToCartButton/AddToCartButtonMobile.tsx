@@ -1,7 +1,7 @@
 // src/components/AddToCartButtonMobile.tsx
 'use client';
 
-import PrimaryButton from '@/components/PrimaryButton';
+import PrimaryButton from '@/components/ui/PrimaryButton';
 import { ProductCardLogic } from '@/types/productCardLogic';
 import Link from 'next/link';
 import { PulseLoader } from 'react-spinners';
@@ -13,7 +13,7 @@ interface AddToCartButtonMobileProps {
 }
 
 export default function AddToCartButtonMobile({ product }: AddToCartButtonMobileProps) {
-  const { newPrice, isVariableProduct, isVariantSelected, isInCart, existingProduct, addToCart, isAddingToCart } = useCartLogic({
+  const { isVariableProduct, isVariantSelected, isInCart, existingProduct, addToCart, isAddingToCart } = useCartLogic({
     product,
   });
 

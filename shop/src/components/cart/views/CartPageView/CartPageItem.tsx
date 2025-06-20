@@ -1,10 +1,10 @@
 import React from 'react';
-import ProductCartImage from '@/components/cart/ProductCartImage';
 import Link from 'next/link';
 import { CartItemState } from '@/types/cartType';
 import CartItemAttributes from '@/components/cart/CartItemAttributes';
 import CartControls from '@/components/cart/CartControls';
 import ProductPrice from '@/components/productDetails/PriceDisplay';
+import Image from 'next/image';
 
 interface CartPageItemProps {
   cartItem: CartItemState;
@@ -14,13 +14,16 @@ interface CartPageItemProps {
 function CartPageItem({ cartItem, isLast = false }: CartPageItemProps) {
   const attributes = cartItem.type === 'VARIABLE' && cartItem.attributeValues ? cartItem.attributeValues : [];
   const cosnt = cartItem.count;
+  const productUrl = `/product/${cartItem.slug}`;
 
   return (
     <div className={`py-4 ${!isLast ? 'border-b border-gray-200' : ''}`}>
       <div className="grid grid-cols-12 gap-6 items-start">
         <div className="col-span-4 sm:col-span-3 flex flex-col items-center gap-2">
           <div className="w-24 h-24 sm:w-28 sm:h-28">
-            <ProductCartImage thumbnail={cartItem.thumbnail} title={cartItem.title} />
+            <Link href={productUrl}>
+              <Image alt={cartItem.title} className="h-full w-full" src={cartItem.thumbnail} width={80} height={80} loading="lazy" />
+            </Link>
           </div>
 
           <div className="w-24 flex justify-center">
@@ -30,7 +33,7 @@ function CartPageItem({ cartItem, isLast = false }: CartPageItemProps) {
 
         <div className="col-span-8 sm:col-span-9 space-y-2">
           <Link
-            href={`/product-detail/${cartItem.id}`}
+            href={productUrl}
             className="line-clamp-2 text-sm sm:text-base font-semibold text-gray-900 leading-snug hover:text-blue-600"
           >
             {cartItem.title}

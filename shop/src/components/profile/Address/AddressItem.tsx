@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import AddressActions from '@/components/ui/DropDownActions';
-import MobileDrawer from '@/components/MobileDrawer';
+import MobileDrawer from '@/components/ui/MobileDrawer';
 import AddressForm from '@/components/checkout/AddressForm';
 import Dialog from '@/components/ui/Dialog';
 import { Option } from '@/components/checkout/AddressFormDrawer';

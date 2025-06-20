@@ -71,9 +71,7 @@ export function useSyncCart() {
   }, [isLogin, syncCartMutation, queryClient]);
 
   useEffect(() => {
-    if (isLogin) {
-      syncCart();
-    }
+    if (isLogin) syncCart();
   }, [isLogin, syncCart]);
 
   return { syncCart };

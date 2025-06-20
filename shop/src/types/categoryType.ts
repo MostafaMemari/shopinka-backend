@@ -1,3 +1,5 @@
+import { Image } from './imageType';
+
 export type Category = {
   id: number;
   name: string;
@@ -6,6 +8,7 @@ export type Category = {
   parentId: string | null;
   userId: number;
   thumbnailImageId: number | null;
+  thumbnailImage: Image;
   createdAt: string;
   updatedAt: string;
   children: Category[];

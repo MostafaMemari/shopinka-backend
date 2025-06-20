@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import ProfileField from './ProfileField';
-import MobileDrawer from '../MobileDrawer';
+import MobileDrawer from '../ui/MobileDrawer';
 import FullNameForm from './FullNameForm';
 import { useChangeFullName } from '@/hooks/reactQuery/user/userUser';
 import LoadingSpinner from '../ui/LoadingSpinner';

@@ -56,6 +56,7 @@ export const useCartLogic = ({ product }: ProductCardLogicProps) => {
       const cartItem: CartItemState = {
         id: isVariableProduct ? (selectedVariant?.id ?? product.id) : product.id,
         title: product.name,
+        slug: product.slug,
         thumbnail: product.mainImageUrl ?? '',
         basePrice: oldPrice ?? newPrice ?? 0,
         salePrice: newPrice ?? 0,

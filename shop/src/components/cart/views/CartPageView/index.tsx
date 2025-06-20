@@ -7,13 +7,13 @@ import { HiOutlineTrash } from 'react-icons/hi';
 import CartPageItem from '@/components/cart/views/CartPageView/CartPageItem';
 import showConfirmDialog from '@/components/cart/showConfirmDialog';
 import CartSummary from '@/components/cart/CartSummary';
-import PrimaryButton from '@/components/PrimaryButton';
+import PrimaryButton from '@/components/ui/PrimaryButton';
 import { useCart } from '@/hooks/reactQuery/cart/useCart';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import ErrorState from '@/components/profile/ErrorState';
 import EmptyState from '@/components/profile/EmptyState';
 import { useAuth } from '@/hooks/auth/useAuth';
-import CartMobileFixContainer from '@/components/CartMobileFixContainer';
+import CartMobileFixContainer from '@/components/ui/CartMobileFixContainer';
 import { formatPrice } from '@/utils/formatter';
 import { useRouter } from 'next/navigation';
 

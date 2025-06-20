@@ -5,6 +5,7 @@ export interface CartItemState {
   id: number;
   type: 'SIMPLE' | 'VARIABLE';
   title: string;
+  slug: string;
   thumbnail: string;
   basePrice: number;
   salePrice: number;

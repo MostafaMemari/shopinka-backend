@@ -17,7 +17,7 @@ import ProductGuaranteeBadge from '../ProductGuaranteeBadge';
 
 import FavoriteProductAction from '../ActionButtons/FavoriteProductAction';
 import ShareProductAction from '../ActionButtons/ShareProductAction';
-import CartMobileFixContainer from '@/components/CartMobileFixContainer';
+import CartMobileFixContainer from '@/components/ui/CartMobileFixContainer';
 interface ProductDetailsViewProps {
   product: ProductDetails;
 }
@@ -96,6 +96,7 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
                         product={{
                           id: product.id,
                           name: product.name,
+                          slug: product.slug,
                           basePrice: product.basePrice ?? 0,
                           salePrice: product.salePrice ?? 0,
                           mainImageUrl: product.mainImage?.fileUrl ?? null,
@@ -160,6 +161,7 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
                         product={{
                           id: product.id,
                           name: product.name,
+                          slug: product.slug,
                           basePrice: product.basePrice ?? 0,
                           salePrice: product.salePrice ?? 0,
                           mainImageUrl: product.mainImage?.fileUrl ?? null,
