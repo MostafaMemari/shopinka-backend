@@ -51,8 +51,13 @@ const horizontalMenuData = (): HorizontalMenuDataType[] => [
   },
   {
     label: 'برگه ها',
-    icon: 'tabler-eye',
+    icon: 'tabler-file-text',
     href: '/pages'
+  },
+  {
+    label: 'تماس با ما',
+    icon: 'tabler-mail',
+    href: '/contact'
   },
   {
     label: 'دسته بندی‌ها',
