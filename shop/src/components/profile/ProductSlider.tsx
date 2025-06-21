@@ -27,28 +27,30 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ orderProductItems }) => {
           1380: { slidesPerView: 4.1, spaceBetween: 18 },
         }}
       >
-        {orderProductItems.map((orderProductItem) => (
-          <SwiperSlide key={orderProductItem?.id}>
-            <Link
-              href={`/product/${orderProductItem.product.slug}`}
-              className="
+        {orderProductItems.map((item) => {
+          const product = item?.product || item?.productVariant?.product;
+          const productName = product?.name || '';
+          const productSlug = product?.slug || '';
+          const productImageUrl =
+            item?.product?.mainImage?.fileUrl || item?.productVariant?.product?.mainImage?.fileUrl || '/images/no-image.webp';
+
+          return (
+            <SwiperSlide key={item?.id}>
+              <Link
+                href={`/product/${productSlug}`}
+                className="
               flex items-center gap-x-3 rounded-xl border border-gray-100 bg-white
               px-2 py-2 shadow-sm transition hover:shadow-lg hover:border-primary
             "
-            >
-              <div className="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center">
-                <Image
-                  alt={orderProductItem.product.name}
-                  src={orderProductItem.product?.mainImage?.fileUrl || '/images/no-image.webp'}
-                  className="object-contain w-14 h-14"
-                  width={60}
-                  height={60}
-                />
-              </div>
-              <p className="line-clamp-2 text-xs sm:text-sm text-gray-700 font-medium">{orderProductItem.product.name}</p>
-            </Link>
-          </SwiperSlide>
-        ))}
+              >
+                <div className="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center">
+                  <Image alt={productName} src={productImageUrl} className="object-contain w-14 h-14" width={60} height={60} />
+                </div>
+                <p className="line-clamp-2 text-xs sm:text-sm text-gray-700 font-medium">{productName}</p>
+              </Link>
+            </SwiperSlide>
+          );
+        })}
       </Swiper>
     </div>
   );

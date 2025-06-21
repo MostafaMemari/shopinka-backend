@@ -47,6 +47,7 @@ async function refreshAccessToken(): Promise<ApiResponse> {
   } catch (error: any) {
     const statusCode = error?.response?.status || 401
     const message = error?.data?.message || 'Failed to refresh token'
+
     return { status: statusCode, data: { message } }
   }
 }
@@ -77,8 +78,11 @@ export const serverApiFetch = async (path: string, options: FetchOptions = {}): 
     const statusCode = error?.response?.status || 500
     const message = error?.data?.message || error?.message || 'خطایی در ارتباط با سرور رخ داده است'
 
+    console.log('error :', error.message)
+
     if (statusCode === 401) {
       const refreshResult = await refreshAccessToken()
+
       if (refreshResult.status === 200) {
         const cookieStore = await cookies()
         const newAccessToken = cookieStore.get(COOKIE_NAMES.ACCESS_TOKEN)?.value
@@ -96,10 +100,12 @@ export const serverApiFetch = async (path: string, options: FetchOptions = {}): 
             },
             retry: 0
           })
+
           return { status: 200, data: retryData }
         } catch (retryError: any) {
           const retryStatus = retryError?.response?.status || 500
           const retryMessage = retryError?.data?.message || retryError?.message || 'خطا در تلاش مجدد'
+
           return { status: retryStatus, data: { message: retryMessage } }
         }
       } else {

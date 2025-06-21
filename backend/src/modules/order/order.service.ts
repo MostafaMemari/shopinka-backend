@@ -208,22 +208,22 @@ export class OrderService {
   }
 
   async findAllForUser(userId: number, queryMyOrderDto: QueryMyOrderDto): Promise<unknown> {
-    const { page, take, status } = queryMyOrderDto;
+    const { page = 1, take = 10, status } = queryMyOrderDto;
 
-    const orderStatusFilter =
-      status === QueryOrderStatus.CURRENT
-        ? { in: [OrderStatus.PENDING, OrderStatus.PROCESSING] }
+    const orderStatusFilter = status
+      ? status === QueryOrderStatus.CURRENT
+        ? { in: [OrderStatus.PENDING, OrderStatus.PROCESSING, OrderStatus.SHIPPED] }
         : status === QueryOrderStatus.DELIVERED
           ? OrderStatus.DELIVERED
           : status === QueryOrderStatus.CANCELLED
             ? OrderStatus.CANCELLED
-            : undefined;
+            : undefined
+      : undefined;
 
     const whereCondition: any = { userId };
     if (orderStatusFilter) {
       whereCondition.status = orderStatusFilter;
     }
-
     const orders = await this.orderRepository.findAll({
       where: whereCondition,
       orderBy: { createdAt: 'desc' },
@@ -252,6 +252,7 @@ export class OrderService {
                   select: {
                     name: true,
                     type: true,
+                    slug: true,
                     mainImage: { select: { fileUrl: true } },
                   },
                 },
@@ -324,6 +325,7 @@ export class OrderService {
                   select: {
                     name: true,
                     type: true,
+                    slug: true,
                     mainImage: { select: { fileUrl: true } },
                   },
                 },

@@ -4,7 +4,9 @@ import OrderCardDetails from '@/components/profile/Order/OrderCardDetails';
 import OrderItems from '@/components/profile/Order/OrderItems';
 import { getOrderById } from '@/service/orderService';
 import Link from 'next/link';
-import { FaChevronLeft } from 'react-icons/fa';
+import { FaChevronRight } from 'react-icons/fa';
+import { OrderItem } from '@/types/orderType';
+import { notFound } from 'next/navigation';
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -13,16 +15,27 @@ type PageProps = {
 async function Page({ params }: PageProps) {
   const { id } = await params;
 
-  const order = await getOrderById(Number(id));
+  let order: OrderItem;
+  try {
+    order = await getOrderById(Number(id));
+    if (!order) notFound();
+  } catch (error) {
+    console.error('Error fetching order:', error);
+    notFound();
+  }
+
+  console.log(order);
 
   return (
-    <>
-      <div className="mb-10 flex flex-col items-center justify-between gap-y-8 xs:flex-row">
-        <DashboardHeader title={`جزئیات سفارش ${order.orderNumber}#`} />
-
-        <Link href="/profile/orders" className="btn-primary w-full px-4 py-2 xs:w-fit">
-          برگشت
-          <FaChevronLeft className="h-5 w-5" />
+    <div className="container mx-auto px-4 py-6">
+      <div className="mb-10 flex flex-col items-center justify-between gap-y-6 sm:flex-row">
+        <DashboardHeader title={`جزئیات سفارش #${order.orderNumber}`} />
+        <Link
+          href="/profile/orders"
+          className="btn-primary flex items-center justify-center gap-2 w-full sm:w-fit px-4 py-2 text-sm font-medium"
+        >
+          بازگشت
+          <FaChevronRight className="h-4 w-4" />
         </Link>
       </div>
 
@@ -31,11 +44,12 @@ async function Page({ params }: PageProps) {
         transactionStatus={order.transaction.status}
         orderNumber={order.orderNumber}
         paymentOrder={order.transaction.amount}
+        createdAt={order.createdAt}
+        updatedAt={order.updatedAt}
       />
-      {/* <OrderCostDetails costs={45534} shipping={shipping} /> */}
       <DeliveryAddress address={order.address} />
-      <OrderItems items={order.items} itemCount={order.items.length} />
-    </>
+      <OrderItems items={order.items} itemCount={order.quantity} />
+    </div>
   );
 }
 

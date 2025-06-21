@@ -45,9 +45,9 @@ export async function refetchProducts() {
 }
 
 export async function fetchProductBySlug(slug: string) {
-  const response = await shopApiFetch(`/product/by-slug/${slug}`);
+  const res = await shopApiFetch(`/product/by-slug/${slug}`);
 
-  return response;
+  return res;
 }
 
 export async function favoriteToggle(productId: number) {

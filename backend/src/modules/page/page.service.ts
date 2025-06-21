@@ -63,6 +63,12 @@ export class PageService {
     });
   }
 
+  findOneBySlug(slug: string): Promise<Page> {
+    return this.pageRepository.findOneOrThrow({
+      where: { slug },
+    });
+  }
+
   async update(userId: number, pageId: number, updatePageDto: UpdatePageDto): Promise<{ message: string; page: Page }> {
     const { slug } = updatePageDto;
 

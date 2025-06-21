@@ -49,6 +49,8 @@ export interface ProductVariant {
   updatedAt: string;
   attributeValues: AttributeValues[];
   mainImage: Image | null;
+
+  product: Product;
 }
 
 export interface ProductDetails {

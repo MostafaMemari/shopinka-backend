@@ -26,17 +26,17 @@ export const defaultFooterProps = {
 };
 
 export const menuLinks1: MenuLink[] = [
-  { id: '1', label: 'شرایط مرجوعی', href: '/return-terms' },
-  { id: '2', label: 'راهنمای خرید', href: '/how-to-buy' },
-  { id: '3', label: 'قوانین و مقررات', href: '/rules-and-terms' },
-  { id: '4', label: 'چرا شاپینکا', href: '/why-us' },
+  { id: '1', label: 'نحوه ثبت سفارش', href: '/info/how-to-order' },
+  { id: '2', label: 'رویه ارسال سفارش', href: '/info/shipping-policy' },
+  { id: '3', label: 'شیوه های پرداخت', href: '/info/payment-methods' },
+  { id: '4', label: 'رویه های بازگردانی کالا', href: '/info/return-policy' },
 ];
 
 export const menuLinks2: MenuLink[] = [
-  { id: '1', label: 'پیگیری سفارشات', href: '/profile-orders' },
-  { id: '2', label: 'تماس با ما', href: '/contact' },
-  { id: '3', label: 'سوالات متداول', href: '/faq' },
-  { id: '4', label: 'درباره ما', href: '/about' },
+  { id: '1', label: 'حریم خصوصی', href: '/info/privacy-policy' },
+  { id: '2', label: 'شرایط استفاده از خدمات سایت', href: '/info/terms-of-service' },
+  { id: '3', label: 'فرصت های شغلی', href: '/info/careers' },
+  { id: '4', label: 'پاسخ به پرسش های متداول', href: '/faq' },
 ];
 
 export const socialLinks: SocialLink[] = [

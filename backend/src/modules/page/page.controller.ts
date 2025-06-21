@@ -36,6 +36,12 @@ export class PageController {
     return this.pageService.findOne(id);
   }
 
+  @Get('by-slug/:slug')
+  @SkipAuth()
+  findOneBySlug(@Param('slug') slug: string) {
+    return this.pageService.findOneBySlug(slug);
+  }
+
   @Patch(':id')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
