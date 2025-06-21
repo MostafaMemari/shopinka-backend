@@ -26,6 +26,7 @@ import { TagModule } from '../tag/tag.module';
 import { ShippingModule } from '../shipping/shipping.module';
 import { AiModule } from '../ai/ai.module';
 import { PageModule } from '../page/page.module';
+import { ContactModule } from '../contact/contact.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { PageModule } from '../page/page.module';
     ShippingModule,
     AiModule,
     PageModule,
+    ContactModule,
   ],
   controllers: [],
   providers: [
