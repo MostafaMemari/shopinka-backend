@@ -123,6 +123,13 @@ export class BlogService {
     });
   }
 
+  findOneBySlug(slug: string): Promise<Blog> {
+    return this.blogRepository.findOneOrThrow({
+      where: { slug, status: BlogStatus.PUBLISHED },
+      include: { mainImage: true, categories: true, tags: true, user: { select: { id: true, fullName: true } }, seoMeta: true },
+    });
+  }
+
   async update(userId: number, blogId: number, updateBlogDto: UpdateBlogDto): Promise<{ message: string; blog: Blog }> {
     const { categoryIds, tagIds, slug, content, readingTime, mainImageId } = updateBlogDto;
     await this.blogRepository.findOneOrThrow({ where: { id: blogId, userId } });

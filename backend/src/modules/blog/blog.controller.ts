@@ -43,6 +43,12 @@ export class BlogController {
     return this.blogService.findOne(id);
   }
 
+  @Get('by-slug/:slug')
+  @SkipAuth()
+  findOneBySlug(@Param('slug') slug: string) {
+    return this.blogService.findOneBySlug(slug);
+  }
+
   @Patch(':id')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)

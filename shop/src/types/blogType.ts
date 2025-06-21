@@ -1,5 +1,6 @@
 import { Image } from './imageType';
 import { Pager } from './pagerType';
+import { User } from './userType';
 
 export interface BlogItem {
   id: number;
@@ -13,6 +14,7 @@ export interface BlogItem {
   createdAt: string;
   updatedAt: string;
 
+  user: User;
   mainImage: Image | undefined;
 }
 

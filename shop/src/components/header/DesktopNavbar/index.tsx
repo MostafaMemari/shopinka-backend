@@ -5,53 +5,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Category } from '@/types/categoryType';
 import CategoryMenu from './CategoryMenu';
 import MenuItem from './MenuItem';
-
-interface MenuItem {
-  id: number;
-  name: string;
-  href: string;
-  subItems?: { id: number; name: string; href: string }[];
-  color?: { light: string; dark: string };
-}
-
-const menuItems: MenuItem[] = [
-  {
-    id: 10,
-    name: 'فروشگاه',
-    href: '/shop',
-    color: { light: '#ef4444', dark: '#f87171' },
-  },
-  {
-    id: 2,
-    name: 'چرا شاپینکا',
-    href: '/',
-  },
-  {
-    id: 3,
-    name: 'راهنمای خرید',
-    href: '/',
-  },
-  {
-    id: 4,
-    name: 'سایر',
-    href: '#',
-    subItems: [
-      { id: 1, name: 'تماس با ما', href: '/' },
-      { id: 2, name: 'درباره ما', href: '/' },
-      { id: 3, name: 'سوالات متداول', href: '/' },
-    ],
-  },
-];
-
-const MenuItems = () => {
-  return (
-    <div className="flex items-center gap-x-2">
-      {menuItems.map((menu) => (
-        <MenuItem key={menu.id} menu={menu} />
-      ))}
-    </div>
-  );
-};
+import { menuItems } from '@/data/menuData';
 
 interface DesktopNavbarProps {
   categories: Category[];
@@ -90,9 +44,13 @@ const DesktopNavbar = ({ categories }: DesktopNavbarProps) => {
         <div className="flex justify-between items-center w-full">
           <div className="flex gap-x-2">
             <CategoryMenu categories={categories} />
-            <MenuItems />
+            <div className="flex items-center gap-x-2">
+              {menuItems.map((menu) => (
+                <MenuItem key={menu.id} menu={menu} />
+              ))}
+            </div>
           </div>
-          <MenuItem menu={{ id: 1, name: 'فروش ویژه', href: './special-sale.html' }} isAlwaysActive />
+          <MenuItem menu={{ id: 1, name: 'فروش ویژه', href: '/shop?hasDiscount=true' }} isAlwaysActive />
         </div>
 
         <div

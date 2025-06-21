@@ -47,7 +47,7 @@ const CarouselBlog: FC<Props> = ({ title, viewAllLink, viewAllText = 'مشاهد
               slidesPerView={blogSwiperConfig.slidesPerView}
               spaceBetween={blogSwiperConfig.spaceBetween}
               breakpoints={blogSwiperConfig.breakpoints}
-              className="product-carousel"
+              className="blog-carousel"
               navigation={{
                 nextEl: '.swiper-button-next',
                 prevEl: '.swiper-button-prev',

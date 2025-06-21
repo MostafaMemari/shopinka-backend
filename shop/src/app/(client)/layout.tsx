@@ -10,7 +10,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <main className="grow bg-background pb-14 pt-22 lg:pt-36">
         <div className="col-span-12 lg:col-span-9">{children}</div>
       </main>
-      <Footer />
+      <Footer
+        copyright
+        copyrightText="کلیه حقوق این سایت متعلق به فروشگاه شاپینکا می‌باشد"
+        subscribeText="از جدیدترین تخفیف ها با خبر شوید"
+        supportPhone="02165102415"
+        supportText="۷ روز هفته، ۲۴ ساعته پاسخگوی شما هستیم"
+      />
     </>
   );
 }

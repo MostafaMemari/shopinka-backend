@@ -28,7 +28,7 @@ function Page() {
         </h1>
         <p className="text-sm sm:text-base text-gray-600">
           سوال خود را پیدا نکردید؟{' '}
-          <Link href="#" className="text-primary font-medium transition-colors">
+          <Link href="/contact" className="text-primary font-medium transition-colors">
             با ما تماس بگیرید
           </Link>
         </p>

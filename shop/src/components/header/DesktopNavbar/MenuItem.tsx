@@ -1,17 +1,12 @@
 // components/MenuItem.tsx
 'use client';
 
+import { type MenuItem } from '@/data/menuData';
 import Link from 'next/link';
 import { useState } from 'react';
 
 interface MenuItemProps {
-  menu: {
-    id: number;
-    name: string;
-    href: string;
-    subItems?: { id: number; name: string; href: string }[];
-    color?: { light: string; dark: string };
-  };
+  menu: MenuItem;
   isAlwaysActive?: boolean;
 }
 
@@ -28,9 +23,11 @@ const MenuItem = ({ menu, isAlwaysActive = false }: MenuItemProps) => {
           }`}
           style={menu.color ? ({ '--color-light': menu.color.light, '--color-dark': menu.color.dark } as React.CSSProperties) : undefined}
         >
+          {menu.icon && <menu.icon className="text-lg" />}
           {menu.name}
           {menu.name === 'سایر' && <span className="text-primary">...</span>}
         </Link>
+
         <span
           className={`absolute bottom-0 right-0 h-0.5 bg-primary transition-all duration-500 ${
             isAlwaysActive || isHovered ? 'w-full' : 'w-0'

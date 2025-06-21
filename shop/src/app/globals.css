@@ -56,13 +56,24 @@ body {
   border-radius: var(--scrollbar-radius);
   border: var(--scrollbar-border);
 }
-
+/******************* product carousel ***********************/
 .product-carousel:not(.swiper-initialized) {
   opacity: 0;
   visibility: hidden;
   height: 0;
 }
 .product-carousel.swiper-initialized {
+  opacity: 1;
+  visibility: visible;
+  height: auto;
+}
+/******************* product carousel ***********************/
+.blog-carousel:not(.swiper-initialized) {
+  opacity: 0;
+  visibility: hidden;
+  height: 0;
+}
+.blog-carousel.swiper-initialized {
   opacity: 1;
   visibility: visible;
   height: auto;
