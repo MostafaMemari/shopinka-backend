@@ -474,3 +474,12 @@ model ShippingInfo {
   sentAt    DateTime @default(now())
   createdAt DateTime @default(now())
 }
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  fullName  String
+  phone     String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}
