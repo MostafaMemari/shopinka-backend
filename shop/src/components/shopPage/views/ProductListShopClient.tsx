@@ -7,7 +7,6 @@ import { Product, ProductParams } from '@/types/productType';
 import { getProducts } from '@/service/productService';
 import LoadingDots from '@/components/shopPage/LoadingDots';
 import { Pager } from '@/types/pagerType';
-import EndMessage from '@/components/shopPage/EndMessage';
 
 interface Props {
   query: ProductParams;
@@ -49,7 +48,7 @@ export default function ProductListShopClient({ query, initialProducts, pager }:
     setProducts(initialProducts);
     setPage(1);
     setTotalPages(pager?.totalPages || 1);
-    setHasMore((pager?.hasNextPage ?? false) && initialProducts.length === (query.take ?? 20) && (pager?.currentPage ?? 1) < MAX_PAGES);
+    setHasMore((pager?.hasNextPage ?? false) && initialProducts.length === (query.take ?? 10) && (pager?.currentPage ?? 1) < MAX_PAGES);
   }, [
     query.hasDiscount,
     query.categoryIds?.toString(),
@@ -73,7 +72,7 @@ export default function ProductListShopClient({ query, initialProducts, pager }:
       setProducts(items); // Replace products for pagination, append for infinite scroll
       setPage(targetPage);
       setTotalPages(newPager?.totalPages || 1);
-      setHasMore((newPager?.hasNextPage ?? false) && items.length === (query.take ?? 20) && targetPage < MAX_PAGES);
+      setHasMore((newPager?.hasNextPage ?? false) && items.length === (query.take ?? 10) && targetPage < MAX_PAGES);
     } catch (error) {
       setHasMore(false);
     } finally {
@@ -89,12 +88,6 @@ export default function ProductListShopClient({ query, initialProducts, pager }:
     await fetchProducts(page + 1);
   };
 
-  const handlePageChange = (newPage: number) => {
-    if (newPage !== page) {
-      fetchProducts(newPage);
-    }
-  };
-
   return (
     <div>
       <InfiniteScroll
@@ -103,7 +96,16 @@ export default function ProductListShopClient({ query, initialProducts, pager }:
         next={fetchMoreData}
         hasMore={hasMore && page < MAX_PAGES}
         loader={products.length > 0 ? <LoadingDots /> : null}
-        endMessage={products.length > 0 && page < MAX_PAGES ? <EndMessage /> : null}
+        endMessage={
+          products.length > 0 && page < MAX_PAGES ? (
+            <div className="flex justify-center items-center py-8 animate-fadeIn">
+              <div className="text-center">
+                <p className="text-lg font-medium text-gray-600 dark:text-gray-300">تمامی محصولات نمایش داده شدند</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">محصولات بیشتری در حال حاضر موجود نیست</p>
+              </div>
+            </div>
+          ) : null
+        }
       >
         <ProductListShop products={products} isLoading={isLoading && products.length === 0} />
       </InfiniteScroll>

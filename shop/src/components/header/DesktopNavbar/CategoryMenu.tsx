@@ -31,7 +31,7 @@ const CategoryMenu = ({ categories }: CategoryMenuProps) => {
     >
       <div className="flex cursor-pointer items-center gap-x-2 pt-2 mb-2">
         <HiOutlineMenu className="h-5 w-5 text-neutral-600 dark:text-white" />
-        <span className="font-medium text-sm text-neutral-600 dark:text-white">دسته‌بندی‌ها</span>
+        <span className="font-medium text-sm text-neutral-600 dark:text-white ml-2">دسته‌بندی‌ها</span>
         <span
           className={`absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-500 ${selectedCategoryId ? 'w-full' : 'w-0'}`}
         />

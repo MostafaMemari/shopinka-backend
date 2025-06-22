@@ -6,7 +6,6 @@ import { BLOG_SORT_OPTIONS, BlogParams } from '@/types/blogType';
 import BlogListShopClient from '@/components/blog/BlogListClient';
 
 import SearchInput from '@/components/filter/SearchInput';
-import { PRODUCT_SORT_OPTIONS } from '@/types/productType';
 import CategorySelector from '@/components/category/CategorySelector';
 import SortBar from '@/components/filter/SortBar';
 import MobileFilter from '@/components/filter/MobileFilter';
@@ -34,7 +33,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
     <>
       <div className="mb-6 flex items-center justify-center gap-x-4 md:hidden">
         <MobileFilter totalCount={pager.totalCount} type="BLOG" />
-        <MobileSort options={BLOG_SORT_OPTIONS} queryKey="sortBy" title="مرتب‌سازی محصولات" />
+        <MobileSort options={BLOG_SORT_OPTIONS} queryKey="sortBy" />
       </div>
       <div className="grid grid-cols-12 grid-rows-[60px_min(500px,_1fr)] gap-4">
         <div className="col-span-4 row-span-2 hidden md:block lg:col-span-3">
