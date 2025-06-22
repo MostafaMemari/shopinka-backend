@@ -4,15 +4,11 @@ import { useAuth } from '@/hooks/auth/useAuth';
 import { useEffect, useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import SkeletonLoader from '../ui/SkeletonLoader';
+import { useIsMounted } from '@/hooks/useIsMounted';
 
 function ProfileHeader() {
   const { user, isLoading } = useAuth();
-
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const isMounted = useIsMounted();
 
   // if (!isMounted) return null;
 

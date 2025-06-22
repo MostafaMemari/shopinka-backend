@@ -6,16 +6,12 @@ import { FaUserCircle } from 'react-icons/fa';
 import { IoIosMenu } from 'react-icons/io';
 import ProfileMenu from '../ProfileMenu';
 import { useAuth } from '@/hooks/auth/useAuth';
+import { useIsMounted } from '@/hooks/useIsMounted';
 
 function ProfileMenuCard() {
   const [isOpen, setIsOpen] = useState(false);
   const { isLoading, user } = useAuth();
-
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const isMounted = useIsMounted();
 
   if (!isMounted) return null;
 

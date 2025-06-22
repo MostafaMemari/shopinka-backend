@@ -11,6 +11,7 @@ import { useAuth } from '@/hooks/auth/useAuth';
 import SkeletonLoader from '../ui/SkeletonLoader';
 import { LuShoppingCart } from 'react-icons/lu';
 import CartIconTotalQuantity from '../cart/CartIconTotalQuantity';
+import { useIsMounted } from '@/hooks/useIsMounted';
 
 interface MobileHeaderProps {
   productId: number;
@@ -19,11 +20,7 @@ interface MobileHeaderProps {
 const MobileHeader = ({ productId }: MobileHeaderProps) => {
   const { isLogin } = useAuth();
   const router = useRouter();
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const isMounted = useIsMounted();
 
   const handleBack = () => {
     router.back();
