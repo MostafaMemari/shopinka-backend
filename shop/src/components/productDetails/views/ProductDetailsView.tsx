@@ -25,21 +25,21 @@ interface ProductDetailsViewProps {
 const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
   const isVariableProduct = product?.variants?.length > 0;
 
-  const breadcrumbItems = [
-    { label: 'روتی کالا', href: '/' },
-    { label: 'مردانه', href: '/men' },
-    { label: 'کتونی مردانه', href: '/' },
-  ];
+  const breadcrumbItems =
+    product?.categories?.map((category) => ({
+      href: `/shop?categoryIds=${category.id}`,
+      name: category.name,
+    })) || [];
 
   return (
     <>
       <div className="hidden lg:block">
-        <BreadcrumbContainer variant="boxed" items={breadcrumbItems} />
+        <BreadcrumbContainer variant="boxed" items={[{ name: 'خانه', href: '/' }, ...breadcrumbItems]} />
         <div className="mb-6 rounded-lg bg-muted p-6 shadow-base">
           <div className="mb-10 grid grow grid-cols-12 gap-4">
             <div className="col-span-4">
-              <div className="hidden lg:block py-2">
-                <div className="flex items-center gap-x-4 ">
+              <div className="hidden lg:block mb-4">
+                <div className="flex items-center gap-x-4">
                   <FavoriteProductAction productId={product.id} isTooltip />
                   <ShareProductAction />
                 </div>
@@ -55,7 +55,6 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
               />
             </div>
             <div className="col-span-8 flex min-h-full flex-col">
-              <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
               <div className="col-span-8 flex min-h-full flex-col">
                 {product.name && <h1 className="text-lg font-semibold pb-2">{product.name}</h1>}
 
@@ -128,7 +127,7 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
                 name: product.name,
               }}
             />
-            <BreadcrumbContainer variant="compact" items={breadcrumbItems} />
+            <BreadcrumbContainer variant="compact" items={[{ name: 'خانه', href: '/' }, ...breadcrumbItems]} />
           </div>
           <div>
             <div className="space-y-4">

@@ -1,21 +1,19 @@
 import { FC } from 'react';
 import RelatedPosts from './RelatedPosts';
-import Categories from './Categories';
-import { getBlogById, getBlogs } from '@/service/blogService';
+import { getBlogs } from '@/service/blogService';
 
 interface SidebarProps {
-  categoryId: number;
+  categoryIds: number[];
 }
 
-const Sidebar: FC<SidebarProps> = ({ categoryId }) => {
-  const blogs = await getBlogs({});
+const Sidebar: FC<SidebarProps> = async ({ categoryIds }) => {
+  const { pager, items } = await getBlogs({ categoryIds, includeMainImage: true, take: 5 });
 
   return (
     <div className="col-span-4 row-span-2 hidden md:block lg:col-span-3">
       <div className="sticky top-32 mb-4 overflow-hidden">
-        <RelatedPosts />
-        {/* <PopularPosts /> */}
-        <Categories />
+        <RelatedPosts postCount={pager.totalCount} posts={items} />
+        {/* <Categories /> */}
       </div>
     </div>
   );

@@ -369,7 +369,12 @@ export class ProductService {
         mainImage: true,
         user: true,
         tags: true,
-        categories: true,
+        categories: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         attributes: true,
         variants: { include: { attributeValues: true, mainImage: true } },
         seoMeta: true,
