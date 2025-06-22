@@ -271,6 +271,35 @@ export class OrderService {
     return pagination({ page, take }, orders);
   }
 
+  async getOrderCounts(userId: number) {
+    const [currentCount, deliveredCount, cancelledCount] = await Promise.all([
+      this.orderRepository.count({
+        where: {
+          userId,
+          status: { in: [OrderStatus.PENDING, OrderStatus.PROCESSING, OrderStatus.SHIPPED] },
+        },
+      }),
+      this.orderRepository.count({
+        where: {
+          userId,
+          status: OrderStatus.DELIVERED,
+        },
+      }),
+      this.orderRepository.count({
+        where: {
+          userId,
+          status: OrderStatus.CANCELLED,
+        },
+      }),
+    ]);
+
+    return {
+      current: currentCount,
+      delivered: deliveredCount,
+      cancelled: cancelledCount,
+    };
+  }
+
   async findAllItemsForUser(userId: number, paginationDto: PaginationDto): Promise<unknown> {
     const orderItems = await this.orderItemRepository.findAll({
       where: { order: { userId } },

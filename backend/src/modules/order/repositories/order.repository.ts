@@ -26,6 +26,10 @@ export class OrderRepository {
     return this.prismaService.order.delete(args);
   }
 
+  count(args: Prisma.OrderCountArgs) {
+    return this.prismaService.order.count(args);
+  }
+
   async findOneOrThrow(args: Prisma.OrderFindFirstArgs): Promise<Order | never> {
     const order = await this.findOne(args);
 

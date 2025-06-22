@@ -27,6 +27,11 @@ export class OrderController {
     return this.orderService.findAllForUser(user.id, queryMyOrderDto);
   }
 
+  @Get('my/counts')
+  getOrderCounts(@GetUser() user: User) {
+    return this.orderService.getOrderCounts(user.id);
+  }
+
   @Get('item')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   findAllItemsForAdmin(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
