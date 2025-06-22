@@ -1,9 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsOptional, IsDate, IsEnum, IsString } from 'class-validator';
 import { SortOrder } from '../../../common/enums/shared.enum';
 import { Transform } from 'class-transformer';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
 import { TagSortBy } from '../enums/tag-sortby.enum';
+import { TagType } from '@prisma/client';
 
 export class QueryTagDto extends PaginationDto {
   @IsOptional()
@@ -14,6 +15,15 @@ export class QueryTagDto extends PaginationDto {
     required: false,
   })
   name?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsEnum(TagType)
+  @ApiPropertyOptional({
+    type: 'string',
+    enum: TagType,
+  })
+  type?: TagType;
 
   @IsBoolean()
   @IsOptional()

@@ -60,6 +60,7 @@ export class CategoryService {
       childrenDepth,
       includeBlogs,
       includeProducts,
+      type,
     } = queryCategoryDto;
 
     const sortedDto = sortObject(queryCategoryDto);
@@ -72,6 +73,7 @@ export class CategoryService {
 
     const filters: Prisma.CategoryWhereInput = { parent: null };
 
+    if (type) filters.type = type;
     if (description) filters.description = { contains: description, mode: 'insensitive' };
     if (slug) filters.slug = { contains: slug, mode: 'insensitive' };
     if (name) filters.name = { contains: name, mode: 'insensitive' };

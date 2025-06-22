@@ -46,6 +46,12 @@ export interface OrderResponse {
   items: OrderItem[];
 }
 
+export interface OrderCountsResponse {
+  current: number;
+  delivered: number;
+  cancelled: number;
+}
+
 export interface orderItemMapped {
   itemId?: number;
   id: number;

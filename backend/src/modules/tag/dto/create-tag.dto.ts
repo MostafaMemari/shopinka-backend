@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Matches, MaxLength } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Matches, MaxLength } from 'class-validator';
 import { Transform } from 'class-transformer';
+import { TagType } from '@prisma/client';
 
 export class CreateTagDto {
   @IsString()
@@ -14,6 +15,12 @@ export class CreateTagDto {
   @MaxLength(350)
   @ApiProperty({ type: 'string', required: false, nullable: true, maxLength: 350 })
   slug?: string;
+
+  @IsOptional()
+  @IsEnum(TagType)
+  @IsNotEmpty()
+  @ApiProperty({ type: 'string', enum: TagType, required: false, nullable: true })
+  type?: TagType;
 
   @IsOptional()
   @IsString()

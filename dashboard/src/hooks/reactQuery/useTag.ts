@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Tag, TagForm } from '@/types/app/tag.type'
+import { Tag, TagForm, TagType } from '@/types/app/tag.type'
 import { tagFormSchema } from '@/libs/validators/tag.schema'
 import { useFormSubmit } from '../useFormSubmit'
 import { errorTagMessage } from '@/messages/tagMessages'
@@ -33,8 +33,12 @@ export const useTagForm = ({ initialData, isUpdate = false, handleModalClose }: 
   const defaultValues: TagForm = {
     name: initialData?.name ?? '',
     slug: initialData?.slug ?? '',
+    type: initialData?.type ?? TagType.BLOG,
     description: initialData?.description ?? null,
+    tagIds: initialData?.tagIds ?? null,
+    categoryIds: initialData?.categoryIds ?? null,
     thumbnailImageId: initialData?.thumbnailImageId ?? null,
+
     seo_title: initialData?.seoMeta?.title ?? '',
     seo_description: initialData?.seoMeta?.description ?? '',
     seo_keywords: initialData?.seoMeta?.keywords ?? [],

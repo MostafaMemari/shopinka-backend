@@ -4,6 +4,7 @@ import { IsOptional, IsString, IsNotEmpty, IsDate, IsEnum, IsBoolean, IsNumber, 
 import { SortOrder } from '../../../common/enums/shared.enum';
 import { CategorySortBy } from '../enums/category-sortby.enum';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
+import { CategoryType } from '@prisma/client';
 
 export class QueryCategoryDto extends PaginationDto {
   @IsOptional()
@@ -11,6 +12,15 @@ export class QueryCategoryDto extends PaginationDto {
   @IsNotEmpty()
   @ApiPropertyOptional({ type: 'string', nullable: true, required: false })
   name?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsEnum(CategoryType)
+  @ApiPropertyOptional({
+    type: 'string',
+    enum: CategoryType,
+  })
+  type?: CategoryType;
 
   @IsOptional()
   @IsString()

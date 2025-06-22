@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import Sidebar from './Sidebar';
 import { BiUser } from 'react-icons/bi';
 import ShareButton from './ShareButton';
 import { NoImage } from '@/types/noImageEnum';
@@ -36,7 +35,11 @@ const BlogDetailsView: FC<BlogDetailsViewProps> = ({ title, username, createdAt,
       <div className="mb-8">
         <img src={image || NoImage.BLOG} alt="blog" className="w-full rounded-xl" />
       </div>
-      <div className="leading-loose text-text/90">{content}</div>
+      <div
+        className="leading-loose prose prose-sm max-w-none p-2 text-text/90"
+        style={{ lineHeight: '2', letterSpacing: '.01em' }}
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
     </div>
   );
 };

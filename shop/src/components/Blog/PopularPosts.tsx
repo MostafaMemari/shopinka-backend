@@ -1,3 +1,5 @@
+import { NoImage } from '@/types/noImageEnum';
+import Image from 'next/image';
 import { FC } from 'react';
 
 const PopularPosts: FC = () => {
@@ -12,7 +14,7 @@ const PopularPosts: FC = () => {
               <a href="#">
                 <div className="flex gap-x-2 xl:gap-x-4">
                   <div className="min-w-fit">
-                    <img src="./assets/images/blog/blog1.jpg" alt="blog" className="w-25 rounded-xl xl:w-32" />
+                    <Image src={NoImage.BLOG} alt="blog" width={64} height={64} className="w-16 rounded-xl xl:w-20" />
                   </div>
                   <div className="flex flex-col gap-y-2">
                     <p className="line-clamp-2 text-sm text-text/90 xl:text-base">نحوه انتقال مخاطبین از گوشی آیفون به اندروید</p>

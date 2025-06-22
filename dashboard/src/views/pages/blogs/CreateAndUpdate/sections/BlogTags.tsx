@@ -32,6 +32,7 @@ const BlogTags = () => {
     enabled: true,
     params: {
       take: 200,
+      type: 'BLOG',
       includeThumbnailImage: true
     },
     staleTime: 5 * 60 * 1000
@@ -45,7 +46,7 @@ const BlogTags = () => {
 
   return (
     <Card>
-      <CardHeader title='وبلاگ ‌ها' />
+      <CardHeader title='برچسب‌ها' />
       <CardContent>
         <Autocomplete
           multiple
@@ -60,29 +61,22 @@ const BlogTags = () => {
           }}
           disabled={isLoading || isFetching}
           renderInput={params => (
-            <TextField {...params} label='وبلاگ ‌ها' placeholder='جستجو و انتخاب وبلاگ ' error={!!errors.tagIds} helperText={errors.tagIds?.message?.toString()} />
+            <TextField {...params} label='انتخاب برچسب' placeholder='جستجو و انتخاب برچسب' error={!!errors.tagIds} helperText={errors.tagIds?.message?.toString()} />
           )}
         />
 
         {(isLoading || isFetching) && <Typography sx={{ mt: 2 }}>در حال بارگذاری...</Typography>}
         {error && (
           <Typography color='error' sx={{ mt: 2 }}>
-            خطا در بارگذاری وبلاگ ‌ها
+            خطا در بارگذاری برچسب‌ها
           </Typography>
         )}
         {!(isLoading || isFetching) && tags.length === 0 && <Typography sx={{ mt: 2 }}>وبلاگ ی یافت نشد</Typography>}
 
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            width: '100%',
-            marginTop: 3
-          }}
-        >
+        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: 3 }}>
           <CreateTagModal>
             <Typography variant='body2' color='primary' sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}>
-              ثبت وبلاگ جدید
+              ثبت برچسب جدید
             </Typography>
           </CreateTagModal>
         </Box>

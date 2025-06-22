@@ -32,6 +32,7 @@ const ProductTags = () => {
     enabled: true,
     params: {
       take: 200,
+      type: 'PRODUCT',
       includeThumbnailImage: true
     },
     staleTime: 5 * 60 * 1000
@@ -61,7 +62,7 @@ const ProductTags = () => {
           disabled={isLoading || isFetching}
           noOptionsText='برچسبی یافت نشد'
           renderInput={params => (
-            <TextField {...params} label='برچسب‌ها' placeholder='جستجو و انتخاب برچسب' error={!!errors.tagIds} helperText={errors.tagIds?.message?.toString()} />
+            <TextField {...params} label='انتخاب برچسب' placeholder='جستجو و انتخاب برچسب' error={!!errors.tagIds} helperText={errors.tagIds?.message?.toString()} />
           )}
         />
 
@@ -73,14 +74,7 @@ const ProductTags = () => {
         )}
         {!(isLoading || isFetching) && tags.length === 0 && <Typography sx={{ mt: 2 }}>برچسبی یافت نشد</Typography>}
 
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            width: '100%',
-            marginTop: 3
-          }}
-        >
+        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: 3 }}>
           <CreateTagModal>
             <Typography variant='body2' color='primary' sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}>
               ثبت برچسب جدید

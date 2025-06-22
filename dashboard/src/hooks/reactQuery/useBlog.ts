@@ -49,6 +49,7 @@ export const useBlogForm = ({ id, initialData }: UseBlogFormProps) => {
       content: null,
       status: BlogStatus.DRAFT,
       categoryIds: [],
+      tagIds: [],
       readingTime: null,
 
       seo_title: '',
@@ -139,7 +140,9 @@ export const useBlogForm = ({ id, initialData }: UseBlogFormProps) => {
     initialData: initialBlog
       ? {
           ...initialBlog,
-          id: String(initialBlog.id)
+          id: String(initialBlog.id),
+          categoryIds: initialBlog.categories?.map(category => category.id) || [],
+          tagIds: initialBlog.tags?.map(tag => tag.id) || []
         }
       : id
         ? { id: String(id) }

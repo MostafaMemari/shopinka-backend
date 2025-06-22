@@ -1,10 +1,18 @@
 'use server';
 
 import { shopApiFetch } from '@/service/api';
-import { OrderItem, OrderParams, OrderResponse } from '@/types/orderType';
+import { OrderCountsResponse, OrderItem, OrderParams, OrderResponse } from '@/types/orderType';
 
 export const getOrders = async ({ params }: { params: OrderParams }): Promise<OrderResponse> => {
   const res = await shopApiFetch('/order/my', { method: 'GET', query: { ...params } });
+
+  return {
+    ...res.data,
+  };
+};
+
+export const getCountOrders = async (): Promise<OrderCountsResponse> => {
+  const res = await shopApiFetch('/order/my/counts', { method: 'GET' });
 
   return {
     ...res.data,

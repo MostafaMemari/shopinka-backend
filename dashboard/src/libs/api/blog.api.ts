@@ -5,8 +5,8 @@ import { serverApiFetch } from '@/utils/api/serverApiFetch'
 import { blogFormSchema } from '../validators/blog.schema'
 import { type InferType } from 'yup'
 import { handleSeoSave } from '../services/seo/seo.service'
-import { SeoFormInput } from '@/types/app/seo.type'
 import { showToast } from '@/utils/showToast'
+import { SeoForm, SeoMetaTargetType } from '@/types/app/seo.type'
 
 type BlogForm = InferType<typeof blogFormSchema>
 
@@ -73,7 +73,7 @@ export const removeBlog = async (id: string): Promise<{ status: number; data: { 
   }
 }
 
-const handleSeo = async (productId: number, data: Partial<BlogForm>, isUpdate?: boolean) => {
+const handleSeo = async (blogId: number, data: Partial<BlogForm>, isUpdate?: boolean) => {
   const seoData = isUpdate
     ? {
         seo_title: data.seo_title,
@@ -106,7 +106,7 @@ const handleSeo = async (productId: number, data: Partial<BlogForm>, isUpdate?: 
         seo_robotsTag: data.seo_robotsTag
       }
 
-  const seoResponse = await handleSeoSave('blog', productId, seoData as SeoFormInput)
+  const seoResponse = await handleSeoSave(SeoMetaTargetType.blog, blogId, seoData as SeoForm)
 
   if (seoResponse.status !== 200 && seoResponse.status !== 201) {
     showToast({ type: 'error', message: 'خطا در ذخیره SEO' })

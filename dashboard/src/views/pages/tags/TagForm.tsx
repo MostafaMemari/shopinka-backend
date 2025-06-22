@@ -5,7 +5,8 @@ import Grid from '@mui/material/Grid2'
 import CustomTextField from '@core/components/mui/TextField'
 import RichTextEditor from '@/components/RichTextEditor/RichTextEditor'
 import TagThumbnailImage from './TagThumbnailImage'
-import { type TagForm, Tag } from '@/types/app/tag.type'
+import { type TagForm, Tag, TagType } from '@/types/app/tag.type'
+import { MenuItem } from '@mui/material'
 
 interface TagFormProps {
   control: any
@@ -53,6 +54,17 @@ const TagForm = ({ control, errors, setValue, isLoading, initialData }: TagFormP
                   disabled={isLoading}
                   aria-describedby='slug-error'
                 />
+              )}
+            />
+
+            <Controller
+              name='type'
+              control={control}
+              render={({ field }) => (
+                <CustomTextField {...field} select fullWidth label='نوع دسته‌بندی' error={!!errors.type} helperText={errors.type?.message} disabled={isLoading}>
+                  <MenuItem value={TagType.PRODUCT}>محصول</MenuItem>
+                  <MenuItem value={TagType.BLOG}>وبلاگ</MenuItem>
+                </CustomTextField>
               )}
             />
           </Grid>

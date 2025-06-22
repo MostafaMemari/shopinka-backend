@@ -53,6 +53,8 @@ export class BlogController {
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateBlogDto: UpdateBlogDto, @GetUser() user: User) {
+    console.log(updateBlogDto);
+
     return this.blogService.update(user.id, id, updateBlogDto);
   }
 

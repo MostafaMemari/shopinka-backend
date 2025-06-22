@@ -20,7 +20,6 @@ import CreateTagModal from './CreateTagModal'
 const TagListView = () => {
   const { page, size, setPage, setSize } = usePaginationParams()
   const { search, setSearch } = useSearch()
-  const router = useRouter()
 
   const [inputValue, setInputValue] = useState(search)
   const debounceDelay = 500

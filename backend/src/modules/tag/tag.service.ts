@@ -36,7 +36,7 @@ export class TagService {
 
   async findAll({ take, page, ...queryTagDto }: QueryTagDto): Promise<unknown> {
     const paginationDto = { take, page };
-    const { endDate, sortBy, sortDirection, startDate, includeUser, includeBlogs, includeProducts, includeThumbnailImage, name } =
+    const { endDate, sortBy, sortDirection, startDate, includeUser, includeBlogs, includeProducts, includeThumbnailImage, name, type } =
       queryTagDto;
 
     const sortedDto = sortObject(queryTagDto);
@@ -48,6 +48,7 @@ export class TagService {
     if (cachedTags) return { ...pagination(paginationDto, cachedTags) };
 
     const filters: Prisma.TagWhereInput = {};
+    if (type) filters.type = type;
 
     if (name) filters.name = { contains: name, mode: 'insensitive' };
     if (startDate || endDate) {

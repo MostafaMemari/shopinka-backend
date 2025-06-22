@@ -1,5 +1,6 @@
 import * as yup from 'yup'
 import { seoSchema } from './seo.schema'
+import { TagType } from '@/types/app/tag.type'
 
 export const tagSchema = yup
   .object({
@@ -16,7 +17,29 @@ export const tagSchema = yup
       .max(50, 'نامک نمی‌تواند بیشتر از 50 کاراکتر باشد')
       .default(null),
 
+    type: yup.string().oneOf(Object.values(TagType), 'نوع برچسب باید یکی از گزینه‌های مجاز باشد').required('انتخاب نوع برچسب الزامی است').default(TagType.PRODUCT),
+
     thumbnailImageId: yup.number().positive().notRequired().default(null),
+
+    categoryIds: yup
+      .array()
+      .of(yup.number().defined().positive('شناسه دسته‌بندی باید عددی مثبت باشد'))
+      .notRequired()
+      .test('unique', 'دسته‌ها تکراری هستند', value => {
+        return value ? new Set(value).size === value.length : true
+      })
+      .default(null),
+
+    tagIds: yup
+      .array()
+      .of(yup.number().defined().positive('شناسه تگ باید عددی مثبت باشد'))
+      .notRequired()
+      .test('unique', 'تگ‌ها تکراری هستند', value => {
+        if (!value) return true
+
+        return new Set(value).size === value.length
+      })
+      .default(null),
 
     description: yup.string().nullable().default(null)
   })

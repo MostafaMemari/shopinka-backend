@@ -37,6 +37,7 @@ const ProductCategories = () => {
       take: 200,
       includeThumbnailImage: true,
       includeChildren: true,
+      type: 'PRODUCT',
       childrenDepth: 6
     },
     staleTime: 5 * 60 * 1000

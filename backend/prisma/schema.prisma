@@ -66,6 +66,11 @@ enum CategoryType {
   BLOG
 }
 
+enum TagType {
+  PRODUCT
+  BLOG
+}
+
 model User {
   id               Int              @id() @default(autoincrement()) @db.Integer()
   fullName         String?          @map("full_name")
@@ -432,6 +437,8 @@ model Tag {
   description      String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt()
+
+  type TagType @default(PRODUCT)
 
   products       Product[]
   blogs          Blog[]
