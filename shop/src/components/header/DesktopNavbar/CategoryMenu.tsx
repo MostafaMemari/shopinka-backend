@@ -1,4 +1,3 @@
-// components/CategoryMenu.tsx
 'use client';
 
 import Link from 'next/link';
@@ -6,6 +5,7 @@ import { useState, useMemo } from 'react';
 import { HiOutlineMenu } from 'react-icons/hi';
 import { Category } from '@/types/categoryType';
 import SubCategoryList from './SubCategoryList';
+import { useIsMounted } from '@/hooks/useIsMounted';
 
 interface CategoryMenuProps {
   categories: Category[];
@@ -13,20 +13,22 @@ interface CategoryMenuProps {
 
 const CategoryMenu = ({ categories }: CategoryMenuProps) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const isMounted = useIsMounted();
 
   const selectedCategory = useMemo(
     () => categories.find((cat) => cat.id === selectedCategoryId) || categories[0],
     [categories, selectedCategoryId],
   );
 
-  if (!categories.length) {
+  // Early return if no categories, but after hooks
+  if (!categories.length || !isMounted) {
     return null;
   }
 
   return (
     <div
       className="group relative"
-      onMouseEnter={() => setSelectedCategoryId(categories[0].id)}
+      onMouseEnter={() => setSelectedCategoryId(categories[0]?.id)}
       onMouseLeave={() => setSelectedCategoryId(null)}
     >
       <div className="flex cursor-pointer items-center gap-x-2 pt-2 mb-2">

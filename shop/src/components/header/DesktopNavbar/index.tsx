@@ -1,4 +1,3 @@
-// components/DesktopNavbar.tsx
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -18,14 +17,7 @@ const DesktopNavbar = ({ categories }: DesktopNavbarProps) => {
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
 
-    if (currentScrollY <= 0) {
-      setIsVisible(true);
-    } else if (currentScrollY > lastScrollY) {
-      setIsVisible(false);
-    } else {
-      setIsVisible(true);
-    }
-
+    setIsVisible(currentScrollY <= 0 || currentScrollY < lastScrollY);
     setLastScrollY(currentScrollY);
   }, [lastScrollY]);
 
@@ -36,14 +28,14 @@ const DesktopNavbar = ({ categories }: DesktopNavbarProps) => {
 
   return (
     <nav
-      className={`sticky top-0 z-30 bg-white dark:bg-neutral-950 border-b shadow-sm max-lg:hidden transition-all duration-700 px-4 ${
+      className={`sticky top-0 z-30 bg-white dark:bg-neutral-950 border-b shadow-sm max-lg:hidden transition-transform duration-700 px-4 ${
         isVisible ? 'translate-y-0' : '-translate-y-full'
       }`}
     >
-      <div className="container relative flex max-w-[1640px] items-center gap-x-2">
+      <div className="container mx-auto max-w-[1640px] flex items-center gap-x-2">
         <div className="flex justify-between items-center w-full">
           <div className="flex gap-x-2">
-            <CategoryMenu categories={categories} />
+            <CategoryMenu categories={categories || []} />
             <div className="flex items-center gap-x-2">
               {menuItems.map((menu) => (
                 <MenuItem key={menu.id} menu={menu} />
@@ -52,10 +44,9 @@ const DesktopNavbar = ({ categories }: DesktopNavbarProps) => {
           </div>
           <MenuItem menu={{ id: 1, name: 'فروش ویژه', href: '/shop?hasDiscount=true' }} isAlwaysActive />
         </div>
-
         <div
           id="header-desktop-navbar-indicator"
-          className="absolute bottom-0 h-[0.15625rem] z-0 rounded-2xl end-0 transition-all duration-[350ms] w-0"
+          className="absolute bottom-0 h-0.5 z-0 rounded-2xl end-0 transition-all duration-350 w-0"
         />
       </div>
     </nav>

@@ -3,6 +3,7 @@
 import { useComment } from '@/hooks/reactQuery/comment/useComment';
 import React, { useState } from 'react';
 import CommentsDrawer from './CommentsDrawer';
+import useIsMdUp from '@/hooks/useIsMdUp';
 
 interface ProductCommentCountProps {
   productId: number;
@@ -12,6 +13,7 @@ function ProductCommentCount({ productId }: ProductCommentCountProps) {
   const { data, isLoading } = useComment({
     params: { productId, page: 1 },
   });
+  const isMdUp = useIsMdUp();
 
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
 
@@ -26,6 +28,10 @@ function ProductCommentCount({ productId }: ProductCommentCountProps) {
     <>
       {isLoading ? (
         <div className="animate-pulse rounded-lg bg-gray-200 h-6 w-24" />
+      ) : isMdUp ? (
+        <div>
+          <span>{CommentCount} دیدگاه</span>
+        </div>
       ) : (
         <div>
           <span onClick={drawerHandlers.onOpen}>{CommentCount} دیدگاه</span>
