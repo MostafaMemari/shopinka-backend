@@ -1,21 +1,30 @@
-import MobileDrawer from '@/components/ui/MobileDrawer';
+'use client';
+
 import { useState } from 'react';
 import { BiSort } from 'react-icons/bi';
+import { useQueryState } from 'nuqs';
 
-interface SortOption {
+import MobileDrawer from '@/components/ui/MobileDrawer';
+
+type SortOption = {
   label: string;
   value: string;
-}
-const SORT_OPTIONS = {
-  default: { label: 'پیش‌فرض', value: '' },
-  newest: { label: 'جدیدترین', value: 'newest' },
-  price_asc: { label: 'ارزان‌ترین', value: 'price_asc' },
-  price_desc: { label: 'گران‌ترین', value: 'price_desc' },
 };
 
-function MobileSortDrawer() {
-  const [sortBy, setSortBy] = useState('');
+interface MobileSortProps {
+  options: Record<string, SortOption>;
+  queryKey?: string;
+  title?: string;
+}
+
+const MobileSort = ({ options, queryKey = 'sort', title = 'مرتب‌سازی' }: MobileSortProps) => {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
+
+  const [sortBy, setSortBy] = useQueryState(queryKey, {
+    defaultValue: '',
+    history: 'replace',
+    shallow: false,
+  });
 
   const handleOptionClick = (value: string) => {
     setSortBy(value);
@@ -28,19 +37,19 @@ function MobileSortDrawer() {
         isOpen={isOpenDrawer}
         onOpen={() => setIsOpenDrawer(true)}
         onClose={() => setIsOpenDrawer(false)}
-        title="مرتب سازی"
+        title={title}
         triggerButton={
           <div className="flex w-full cursor-pointer items-center gap-x-4 rounded-lg bg-muted px-4 py-3 text-sm xs:text-base">
             <BiSort className="h-6 w-6" />
-            <div>مرتب سازی</div>
+            <div>{title}</div>
           </div>
         }
       >
         <div className="main-scroll h-full space-y-2 divide-y overflow-y-auto p-4">
           <fieldset className="flex flex-col space-y-2" dir="rtl">
-            <legend className="sr-only">{'مرتب سازی'}</legend>
-            {Object.values(SORT_OPTIONS).map((option: SortOption) => (
-              <div key={option.value}>
+            <legend className="sr-only">{title}</legend>
+            {Object.entries(options).map(([key, option]) => (
+              <div key={key}>
                 <input
                   className="peer hidden"
                   id={`sort-${option.value}`}
@@ -63,6 +72,6 @@ function MobileSortDrawer() {
       </MobileDrawer>
     </>
   );
-}
+};
 
-export default MobileSortDrawer;
+export default MobileSort;

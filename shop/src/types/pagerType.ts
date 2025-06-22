@@ -2,6 +2,6 @@ export type Pager = {
   totalCount: number;
   totalPages: number;
   currentPage: number;
-  hasNextPage: true;
+  hasNextPage: boolean;
   hasPreviousPage: false;
 };

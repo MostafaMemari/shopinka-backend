@@ -44,3 +44,8 @@ export interface BlogResponse {
   pager: Pager;
   items: BlogItem[];
 }
+
+export const BLOG_SORT_OPTIONS = {
+  default: { label: 'پیش‌فرض', value: '' },
+  newest: { label: 'جدیدترین', value: 'updatedAt' },
+};

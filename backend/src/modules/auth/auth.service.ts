@@ -58,6 +58,7 @@ export class AuthService {
 
       const verifiedToken = this.jwtService.verify<{ id: number }>(verifyTokenDto.accessToken, { secret: ACCESS_TOKEN_SECRET });
 
+      console.log(verifiedToken);
       if (!verifiedToken.id) {
         throw new BadRequestException(AuthMessages.InvalidAccessTokenPayload);
       }
@@ -66,7 +67,7 @@ export class AuthService {
 
       return user;
     } catch (error) {
-      throw new HttpException(error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(error.message, error.status || HttpStatus.UNAUTHORIZED);
     }
   }
 

@@ -2,18 +2,24 @@
 
 import { useRouter } from 'next/navigation';
 
-function ResetFilters() {
+interface ResetFiltersProps {
+  title?: string;
+  resetPath?: string;
+  buttonText?: string;
+}
+
+function ResetFilters({ title = 'فیلترها', resetPath = '/', buttonText = 'حذف همه' }: ResetFiltersProps) {
   const router = useRouter();
 
   const handleReset = () => {
-    router.replace('/shop');
+    router.replace(resetPath);
   };
 
   return (
     <div className="mb-6 flex items-center justify-between">
-      <h3 className="xl:text-lg">فیلتر محصولات</h3>
+      <h3 className="xl:text-lg">{title}</h3>
       <button className="btn-primary-nobg py-2 text-sm cursor-pointer" onClick={handleReset}>
-        حذف همه
+        {buttonText}
       </button>
     </div>
   );

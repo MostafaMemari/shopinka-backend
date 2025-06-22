@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 import { HiOutlineXMark } from 'react-icons/hi2';
-import { FiInfo, FiMail, FiHelpCircle } from 'react-icons/fi';
 import { HiOutlineMenu } from 'react-icons/hi';
+import { menuItems } from '@/data/menuData';
 
 interface MobileMenuProps {
   onToggleMenu?: (isOpen: boolean) => void;
@@ -57,6 +57,7 @@ const MobileMenu = ({ onToggleMenu }: MobileMenuProps) => {
       </div>
 
       <div
+        ref={menuRef}
         className={`fixed w-[265px] top-[5rem] bottom-[5rem] right-3 rounded-2xl z-40 bg-white shadow-md transition-transform duration-300 ${
           isMenuOpen ? 'translate-x-0' : 'translate-x-[110%]'
         }`}
@@ -67,24 +68,17 @@ const MobileMenu = ({ onToggleMenu }: MobileMenuProps) => {
           </div>
 
           <ul className="space-y-2 mb-4">
-            <li>
-              <Link href="/about" onClick={toggleMenu} className="flex items-center gap-x-2 py-2 px-4 hover:bg-gray-100 rounded">
-                <FiInfo className="h-5 w-5" />
-                <span>درباره ما</span>
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact" onClick={toggleMenu} className="flex items-center gap-x-2 py-2 px-4 hover:bg-gray-100 rounded">
-                <FiMail className="h-5 w-5" />
-                <span>تماس با ما</span>
-              </Link>
-            </li>
-            <li>
-              <Link href="/faq" onClick={toggleMenu} className="flex items-center gap-x-2 py-2 px-4 hover:bg-gray-100 rounded">
-                <FiHelpCircle className="h-5 w-5" />
-                <span>سوالات متداول</span>
-              </Link>
-            </li>
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <li key={item.id}>
+                  <Link href={item.href} onClick={toggleMenu} className="flex items-center gap-x-2 py-2 px-4 hover:bg-gray-100 rounded">
+                    {Icon && <Icon className="h-5 w-5" />}
+                    <span>{item.name}</span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>

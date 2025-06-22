@@ -68,6 +68,8 @@ export const createBlog = async (data: Blog): Promise<{ status: number; data: { 
 export const removeBlog = async (id: string): Promise<{ status: number; data: { message: string; blog: Blog } | null }> => {
   const res = await serverApiFetch(`/blog/${id}`, { method: 'DELETE' })
 
+  console.log(res)
+
   return {
     ...res
   }

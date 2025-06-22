@@ -82,3 +82,10 @@ export interface ProductDetails {
   attributes: Attribute[] | [];
   variants: ProductVariant[] | [];
 }
+
+export const PRODUCT_SORT_OPTIONS = {
+  default: { label: 'پیش‌فرض', value: '' },
+  newest: { label: 'جدیدترین', value: 'newest' },
+  price_asc: { label: 'ارزان‌ترین', value: 'price_asc' },
+  price_desc: { label: 'گران‌ترین', value: 'price_desc' },
+};

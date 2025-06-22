@@ -2,15 +2,17 @@
 
 import { FC, useState } from 'react';
 import { FiFilter } from 'react-icons/fi';
-
 import MobileDrawer from '@/components/ui/MobileDrawer';
-import SearchInputBlog from '../SearchInputBlog';
+import CategorySelector from '@/components/category/CategorySelector';
+import SearchInput from './SearchInput';
 
-interface MobileFilterBlogProps {
+interface MobileFilterProps {
   totalCount: number;
+  type?: 'BLOG' | 'SHOP';
+  title?: string;
 }
 
-const MobileFilterBlog: FC<MobileFilterBlogProps> = ({ totalCount }) => {
+const MobileFilter: FC<MobileFilterProps> = ({ totalCount, type, title }) => {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
 
   return (
@@ -19,7 +21,7 @@ const MobileFilterBlog: FC<MobileFilterBlogProps> = ({ totalCount }) => {
         isOpen={isOpenDrawer}
         onOpen={() => setIsOpenDrawer(true)}
         onClose={() => setIsOpenDrawer(false)}
-        title="فیلتر محصولات"
+        title={title || 'فیلتر محصولات'}
         triggerButton={
           <div className="flex w-full cursor-pointer items-center gap-x-4 rounded-lg bg-muted px-4 py-3 text-sm xs:text-base">
             <FiFilter className="h-6 w-6" />
@@ -33,11 +35,12 @@ const MobileFilterBlog: FC<MobileFilterBlogProps> = ({ totalCount }) => {
         }
       >
         <ul className="space-y-6 p-4" dir="rtl">
-          <SearchInputBlog />
+          <SearchInput />
+          <CategorySelector type={type} title="فیلتر بر اساس دسته‌بندی" />
         </ul>
       </MobileDrawer>
     </>
   );
 };
 
-export default MobileFilterBlog;
+export default MobileFilter;

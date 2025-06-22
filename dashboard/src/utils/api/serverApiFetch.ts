@@ -83,6 +83,8 @@ export const serverApiFetch = async (path: string, options: FetchOptions = {}): 
     if (statusCode === 401) {
       const refreshResult = await refreshAccessToken()
 
+      console.log(refreshResult)
+
       if (refreshResult.status === 200) {
         const cookieStore = await cookies()
         const newAccessToken = cookieStore.get(COOKIE_NAMES.ACCESS_TOKEN)?.value
