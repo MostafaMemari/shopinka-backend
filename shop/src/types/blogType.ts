@@ -25,7 +25,7 @@ export interface BlogItem {
 export interface BlogParams {
   page?: number;
   take?: number;
-  title?: string;
+  search?: string;
   startDate?: string;
   endDate?: string;
   sortBy?: 'createdAt' | 'updatedAt';

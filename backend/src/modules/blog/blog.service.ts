@@ -70,7 +70,7 @@ export class BlogService {
       includeSeoMeta,
       includeTags,
       includeUser,
-      title,
+      search,
       includeMainImage,
       categoryIds,
       tagIds,
@@ -94,7 +94,7 @@ export class BlogService {
       filters.tags = { some: { id: { in: tagIds } } };
     }
 
-    if (title) filters.title = { contains: title, mode: 'insensitive' };
+    if (search) filters.title = { contains: search, mode: 'insensitive' };
     if (startDate || endDate) {
       filters.createdAt = {};
       if (startDate) filters.createdAt.gte = new Date(startDate);

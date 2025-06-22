@@ -14,7 +14,7 @@ export class QueryBlogDto extends PaginationDto {
     nullable: true,
     required: false,
   })
-  title?: string;
+  search?: string;
 
   @IsOptional()
   @ApiProperty({

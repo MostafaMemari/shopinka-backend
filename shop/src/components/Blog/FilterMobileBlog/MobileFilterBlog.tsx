@@ -2,15 +2,15 @@
 
 import { FC, useState } from 'react';
 import { FiFilter } from 'react-icons/fi';
-import MobileDrawer from '@/components/ui/MobileDrawer';
-import SearchInputBlog from '@/components/blog/SearchInputBlog';
-import CategorySelectorBlog from '@/components/blog/CategorySelectorBlog';
 
-interface MobileFilterProps {
+import MobileDrawer from '@/components/ui/MobileDrawer';
+import SearchInputBlog from '../SearchInputBlog';
+
+interface MobileFilterBlogProps {
   totalCount: number;
 }
 
-const MobileFilter: FC<MobileFilterProps> = ({ totalCount }) => {
+const MobileFilterBlog: FC<MobileFilterBlogProps> = ({ totalCount }) => {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
 
   return (
@@ -34,11 +34,10 @@ const MobileFilter: FC<MobileFilterProps> = ({ totalCount }) => {
       >
         <ul className="space-y-6 p-4" dir="rtl">
           <SearchInputBlog />
-          <CategorySelectorBlog />
         </ul>
       </MobileDrawer>
     </>
   );
 };
 
-export default MobileFilter;
+export default MobileFilterBlog;
