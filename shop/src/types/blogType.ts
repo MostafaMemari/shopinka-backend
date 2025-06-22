@@ -1,5 +1,7 @@
+import { Category } from './categoryType';
 import { Image } from './imageType';
 import { Pager } from './pagerType';
+import { SeoMeta } from './seoMetaType';
 import { User } from './userType';
 
 export interface BlogItem {
@@ -13,7 +15,9 @@ export interface BlogItem {
   readingTime: 20;
   createdAt: string;
   updatedAt: string;
-
+  categories: Category[];
+  tags: string[];
+  seoMeta: SeoMeta | null;
   user: User;
   mainImage: Image | undefined;
 }
@@ -26,6 +30,8 @@ export interface BlogParams {
   endDate?: string;
   sortBy?: 'createdAt' | 'updatedAt';
   sortDirection?: 'desc' | 'asc';
+  categoryIds?: number[];
+  tagIds?: number[];
 
   includeCategories?: boolean;
   includeTags?: boolean;

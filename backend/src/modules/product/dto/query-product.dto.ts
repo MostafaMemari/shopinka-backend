@@ -1,10 +1,24 @@
-import { IsOptional, IsDate, IsString, IsEnum, IsNumber, IsPositive, IsNotEmpty, Max, Min, IsBoolean } from 'class-validator';
+import {
+  IsOptional,
+  IsDate,
+  IsString,
+  IsEnum,
+  IsNumber,
+  IsPositive,
+  IsNotEmpty,
+  Max,
+  Min,
+  IsBoolean,
+  IsArray,
+  ArrayUnique,
+} from 'class-validator';
 import { SortOrder } from '../../../common/enums/shared.enum';
 import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ProductType } from '@prisma/client';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
 import { ProductSortBy } from '../enums/product-sortby.enum';
+import { transformNumberArray } from 'src/common/utils/functions.utils';
 
 export class QueryProductDto extends PaginationDto {
   @IsOptional()
@@ -24,6 +38,36 @@ export class QueryProductDto extends PaginationDto {
   @IsNotEmpty()
   @ApiProperty({ type: 'string', required: false, nullable: true })
   slug?: string;
+
+  @IsOptional()
+  @ApiProperty({
+    required: false,
+    nullable: true,
+    isArray: true,
+    type: 'array',
+    uniqueItems: true,
+    items: { type: 'number', nullable: false },
+  })
+  @Transform(({ value }) => transformNumberArray(value))
+  @IsArray()
+  @ArrayUnique()
+  @IsNotEmpty()
+  categoryIds?: number[];
+
+  @IsOptional()
+  @ApiProperty({
+    required: false,
+    nullable: true,
+    isArray: true,
+    type: 'array',
+    uniqueItems: true,
+    items: { type: 'number', nullable: false },
+  })
+  @Transform(({ value }) => transformNumberArray(value))
+  @IsArray()
+  @ArrayUnique()
+  @IsNotEmpty()
+  tagIds?: number[];
 
   @IsOptional()
   @IsString()

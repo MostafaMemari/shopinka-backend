@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsOptional, IsDate, IsEnum, IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsDate, IsEnum, IsString, IsArray, ArrayUnique, IsNotEmpty } from 'class-validator';
 import { SortOrder } from '../../../common/enums/shared.enum';
 import { Transform } from 'class-transformer';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
 import { BlogSortBy } from '../enums/blog-sortby.enum';
+import { transformNumberArray } from 'src/common/utils/functions.utils';
 
 export class QueryBlogDto extends PaginationDto {
   @IsOptional()
@@ -14,6 +15,36 @@ export class QueryBlogDto extends PaginationDto {
     required: false,
   })
   title?: string;
+
+  @IsOptional()
+  @ApiProperty({
+    required: false,
+    nullable: true,
+    isArray: true,
+    type: 'array',
+    uniqueItems: true,
+    items: { type: 'number', nullable: false },
+  })
+  @Transform(({ value }) => transformNumberArray(value))
+  @IsArray()
+  @ArrayUnique()
+  @IsNotEmpty()
+  categoryIds?: number[];
+
+  @IsOptional()
+  @ApiProperty({
+    required: false,
+    nullable: true,
+    isArray: true,
+    type: 'array',
+    uniqueItems: true,
+    items: { type: 'number', nullable: false },
+  })
+  @Transform(({ value }) => transformNumberArray(value))
+  @IsArray()
+  @ArrayUnique()
+  @IsNotEmpty()
+  tagIds?: number[];
 
   @IsBoolean()
   @IsOptional()

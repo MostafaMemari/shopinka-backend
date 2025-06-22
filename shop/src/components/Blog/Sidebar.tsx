@@ -1,9 +1,15 @@
 import { FC } from 'react';
 import RelatedPosts from './RelatedPosts';
-import PopularPosts from './PopularPosts';
 import Categories from './Categories';
+import { getBlogById, getBlogs } from '@/service/blogService';
 
-const Sidebar: FC = () => {
+interface SidebarProps {
+  categoryId: number;
+}
+
+const Sidebar: FC<SidebarProps> = ({ categoryId }) => {
+  const blogs = await getBlogs({});
+
   return (
     <div className="col-span-4 row-span-2 hidden md:block lg:col-span-3">
       <div className="sticky top-32 mb-4 overflow-hidden">

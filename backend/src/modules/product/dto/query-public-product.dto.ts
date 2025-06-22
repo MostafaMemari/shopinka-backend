@@ -42,6 +42,21 @@ export class QueryPublicProductDto extends PaginationDto {
   @IsArray()
   @ArrayUnique()
   @IsNotEmpty()
+  tagIds?: number[];
+
+  @IsOptional()
+  @ApiProperty({
+    required: false,
+    nullable: true,
+    isArray: true,
+    type: 'array',
+    uniqueItems: true,
+    items: { type: 'number', nullable: false },
+  })
+  @Transform(({ value }) => transformNumberArray(value))
+  @IsArray()
+  @ArrayUnique()
+  @IsNotEmpty()
   attributeValueIds?: number[];
 
   @ApiPropertyOptional({ example: 10000 })

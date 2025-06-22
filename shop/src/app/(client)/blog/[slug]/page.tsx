@@ -24,7 +24,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             username={blog.user.fullName ?? 'نامشخص'}
           />
         </div>
-        <Sidebar />
+        <Sidebar categoryId={blog.categories[0]?.id} />
       </div>
     </>
   );

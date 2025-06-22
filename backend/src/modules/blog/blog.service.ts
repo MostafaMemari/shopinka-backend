@@ -72,6 +72,8 @@ export class BlogService {
       includeUser,
       title,
       includeMainImage,
+      categoryIds,
+      tagIds,
     } = queryBlogDto;
 
     const sortedDto = sortObject(queryBlogDto);
@@ -83,6 +85,14 @@ export class BlogService {
     if (cachedBlogs) return { ...pagination(paginationDto, cachedBlogs) };
 
     const filters: Prisma.BlogWhereInput = { status: BlogStatus.PUBLISHED };
+
+    if (categoryIds) {
+      filters.categories = { some: { id: { in: categoryIds } } };
+    }
+
+    if (tagIds) {
+      filters.tags = { some: { id: { in: tagIds } } };
+    }
 
     if (title) filters.title = { contains: title, mode: 'insensitive' };
     if (startDate || endDate) {

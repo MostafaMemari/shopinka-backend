@@ -16,3 +16,11 @@ export const getBlogBySlug = async (slug: string): Promise<BlogItem> => {
     ...res.data,
   };
 };
+
+export const getBlogById = async (id: string): Promise<BlogItem> => {
+  const res = await shopApiFetch(`/blog/${id}`, { method: 'GET' });
+
+  return {
+    ...res.data,
+  };
+};

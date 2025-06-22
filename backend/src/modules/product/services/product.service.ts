@@ -83,7 +83,6 @@ export class ProductService {
 
     const {
       hasDiscount,
-      categoryIds,
       attributeValueIds,
       minPrice,
       maxPrice,
@@ -92,6 +91,8 @@ export class ProductService {
       includeMainImage,
       includeVariants,
       sortBy,
+      tagIds,
+      categoryIds,
     } = query;
 
     const sortedDto = sortObject(query);
@@ -110,6 +111,14 @@ export class ProductService {
 
     if (hasDiscount) {
       filters.salePrice = { not: null };
+    }
+
+    if (categoryIds) {
+      filters.categories = { some: { id: { in: categoryIds } } };
+    }
+
+    if (tagIds) {
+      filters.tags = { some: { id: { in: tagIds } } };
     }
 
     if (categoryIds?.length) {
