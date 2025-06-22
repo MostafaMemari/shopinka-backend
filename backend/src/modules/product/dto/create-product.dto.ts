@@ -1,19 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import {
-  ArrayUnique,
-  IsArray,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsPositive,
-  IsString,
-  Matches,
-  Max,
-  MaxLength,
-  Min,
-} from 'class-validator';
+import { ArrayUnique, IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Max, MaxLength, Min } from 'class-validator';
 import { ProductStatus, ProductType } from '@prisma/client';
 import { transformNumberArray } from '../../../common/utils/functions.utils';
 

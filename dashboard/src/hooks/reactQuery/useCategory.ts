@@ -6,7 +6,7 @@ import { useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { CategoryForm, categoryFormSchema } from '@/libs/validators/category.schema'
-import { Category } from '@/types/app/category.type'
+import { Category, CategoryType } from '@/types/app/category.type'
 import { useFormSubmit } from '../useFormSubmit'
 import { RobotsTag } from '@/types/enums/robotsTag'
 import { errorCategoryMessage } from '@/messages/categoryMessages'
@@ -35,6 +35,7 @@ export const useCategoryForm = ({ initialData, isUpdate = false, handleModalClos
     slug: initialData?.slug ?? '',
     description: initialData?.description ?? '',
     parentId: initialData?.parentId || null,
+    type: initialData?.type ?? CategoryType.PRODUCT,
     thumbnailImageId: initialData?.thumbnailImageId ?? null,
 
     seo_title: initialData?.seoMeta?.title ?? '',

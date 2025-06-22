@@ -61,6 +61,11 @@ enum SeoMetaTargetType {
   tag
 }
 
+enum CategoryType {
+  PRODUCT
+  BLOG
+}
+
 model User {
   id               Int              @id() @default(autoincrement()) @db.Integer()
   fullName         String?          @map("full_name")
@@ -273,6 +278,8 @@ model Category {
   thumbnailImageId Int?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt()
+
+  type CategoryType @default(PRODUCT)
 
   parent   Category?  @relation("CategoryToCategory", fields: [parentId], references: [id], onDelete: Cascade)
   children Category[] @relation("CategoryToCategory")

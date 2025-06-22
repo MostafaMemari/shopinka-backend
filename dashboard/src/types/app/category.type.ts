@@ -14,7 +14,13 @@ export type Category = {
     fileUrl: string
     thumbnailUrl: string
   }
+  type: CategoryType
   children: Category[] | []
   parent: Category | null
   seoMeta: Seo | null
+}
+
+export enum CategoryType {
+  PRODUCT = 'PRODUCT',
+  BLOG = 'BLOG'
 }

@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { blogSwiperConfig } from '@/config/swiper';
 import { BlogItem } from '@/types/blogType';
 import BlogCard from './BlogCard';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import 'swiper/css';
@@ -13,14 +12,30 @@ import 'swiper/css/navigation';
 import { Navigation } from 'swiper/modules';
 import { HiChevronLeft } from 'react-icons/hi';
 
-interface Props {
+const SkeletonLoader = () => {
+  return (
+    <div className="animate-pulse relative overflow-hidden">
+      <div className="flex space-x-2 rtl:space-x-reverse" style={{ gap: `${10}px` }}>
+        {[...Array(6)].map((_, index) => (
+          <div key={index} className="w-72 h-60 bg-gray-200 rounded-lg p-4 flex-shrink-0">
+            <div className="w-full h-40 bg-gray-300 rounded-md mb-4"></div>
+            <div className="h-6 bg-gray-300 rounded w-3/4 mb-2"></div>
+            <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+interface CarouselBlogProps {
   title: string;
   viewAllLink: string;
   viewAllText?: string;
   blogs: BlogItem[];
 }
 
-const CarouselBlog: FC<Props> = ({ title, viewAllLink, viewAllText = 'مشاهده همه', blogs }) => {
+const CarouselBlog: FC<CarouselBlogProps> = ({ title, viewAllLink, viewAllText = 'مشاهده همه', blogs }) => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {

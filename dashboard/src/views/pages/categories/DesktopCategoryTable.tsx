@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { Box, IconButton, Typography } from '@mui/material'
+import { Box, Chip, IconButton, Typography } from '@mui/material'
 
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
@@ -41,6 +41,9 @@ const DesktopCategoryTable = ({ categories }: { categories: Category[] }) => {
           </Typography>
         </td>
         <td>
+          <Chip label={category.type === 'PRODUCT' ? 'محصول' : 'وبلاگ'} color={category.type === 'PRODUCT' ? 'primary' : 'success'} size='small' variant='outlined' />
+        </td>
+        <td>
           <Box display='flex' alignItems='center' gap={2}>
             <RemoveCategoryModal id={category.id}>
               <IconButton size='small'>
@@ -76,6 +79,7 @@ const DesktopCategoryTable = ({ categories }: { categories: Category[] }) => {
             <th>نام دسته‌بندی</th>
             <th>نامک دسته‌بندی</th>
             <th>توضیحات</th>
+            <th>نوع</th>
             <th>عملیات</th>
           </tr>
         </thead>

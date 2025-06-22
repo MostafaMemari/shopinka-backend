@@ -10,8 +10,9 @@ import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
 import { useState } from 'react'
-import { Category } from '@/types/app/category.type'
+import { Category, CategoryType } from '@/types/app/category.type'
 import SeoFormWithProps from '@/components/seo/props/SeoFormWithProps'
+import { MenuItem } from '@mui/material'
 
 interface CategoryFormProps {
   control: any
@@ -74,6 +75,18 @@ const CategoryForm = ({ control, errors, setValue, isLoading, initialData }: Cat
                     />
                   )}
                 />
+
+                <Controller
+                  name='type'
+                  control={control}
+                  render={({ field }) => (
+                    <CustomTextField {...field} select fullWidth label='نوع دسته‌بندی' error={!!errors.type} helperText={errors.type?.message} disabled={isLoading}>
+                      <MenuItem value={CategoryType.PRODUCT}>محصول</MenuItem>
+                      <MenuItem value={CategoryType.BLOG}>وبلاگ</MenuItem>
+                    </CustomTextField>
+                  )}
+                />
+
                 <ParentCategorySelect control={control} errors={errors} isLoading={isLoading} />
               </Grid>
             </Grid>

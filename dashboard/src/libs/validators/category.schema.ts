@@ -1,5 +1,6 @@
 import * as yup from 'yup'
 import { seoSchema } from './seo.schema'
+import { CategoryType } from '@/types/app/category.type'
 
 export const categorySchema = yup
   .object({
@@ -15,6 +16,12 @@ export const categorySchema = yup
       .min(3, 'نامک باید حداقل 3 کاراکتر باشد')
       .max(50, 'نامک نمی‌تواند بیشتر از 50 کاراکتر باشد')
       .default(null),
+
+    type: yup
+      .string()
+      .oneOf(Object.values(CategoryType), 'نوع دسته‌بندی باید یکی از گزینه‌های مجاز باشد')
+      .required('انتخاب نوع دسته‌بندی الزامی است')
+      .default(CategoryType.PRODUCT),
 
     parentId: yup.number().notRequired().positive().default(null),
 
