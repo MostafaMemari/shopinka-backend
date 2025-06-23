@@ -52,7 +52,6 @@ const ProfileMenu = ({ closeDropdown }: ProfileMenuProps) => {
                   <span className="group-hover:text-primary dark:group-hover:text-emerald-400">{item.label}</span>
                 </span>
               </span>
-              {item.badge}
             </Link>
           </li>
         ))}

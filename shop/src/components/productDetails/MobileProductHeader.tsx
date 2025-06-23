@@ -1,17 +1,15 @@
-'use client'; // چون این یه client component هست
+'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import { IoIosArrowBack } from 'react-icons/io';
 import { RiHome3Line } from 'react-icons/ri';
 import { HiOutlineShare } from 'react-icons/hi';
-import { useCart } from '@/hooks/reactQuery/cart/useCart';
 import FavoriteProductAction from './ActionButtons/FavoriteProductAction';
-import { useAuth } from '@/hooks/auth/useAuth';
 import SkeletonLoader from '../ui/SkeletonLoader';
-import { LuShoppingCart } from 'react-icons/lu';
 import CartIconTotalQuantity from '../cart/CartIconTotalQuantity';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 
 interface MobileHeaderProps {
   productId: number;

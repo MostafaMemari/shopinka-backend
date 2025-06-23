@@ -7,9 +7,9 @@ import CartSummary from '@/components/cart/CartSummary';
 import LoadingSpinner from '../ui/LoadingSpinner';
 import { ShippingItem } from '@/types/shippingType';
 import { useCreatePayment } from '@/hooks/reactQuery/payment/useCreatePayment';
-import { useAuth } from '@/hooks/auth/useAuth';
 import CartMobileFixContainer from '../ui/CartMobileFixContainer';
 import { formatPrice } from '@/utils/formatter';
+import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 
 interface CartPriceDetailProps {
   selectedAddressId: number | null;

@@ -18,8 +18,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
   const discountProducts = await getProducts({ take: 14, categoryIds });
 
-  console.log(discountProducts);
-
   return (
     <>
       <MobileHeader productId={product.data.id} />

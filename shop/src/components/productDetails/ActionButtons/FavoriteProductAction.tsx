@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuth } from '@/hooks/auth/useAuth';
+import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 import { useToggleFavorite } from '@/hooks/reactQuery/favorite/useToggleFavorite';
 import { useProductFavorite } from '@/hooks/reactQuery/product/useProduct';
 import { cn } from '@/utils/utils';

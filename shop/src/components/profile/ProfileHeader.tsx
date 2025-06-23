@@ -1,10 +1,9 @@
 'use client';
 
-import { useAuth } from '@/hooks/auth/useAuth';
-import { useEffect, useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import SkeletonLoader from '../ui/SkeletonLoader';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 
 function ProfileHeader() {
   const { user, isLoading } = useAuth();

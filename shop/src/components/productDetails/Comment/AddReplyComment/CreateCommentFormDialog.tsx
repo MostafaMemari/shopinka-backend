@@ -6,9 +6,9 @@ import Dialog from '@/components/ui/Dialog';
 import { AiOutlineComment } from 'react-icons/ai';
 import CommentForm, { CommentFormikType } from '../CommentForm';
 import { useCreateComment } from '@/hooks/reactQuery/comment/useCreateComment';
-import { useAuth } from '@/hooks/auth/useAuth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 
 interface CommentFormDialogProps {
   productId: number;

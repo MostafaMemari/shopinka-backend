@@ -6,10 +6,10 @@ import { usePathname } from 'next/navigation';
 import { useDropdown } from '@/hooks/useDropdown';
 import SkeletonLoader from '../../ui/SkeletonLoader';
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
-import ProfileMenu from './ProfileMenu';
 import ProfileButton from './ProfileButton';
 
 import { useEffect, useState } from 'react';
+import ProfileMenu from './ProfileMenu';
 
 const ProfileDropdown = () => {
   const pathname = usePathname();

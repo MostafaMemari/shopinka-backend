@@ -62,9 +62,9 @@ export default function OtpForm({ mobile, isExpired, timeLeft, formatTime, reset
       }
 
       if (res.status === 200 || res.status === 201) {
-        Toast.fire({ icon: 'success', title: 'ورود شما با موفقیت انجام شد' });
         loginUser({ mobile, role: 'CUSTOMER', full_name: '' });
-        router.push(backUrl);
+        Toast.fire({ icon: 'success', title: 'ورود شما با موفقیت انجام شد' });
+        router.push(backUrl || '/');
       }
     } catch (error) {
       setErrors({ otp: 'کد تأیید نامعتبر است' });

@@ -8,8 +8,9 @@ import { useChangeFullName } from '@/hooks/reactQuery/user/userUser';
 import LoadingSpinner from '../ui/LoadingSpinner';
 import Dialog from '../ui/Dialog';
 import useIsMdUp from '@/hooks/useIsMdUp';
-import { useAuth } from '@/hooks/auth/useAuth';
 import ErrorState from './ErrorState';
+import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
+import { useIsMounted } from '@/hooks/useIsMounted';
 
 interface ProfileFieldType {
   label: string;
@@ -21,6 +22,7 @@ interface ProfileFieldType {
 const ProfileEditActions = () => {
   const { user, isLoading, loginUser, error } = useAuth();
   const { changeFullName, isChangeFullNameLoading } = useChangeFullName();
+  const isMounted = useIsMounted();
   const isMdUp = useIsMdUp();
   const formRef = useRef<HTMLFormElement>(null);
   const [modalState, setModalState] = useState<{ type: string | null; isOpen: boolean }>({ type: null, isOpen: false });
@@ -66,7 +68,7 @@ const ProfileEditActions = () => {
   return (
     <>
       <div className="mb-8 space-y-4">
-        {isLoading ? (
+        {isLoading || !isMounted ? (
           <LoadingSpinner />
         ) : error ? (
           <ErrorState />

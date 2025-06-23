@@ -1,16 +1,16 @@
 'use client';
 
 import MobileDrawer from '@/components/ui/MobileDrawer';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { IoIosMenu } from 'react-icons/io';
 import ProfileMenu from '../ProfileMenu';
-import { useAuth } from '@/hooks/auth/useAuth';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 
 function ProfileMenuCard() {
   const [isOpen, setIsOpen] = useState(false);
-  const { isLoading, user } = useAuth();
+  const { user } = useAuth();
   const isMounted = useIsMounted();
 
   if (!isMounted) return null;

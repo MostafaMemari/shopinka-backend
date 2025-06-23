@@ -12,10 +12,10 @@ import { useCart } from '@/hooks/reactQuery/cart/useCart';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import ErrorState from '@/components/profile/ErrorState';
 import EmptyState from '@/components/profile/EmptyState';
-import { useAuth } from '@/hooks/auth/useAuth';
 import CartMobileFixContainer from '@/components/ui/CartMobileFixContainer';
 import { formatPrice } from '@/utils/formatter';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 
 function CartPageView() {
   const router = useRouter();

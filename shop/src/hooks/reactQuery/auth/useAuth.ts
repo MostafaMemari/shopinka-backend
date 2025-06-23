@@ -3,17 +3,16 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useQueryClient } from '@tanstack/react-query';
 import { loginStart, loginSuccess, loginFailure, logout } from '@/store/slices/authSlice';
 import { User, UserState } from '@/types/userType';
-import { getMe } from '@/service/userService';
 import { logout as logoutApi } from '@/service/authService';
-import { clearCartAction } from '@/store/slices/cartSlice';
 import { QueryKeys } from '@/types/query-keys';
+import { getMe } from '@/service/userService';
 import { useSyncCart } from '../cart/useSyncCart';
 
 export function useAuth() {
   const dispatch = useAppDispatch();
   const { isLogin, user, isLoading, error } = useAppSelector((state) => state.auth);
   const queryClient = useQueryClient();
-  const { syncCart } = useSyncCart();
+  const syncCart = useSyncCart();
 
   const checkAuth = useCallback(async () => {
     dispatch(loginStart());
@@ -24,7 +23,8 @@ export function useAuth() {
         userData = await queryClient.fetchQuery({
           queryKey: [QueryKeys.User],
           queryFn: getMe,
-          staleTime: 1 * 60 * 1000,
+          staleTime: 5 * 60 * 1000,
+          gcTime: 10 * 60 * 1000,
         });
       }
 
@@ -35,8 +35,8 @@ export function useAuth() {
             role: userData.data.role,
             full_name: userData.data.fullName ?? '',
           }),
+          await syncCart(),
         );
-        await syncCart();
       } else {
         dispatch(loginFailure('No user data found'));
       }
@@ -44,12 +44,10 @@ export function useAuth() {
       dispatch(loginFailure('Failed to authenticate'));
       console.error('Authentication error:', err);
     }
-  }, [dispatch, queryClient, syncCart]);
+  }, [dispatch, queryClient]);
 
   useEffect(() => {
-    if (!isLogin) {
-      checkAuth();
-    }
+    if (!isLogin) checkAuth();
   }, [checkAuth, isLogin]);
 
   const loginUser = useCallback(
@@ -64,16 +62,15 @@ export function useAuth() {
         console.error('Login error:', err);
       }
     },
-    [dispatch, queryClient, syncCart],
+    [dispatch, queryClient],
   );
 
   const logoutUser = useCallback(async () => {
     dispatch(loginStart());
     try {
       await logoutApi();
-      await dispatch(clearCartAction());
+      queryClient.removeQueries({ queryKey: [QueryKeys.User, QueryKeys.Cart] });
       dispatch(logout());
-      queryClient.removeQueries({ queryKey: [QueryKeys.User] });
     } catch (err) {
       dispatch(loginFailure('Logout failed'));
       console.error('Logout error:', err);

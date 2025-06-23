@@ -6,8 +6,8 @@ import CommentForm, { CommentFormikType } from '../CommentForm';
 import { AiOutlineComment } from 'react-icons/ai';
 import { useCreateComment } from '@/hooks/reactQuery/comment/useCreateComment';
 import { usePathname } from 'next/navigation';
-import { useAuth } from '@/hooks/auth/useAuth';
 import Link from 'next/link';
+import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 
 interface CommentFormDrawerProps {
   productId: number;

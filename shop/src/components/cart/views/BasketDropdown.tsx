@@ -6,8 +6,8 @@ import Link from 'next/link';
 import DesktopBasketItem from './DesktopBasketItem';
 import { formatPrice } from '@/utils/formatter';
 import { useCart } from '@/hooks/reactQuery/cart/useCart';
-import { useAuth } from '@/hooks/auth/useAuth';
 import CartIconTotalQuantity from '../CartIconTotalQuantity';
+import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 
 export default function BasketDropdown() {
   const { isLogin } = useAuth();

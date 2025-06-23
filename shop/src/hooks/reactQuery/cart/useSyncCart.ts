@@ -1,54 +1,31 @@
-import { useCallback, useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { setCart } from '@/store/slices/cartSlice';
-import { QueryKeys } from '@/types/query-keys';
-import { CartData, CartItemState } from '@/types/cartType';
+import { useQueryClient } from '@tanstack/react-query';
 import { createCartBulk, getCart } from '@/service/cartService';
+import { setCart } from '@/store/slices/cartSlice';
+import { CartData, CartItemState } from '@/types/cartType';
+import { QueryKeys } from '@/types/query-keys';
+import { store } from '@/store';
 
-export function useSyncCart() {
-  const dispatch = useAppDispatch();
-  const { isLogin } = useAppSelector((state) => state.auth);
+export const useSyncCart = () => {
   const queryClient = useQueryClient();
 
-  const pullServerCart = async () => {
-    let cartData = queryClient.getQueryData<{ items: CartItemState[] }>([QueryKeys.Cart]);
-
-    if (!cartData) {
-      cartData = await queryClient.fetchQuery({
-        queryKey: [QueryKeys.Cart],
-        queryFn: getCart,
-        staleTime: 1 * 60 * 1000,
-      });
-    }
-
-    if (cartData) {
-      dispatch(setCart({ items: cartData.items }));
-      return cartData.items;
-    }
-    return [];
-  };
-
-  const { mutateAsync: syncCartMutation } = useMutation({
-    mutationFn: (itemsPayload: CartData[]) => createCartBulk({ items: itemsPayload }),
-    onSuccess: () => {
-      localStorage.removeItem('cart');
-      pullServerCart();
-    },
-    onError: (err) => {
-      console.error('Failed to sync cart with API:', err);
-    },
-  });
-
-  const syncCart = useCallback(async () => {
-    if (!isLogin) return;
-
+  const sync = async () => {
     let localCart: CartItemState[] = [];
+
     try {
       localCart = JSON.parse(localStorage.getItem('cart') ?? '[]');
     } catch {
       localStorage.removeItem('cart');
     }
+
+    const pullServerCart = async () => {
+      const cartData = await queryClient.fetchQuery({
+        queryKey: [QueryKeys.Cart],
+        queryFn: getCart,
+        staleTime: 1 * 60 * 1000,
+      });
+
+      store.dispatch(setCart({ items: cartData.items }));
+    };
 
     if (localCart.length === 0) {
       await pullServerCart();
@@ -62,17 +39,14 @@ export function useSyncCart() {
     }));
 
     try {
-      await syncCartMutation(itemsPayload);
+      await createCartBulk({ items: itemsPayload });
+      localStorage.removeItem('cart');
+      await pullServerCart();
       queryClient.invalidateQueries({ queryKey: [QueryKeys.Cart] });
     } catch (err) {
-      console.error('Failed to sync cart:', err);
-      throw err;
+      console.error('❌ Failed to sync cart:', err);
     }
-  }, [isLogin, syncCartMutation, queryClient]);
+  };
 
-  useEffect(() => {
-    if (isLogin) syncCart();
-  }, [isLogin, syncCart]);
-
-  return { syncCart };
-}
+  return sync;
+};

@@ -121,27 +121,6 @@ export const deleteFromCart = createAsyncThunk('cart/deleteFromCart', async (ite
   }
 });
 
-export const clearCartAction = createAsyncThunk('cart/clearCart', async (_, { getState, dispatch }) => {
-  const state = getState() as RootState;
-  const { isLogin } = state.auth;
-
-  if (!isLogin) {
-    localStorage.removeItem('cart');
-    dispatch(setCart({ items: [] }));
-    return;
-  }
-
-  try {
-    await clearCart();
-    const updatedCart = await getCart();
-    const items = updatedCart.items;
-    dispatch(setCart({ items }));
-  } catch (error) {
-    console.error('Failed to clear cart:', error);
-    throw error;
-  }
-});
-
 const cartSlice = createSlice({
   name: 'cart',
   initialState,

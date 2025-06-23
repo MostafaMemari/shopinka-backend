@@ -6,7 +6,7 @@ import { CartItemState } from '@/types/cartType';
 import { PulseLoader } from 'react-spinners';
 import { useCart } from '@/hooks/reactQuery/cart/useCart';
 import { cn } from '@/utils/utils';
-import { useAuth } from '@/hooks/auth/useAuth';
+import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 
 interface CartControlsProps {
   product: CartItemState;

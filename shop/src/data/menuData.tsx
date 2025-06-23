@@ -47,7 +47,7 @@ export const menuItems: MenuItem[] = [
   },
 ];
 
-export const profileMenuItems: ProfileMenuItem[] = [
+export const profileMenuItems = [
   { href: '/profile', icon: TbSmartHome, label: 'پیشخوان' },
   { href: '/profile/orders', icon: HiOutlineShoppingBag, label: 'سفارش ها' },
   { href: '/profile/favorite', icon: HiOutlineHeart, label: 'علاقه‌مندی ها' },

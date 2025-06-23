@@ -4,12 +4,11 @@ import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
-import { setCart, addToCart, increaseCount, decreaseCount, deleteFromCart, clearCartAction } from '@/store/slices/cartSlice';
+import { setCart, addToCart, increaseCount, decreaseCount, deleteFromCart } from '@/store/slices/cartSlice';
 import { createCart, getCart, updateQuantityItemCart, removeItemCart, clearCart } from '@/service/cartService';
-import { CartResponse, CartData, CartItemState, CartState } from '@/types/cartType';
+import { CartData, CartItemState, CartState } from '@/types/cartType';
 import { QueryOptions } from '@/types/queryOptions';
 import { QueryKeys } from '@/types/query-keys';
-import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 
 export function useCartData({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   // const { isLogin } = useAuth();
@@ -81,16 +80,6 @@ export const useCart = (isLogin: boolean) => {
     },
   });
 
-  const clearCartMutation = useMutation({
-    mutationFn: clearCart,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-    },
-    onError: (error) => {
-      console.error('Failed to clear cart:', error);
-    },
-  });
-
   const currentCart: CartState = isLogin && data?.items ? data : { items: reduxCart, payablePrice, totalDiscountPrice, totalPrice };
 
   return {
@@ -131,12 +120,6 @@ export const useCart = (isLogin: boolean) => {
         dispatch(deleteFromCart(item.id));
       } else {
         removeItemMutation.mutate({ itemId: Number(item.itemId) });
-      }
-    },
-    clearCart: () => {
-      clearCartMutation.mutate();
-      if (!isLogin) {
-        dispatch(clearCartAction());
       }
     },
     refetchCart: refetch,
