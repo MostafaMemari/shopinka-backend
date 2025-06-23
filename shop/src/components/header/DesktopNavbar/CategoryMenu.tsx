@@ -20,7 +20,6 @@ const CategoryMenu = ({ categories }: CategoryMenuProps) => {
     [categories, selectedCategoryId],
   );
 
-  // Early return if no categories, but after hooks
   if (!categories.length || !isMounted) {
     return null;
   }

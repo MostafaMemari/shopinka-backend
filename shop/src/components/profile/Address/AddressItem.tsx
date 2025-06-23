@@ -4,12 +4,9 @@ import MobileDrawer from '@/components/ui/MobileDrawer';
 import AddressForm from '@/components/checkout/AddressForm';
 import Dialog from '@/components/ui/Dialog';
 import { AddressFormType } from '@/types/addressType';
-import { Option } from './CreateAddress';
 
 type AddressItemProps = {
   item: any;
-  provinces: Option[];
-  cities: Record<string, Option[]>;
   isEditing: boolean;
   isDrawer: boolean;
   onEdit: (useDrawer: boolean) => void;
@@ -19,18 +16,7 @@ type AddressItemProps = {
   isLoading: boolean;
 };
 
-const AddressItem: React.FC<AddressItemProps> = ({
-  item,
-  provinces,
-  cities,
-  isEditing,
-  isDrawer,
-  onEdit,
-  onCloseEdit,
-  onDelete,
-  onSubmit,
-  isLoading,
-}) => {
+const AddressItem: React.FC<AddressItemProps> = ({ item, isEditing, isDrawer, onEdit, onCloseEdit, onDelete, onSubmit, isLoading }) => {
   const formRef = useRef<HTMLFormElement>(null);
 
   const triggerFormSubmit = () => {
@@ -38,43 +24,75 @@ const AddressItem: React.FC<AddressItemProps> = ({
   };
 
   const ConfirmButton = (
-    <button className="btn-primary w-full py-3 text-sm" type="button" onClick={triggerFormSubmit} disabled={isLoading}>
-      {isLoading ? 'در حال ثبت' : 'تأیید و ادامه'}
+    <button
+      className="btn-primary w-full py-3 text-base font-semibold rounded-lg transition focus:ring-2 focus:ring-primary-400 disabled:opacity-60"
+      type="button"
+      onClick={triggerFormSubmit}
+      disabled={isLoading}
+    >
+      {isLoading ? 'در حال ثبت...' : 'تأیید و ادامه'}
     </button>
+  );
+
+  const AddressDetails = (
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-2">
+        <span className="inline-block w-2 h-2 bg-primary rounded-full" />
+        <span className="font-semibold text-base text-gray-800 dark:text-white">
+          {item.province}
+          {item.city && `، ${item.city}`}
+          {item.streetAndAlley && ` - ${item.streetAndAlley}`}
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-gray-600 dark:text-gray-300">
+        {item.plate && <span>پلاک: {item.plate}</span>}
+        {item.unit && <span>واحد: {item.unit}</span>}
+        {item.postalCode && <span>کد پستی: {item.postalCode}</span>}
+      </div>
+      <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+        <span>گیرنده:</span>
+        <span className="font-medium">{item.fullName}</span>
+      </div>
+    </div>
+  );
+
+  const ActionsMenu = (
+    <div className="absolute top-4 left-4 z-10">
+      <div className="hidden md:block">
+        <AddressActions onDelete={onDelete} onEdit={() => onEdit(false)} />
+      </div>
+      <div className="md:hidden">
+        <AddressActions onDelete={onDelete} onEdit={() => onEdit(true)} />
+      </div>
+    </div>
+  );
+
+  const AddressFormWrapper = (
+    <AddressForm
+      onSubmit={onSubmit}
+      ref={formRef}
+      initialValues={{
+        city: item.city,
+        postalCode: item.postalCode,
+        province: item.province,
+        fullName: item.fullName,
+        streetAndAlley: item.streetAndAlley,
+        unit: item.unit,
+        plate: item.plate,
+      }}
+    />
   );
 
   return (
     <div
-      className={`relative rounded-lg p-4 transition-shadow border dark:border-gray-700 ${
-        isEditing ? 'shadow-lg border-primary dark:border-primary' : 'hover:shadow-md'
-      } bg-white dark:bg-gray-900`}
+      className={`
+        relative rounded-xl p-5 border transition-shadow
+        ${isEditing ? 'bg-primary/5 border-primary shadow-lg' : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:shadow-md'}
+      `}
       key={item.id}
     >
-      <div className="flex items-center justify-between gap-x-4 mb-1">
-        <div className="flex-1">
-          <p className="font-semibold text-base text-gray-800 dark:text-white mb-1 line-clamp-2">
-            {`${item.province}، ${item.city} - ${item.streetAndAlley}`}
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">کد پستی: {item.postalCode}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            گیرنده: <span className="font-medium">{item.fullName}</span>
-          </p>
-        </div>
-        <div className="flex-shrink-0 flex items-center gap-x-2">
-          <div className="hidden md:block">
-            <AddressActions onDelete={onDelete} onEdit={() => onEdit(false)} />
-          </div>
-          <div className="md:hidden">
-            <AddressActions onDelete={onDelete} onEdit={() => onEdit(true)} />
-          </div>
-        </div>
-      </div>
-      {(item.unit || item.plate) && (
-        <p className="text-xs text-gray-400 mt-2">
-          {item.plate && `پلاک: ${item.plate}`} {item.unit && `واحد: ${item.unit}`}
-        </p>
-      )}
-
+      {ActionsMenu}
+      {AddressDetails}
       <MobileDrawer
         title="ویرایش آدرس"
         isOpen={isEditing && isDrawer}
@@ -83,23 +101,8 @@ const AddressItem: React.FC<AddressItemProps> = ({
         triggerButton={null}
         footerActions={ConfirmButton}
       >
-        <AddressForm
-          provinces={provinces}
-          cities={cities}
-          onSubmit={onSubmit}
-          ref={formRef}
-          initialValues={{
-            city: item.city,
-            postalCode: item.postalCode,
-            province: item.province,
-            fullName: item.fullName,
-            streetAndAlley: item.streetAndAlley,
-            unit: item.unit,
-            plate: item.plate,
-          }}
-        />
+        <div className="py-2">{AddressFormWrapper}</div>
       </MobileDrawer>
-
       <Dialog
         title="ویرایش آدرس"
         isOpen={isEditing && !isDrawer}
@@ -108,23 +111,7 @@ const AddressItem: React.FC<AddressItemProps> = ({
         actions={ConfirmButton}
         size="md"
       >
-        <div className="mt-4">
-          <AddressForm
-            provinces={provinces}
-            cities={cities}
-            onSubmit={onSubmit}
-            ref={formRef}
-            initialValues={{
-              city: item.city,
-              postalCode: item.postalCode,
-              province: item.province,
-              fullName: item.fullName,
-              streetAndAlley: item.streetAndAlley,
-              unit: item.unit,
-              plate: item.plate,
-            }}
-          />
-        </div>
+        <div className="py-2">{AddressFormWrapper}</div>
       </Dialog>
     </div>
   );

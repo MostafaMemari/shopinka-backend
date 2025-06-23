@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation';
 import { getBlogBySlug } from '@/service/blogService';
-import BlogDetailsView from '@/components/blog/BlogDetailsView';
 import { NoImage } from '@/types/noImageEnum';
-import Sidebar from '@/components/blog/Sidebar';
+import BlogDetailsView from '@/components/Blog/BlogDetailsView';
+import Sidebar from '@/components/Blog/Sidebar';
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

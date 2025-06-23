@@ -12,14 +12,6 @@ export async function getCategories(params?: CategoryParams) {
   return response.data;
 }
 
-// export async function getCategoriesCatch(params?: CategoryParams) {
-//   const response = await shopApiFetch('/category', {
-//     query: { ...params },
-//   });
-
-//   return response.data;
-// }
-
 export const getCategoriesCatch = unstable_cache(
   async (params?: CategoryParams): Promise<{ items: Category[]; pager: Pager }> => {
     const response = await ofetch(`/category`, {

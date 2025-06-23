@@ -11,27 +11,6 @@ import AddressForm from '@/components/checkout/AddressForm';
 import MobileDrawer from '@/components/ui/MobileDrawer';
 import SkeletonLoader from '@/components/ui/SkeletonLoader';
 
-export interface Option {
-  value: string;
-  label: string;
-}
-
-const provinces: Option[] = [
-  { value: 'tehran', label: 'تهران' },
-  { value: 'isfahan', label: 'اصفهان' },
-];
-
-const cities: { [key: string]: Option[] } = {
-  tehran: [
-    { value: 'tehran', label: 'تهران' },
-    { value: 'rey', label: 'ری' },
-  ],
-  isfahan: [
-    { value: 'isfahan', label: 'اصفهان' },
-    { value: 'kashan', label: 'کاشان' },
-  ],
-};
-
 export default function CreateAddress({}) {
   const { data, isLoading, error } = useAddress({});
   const addresses: AddressItemType[] = data?.data.items || [];
@@ -100,7 +79,7 @@ export default function CreateAddress({}) {
           {isMdUp ? (
             <Dialog isOpen={modalState} onClose={() => setModalState(false)} title="افزودن آدرس جدید" actions={actions} size="xl">
               <div className="mt-4">
-                <AddressForm provinces={provinces} cities={cities} onSubmit={handleFormSubmit} ref={formRef} />
+                <AddressForm onSubmit={handleFormSubmit} ref={formRef} />
               </div>
             </Dialog>
           ) : (
@@ -111,7 +90,7 @@ export default function CreateAddress({}) {
               onClose={() => setModalState(false)}
               footerActions={actions}
             >
-              <AddressForm provinces={provinces} cities={cities} onSubmit={handleFormSubmit} ref={formRef} />
+              <AddressForm onSubmit={handleFormSubmit} ref={formRef} />
             </MobileDrawer>
           )}
         </>

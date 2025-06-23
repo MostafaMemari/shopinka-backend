@@ -3,7 +3,6 @@ import { loadSearchParams } from '@/utils/loadSearchParams';
 import { SearchParams } from 'nuqs';
 import { getBlogs } from '@/service/blogService';
 import { BLOG_SORT_OPTIONS, BlogParams } from '@/types/blogType';
-import BlogListShopClient from '@/components/blog/BlogListClient';
 
 import SearchInput from '@/components/filter/SearchInput';
 import CategorySelector from '@/components/category/CategorySelector';
@@ -11,6 +10,7 @@ import SortBar from '@/components/filter/SortBar';
 import MobileFilter from '@/components/filter/MobileFilter';
 import ResetFilters from '@/components/filter/ResetFilters';
 import MobileSort from '@/components/filter/MobileSort';
+import BlogListShopClient from '@/components/Blog/BlogListClient';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;

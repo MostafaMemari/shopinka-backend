@@ -1,8 +1,8 @@
 import { getProducts } from '@/service/productService';
 import CarouselProduct from '@/components/product/ProductCarousel';
 import BannerSlider from '@/components/Carousel/BannerSlider';
-import CarouselBlog from '@/components/blog/CarouselBlog';
 import { getBlogs } from '@/service/blogService';
+import CarouselBlog from '@/components/Blog/CarouselBlog';
 
 export default async function Home() {
   const [discountProducts, newestProducts, blogs] = await Promise.all([

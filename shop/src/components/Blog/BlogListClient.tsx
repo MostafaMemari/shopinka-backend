@@ -6,7 +6,7 @@ import { BlogItem, BlogParams } from '@/types/blogType';
 import { getBlogs } from '@/service/blogService';
 import LoadingDots from '@/components/shopPage/LoadingDots';
 import { Pager } from '@/types/pagerType';
-import BlogListShop from './BlogListShop';
+import BlogListShop from '../Blog/BlogListShop';
 
 interface Props {
   query: BlogParams;

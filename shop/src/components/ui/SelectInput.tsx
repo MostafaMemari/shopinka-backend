@@ -1,8 +1,10 @@
-'use client';
-
 import React from 'react';
 import Select from 'react-select';
-import { Option } from '../checkout/AddressSection';
+
+export interface Option {
+  label: string;
+  value: string;
+}
 
 interface SelectInputProps {
   id: string;
@@ -30,9 +32,14 @@ const SelectInput: React.FC<SelectInputProps> = ({
   const selectedOption = options.find((opt) => opt.value === formik.values[name]);
 
   const defaultHandleChange = (selected: Option | null) => {
-    console.log('Selected:', selected); // برای دیباگ
-    formik.setFieldValue(name, selected?.value || '');
-    formik.setFieldTouched(name, true);
+    const value = selected?.value || '';
+    formik.setFieldValue(name, value, true);
+    formik.validateField(name).then(() => {
+      if (value) {
+        formik.setFieldTouched(name, false, false);
+      }
+      if (onChange) onChange(selected);
+    });
   };
 
   return (
@@ -45,7 +52,7 @@ const SelectInput: React.FC<SelectInputProps> = ({
         inputId={id}
         name={name}
         value={selectedOption || null}
-        onChange={onChange || defaultHandleChange}
+        onChange={defaultHandleChange}
         onBlur={() => formik.setFieldTouched(name, true)}
         options={options}
         placeholder={placeholder}
@@ -58,10 +65,10 @@ const SelectInput: React.FC<SelectInputProps> = ({
             direction: 'rtl',
             borderRadius: '0.5rem',
             minHeight: '40px',
-            borderColor: state.isFocused ? '#3B82F6' : '#D1D5DB',
-            boxShadow: state.isFocused ? '0 0 0 1px #3B82F6' : undefined,
+            borderColor: state.isFocused ? '#a00' : '#D1D5DB',
+            boxShadow: state.isFocused ? '0 0 0 1px #a00' : undefined,
             '&:hover': {
-              borderColor: '#3B82F6',
+              borderColor: '#a00',
             },
           }),
           input: (base) => ({ ...base, direction: 'rtl' }),
@@ -69,9 +76,7 @@ const SelectInput: React.FC<SelectInputProps> = ({
           singleValue: (base) => ({ ...base, textAlign: 'right', direction: 'rtl' }),
         }}
       />
-      {formik.touched[name] && formik.errors[name] && formik.submitCount > 0 && (
-        <p className="text-red-500 text-xs mt-1">{formik.errors[name]}</p>
-      )}
+      {formik.touched[name] && formik.errors[name] && <p className="text-red-500 text-xs mt-1">{formik.errors[name]}</p>}
     </div>
   );
 };

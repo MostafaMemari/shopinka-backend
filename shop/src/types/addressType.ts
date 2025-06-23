@@ -21,3 +21,7 @@ export type AddressItem = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type ProvincesType = { id: number; name: string };
+
+export type CitiesType = { id: number; name: string; province: number };

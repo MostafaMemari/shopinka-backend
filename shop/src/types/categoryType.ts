@@ -18,6 +18,7 @@ export type CategoryParams = {
   name?: string;
   slug?: string;
   description?: string;
+  type: 'BLOG' | 'PRODUCT';
   childrenDepth?: number;
   includeUser?: boolean;
   includeBlogs?: boolean;

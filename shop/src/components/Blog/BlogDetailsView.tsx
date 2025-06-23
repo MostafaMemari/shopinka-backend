@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { BiUser } from 'react-icons/bi';
-import ShareButton from './ShareButton';
 import { NoImage } from '@/types/noImageEnum';
 import Image from 'next/image';
+import ShareButton from './ShareButton';
 
 interface BlogDetailsViewProps {
   title: string;

@@ -1,6 +1,6 @@
 import { BlogItem } from '@/types/blogType';
-import BlogCardSkeleton from './BlogCardSkeleton';
 import BlogCard from './CarouselBlog/BlogCard';
+import BlogCardSkeleton from '../Blog/BlogCardSkeleton';
 
 export default function BlogListShop({ blogs, isLoading }: { blogs: BlogItem[]; isLoading?: boolean }) {
   if (isLoading) {

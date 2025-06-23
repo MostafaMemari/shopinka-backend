@@ -8,23 +8,6 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import ErrorState from '../ErrorState';
 import EmptyState from '../EmptyState';
 import { GrLocation } from 'react-icons/gr';
-import { Option } from '@/components/checkout/AddressSection';
-
-const provinces: Option[] = [
-  { value: 'tehran', label: 'تهران' },
-  { value: 'isfahan', label: 'اصفهان' },
-];
-
-const cities: Record<string, Option[]> = {
-  tehran: [
-    { value: 'tehran', label: 'تهران' },
-    { value: 'rey', label: 'ری' },
-  ],
-  isfahan: [
-    { value: 'isfahan', label: 'اصفهان' },
-    { value: 'kashan', label: 'کاشان' },
-  ],
-};
 
 export default function AddressSection() {
   const { data, isLoading, error } = useAddress({});
@@ -79,8 +62,6 @@ export default function AddressSection() {
                 <AddressItem
                   key={item.id}
                   item={item}
-                  provinces={provinces}
-                  cities={cities}
                   isEditing={editingId === item.id}
                   isDrawer={isDrawer}
                   onEdit={(useDrawer) => openEdit(item.id, useDrawer)}

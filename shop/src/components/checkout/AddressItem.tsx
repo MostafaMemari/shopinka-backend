@@ -1,29 +1,12 @@
+import React, { useRef, useState } from 'react';
 import { AddressFormType, type AddressItem as AddressItemType } from '@/types/addressType';
 import { useAddress } from '@/hooks/reactQuery/useAddress';
-import React, { useRef, useState } from 'react';
+import useIsMdUp from '@/hooks/useIsMdUp';
 
 import AddressActions from '@/components/ui/DropDownActions';
 import Dialog from '@/components/ui/Dialog';
 import MobileDrawer from '@/components/ui/MobileDrawer';
 import AddressForm from './AddressForm';
-import { Option } from './AddressSection';
-import useIsMdUp from '@/hooks/useIsMdUp';
-
-const provinces: Option[] = [
-  { value: 'tehran', label: 'تهران' },
-  { value: 'isfahan', label: 'اصفهان' },
-];
-
-const cities: Record<string, Option[]> = {
-  tehran: [
-    { value: 'tehran', label: 'تهران' },
-    { value: 'rey', label: 'ری' },
-  ],
-  isfahan: [
-    { value: 'isfahan', label: 'اصفهان' },
-    { value: 'kashan', label: 'کاشان' },
-  ],
-};
 
 interface AddressItemProps {
   item: AddressItemType;
@@ -34,10 +17,9 @@ interface AddressItemProps {
 const AddressItem: React.FC<AddressItemProps> = ({ item, selectedAddressId, onSelectAddress }) => {
   const { deleteAddress, updateAddress, isCreateAddressLoading } = useAddress({});
   const formRef = useRef<HTMLFormElement>(null);
-  const [modalState, setModalState] = useState<boolean>(false);
+  const [modalState, setModalState] = useState(false);
 
   const isMdUp = useIsMdUp();
-
   const isSelected = selectedAddressId === item.id;
 
   const handleFormSubmit = async (values: AddressFormType) => {
@@ -58,14 +40,12 @@ const AddressItem: React.FC<AddressItemProps> = ({ item, selectedAddressId, onSe
     formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
   };
 
-  const handleDeleteAddress = (addressId: number) => {
-    deleteAddress(addressId);
+  const handleDeleteAddress = () => {
+    deleteAddress(item.id);
   };
 
   const handleSelect = () => {
-    if (!isSelected) {
-      onSelectAddress(item.id);
-    }
+    if (!isSelected) onSelectAddress(item.id);
   };
 
   const formInitialValues = {
@@ -79,18 +59,22 @@ const AddressItem: React.FC<AddressItemProps> = ({ item, selectedAddressId, onSe
   };
 
   const ConfirmButton = (
-    <button className="btn-primary w-full py-3 text-sm" type="button" onClick={triggerFormSubmit} disabled={isCreateAddressLoading}>
-      {isCreateAddressLoading ? 'در حال ثبت' : 'تأیید و ادامه'}
+    <button
+      className="btn-primary w-full py-3 text-base font-semibold rounded-lg transition focus:ring-2 focus:ring-primary-400 disabled:opacity-60"
+      type="button"
+      onClick={triggerFormSubmit}
+      disabled={isCreateAddressLoading}
+    >
+      {isCreateAddressLoading ? 'در حال ثبت...' : 'تأیید و ادامه'}
     </button>
   );
-
-  const addressSummary = `${item.province}، ${item.city} - ${item.streetAndAlley} - کد پستی: ${item.postalCode}`;
 
   return (
     <div>
       <div
         onClick={handleSelect}
-        className={`relative block cursor-pointer rounded-lg border p-4 shadow-sm transition-all
+        className={`
+          relative block cursor-pointer rounded-xl border p-5 shadow-sm transition-all
           ${isSelected ? 'border-primary bg-primary/10 shadow-md' : 'border-gray-200 bg-white hover:border-gray-300'}
           dark:bg-gray-800 dark:border-gray-700
         `}
@@ -98,6 +82,16 @@ const AddressItem: React.FC<AddressItemProps> = ({ item, selectedAddressId, onSe
         tabIndex={0}
         role="button"
       >
+        <div className="absolute top-4 left-4 z-10">
+          <div className="hidden md:block">
+            <AddressActions onDelete={handleDeleteAddress} onEdit={() => setModalState(true)} />
+          </div>
+          <div className="md:hidden">
+            <AddressActions onDelete={handleDeleteAddress} onEdit={() => setModalState(true)} />
+          </div>
+        </div>
+
+        {/* رادیو انتخاب آدرس */}
         <span className="absolute right-3 top-5 flex items-center justify-center h-6 w-6">
           <span
             className={`flex items-center justify-center rounded-full border-2 transition-colors
@@ -112,18 +106,22 @@ const AddressItem: React.FC<AddressItemProps> = ({ item, selectedAddressId, onSe
           </span>
         </span>
 
-        <div className="mb-4 flex items-center justify-between gap-x-2 sm:mb-2">
-          <p className="text-sm text-gray-900 xs:text-base pr-7 dark:text-gray-100 line-clamp-2">{addressSummary}</p>
-
-          <div className="relative hidden md:block">
-            <AddressActions onDelete={() => handleDeleteAddress(item.id)} onEdit={() => setModalState(true)} />
+        <div className="flex flex-col gap-2 pr-9">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-base text-gray-800 dark:text-white">
+              {item.province}
+              {item.city && `، ${item.city}`}
+              {item.streetAndAlley && ` - ${item.streetAndAlley}`}
+            </span>
           </div>
-        </div>
-
-        <div className="flex items-center justify-between gap-x-2">
-          <p className="line-clamp-1 text-sm text-gray-500 dark:text-gray-400">{`گیرنده: ${item.fullName}`}</p>
-          <div className="flex items-center gap-x-2 md:hidden">
-            <AddressActions onDelete={() => handleDeleteAddress(item.id)} onEdit={() => setModalState(true)} />
+          <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-gray-600 dark:text-gray-300">
+            {item.plate && <span>پلاک: {item.plate}</span>}
+            {item.unit && <span>واحد: {item.unit}</span>}
+            {item.postalCode && <span>کد پستی: {item.postalCode}</span>}
+          </div>
+          <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+            <span>گیرنده:</span>
+            <span className="font-medium">{item.fullName}</span>
           </div>
         </div>
       </div>
@@ -137,14 +135,8 @@ const AddressItem: React.FC<AddressItemProps> = ({ item, selectedAddressId, onSe
           actions={ConfirmButton}
           size="md"
         >
-          <div className="mt-4">
-            <AddressForm
-              provinces={provinces}
-              cities={cities}
-              onSubmit={handleFormSubmit}
-              ref={formRef}
-              initialValues={formInitialValues}
-            />
+          <div className="py-2">
+            <AddressForm onSubmit={handleFormSubmit} ref={formRef} initialValues={formInitialValues} />
           </div>
         </Dialog>
       ) : (
@@ -156,7 +148,9 @@ const AddressItem: React.FC<AddressItemProps> = ({ item, selectedAddressId, onSe
           triggerButton={null}
           footerActions={ConfirmButton}
         >
-          <AddressForm provinces={provinces} cities={cities} onSubmit={handleFormSubmit} ref={formRef} initialValues={formInitialValues} />
+          <div className="py-2">
+            <AddressForm onSubmit={handleFormSubmit} ref={formRef} initialValues={formInitialValues} />
+          </div>
         </MobileDrawer>
       )}
     </div>

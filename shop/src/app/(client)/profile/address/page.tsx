@@ -1,10 +1,8 @@
 'use client';
 
-import AddressSection from '@/components/checkout/AddressSection';
 import AddressesActions from '@/components/profile/Address/AddressesActions';
 import CreateAddress from '@/components/profile/Address/CreateAddress';
 import DashboardHeader from '@/components/profile/DashboardHeader';
-import { MdOutlineAddLocationAlt, MdOutlineEditLocation } from 'react-icons/md';
 
 export default function Page() {
   return (

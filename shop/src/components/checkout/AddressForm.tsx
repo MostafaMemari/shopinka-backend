@@ -2,19 +2,14 @@
 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { forwardRef, useState } from 'react';
+import { forwardRef, useEffect, useMemo, useState } from 'react';
 import TextInput from '@/components/ui/TextInput';
 import SelectInput from '@/components/ui/SelectInput';
 import { AddressFormType } from '@/types/addressType';
-import { Option } from './AddressSection';
-
-interface Cities {
-  [key: string]: Option[];
-}
+import { provinces } from '@/data/provinces';
+import { cities } from '@/data/cities';
 
 interface AddressProps {
-  provinces: Option[];
-  cities: Cities;
   onSubmit: (values: AddressFormType) => Promise<void>;
   initialValues?: AddressFormType;
   className?: string;
@@ -23,8 +18,6 @@ interface AddressProps {
 const AddressForm = forwardRef<HTMLFormElement, AddressProps>(
   (
     {
-      provinces,
-      cities,
       onSubmit,
       initialValues = {
         fullName: '',
@@ -39,17 +32,29 @@ const AddressForm = forwardRef<HTMLFormElement, AddressProps>(
     },
     ref,
   ) => {
-    const [selectedProvince, setSelectedProvince] = useState(initialValues.province);
+    const [selectedProvinceId, setSelectedProvinceId] = useState<number | null>(null);
+
+    useEffect(() => {
+      if (initialValues.province) {
+        const provinceId = provinces.find((p) => p.name === initialValues.province)?.id || null;
+        setSelectedProvinceId(provinceId);
+      }
+    }, [initialValues.province]);
+
+    const filteredCities = useMemo(() => {
+      if (selectedProvinceId === null) return [];
+      return cities.filter((city) => city.province === selectedProvinceId);
+    }, [selectedProvinceId]);
 
     const formik = useFormik({
       initialValues,
       validationSchema: Yup.object({
         fullName: Yup.string().trim().required('نام و نام خانوادگی الزامی است'),
-        province: Yup.string().trim().required('استان الزامی است'),
-        city: Yup.string().trim().required('شهر الزامی است'),
-        plate: Yup.string().trim().required('پلاک الزامی است'),
-        streetAndAlley: Yup.string().trim().required('خیابان و کوچه الزامی است'),
-        unit: Yup.string().trim().optional(),
+        province: Yup.string().required('استان الزامی است'),
+        city: Yup.string().required('شهر الزامی است'),
+        plate: Yup.string().required('پلاک الزامی است'),
+        streetAndAlley: Yup.string().required('خیابان و کوچه الزامی است'),
+        unit: Yup.string().optional(),
         postalCode: Yup.string()
           .matches(/^\d{10}$/, 'کدپستی باید ۱۰ رقمی باشد')
           .optional(),
@@ -57,54 +62,61 @@ const AddressForm = forwardRef<HTMLFormElement, AddressProps>(
       onSubmit: async (values) => {
         await onSubmit(values);
       },
+      validateOnChange: false,
+      validateOnBlur: true,
     });
 
-    const handleProvinceChange = (selectedOption: Option | null) => {
-      if (!selectedOption) return;
-
-      const value = selectedOption.value;
-      setSelectedProvince(value);
-      formik.setFieldValue('province', value);
-      formik.setFieldValue('city', '');
-    };
-
     return (
-      <form ref={ref} onSubmit={formik.handleSubmit} className={`space-y-1 p-4 text-right ${className}`.trim()} dir="rtl">
+      <form ref={ref} onSubmit={formik.handleSubmit} className={`space-y-1 p-4 text-right ${className}`} dir="rtl">
         <div className="grid grid-cols-1 gap-4">
           <TextInput id="fullName" name="fullName" isRequired label="نام و نام خانوادگی تحویل گیرنده" formik={formik} />
         </div>
+
         <div className="grid grid-cols-2 gap-4">
           <SelectInput
             id="province"
             name="province"
             label="استان"
             formik={formik}
-            options={provinces}
+            options={provinces.map((p) => ({ value: p.name, label: p.name }))}
             placeholder="انتخاب کنید"
             isRequired
-            onChange={handleProvinceChange}
+            onChange={(selected) => {
+              const value = selected?.value || '';
+              const provinceId = provinces.find((p) => p.name === value)?.id || null;
+              setSelectedProvinceId(provinceId);
+              formik.setFieldValue('province', value);
+              formik.setFieldValue('city', '');
+              formik.setFieldTouched('city', false);
+            }}
           />
+
           <SelectInput
+            key={`city-${selectedProvinceId}`}
             id="city"
             name="city"
             label="شهر"
             formik={formik}
-            options={cities[selectedProvince] || []}
-            placeholder=""
+            options={filteredCities.map((c) => ({ value: c.name, label: c.name }))}
+            placeholder="انتخاب کنید"
             isRequired
-            isDisabled={!selectedProvince}
-            key={selectedProvince}
+            isDisabled={!selectedProvinceId}
+            onChange={(selected) => {
+              const value = selected?.value || '';
+              formik.setFieldValue('city', value);
+            }}
           />
         </div>
+
         <div className="grid grid-cols-2 gap-4">
           <TextInput id="plate" name="plate" label="پلاک" isRequired formik={formik} />
           <TextInput id="streetAndAlley" name="streetAndAlley" isRequired label="خیابان و کوچه" formik={formik} />
         </div>
+
         <div className="grid grid-cols-2 gap-4">
           <TextInput id="unit" name="unit" label="واحد" formik={formik} />
           <TextInput id="postalCode" name="postalCode" label="کدپستی" formik={formik} />
         </div>
-        <div className="grid grid-cols-2 gap-4"></div>
       </form>
     );
   },
