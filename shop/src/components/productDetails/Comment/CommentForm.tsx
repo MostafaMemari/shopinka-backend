@@ -95,4 +95,6 @@ const CommentForm = forwardRef<HTMLFormElement, CommentProps>(
   },
 );
 
+CommentForm.displayName = 'CommentForm';
+
 export default CommentForm;

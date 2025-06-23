@@ -5,7 +5,7 @@ import { QueryKeys } from '@/types/query-keys';
 import { pager } from '@/types/paginationType';
 import { createAddress, getAddress, updateAddress, deleteAddress } from '@/service/addressService';
 
-export function useAddress({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
+export function useAddress({ enabled = true, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   const queryClient = useQueryClient();
 
   const { data, isLoading, error, refetch } = useQuery<{
@@ -39,7 +39,6 @@ export function useAddress({ enabled = true, params = {}, staleTime = 1 * 60 * 1
           onSuccess?.();
         },
         onError: (error) => {
-          console.error('خطا در افزودن آدرس:', error);
           onError?.(error);
         },
       });
@@ -54,7 +53,6 @@ export function useAddress({ enabled = true, params = {}, staleTime = 1 * 60 * 1
             onSuccess?.();
           },
           onError: (error) => {
-            console.error('خطا در ویرایش آدرس:', error);
             onError?.(error);
           },
         },
@@ -68,7 +66,6 @@ export function useAddress({ enabled = true, params = {}, staleTime = 1 * 60 * 1
           onSuccess?.();
         },
         onError: (error) => {
-          console.error('خطا در حذف آدرس:', error);
           onError?.(error);
         },
       });

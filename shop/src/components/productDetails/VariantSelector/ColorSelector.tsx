@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { IColor } from '@/lib/types/colors';
+import { IColor } from '../utils/productVariants';
 
 interface Props {
   colors: IColor[];

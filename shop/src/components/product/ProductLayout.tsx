@@ -8,9 +8,9 @@ import { PiPhoneCall } from 'react-icons/pi';
 import { LuList, LuShoppingCart, LuUser, LuCheck } from 'react-icons/lu';
 import { RiHome3Line } from 'react-icons/ri';
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
-import MobileMenu from '@/components/mobileLayout/MobileMenu';
 import MobileLogo from '@/components/ui/Logo/MobileLogo';
 import CartMobileFixContainer from '../ui/CartMobileFixContainer';
+import MobileMenu from '../mobileLayout/MobileMenu';
 
 const ProductLayout = () => {
   const pathname = usePathname();
@@ -48,7 +48,7 @@ const ProductLayout = () => {
 
       <div className="fixed top-3 right-3 left-3 rounded-2xl z-50 bg-white shadow-md">
         <div className="flex items-center justify-between py-2 px-4">
-          <MobileMenu onToggleMenu={setIsMenuOpen} />
+          <MobileMenu onToggleMenu={setIsMenuOpen} isMenuOpen={isMenuOpen} />
           <MobileLogo />
           <PiPhoneCall className="h-6 w-6" />
         </div>

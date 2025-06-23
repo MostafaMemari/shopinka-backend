@@ -51,12 +51,11 @@ function Page() {
           </div>
         </div>
 
-        {/* بخش آکاردئون */}
         <div className="lg:col-span-8 space-y-8">
           {filteredFaqData.length > 0 ? (
             filteredFaqData.map((section, index) => <Accordion key={index} category={section.category} items={section.items} />)
           ) : (
-            <p className="text-sm sm:text-base text-gray-600 text-center">هیچ نتیجه‌ای برای "{searchTerm}" یافت نشد.</p>
+            <p className="text-sm sm:text-base text-gray-600 text-center">هیچ نتیجه‌ای برای {searchTerm} یافت نشد.</p>
           )}
         </div>
       </div>

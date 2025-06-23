@@ -19,6 +19,10 @@ export class CartRepository {
     return this.prismaService.cart.update(args);
   }
 
+  findFirst(args: Prisma.CartFindFirstArgs): Promise<Cart | null> {
+    return this.prismaService.cart.findFirst(args);
+  }
+
   async findOneOrThrow(args: Prisma.CartFindFirstArgs): Promise<Cart | never> {
     const cart = await this.findOne(args);
 

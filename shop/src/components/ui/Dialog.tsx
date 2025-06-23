@@ -26,7 +26,6 @@ export default function Dialog({
   title,
   children,
   actions,
-  icon,
   size = 'sm',
   closeOnEsc = true,
   closeOnOverlayClick = true,

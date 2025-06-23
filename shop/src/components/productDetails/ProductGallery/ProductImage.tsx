@@ -1,7 +1,12 @@
-import { IProductThumbnail } from '@/lib/types/products';
 import Image from 'next/image';
 
-export default function GalleryImage({ src, alt, isBlurred = false }: IProductThumbnail) {
+interface ProductImageProps {
+  src: string;
+  alt?: string;
+  isBlurred?: boolean;
+}
+
+export default function ProductImage({ src, alt, isBlurred = false }: ProductImageProps) {
   return (
     <div className={`cursor-pointer rounded-lg border p-1 ${isBlurred ? 'relative' : ''}`}>
       <Image

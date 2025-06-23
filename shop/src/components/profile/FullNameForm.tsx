@@ -44,4 +44,6 @@ const FullNameForm = forwardRef<HTMLFormElement, AddressProps>(
   },
 );
 
+FullNameForm.displayName = 'FullNameForm';
+
 export default FullNameForm;

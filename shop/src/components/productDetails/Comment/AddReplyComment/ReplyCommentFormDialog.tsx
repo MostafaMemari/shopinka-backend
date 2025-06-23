@@ -24,18 +24,12 @@ const ReplyCommentFormDialog = ({ productId, parentId, commentTitle }: ReplyComm
   const { isLogin } = useAuth();
 
   const handleFormSubmit = async (values: CommentFormikType) => {
-    createComment(
-      { ...values, productId, isRecommended: true, parentId },
-      () => {
-        setIsOpen(false);
-        if (formRef.current) {
-          formRef.current.reset();
-        }
-      },
-      (error) => {
-        console.error('خطا در ارسال فرم:', error);
-      },
-    );
+    createComment({ ...values, productId, isRecommended: true, parentId }, () => {
+      setIsOpen(false);
+      if (formRef.current) {
+        formRef.current.reset();
+      }
+    });
   };
 
   const handleSubmit = () => {

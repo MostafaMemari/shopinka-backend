@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-
 import EmptyState from '../EmptyState';
 import ErrorState from '../ErrorState';
 import Pagination from '../Pagination';
@@ -19,7 +18,7 @@ const TabContent: React.FC<TabContentProps> = ({ tabId }) => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  let orders = data?.items || [];
+  const orders = data?.items || [];
 
   const orderPager = data?.pager ?? { totalCount: 0, totalPages: 1 };
 

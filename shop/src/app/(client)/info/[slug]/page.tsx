@@ -1,20 +1,13 @@
 import { getPageBySlug } from '@/service/pageService';
 import { notFound } from 'next/navigation';
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const res = await getPageBySlug(params.slug);
-  if (!res || res?.status === 404) return {};
-  return {
-    title: res.name,
-    description: res.description?.replace(/<[^>]+>/g, '').slice(0, 150) || res.name,
-  };
+interface PageProps {
+  params: Promise<{ slug: string }>;
 }
 
-export default async function Page({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function Page({ params }: PageProps) {
+  const { slug } = await params;
   const res = await getPageBySlug(slug);
-
-  console.log(res);
 
   if (res?.status === 404 || !res) return notFound();
 

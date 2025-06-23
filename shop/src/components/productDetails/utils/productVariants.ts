@@ -1,6 +1,12 @@
 import { Attribute, AttributeValues } from '@/types/attributeType';
 import { ProductVariant } from '@/types/productType';
-import { IColor } from '@/lib/types/colors';
+
+export interface IColor {
+  id: string;
+  name: string;
+  color: string;
+  isDisabled?: boolean;
+}
 
 export interface TransformedVariants {
   colors: IColor[];

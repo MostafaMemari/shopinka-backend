@@ -11,6 +11,10 @@ export class CartItemRepository {
     return this.prismaService.cartItem.create(args);
   }
 
+  upsert(args: Prisma.CartItemUpsertArgs): Promise<CartItem> {
+    return this.prismaService.cartItem.upsert(args);
+  }
+
   findAll(args: Prisma.CartItemFindManyArgs = {}): Promise<CartItem[]> {
     return this.prismaService.cartItem.findMany(args);
   }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
@@ -10,7 +10,7 @@ import { CartData, CartItemState, CartState } from '@/types/cartType';
 import { QueryOptions } from '@/types/queryOptions';
 import { QueryKeys } from '@/types/query-keys';
 
-export function useCartData({ enabled = true, params = {}, staleTime = 1 * 60 * 1000 }: QueryOptions) {
+export function useCartData({ enabled = true, staleTime = 1 * 60 * 1000 }: QueryOptions) {
   // const { isLogin } = useAuth();
 
   const { data, isLoading, error, refetch } = useQuery<CartState>({
@@ -29,8 +29,6 @@ export const useCart = (isLogin: boolean) => {
   const { items: reduxCart, payablePrice, totalDiscountPrice, totalPrice } = useSelector((state: RootState) => state.cart);
   const { data, isLoading, error, refetch } = useCartData({});
 
-  // console.log(isLoading);
-
   useEffect(() => {
     if (isLogin && data) {
       dispatch(setCart({ items: data.items }));
@@ -45,18 +43,12 @@ export const useCart = (isLogin: boolean) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
     },
-    onError: (error) => {
-      console.error('Failed to add to cart via API:', error);
-    },
   });
 
   const updateQuantityMutation = useMutation({
     mutationFn: ({ quantity, itemId }: { quantity: number; itemId: number }) => updateQuantityItemCart({ quantity, itemId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
-    },
-    onError: (error) => {
-      console.error('Failed to update cart quantity:', error);
     },
   });
 
@@ -65,18 +57,12 @@ export const useCart = (isLogin: boolean) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
     },
-    onError: (error) => {
-      console.error('Failed to remove cart item:', error);
-    },
   });
 
   const deleteAllItemCart = useMutation({
     mutationFn: () => clearCart(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
-    },
-    onError: (error) => {
-      console.error('Failed to clear cart item:', error);
     },
   });
 

@@ -110,4 +110,6 @@ const AddressForm = forwardRef<HTMLFormElement, AddressProps>(
   },
 );
 
+AddressForm.displayName = 'AddressForm';
+
 export default AddressForm;

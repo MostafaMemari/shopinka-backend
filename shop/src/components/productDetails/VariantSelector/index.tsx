@@ -33,7 +33,6 @@ export default function ProductVariants({ variants, attributes, productType, def
     }
   }, [defaultVariantId, productType, variants, attributes, dispatch, selectedVariant]);
 
-  // آپدیت واریانت بر اساس انتخاب‌های کاربر
   useEffect(() => {
     if (productType === 'VARIABLE') {
       const matchingVariant = findMatchingVariant(variants, selectedColor, selectedButton, attributes);
@@ -78,7 +77,6 @@ export default function ProductVariants({ variants, attributes, productType, def
     }));
   }, [variants, attributes]);
 
-  // انتخاب خودکار اولین دکمه نوع فقط وقتی selectedButton null است
   useEffect(() => {
     if (selectedColor && validButtons.length > 0 && selectedButton === null) {
       const firstEnabledButton = validButtons.find((button) => !button.isDisabled);
@@ -90,7 +88,6 @@ export default function ProductVariants({ variants, attributes, productType, def
     }
   }, [selectedColor, validButtons, selectedButton, dispatch]);
 
-  // ریست کردن انتخاب‌ها
   const handleReset = () => {
     dispatch(setSelectedColor(null));
     dispatch(setSelectedButton(null));

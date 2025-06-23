@@ -3,8 +3,8 @@ import AddressActions from '@/components/ui/DropDownActions';
 import MobileDrawer from '@/components/ui/MobileDrawer';
 import AddressForm from '@/components/checkout/AddressForm';
 import Dialog from '@/components/ui/Dialog';
-import { Option } from '@/components/checkout/AddressFormDrawer';
 import { AddressFormType } from '@/types/addressType';
+import { Option } from './CreateAddress';
 
 type AddressItemProps = {
   item: any;

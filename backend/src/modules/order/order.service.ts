@@ -41,29 +41,55 @@ export class OrderService {
   async handleExpiredPendingOrders() {
     this.logger.log('Checking for expired pending orders...');
 
-    const TIMEOUT_MS = 60 * 60 * 1000; //* 1 hours
+    const TIMEOUT_MS = 60 * 60 * 1000; // 1 hour
     const expirationTime = new Date(Date.now() - TIMEOUT_MS);
 
     try {
-      const expiredOrders = await this.orderRepository.findAll({
+      const expiredOrders = (await this.orderRepository.findAll({
         where: {
           status: OrderStatus.PENDING,
           createdAt: { lt: expirationTime },
         },
         include: { items: true },
-      });
+      })) as (Order & { items: OrderItem[] })[];
 
       for (const order of expiredOrders) {
-        await this.cartRepository.update({
-          where: { userId: order.userId },
-          data: {
-            items: {
-              connect: order['items'].map((item: OrderItem) => ({ ...item })),
-            },
-          },
-        });
+        if (!order.userId) continue;
 
-        await this.orderRepository.update({ where: { id: order.id }, data: { status: OrderStatus.CANCELLED } });
+        let userCart = await this.cartRepository.findFirst({ where: { userId: order.userId } });
+
+        if (!userCart) {
+          userCart = await this.cartRepository.create({
+            data: { userId: order.userId },
+          });
+        }
+
+        for (const item of order.items) {
+          await this.cartItemRepository.upsert({
+            where: {
+              cartId_productId: {
+                cartId: userCart.id,
+                productId: item.productId ?? 0,
+              },
+            },
+            update: {
+              quantity: {
+                increment: item.quantity,
+              },
+            },
+            create: {
+              cartId: userCart.id,
+              productId: item.productId,
+              productVariantId: item.productVariantId,
+              quantity: item.quantity,
+            },
+          });
+        }
+
+        await this.orderRepository.update({
+          where: { id: order.id },
+          data: { status: OrderStatus.CANCELLED },
+        });
 
         this.logger.warn(`Order ${order.id} canceled due to timeout (created at ${order.createdAt}). Items returned to cart.`);
       }

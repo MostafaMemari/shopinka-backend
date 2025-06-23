@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { BiUser } from 'react-icons/bi';
 import ShareButton from './ShareButton';
 import { NoImage } from '@/types/noImageEnum';
+import Image from 'next/image';
 
 interface BlogDetailsViewProps {
   title: string;
@@ -33,7 +34,7 @@ const BlogDetailsView: FC<BlogDetailsViewProps> = ({ title, username, createdAt,
         <ShareButton />
       </div>
       <div className="mb-8">
-        <img src={image || NoImage.BLOG} alt="blog" className="w-full rounded-xl" />
+        <Image src={image || NoImage.BLOG} alt="blog" width={600} height={400} className="w-full rounded-xl" />
       </div>
       <div
         className="leading-loose prose prose-sm max-w-none p-2 text-text/90"

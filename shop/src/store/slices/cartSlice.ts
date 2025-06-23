@@ -2,7 +2,7 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '@/store';
 import { CartData, CartItemState, CartState } from '@/types/cartType';
 import { calculateTotals } from '@/utils/calculateTotals';
-import { clearCart, createCartBulk, getCart, removeItemCart, updateQuantityItemCart } from '@/service/cartService';
+import { createCartBulk, getCart, removeItemCart, updateQuantityItemCart } from '@/service/cartService';
 
 const initialState: CartState = {
   items: [],
@@ -44,7 +44,6 @@ export const addToCart = createAsyncThunk('cart/addToCart', async (item: CartIte
     const items = updatedCart.items;
     dispatch(setCart({ items }));
   } catch (error) {
-    console.error('Failed to add to cart:', error);
     throw error;
   }
 });
@@ -68,7 +67,6 @@ export const increaseCount = createAsyncThunk('cart/increaseCount', async (item:
     const items = updatedCart.items;
     dispatch(setCart({ items }));
   } catch (error) {
-    console.error('Failed to increase cart item count:', error);
     throw error;
   }
 });
@@ -92,7 +90,6 @@ export const decreaseCount = createAsyncThunk('cart/decreaseCount', async (item:
     const items = updatedCart.items;
     dispatch(setCart({ items }));
   } catch (error) {
-    console.error('Failed to decrease cart item count:', error);
     throw error;
   }
 });
@@ -116,7 +113,6 @@ export const deleteFromCart = createAsyncThunk('cart/deleteFromCart', async (ite
     const items = updatedCart.items;
     dispatch(setCart({ items }));
   } catch (error) {
-    console.error('Failed to remove from cart:', error);
     throw error;
   }
 });

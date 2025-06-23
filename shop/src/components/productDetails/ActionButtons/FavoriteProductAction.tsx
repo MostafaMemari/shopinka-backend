@@ -3,6 +3,7 @@
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 import { useToggleFavorite } from '@/hooks/reactQuery/favorite/useToggleFavorite';
 import { useProductFavorite } from '@/hooks/reactQuery/product/useProduct';
+import { useIsMounted } from '@/hooks/useIsMounted';
 import { cn } from '@/utils/utils';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -16,12 +17,10 @@ interface FavoriteProductActionProps {
 }
 
 function FavoriteProductAction({ productId, isTooltip = false, className }: FavoriteProductActionProps) {
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useIsMounted();
   const { isLogin, isLoading } = useAuth();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const pathname = usePathname();
-  const isFavoriteQuery = searchParams.get('favorite');
 
   const { data: isFavoriteProduct, refetch, isLoading: isFavoriteLoading } = useProductFavorite({ productId, isLogin });
 
@@ -32,14 +31,9 @@ function FavoriteProductAction({ productId, isTooltip = false, className }: Favo
       if (isToggleFavoriteLoading) return;
       favoriteToggle(productId, refetch);
     } else {
-      router.push(`/login?backUrl=${pathname}&favorite=true`);
+      router.push(`/login?backUrl=${pathname}`);
     }
   };
-
-  useEffect(() => {
-    setIsMounted(true);
-    if (isFavoriteQuery) handleAddToFavorite();
-  }, []);
 
   if (!isMounted || isLoading || isFavoriteLoading || isToggleFavoriteLoading) return <FaSpinner className="h-6 w-6 animate-spin" />;
 

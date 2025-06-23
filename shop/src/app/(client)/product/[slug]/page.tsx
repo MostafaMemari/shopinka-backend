@@ -4,7 +4,6 @@ import { notFound } from 'next/navigation';
 import ProductTabs from '@/components/product/ProductTabs';
 import MobileHeader from '@/components/productDetails/MobileProductHeader';
 import CarouselProduct from '@/components/product/ProductCarousel';
-import { Category } from '@/types/categoryType';
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

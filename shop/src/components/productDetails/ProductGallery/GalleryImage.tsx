@@ -1,9 +1,14 @@
 'use client';
 
-import { IProductThumbnail } from '@/lib/types/products';
 import Image from 'next/image';
 
-export default function GalleryImage({ src, alt, isBlurred = false }: IProductThumbnail) {
+interface GalleryImageProps {
+  src: string;
+  alt?: string;
+  isBlurred?: boolean;
+}
+
+export default function GalleryImage({ src, alt, isBlurred = false }: GalleryImageProps) {
   return (
     <div className={`relative h-16 w-16 xl:h-20 xl:w-20 cursor-pointer rounded-lg border ${isBlurred ? 'relative' : ''}`}>
       <Image src={src} alt={alt ?? ''} fill className={`rounded-lg object-cover p-1 ${isBlurred ? 'blur-sm' : ''}`} />

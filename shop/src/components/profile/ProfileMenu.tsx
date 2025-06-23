@@ -26,13 +26,11 @@ function ProfileMenu({ onClose }: ProfileMenuProps) {
     try {
       const res = await logout();
       if (res?.status === 201 || res?.status === 200) {
-        router.push('/');
-
         logoutUser();
         Toast.fire({ icon: 'success', title: 'خروج با موفقیت انجام شد' });
+        router.push('/');
       }
     } catch (err) {
-      console.error('Logout error:', err);
       Toast.fire({ icon: 'error', title: 'خروج با خطا مواجه شد' });
     } finally {
       setIsLoggingOut(false);
