@@ -15,43 +15,45 @@ import SortBar from '@/components/filter/SortBar';
 import MobileFilter from '@/components/filter/MobileFilter';
 import MobileSortDrawer from '@/components/filter/MobileSortDrawer';
 import ResetFilters from '@/components/filter/ResetFilters';
-import { getCategories } from '@/service/categoryService';
+import { getCategoryBySlug } from '@/service/categoryService';
 import CategoryChildrenGrid from '@/components/category/CategoryChildrenGrid';
+import CategoryHeaderSection from '@/components/category/CategoryHeaderSection';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;
+  params: Promise<{ slug: string[] }>;
 };
 
-export default async function ShopPage({ searchParams }: PageProps) {
-  const params = await loadSearchParams(searchParams);
+export default async function ShopPage({ searchParams, params }: PageProps) {
+  const queryParams = await loadSearchParams(searchParams);
+  const { slug } = await params;
+  const lastSlug = slug[slug.length - 1];
 
   const query: ProductParams = {
-    page: params.page ?? 1,
-    take: params.perPage ?? 20,
-    hasDiscount: params.hasDiscount ?? undefined,
-    categoryIds: parseArrayParam(params.categoryIds ?? undefined),
-    attributeValueIds: parseArrayParam(params.attributeValueIds ?? undefined),
-    minPrice: params.minPrice ?? undefined,
-    maxPrice: params.maxPrice ?? undefined,
-    stockStatus: params.stockStatus === 'instock' ? 'instock' : 'all',
-    search: params.search,
-    includeMainImage: params.includeMainImage ?? false,
-    includeVariants: params.includeVariants ?? false,
+    page: queryParams.page ?? 1,
+    take: queryParams.perPage ?? 20,
+    hasDiscount: queryParams.hasDiscount ?? undefined,
+    categoryIds: parseArrayParam(queryParams.categoryIds ?? undefined),
+    attributeValueIds: parseArrayParam(queryParams.attributeValueIds ?? undefined),
+    minPrice: queryParams.minPrice ?? undefined,
+    maxPrice: queryParams.maxPrice ?? undefined,
+    stockStatus: queryParams.stockStatus === 'instock' ? 'instock' : 'all',
+    search: queryParams.search,
+    includeMainImage: queryParams.includeMainImage ?? false,
+    includeVariants: queryParams.includeVariants ?? false,
     sortBy:
-      params.sortBy && ['price_asc', 'price_desc', 'newest'].includes(params.sortBy)
-        ? (params.sortBy as ProductParams['sortBy'])
+      queryParams.sortBy && ['price_asc', 'price_desc', 'newest'].includes(queryParams.sortBy)
+        ? (queryParams.sortBy as ProductParams['sortBy'])
         : undefined,
   };
 
-  const categories = await getCategories({ type: 'PRODUCT', includeThumbnailImage: true });
+  const category = await getCategoryBySlug(lastSlug);
 
-  console.log(categories);
-
-  const { items, pager } = await getProducts(query);
+  const { items, pager } = await getProducts({ ...query, categoryIds: category ? [category.id] : [] });
 
   return (
     <>
-      <CategoryChildrenGrid name="دسته‌بندی ها" categories={categories.items} />
+      <CategoryChildrenGrid name={category.name} categories={category.children} />
 
       <div className="mb-6 flex items-center justify-center gap-x-4 md:hidden">
         <MobileFilter totalCount={pager.totalCount} type="SHOP" />
@@ -84,6 +86,8 @@ export default async function ShopPage({ searchParams }: PageProps) {
           </Suspense>
         </div>
       </div>
+
+      <CategoryHeaderSection name={category.name} description={category.description || ''} thumbnailImage={category.thumbnailImage} />
     </>
   );
 }

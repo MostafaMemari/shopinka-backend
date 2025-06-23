@@ -36,6 +36,14 @@ export class CategoryController {
     return this.categoryService.findOne(id);
   }
 
+  @Get('by-slug/:slug')
+  @SkipAuth()
+  findOneBySlug(@Param('slug') slug: string) {
+    console.log(slug);
+
+    return this.categoryService.findOneBySlug(slug);
+  }
+
   @Patch(':id')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)

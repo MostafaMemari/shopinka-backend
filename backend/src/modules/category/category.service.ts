@@ -126,6 +126,18 @@ export class CategoryService {
     );
   }
 
+  async findOneBySlug(slug: string): Promise<Category | never> {
+    return await this.categoryRepository.findOneOrThrow({
+      where: { slug },
+      include: {
+        children: {
+          select: { id: true, name: true, slug: true, thumbnailImage: { select: { id: true, fileUrl: true } } },
+        },
+        thumbnailImage: { select: { id: true, fileUrl: true } },
+      },
+    });
+  }
+
   async update(userId: number, categoryId: number, updateCategoryDto: UpdateCategoryDto): Promise<{ message: string; category: Category }> {
     const { parentId, slug, thumbnailImageId } = updateCategoryDto;
 

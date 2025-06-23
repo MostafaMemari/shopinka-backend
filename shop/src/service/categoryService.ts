@@ -12,6 +12,19 @@ export async function getCategories(params?: CategoryParams) {
   return response.data;
 }
 
+export const getCategoryBySlug = unstable_cache(
+  async (slug: string): Promise<Category | never> => {
+    const response = await ofetch(`/category/by-slug/${slug}`, {
+      baseURL: process.env.API_BASE_URL,
+      method: 'GET',
+    });
+
+    return response as Category;
+  },
+  ['slug'],
+  { tags: ['categories'] },
+);
+
 export const getCategoriesCatch = unstable_cache(
   async (params?: CategoryParams): Promise<{ items: Category[]; pager: Pager }> => {
     const response = await ofetch(`/category`, {
