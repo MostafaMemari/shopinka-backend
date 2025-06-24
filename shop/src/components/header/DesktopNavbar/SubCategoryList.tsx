@@ -1,4 +1,3 @@
-// components/SubCategoryList.tsx
 'use client';
 
 import Link from 'next/link';
@@ -7,14 +6,17 @@ import { Category } from '@/types/categoryType';
 
 interface SubCategoryListProps {
   category: Category;
+  onLinkClick?: () => void;
 }
 
-const SubCategoryList = ({ category }: SubCategoryListProps) => {
+const SubCategoryList = ({ category, onLinkClick }: SubCategoryListProps) => {
+  const categorySlug = `/product-category/${category.slug}`;
+
   return (
     <div className="p-5" dir="rtl">
       <div className="w-full">
         <div className="mb-4">
-          <Link className="flex items-center gap-x-1 py-2 text-sm text-primary" href={category.slug}>
+          <Link className="flex items-center gap-x-1 py-2 text-sm text-primary" href={categorySlug} onClick={onLinkClick}>
             <span>مشاهده همه {category.name}</span>
             <HiOutlineChevronLeft className="h-5 w-5" />
           </Link>
@@ -24,7 +26,11 @@ const SubCategoryList = ({ category }: SubCategoryListProps) => {
           {category.children?.length ? (
             category.children.map((subCategory) => (
               <div key={subCategory.id} className="space-y-2">
-                <Link className="flex items-center gap-x-2 text-sm font-medium hover:text-primary" href={subCategory.slug}>
+                <Link
+                  className="flex items-center gap-x-2 text-sm font-medium hover:text-primary"
+                  href={`${categorySlug}/${subCategory.slug}`}
+                  onClick={onLinkClick}
+                >
                   <span className="h-5 w-0.5 rounded-full bg-primary dark:bg-primary"></span>
                   <span>{subCategory.name}</span>
                   <HiOutlineChevronLeft className="h-5 w-5" />
@@ -33,7 +39,11 @@ const SubCategoryList = ({ category }: SubCategoryListProps) => {
                   <ul className="space-y-2">
                     {subCategory.children.map((subItem) => (
                       <li key={subItem.id}>
-                        <Link className="block py-1 text-sm text-text/90 hover:text-primary" href={subItem.slug}>
+                        <Link
+                          className="block py-1 text-sm text-text/90 hover:text-primary"
+                          href={`${categorySlug}/${subCategory.slug}/${subItem.slug}`}
+                          onClick={onLinkClick}
+                        >
                           {subItem.name}
                         </Link>
                       </li>

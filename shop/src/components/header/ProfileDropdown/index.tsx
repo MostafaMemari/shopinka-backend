@@ -13,7 +13,7 @@ import ProfileMenu from './ProfileMenu';
 
 const ProfileDropdown = () => {
   const pathname = usePathname();
-  const { isLogin, isLoading } = useAuth();
+  const { isLogin } = useAuth();
   const { isOpen, dropdownRef, toggleDropdown, closeDropdown } = useDropdown({
     closeOnOutsideClick: true,
     openOnHover: false,
@@ -23,8 +23,6 @@ const ProfileDropdown = () => {
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  // if (!isMounted) return null;
 
   if (!isMounted) {
     return (

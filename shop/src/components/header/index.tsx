@@ -6,7 +6,7 @@ import DesktopNavbar from './DesktopNavbar';
 import { getCategoriesCatch } from '@/service/categoryService';
 
 async function Header() {
-  const categories = (await getCategoriesCatch({ includeChildren: true, type: 'PRODUCT' })).items;
+  const categories = (await getCategoriesCatch({ includeChildren: true, type: 'PRODUCT', includeOnlyTopLevel: true })).items;
 
   return (
     <header>
