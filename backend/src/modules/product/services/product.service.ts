@@ -373,6 +373,7 @@ export class ProductService {
           select: {
             id: true,
             name: true,
+            slug: true,
           },
         },
         attributes: true,

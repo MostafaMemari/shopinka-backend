@@ -58,7 +58,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <CategoryChildrenGrid name="دسته‌بندی ها" categories={categories.items} />
+      <CategoryChildrenGrid basePath="product-category" name="دسته‌بندی ها" categories={categories.items} />
 
       <div className="mb-6 flex items-center justify-center gap-x-4 md:hidden">
         <MobileFilter totalCount={pager.totalCount} type="SHOP" />

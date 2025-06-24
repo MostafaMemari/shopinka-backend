@@ -25,6 +25,8 @@ interface ProductDetailsViewProps {
 const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
   const isVariableProduct = product?.variants?.length > 0;
 
+  console.log(product.categories);
+
   const breadcrumbItems =
     product?.categories?.map((category) => ({
       href: `/shop?categoryIds=${category.id}`,

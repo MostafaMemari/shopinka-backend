@@ -6,9 +6,10 @@ import Link from 'next/link';
 interface CategoryChildrenGridProps {
   name: string;
   categories: Category[];
+  basePath?: string;
 }
 
-export default function CategoryChildrenGrid({ name, categories }: CategoryChildrenGridProps) {
+export default function CategoryChildrenGrid({ name, categories, basePath }: CategoryChildrenGridProps) {
   if (!categories?.length) return null;
 
   return (
@@ -25,7 +26,7 @@ export default function CategoryChildrenGrid({ name, categories }: CategoryChild
       >
         {categories.map((child) => (
           <div key={child.id}>
-            <Link href={`/product-category/${child.slug}`}>
+            <Link href={basePath ? `/${basePath}/${child.slug}` : child.slug}>
               <div
                 className="
               flex flex-col items-center bg-white rounded-xl shadow-sm p-3 transition
