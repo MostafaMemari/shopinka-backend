@@ -15,6 +15,8 @@ export type Category = {
 };
 
 export type CategoryParams = {
+  page?: number;
+  take?: number;
   name?: string;
   slug?: string;
   description?: string;

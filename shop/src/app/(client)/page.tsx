@@ -3,12 +3,15 @@ import CarouselProduct from '@/components/product/ProductCarousel';
 import BannerSlider from '@/components/Carousel/BannerSlider';
 import { getBlogs } from '@/service/blogService';
 import CarouselBlog from '@/components/Blog/CarouselBlog';
+import CategoryCirclesBanners from '@/components/CategoryBanners';
+import { getCategoryBySlug } from '@/service/categoryService';
 
 export default async function Home() {
-  const [discountProducts, newestProducts, blogs] = await Promise.all([
+  const [discountProducts, newestProducts, blogs, categories] = await Promise.all([
     getProducts({ take: 14, hasDiscount: true }),
     getProducts({ take: 14, sortBy: 'newest' }),
     getBlogs({ take: 14 }),
+    getCategoryBySlug('car-sticker'),
   ]);
 
   return (
@@ -20,9 +23,8 @@ export default async function Home() {
       </div>
       <CarouselProduct title="فروش ویژه" products={discountProducts.items} viewAllLink="/shop?hasDiscount=true" />
       <CarouselProduct title="جدیدترین محصولات" products={newestProducts.items} viewAllLink="/shop?sortBy=newest" />
+      <CategoryCirclesBanners basePath={`/product-category/${categories.slug}`} categories={categories.children} />
       <CarouselBlog title="آخرین مقالات" blogs={blogs.items} viewAllLink="/shop?sortBy=newest" />
-
-      {/* <CategoryCirclesBanners categories={categories.items} /> */}
     </>
   );
 }
