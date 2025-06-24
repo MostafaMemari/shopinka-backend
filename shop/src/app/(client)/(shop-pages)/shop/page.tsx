@@ -16,8 +16,7 @@ import ResetFilters from '@/components/filter/ResetFilters';
 import { getCategories } from '@/service/categoryService';
 import CategoryChildrenGrid from '@/components/category/CategoryChildrenGrid';
 import { Category } from '@/types/categoryType';
-import ProductCard from '@/components/product/ProductCard';
-import Pagination from '@/components/shopPage/shop/Pagination';
+import ProductListShop from '@/components/shopPage/ProductListShop';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;
@@ -87,15 +86,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
         </div>
         <div className="col-span-12 space-y-4 md:col-span-8 lg:col-span-9">
           <SortBar options={PRODUCT_SORT_OPTIONS} queryKey="sortBy" />
-
-          <div className="grid grid-cols-2 gap-px gap-y-2 xs:gap-4 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-          <Pagination currentPage={pager.currentPage} totalPages={pager.totalPages} />
-
-          {/* <ProductListShop initialProducts={products} initialQuery={query} pager={pager} /> */}
+          <ProductListShop initialProducts={products} initialQuery={query} pager={pager} />
         </div>
       </div>
     </>

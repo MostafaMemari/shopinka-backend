@@ -46,7 +46,7 @@ export default async function ShopPage({ searchParams, params }: PageProps) {
         : undefined,
   };
 
-  const { items: category } = await getCategories({
+  const { items } = await getCategories({
     type: 'PRODUCT',
     slug: lastSlug,
     includeOnlyTopLevel: false,
@@ -55,11 +55,13 @@ export default async function ShopPage({ searchParams, params }: PageProps) {
     childrenDepth: 3,
   });
 
-  const { items: products, pager } = await getProducts({ ...query, categoryIds: category[0] ? [category[0].id] : [] });
+  const category = items[0];
+
+  const { items: products, pager } = await getProducts({ ...query, categoryIds: category ? [category.id] : [] });
 
   return (
     <>
-      <CategoryChildrenGrid name={category[0].name} categories={category[0].children} />
+      <CategoryChildrenGrid name={category.name} categories={category.children} />
 
       <div className="mb-6 flex items-center justify-center gap-x-4 md:hidden">
         <MobileFilter totalCount={pager.totalCount} type="SHOP" />
@@ -77,7 +79,7 @@ export default async function ShopPage({ searchParams, params }: PageProps) {
                 <ul className="space-y-6">
                   <SearchInput />
                   <PriceSelector />
-                  <CategorySelector title="فیلتر بر اساس دسته‌بندی" categories={category[0].children} />
+                  <CategorySelector title="فیلتر بر اساس دسته‌بندی" categories={category.children} />
                   <StockStatusFilter />
                   <DiscountFilter />
                 </ul>
@@ -87,12 +89,7 @@ export default async function ShopPage({ searchParams, params }: PageProps) {
         </div>
         <div className="col-span-12 space-y-4 md:col-span-8 lg:col-span-9">
           <SortBar options={PRODUCT_SORT_OPTIONS} queryKey="sortBy" />
-
-          <ProductListShop
-            initialProducts={products}
-            initialQuery={{ ...query, categoryIds: category[0] ? [category[0].id] : [] }}
-            pager={pager}
-          />
+          <ProductListShop initialProducts={products} initialQuery={query} pager={pager} />
         </div>
       </div>
 

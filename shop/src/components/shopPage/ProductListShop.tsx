@@ -1,25 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { getProducts } from '@/service/productService';
-import { Product, ProductParams } from '@/types/productType';
 import ProductCard from '@/components/product/ProductCard';
-import LoadingDots from '@/components/shopPage/LoadingDots';
-import { Pager } from '@/types/pagerType';
-import Pagination from './shop/Pagination';
 
-interface Props {
+import { getProducts } from '@/service/productService';
+import LoadingDots from '@/components/shopPage/LoadingDots';
+import Pagination from '@/components/shopPage/shop/Pagination';
+import { Pager } from '@/types/pagerType';
+import { Product, ProductParams } from '@/types/productType';
+
+interface ProductListShopProps {
   initialProducts: Product[];
   initialQuery: ProductParams;
   pager: Pager;
 }
 
-const ProductListShop = ({ initialQuery, pager }: Props) => {
-  const [products, setProducts] = useState<Product[]>([]);
+export default function ProductListShop({ initialProducts, initialQuery, pager }: ProductListShopProps) {
+  const [products, setProducts] = useState(initialProducts);
   const [page, setPage] = useState(pager.currentPage);
-  const [hasMore, setHasMore] = useState(pager.hasNextPage && pager.currentPage < 10);
-  const [showPagination, setShowPagination] = useState(pager.currentPage >= 10);
+  const [hasMore, setHasMore] = useState(pager.hasNextPage && page < 10);
+  const [showPagination, setShowPagination] = useState(page >= 10);
+
+  useEffect(() => {
+    setProducts(initialProducts);
+    setPage(pager.currentPage);
+    setHasMore(pager.hasNextPage && pager.currentPage < 10);
+    setShowPagination(pager.currentPage >= 10);
+  }, [initialQuery]);
 
   const fetchMore = async () => {
     const nextPage = page + 1;
@@ -47,7 +55,7 @@ const ProductListShop = ({ initialQuery, pager }: Props) => {
         hasMore={hasMore}
         loader={<LoadingDots />}
       >
-        <div className="grid grid-cols-2 gap-px gap-y-2 xs:gap-4 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 xs:gap-4 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
@@ -57,6 +65,4 @@ const ProductListShop = ({ initialQuery, pager }: Props) => {
       {showPagination && <Pagination currentPage={page} totalPages={pager.totalPages} />}
     </>
   );
-};
-
-export default ProductListShop;
+}
