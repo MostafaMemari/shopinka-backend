@@ -64,6 +64,8 @@ export const logout = async (): Promise<{ status: number; data: any }> => {
     body: { refreshToken },
   });
 
+  console.log(res);
+
   cookieStore.delete(COOKIE_NAMES.ACCESS_TOKEN);
   cookieStore.delete(COOKIE_NAMES.REFRESH_TOKEN);
 

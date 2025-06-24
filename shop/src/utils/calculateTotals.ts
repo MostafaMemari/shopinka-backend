@@ -9,17 +9,18 @@ export const calculateTotals = (
 } => {
   const validItems = Array.isArray(items) ? items : [];
 
+  const totalPrice = validItems.reduce((total, item) => total + (item.basePrice || 0) * (item.count || 0), 0);
+
+  const payablePrice = validItems.reduce((total, item) => {
+    const price = item.salePrice && item.salePrice > 0 ? item.salePrice : item.basePrice || 0;
+    return total + price * (item.count || 0);
+  }, 0);
+
+  const totalDiscountPrice = totalPrice - payablePrice;
+
   return {
-    totalPrice: validItems.reduce((total, item) => total + item?.basePrice * item?.count, 0),
-
-    totalDiscountPrice: validItems.reduce((total, item) => {
-      const priceToUse = item?.basePrice - item?.salePrice;
-      return total + priceToUse * item?.count;
-    }, 0),
-
-    payablePrice: validItems.reduce((total, item) => {
-      const priceToPay = item?.salePrice ?? item?.basePrice;
-      return total + priceToPay * item?.count;
-    }, 0),
+    totalPrice,
+    totalDiscountPrice,
+    payablePrice,
   };
 };

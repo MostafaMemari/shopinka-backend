@@ -94,11 +94,13 @@ export function calculateCartTotals(items: CartItemInput[]): CartTotals {
 
       const salePrice = item.productVariant?.salePrice ?? item.product?.salePrice ?? basePrice;
 
-      const discount = basePrice - salePrice;
+      const priceToUse = Math.max(salePrice, 0);
+
+      const discount = Math.max(basePrice - priceToUse, 0);
 
       acc.totalPrice += basePrice * count;
       acc.totalDiscountPrice += discount * count;
-      acc.payablePrice += salePrice * count;
+      acc.payablePrice += priceToUse * count;
 
       return acc;
     },

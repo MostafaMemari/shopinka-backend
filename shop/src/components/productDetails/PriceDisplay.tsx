@@ -1,4 +1,3 @@
-// src/components/ProductPrice/ProductPrice.tsx
 'use client';
 
 import { formatPrice } from '@/utils/formatter';
@@ -52,12 +51,10 @@ export function ProductPrice({ product }: ProductPriceProps) {
           </div>
         </>
       ) : (
-        salePrice != null && (
-          <div className="text-primary">
-            <span className="text-base font-semibold lg:text-lg lg:font-bold">{formatPrice(salePrice)}</span>
-            <span className="text-xs font-light lg:text-sm lg:font-medium"> تومان</span>
-          </div>
-        )
+        <div className="text-primary">
+          <span className="text-base font-semibold lg:text-lg lg:font-bold">{formatPrice(basePrice ?? 0)}</span>
+          <span className="text-xs font-light lg:text-sm lg:font-medium"> تومان</span>
+        </div>
       )}
     </div>
   );

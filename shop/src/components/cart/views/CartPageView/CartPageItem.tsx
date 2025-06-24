@@ -5,6 +5,7 @@ import CartItemAttributes from '@/components/cart/CartItemAttributes';
 import CartControls from '@/components/cart/CartControls';
 import ProductPrice from '@/components/productDetails/PriceDisplay';
 import Image from 'next/image';
+import ProductCartPrice from '../../ProductCartPrice';
 
 interface CartPageItemProps {
   cartItem: CartItemState;
@@ -44,7 +45,7 @@ function CartPageItem({ cartItem, isLast = false }: CartPageItemProps) {
           </div>
 
           <div className="text-blue-600 text-sm font-bold pt-1">
-            <ProductPrice product={{ basePrice: cartItem.basePrice * cosnt, salePrice: cartItem.salePrice * cosnt, type: cartItem.type }} />
+            <ProductCartPrice salePrice={cartItem.salePrice * cartItem.count} basePrice={cartItem.basePrice * cartItem.count} />
           </div>
         </div>
       </div>

@@ -3,7 +3,6 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useQueryClient } from '@tanstack/react-query';
 import { loginStart, loginSuccess, loginFailure, logout } from '@/store/slices/authSlice';
 import { User, UserState } from '@/types/userType';
-import { logout as logoutApi } from '@/service/authService';
 import { QueryKeys } from '@/types/query-keys';
 import { getMe } from '@/service/userService';
 import { useSyncCart } from '../cart/useSyncCart';
@@ -68,7 +67,6 @@ export function useAuth() {
   const logoutUser = useCallback(async () => {
     dispatch(loginStart());
     try {
-      await logoutApi();
       queryClient.removeQueries({ queryKey: [QueryKeys.User, QueryKeys.Cart] });
       dispatch(logout());
     } catch (err) {

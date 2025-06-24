@@ -10,7 +10,7 @@ import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { pagination } from '../../common/utils/pagination.utils';
 import { PrismaService } from '../prisma/prisma.service';
-import { calculateCartTotals } from 'src/common/utils/functions.utils';
+import { calculateCartTotals } from '../../common/utils/functions.utils';
 
 @Injectable()
 export class CartService {
