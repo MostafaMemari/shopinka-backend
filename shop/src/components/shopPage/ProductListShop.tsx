@@ -37,7 +37,12 @@ export default function ProductListShop({ initialProducts, initialQuery, pager }
       take: initialQuery.take ?? 20,
     });
 
-    setProducts((prev) => [...prev, ...newProducts]);
+    setProducts((prev) => {
+      const all = [...prev, ...newProducts];
+      const unique = Array.from(new Map(all.map((p) => [p.id, p])).values());
+      return unique;
+    });
+
     setPage(nextPage);
 
     if (!newPager.hasNextPage || nextPage >= 10) {

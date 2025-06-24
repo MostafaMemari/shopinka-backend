@@ -46,7 +46,7 @@ const Pagination: FC<PaginationProps> = ({ currentPage, totalPages }) => {
   return (
     <div className="flex items-center justify-center gap-x-4 md:justify-end">
       <button
-        className={`flex h-8 w-8 items-center justify-center rounded-full bg-muted transition-all duration-200 ${
+        className={`flex h-8 w-8 items-center justify-center rounded-full bg-muted transition-all duration-200 cursor-pointer ${
           currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary hover:text-white hover:dark:bg-emerald-600'
         }`}
         onClick={() => currentPage > 1 && setQueryPage(String(currentPage - 1))}
@@ -61,7 +61,7 @@ const Pagination: FC<PaginationProps> = ({ currentPage, totalPages }) => {
             <button
               key={`page-${page}`}
               onClick={() => setQueryPage(String(page))}
-              className={`pagination-button ${page === currentPage ? 'pagination-button-active' : ''}`}
+              className={`pagination-button cursor-pointer ${page === currentPage ? 'pagination-button-active' : ''}`}
             >
               {page}
             </button>
@@ -74,7 +74,7 @@ const Pagination: FC<PaginationProps> = ({ currentPage, totalPages }) => {
       </div>
 
       <button
-        className={`flex h-8 w-8 items-center justify-center rounded-full bg-muted transition-all duration-200 ${
+        className={`flex h-8 w-8 items-center justify-center rounded-full bg-muted transition-all duration-200 cursor-pointer ${
           currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary hover:text-white hover:dark:bg-emerald-600'
         }`}
         onClick={() => currentPage < totalPages && setQueryPage(String(currentPage + 1))}
