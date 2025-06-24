@@ -18,16 +18,20 @@ interface ApiResponse<T = any> {
 }
 
 async function refreshAccessToken(): Promise<ApiResponse> {
+  const cookieStore = await cookies()
+
   try {
     const response = await ofetch('/auth/refresh-token', {
       baseURL: process.env.API_BASE_URL,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      body: {
+        refreshToken: cookieStore.get(COOKIE_NAMES.REFRESH_TOKEN)?.value
+      },
       retry: 0
     })
 
     const { accessToken, refreshToken } = response
-    const cookieStore = await cookies()
 
     cookieStore.set(COOKIE_NAMES.ACCESS_TOKEN, accessToken, {
       httpOnly: true,
@@ -78,12 +82,8 @@ export const serverApiFetch = async (path: string, options: FetchOptions = {}): 
     const statusCode = error?.response?.status || 500
     const message = error?.data?.message || error?.message || 'خطایی در ارتباط با سرور رخ داده است'
 
-    console.log('error :', error.message)
-
     if (statusCode === 401) {
       const refreshResult = await refreshAccessToken()
-
-      console.log(refreshResult)
 
       if (refreshResult.status === 200) {
         const cookieStore = await cookies()
