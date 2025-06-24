@@ -1,5 +1,3 @@
-import { Suspense } from 'react';
-import ProductListShopClient from '@/components/shopPage/views/ProductListShopClient';
 import { getProducts } from '@/service/productService';
 import { loadSearchParams } from '@/utils/loadSearchParams';
 import { parseArrayParam } from '@/utils/parseArrayParam';
@@ -15,9 +13,10 @@ import SortBar from '@/components/filter/SortBar';
 import MobileFilter from '@/components/filter/MobileFilter';
 import MobileSortDrawer from '@/components/filter/MobileSortDrawer';
 import ResetFilters from '@/components/filter/ResetFilters';
-import { getCategories, getCategoryBySlug } from '@/service/categoryService';
+import { getCategories } from '@/service/categoryService';
 import CategoryChildrenGrid from '@/components/category/CategoryChildrenGrid';
 import CategoryHeaderSection from '@/components/category/CategoryHeaderSection';
+import ProductListShop from '@/components/shopPage/ProductListShop';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;
@@ -31,7 +30,7 @@ export default async function ShopPage({ searchParams, params }: PageProps) {
 
   const query: ProductParams = {
     page: queryParams.page ?? 1,
-    take: queryParams.perPage ?? 20,
+    take: queryParams.perPage ?? 10,
     hasDiscount: queryParams.hasDiscount ?? undefined,
     categoryIds: parseArrayParam(queryParams.categoryIds ?? undefined),
     attributeValueIds: parseArrayParam(queryParams.attributeValueIds ?? undefined),
@@ -88,9 +87,12 @@ export default async function ShopPage({ searchParams, params }: PageProps) {
         </div>
         <div className="col-span-12 space-y-4 md:col-span-8 lg:col-span-9">
           <SortBar options={PRODUCT_SORT_OPTIONS} queryKey="sortBy" />
-          <Suspense fallback={<div>Loading...</div>}>
-            <ProductListShopClient query={query} initialProducts={products || []} pager={pager} />
-          </Suspense>
+
+          <ProductListShop
+            initialProducts={products}
+            initialQuery={{ ...query, categoryIds: category[0] ? [category[0].id] : [] }}
+            pager={pager}
+          />
         </div>
       </div>
 

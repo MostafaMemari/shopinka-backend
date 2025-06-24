@@ -1,10 +1,11 @@
 'use client';
 
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useEffect } from 'react';
 import { useQueryState } from 'nuqs';
 import CategoryAccordion from './CategoryAccordion';
 import CategoryItem from './CategoryItem';
 import { Category } from '@/types/categoryType';
+import { useResetPageOnQueryChange } from '@/hooks/useResetPageOnQueryChange';
 
 interface Props {
   queryKey?: string;
@@ -18,6 +19,8 @@ const CategorySelector: React.FC<Props> = ({ queryKey = 'categoryIds', title = '
     history: 'replace',
     shallow: false,
   });
+
+  useResetPageOnQueryChange(categoryIds);
 
   const selectedCategories = useMemo(() => (categoryIds ? categoryIds.split(',').map(Number) : []), [categoryIds]);
 

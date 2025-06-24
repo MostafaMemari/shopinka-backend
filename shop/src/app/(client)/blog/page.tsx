@@ -46,7 +46,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
                 <ResetFilters resetPath="/blog" />
                 <ul className="space-y-6">
                   <SearchInput />
-                  <CategorySelector type="BLOG" title="فیلتر بر اساس دسته‌بندی" />
+                  {/* <CategorySelector title="فیلتر بر اساس دسته‌بندی" /> */}
                 </ul>
               </div>
             </div>

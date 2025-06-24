@@ -11,8 +11,6 @@ import { QueryOptions } from '@/types/queryOptions';
 import { QueryKeys } from '@/types/query-keys';
 
 export function useCartData({ enabled = true, staleTime = 1 * 60 * 1000 }: QueryOptions) {
-  // const { isLogin } = useAuth();
-
   const { data, isLoading, error, refetch } = useQuery<CartState>({
     queryKey: [QueryKeys.Cart],
     queryFn: getCart,

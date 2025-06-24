@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { PlaceholderImageEnum } from '@/types/enums/PlaceholderImageEnum';
 
-const fallbackSrc = '/images/no-image.webp';
+const fallbackSrc = PlaceholderImageEnum.SQUARE;
 
 const ProductImage = ({ src, alt }: { src: string; alt: string }) => {
   const initialSrc = src || fallbackSrc;

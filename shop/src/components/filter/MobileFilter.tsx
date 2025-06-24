@@ -36,7 +36,7 @@ const MobileFilter: FC<MobileFilterProps> = ({ totalCount, type, title }) => {
       >
         <ul className="space-y-6 p-4" dir="rtl">
           <SearchInput />
-          <CategorySelector type={type} title="فیلتر بر اساس دسته‌بندی" />
+          {/* <CategorySelector type={type} title="فیلتر بر اساس دسته‌بندی" /> */}
         </ul>
       </MobileDrawer>
     </>

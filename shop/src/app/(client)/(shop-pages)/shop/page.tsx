@@ -1,5 +1,3 @@
-import { Suspense } from 'react';
-import ProductListShopClient from '@/components/shopPage/views/ProductListShopClient';
 import { getProducts } from '@/service/productService';
 import { loadSearchParams } from '@/utils/loadSearchParams';
 import { parseArrayParam } from '@/utils/parseArrayParam';
@@ -18,6 +16,8 @@ import ResetFilters from '@/components/filter/ResetFilters';
 import { getCategories } from '@/service/categoryService';
 import CategoryChildrenGrid from '@/components/category/CategoryChildrenGrid';
 import { Category } from '@/types/categoryType';
+import ProductCard from '@/components/product/ProductCard';
+import Pagination from '@/components/shopPage/shop/Pagination';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;
@@ -25,8 +25,6 @@ type PageProps = {
 
 export default async function ShopPage({ searchParams }: PageProps) {
   const params = await loadSearchParams(searchParams);
-
-  console.log('params', params);
 
   const query: ProductParams = {
     page: params.page ?? 1,
@@ -54,7 +52,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
     includeOnlyTopLevel: true,
   });
 
-  const { items, pager } = await getProducts(query);
+  const { items: products, pager } = await getProducts(query);
 
   return (
     <>
@@ -89,9 +87,15 @@ export default async function ShopPage({ searchParams }: PageProps) {
         </div>
         <div className="col-span-12 space-y-4 md:col-span-8 lg:col-span-9">
           <SortBar options={PRODUCT_SORT_OPTIONS} queryKey="sortBy" />
-          <Suspense fallback={<div>Loading...</div>}>
-            <ProductListShopClient query={query} initialProducts={items || []} pager={pager} />
-          </Suspense>
+
+          <div className="grid grid-cols-2 gap-px gap-y-2 xs:gap-4 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+          <Pagination currentPage={pager.currentPage} totalPages={pager.totalPages} />
+
+          {/* <ProductListShop initialProducts={products} initialQuery={query} pager={pager} /> */}
         </div>
       </div>
     </>

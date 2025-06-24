@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useQueryState } from 'nuqs';
 import { useDebouncedCallback } from 'use-debounce';
+import { useResetPageOnQueryChange } from '@/hooks/useResetPageOnQueryChange';
 
 interface SearchInputProps {
   queryKey?: string;
@@ -28,6 +29,8 @@ const SearchInput = ({
   });
 
   const [inputValue, setInputValue] = useState(searchQuery);
+
+  useResetPageOnQueryChange(searchQuery);
 
   useEffect(() => {
     setInputValue(searchQuery);

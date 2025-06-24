@@ -1,5 +1,6 @@
 'use client';
 
+import { useResetPageOnQueryChange } from '@/hooks/useResetPageOnQueryChange';
 import { useQueryState } from 'nuqs';
 import React from 'react';
 
@@ -11,6 +12,8 @@ function DiscountFilter() {
     history: 'replace',
     shallow: false,
   });
+
+  useResetPageOnQueryChange(JSON.stringify(hasDiscount));
 
   return (
     <li>

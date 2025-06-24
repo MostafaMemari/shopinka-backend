@@ -5,6 +5,7 @@ import { useQueryState } from 'nuqs';
 import noUiSlider, { API } from 'nouislider';
 import 'nouislider/dist/nouislider.css';
 import './PriceSelector.css';
+import { useResetPageOnQueryChange } from '@/hooks/useResetPageOnQueryChange';
 
 const MIN_PRICE = 0;
 const MAX_PRICE = 100000;
@@ -29,6 +30,8 @@ function PriceSelector() {
     history: 'replace',
     shallow: false,
   });
+
+  useResetPageOnQueryChange(JSON.stringify([minPrice, maxPrice]));
 
   useEffect(() => {
     if (!sliderRef.current) return;
