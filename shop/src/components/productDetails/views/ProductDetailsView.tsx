@@ -18,6 +18,7 @@ import ProductGuaranteeBadge from '../ProductGuaranteeBadge';
 import FavoriteProductAction from '../ActionButtons/FavoriteProductAction';
 import ShareProductAction from '../ActionButtons/ShareProductAction';
 import CartMobileFixContainer from '@/components/ui/CartMobileFixContainer';
+
 interface ProductDetailsViewProps {
   product: ProductDetails;
 }
@@ -25,13 +26,17 @@ interface ProductDetailsViewProps {
 const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
   const isVariableProduct = product?.variants?.length > 0;
 
-  console.log(product.categories);
-
   const breadcrumbItems =
-    product?.categories?.map((category) => ({
-      href: `/shop?categoryIds=${category.id}`,
-      name: category.name,
-    })) || [];
+    product?.categories?.slice(0, 2).map((_, index) => {
+      const href = `/product-category/${product.categories
+        .slice(0, index + 1)
+        .map((c) => c.slug)
+        .join('/')}`;
+      return {
+        name: product.categories[index].name,
+        href,
+      };
+    }) || [];
 
   return (
     <>

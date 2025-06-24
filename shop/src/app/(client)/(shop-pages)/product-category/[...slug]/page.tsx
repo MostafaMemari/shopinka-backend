@@ -61,7 +61,7 @@ export default async function ShopPage({ searchParams, params }: PageProps) {
 
   return (
     <>
-      <CategoryChildrenGrid name={category.name} categories={category.children} />
+      <CategoryChildrenGrid name={category.name} basePath={`product-category/${category.slug}`} categories={category.children} />
 
       <div className="mb-6 flex items-center justify-center gap-x-4 md:hidden">
         <MobileFilter totalCount={pager.totalCount} type="SHOP" />
@@ -75,7 +75,7 @@ export default async function ShopPage({ searchParams, params }: PageProps) {
               className="custom-scrollbar flex max-h-[calc(95vh_-_100px)] flex-col overflow-y-auto overflow-x-hidden px-4 py-3"
             >
               <div dir="rtl">
-                <ResetFilters resetPath="/shop" />
+                <ResetFilters />
                 <ul className="space-y-6">
                   <SearchInput />
                   <PriceSelector />

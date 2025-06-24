@@ -4,15 +4,14 @@ import { useRouter } from 'next/navigation';
 
 interface ResetFiltersProps {
   title?: string;
-  resetPath?: string;
   buttonText?: string;
 }
 
-function ResetFilters({ title = 'فیلترها', resetPath = '/', buttonText = 'حذف همه' }: ResetFiltersProps) {
+function ResetFilters({ title = 'فیلترها', buttonText = 'حذف همه' }: ResetFiltersProps) {
   const router = useRouter();
 
   const handleReset = () => {
-    router.replace(resetPath);
+    router.replace(window.location.pathname);
   };
 
   return (
