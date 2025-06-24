@@ -61,6 +61,7 @@ export class CategoryService {
       includeBlogs,
       includeProducts,
       type,
+      includeOnlyTopLevel,
     } = queryCategoryDto;
 
     const sortedDto = sortObject(queryCategoryDto);
@@ -71,7 +72,7 @@ export class CategoryService {
 
     if (cachedCategories) return { ...pagination(paginationDto, cachedCategories) };
 
-    const filters: Prisma.CategoryWhereInput = { parent: null };
+    const filters: Prisma.CategoryWhereInput = {};
 
     if (type) filters.type = type;
     if (description) filters.description = { contains: description, mode: 'insensitive' };
@@ -81,6 +82,9 @@ export class CategoryService {
       filters.createdAt = {};
       if (startDate) filters.createdAt.gte = new Date(startDate);
       if (endDate) filters.createdAt.lte = new Date(endDate);
+    }
+    if (includeOnlyTopLevel === true) {
+      filters.parent = null;
     }
 
     const include: Prisma.CategoryInclude = {

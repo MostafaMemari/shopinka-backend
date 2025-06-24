@@ -17,6 +17,7 @@ import MobileSortDrawer from '@/components/filter/MobileSortDrawer';
 import ResetFilters from '@/components/filter/ResetFilters';
 import { getCategories } from '@/service/categoryService';
 import CategoryChildrenGrid from '@/components/category/CategoryChildrenGrid';
+import { Category } from '@/types/categoryType';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;
@@ -25,9 +26,11 @@ type PageProps = {
 export default async function ShopPage({ searchParams }: PageProps) {
   const params = await loadSearchParams(searchParams);
 
+  console.log('params', params);
+
   const query: ProductParams = {
     page: params.page ?? 1,
-    take: params.perPage ?? 20,
+    take: params.perPage ?? 10,
     hasDiscount: params.hasDiscount ?? undefined,
     categoryIds: parseArrayParam(params.categoryIds ?? undefined),
     attributeValueIds: parseArrayParam(params.attributeValueIds ?? undefined),
@@ -43,9 +46,13 @@ export default async function ShopPage({ searchParams }: PageProps) {
         : undefined,
   };
 
-  const categories = await getCategories({ type: 'PRODUCT', includeThumbnailImage: true });
-
-  console.log(categories);
+  const categories = await getCategories({
+    type: 'PRODUCT',
+    includeThumbnailImage: true,
+    includeChildren: true,
+    childrenDepth: 3,
+    includeOnlyTopLevel: true,
+  });
 
   const { items, pager } = await getProducts(query);
 
@@ -69,7 +76,10 @@ export default async function ShopPage({ searchParams }: PageProps) {
                 <ul className="space-y-6">
                   <SearchInput />
                   <PriceSelector />
-                  <CategorySelector type="SHOP" title="فیلتر بر اساس دسته‌بندی" />
+                  <CategorySelector
+                    title="فیلتر بر اساس دسته‌بندی"
+                    categories={categories.items.map((cat: Category) => cat.children).flat()}
+                  />
                   <StockStatusFilter />
                   <DiscountFilter />
                 </ul>

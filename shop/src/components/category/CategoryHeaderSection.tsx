@@ -16,7 +16,7 @@ export default function CategoryHeaderSection({ name, description, thumbnailImag
     <section className="mt-8" itemScope itemType="https://schema.org/CollectionPage">
       <div className="container bg-muted mx-auto rounded-xl p-4 flex flex-col items-center">
         {thumbnailImage && (
-          <div className="w-full max-w-2xl h-32 mb-4 rounded-lg overflow-hidden">
+          <div className="w-32 h-32 mb-4 rounded-lg overflow-hidden">
             <Image
               src={thumbnailImage?.fileUrl || NoImage.PRODUCT}
               alt={name ? `عکس دسته‌بندی ${name}` : 'تصویر دسته‌بندی'}

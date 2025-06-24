@@ -15,7 +15,7 @@ import SortBar from '@/components/filter/SortBar';
 import MobileFilter from '@/components/filter/MobileFilter';
 import MobileSortDrawer from '@/components/filter/MobileSortDrawer';
 import ResetFilters from '@/components/filter/ResetFilters';
-import { getCategoryBySlug } from '@/service/categoryService';
+import { getCategories, getCategoryBySlug } from '@/service/categoryService';
 import CategoryChildrenGrid from '@/components/category/CategoryChildrenGrid';
 import CategoryHeaderSection from '@/components/category/CategoryHeaderSection';
 
@@ -47,13 +47,20 @@ export default async function ShopPage({ searchParams, params }: PageProps) {
         : undefined,
   };
 
-  const category = await getCategoryBySlug(lastSlug);
+  const { items: category } = await getCategories({
+    type: 'PRODUCT',
+    slug: lastSlug,
+    includeOnlyTopLevel: false,
+    includeThumbnailImage: true,
+    includeChildren: true,
+    childrenDepth: 3,
+  });
 
-  const { items, pager } = await getProducts({ ...query, categoryIds: category ? [category.id] : [] });
+  const { items: products, pager } = await getProducts({ ...query, categoryIds: category[0] ? [category[0].id] : [] });
 
   return (
     <>
-      <CategoryChildrenGrid name={category.name} categories={category.children} />
+      <CategoryChildrenGrid name={category[0].name} categories={category[0].children} />
 
       <div className="mb-6 flex items-center justify-center gap-x-4 md:hidden">
         <MobileFilter totalCount={pager.totalCount} type="SHOP" />
@@ -71,7 +78,7 @@ export default async function ShopPage({ searchParams, params }: PageProps) {
                 <ul className="space-y-6">
                   <SearchInput />
                   <PriceSelector />
-                  <CategorySelector type="SHOP" title="فیلتر بر اساس دسته‌بندی" />
+                  <CategorySelector title="فیلتر بر اساس دسته‌بندی" categories={category[0].children} />
                   <StockStatusFilter />
                   <DiscountFilter />
                 </ul>
@@ -82,7 +89,7 @@ export default async function ShopPage({ searchParams, params }: PageProps) {
         <div className="col-span-12 space-y-4 md:col-span-8 lg:col-span-9">
           <SortBar options={PRODUCT_SORT_OPTIONS} queryKey="sortBy" />
           <Suspense fallback={<div>Loading...</div>}>
-            <ProductListShopClient query={query} initialProducts={items || []} pager={pager} />
+            <ProductListShopClient query={query} initialProducts={products || []} pager={pager} />
           </Suspense>
         </div>
       </div>

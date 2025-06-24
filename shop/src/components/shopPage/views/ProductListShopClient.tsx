@@ -69,7 +69,7 @@ export default function ProductListShopClient({ query, initialProducts, pager }:
     setIsLoading(true);
     try {
       const { items, pager: newPager } = await getProducts({ ...query, page: targetPage });
-      setProducts(items); // Replace products for pagination, append for infinite scroll
+      setProducts(items);
       setPage(targetPage);
       setTotalPages(newPager?.totalPages || 1);
       setHasMore((newPager?.hasNextPage ?? false) && items.length === (query.take ?? 10) && targetPage < MAX_PAGES);

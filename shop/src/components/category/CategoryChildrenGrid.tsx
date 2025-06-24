@@ -1,4 +1,5 @@
 import { Category } from '@/types/categoryType';
+import { PlaceholderImageEnum } from '@/types/enums/PlaceholderImageEnum';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -34,7 +35,7 @@ export default function CategoryChildrenGrid({ name, categories }: CategoryChild
               >
                 <div className="w-20 h-20 rounded-lg overflow-hidden flex items-center justify-center bg-gray-50 mb-2">
                   <Image
-                    src={child?.thumbnailImage?.fileUrl || '/placeholder.jpg'}
+                    src={child?.thumbnailImage?.fileUrl || PlaceholderImageEnum.SQUARE}
                     alt={child?.name || 'زیر دسته'}
                     width={80}
                     height={80}

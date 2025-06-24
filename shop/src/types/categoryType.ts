@@ -20,6 +20,7 @@ export type CategoryParams = {
   description?: string;
   type: 'BLOG' | 'PRODUCT';
   childrenDepth?: number;
+  includeOnlyTopLevel?: boolean;
   includeUser?: boolean;
   includeBlogs?: boolean;
   includeProducts?: boolean;
