@@ -26,7 +26,9 @@ export default function RootLayout({
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <body className={`${iranyekan} antialiased`}>
         <NextTopLoader showSpinner={false} color="#b22222" />
-        <ScrollToTop />
+        <Suspense>
+          <ScrollToTop />
+        </Suspense>
 
         <ClientProvider>
           <div className="flex min-h-screen flex-col">

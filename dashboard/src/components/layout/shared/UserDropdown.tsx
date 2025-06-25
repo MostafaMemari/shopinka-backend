@@ -72,7 +72,6 @@ const UserDropdown = () => {
         router.push('/login')
       }
     } catch (err) {
-      console.log(err)
       showToast({ type: 'error', message: 'خروج با خطا مواجه شد' })
     }
   }

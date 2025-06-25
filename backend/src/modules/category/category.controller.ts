@@ -39,8 +39,6 @@ export class CategoryController {
   @Get('by-slug/:slug')
   @SkipAuth()
   findOneBySlug(@Param('slug') slug: string) {
-    console.log(slug);
-
     return this.categoryService.findOneBySlug(slug);
   }
 

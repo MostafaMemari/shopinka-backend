@@ -19,8 +19,6 @@ const UpdateTagModal = ({ children, initialData }: UpdateTagModalProps) => {
   const handleOpen = useCallback(() => setOpen(true), [])
   const handleClose = useCallback(() => setOpen(false), [])
 
-  console.log(initialData)
-
   const { control, errors, setValue, isLoading, onSubmit } = useTagForm({
     initialData,
     isUpdate: true,

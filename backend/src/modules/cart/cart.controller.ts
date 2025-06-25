@@ -17,7 +17,6 @@ export class CartController {
 
   @Get('me')
   me(@GetUser() user: User) {
-    console.log('cart', new Date().toLocaleString('fa-ir'));
     return this.cartService.me(user.id);
   }
 
@@ -40,8 +39,6 @@ export class CartController {
   @Post('items')
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   addItems(@Body() bulkDto: BulkCreateCartItemDto, @GetUser() user: User) {
-    console.log(bulkDto);
-
     return this.cartService.addItems(user.id, bulkDto.items);
   }
 

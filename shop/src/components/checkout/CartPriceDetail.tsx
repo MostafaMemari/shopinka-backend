@@ -34,9 +34,7 @@ export default function CartPriceDetail({ selectedAddressId, selectedShippingIte
         shippingId: selectedShippingItem?.id ?? 0,
         description: 'testtttt',
       },
-      () => {
-        console.log('Payment created successfully');
-      },
+      () => {},
     );
   };
 

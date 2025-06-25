@@ -26,8 +26,6 @@ export const createAttributeValues = async (data: Omit<AttributeValueForm, 'id'>
     body: { ...data }
   })
 
-  console.log(res)
-
   return {
     ...res
   }

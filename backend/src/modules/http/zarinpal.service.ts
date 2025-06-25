@@ -30,7 +30,6 @@ export class ZarinpalService {
         .pipe(map((res) => res.data))
         .pipe(
           catchError((err) => {
-            console.log(err.response);
             throw new InternalServerErrorException('Zarinpal error');
           }),
         ),
@@ -56,8 +55,6 @@ export class ZarinpalService {
       accessToken: process.env.ZARINPAL_ACCESS_TOKEN,
       merchantId: process.env.ZARINPAL_MERCHANT_ID,
     });
-
-    console.log(refundDto, process.env.ZARINPAL_ACCESS_TOKEN);
 
     const result = await zarinpal.refunds.create({
       amount,

@@ -32,8 +32,6 @@ export const getBlogById = async (id: number): Promise<{ status: number; data: B
 }
 
 export const updateBlog = async (id: number, data: Partial<Blog>): Promise<{ status: number; data: Blog | null }> => {
-  console.log(data)
-
   const res = await serverApiFetch(`/blog/${id}`, {
     method: 'PATCH',
     body: { ...data }
@@ -67,8 +65,6 @@ export const createBlog = async (data: Blog): Promise<{ status: number; data: { 
 
 export const removeBlog = async (id: string): Promise<{ status: number; data: { message: string; blog: Blog } | null }> => {
   const res = await serverApiFetch(`/blog/${id}`, { method: 'DELETE' })
-
-  console.log(res)
 
   return {
     ...res

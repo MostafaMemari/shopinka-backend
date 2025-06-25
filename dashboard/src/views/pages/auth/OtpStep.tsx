@@ -128,7 +128,6 @@ const OtpInputComponent = ({ phoneNumber, onBack }: { phoneNumber: string; onBac
         autoComplete='off'
         onSubmit={e => {
           e.preventDefault()
-          console.log('Form Submitted with OTP:', otp)
         }}
         className='flex flex-col gap-6'
       >

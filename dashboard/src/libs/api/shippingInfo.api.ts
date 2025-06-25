@@ -16,8 +16,6 @@ export const updateShippingInfo = async (id: string, data: Partial<ShippingInfoF
     body: { ...data }
   })
 
-  console.log(res)
-
   return {
     ...res
   }
@@ -28,8 +26,6 @@ export const addShippingInfo = async (data: ShippingInfoForm): Promise<{ status:
     method: 'POST',
     body: { ...data, sentAt: new Date() }
   })
-
-  console.log(res)
 
   return {
     ...res

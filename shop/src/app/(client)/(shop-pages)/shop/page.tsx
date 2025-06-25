@@ -69,7 +69,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
               className="custom-scrollbar flex max-h-[calc(95vh_-_100px)] flex-col overflow-y-auto overflow-x-hidden px-4 py-3"
             >
               <div dir="rtl">
-                <ResetFilters resetPath="/shop" />
+                <ResetFilters />
                 <ul className="space-y-6">
                   <SearchInput />
                   <PriceSelector />

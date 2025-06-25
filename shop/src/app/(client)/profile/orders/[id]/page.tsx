@@ -24,8 +24,6 @@ async function Page({ params }: PageProps) {
     notFound();
   }
 
-  console.log(order);
-
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="mb-10 flex flex-col items-center justify-between gap-y-6 sm:flex-row">

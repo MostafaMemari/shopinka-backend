@@ -5,8 +5,8 @@ import { useToggleFavorite } from '@/hooks/reactQuery/favorite/useToggleFavorite
 import { useProductFavorite } from '@/hooks/reactQuery/product/useProduct';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { cn } from '@/utils/utils';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import React from 'react';
 import { FaSpinner } from 'react-icons/fa';
 import { HiHeart, HiOutlineHeart } from 'react-icons/hi';
 

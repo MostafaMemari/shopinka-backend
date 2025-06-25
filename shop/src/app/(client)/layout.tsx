@@ -1,6 +1,5 @@
 import Footer from '@/components/footer';
 import Header from '@/components/header';
-import ScrollToTop from '@/components/ScrollToTop';
 import MobileLayout from '@/components/ui/MobileLayout';
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

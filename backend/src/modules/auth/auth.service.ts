@@ -58,7 +58,6 @@ export class AuthService {
 
       const verifiedToken = this.jwtService.verify<{ id: number }>(verifyTokenDto.accessToken, { secret: ACCESS_TOKEN_SECRET });
 
-      console.log(verifiedToken);
       if (!verifiedToken.id) {
         throw new BadRequestException(AuthMessages.InvalidAccessTokenPayload);
       }
