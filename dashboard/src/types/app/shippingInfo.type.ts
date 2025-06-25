@@ -1,4 +1,4 @@
-import { InferType } from 'yup'
+import * as yup from 'yup'
 import { shippingInfoSchema } from '@/libs/validators/shippingInfo.schema'
 
 export type ShippingInfo = {
@@ -10,4 +10,4 @@ export type ShippingInfo = {
   updatedAt: string
 }
 
-export type ShippingInfoForm = InferType<typeof shippingInfoSchema>
+export type ShippingInfoForm = yup.InferType<typeof shippingInfoSchema>

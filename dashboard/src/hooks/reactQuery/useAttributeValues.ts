@@ -1,12 +1,12 @@
 import { useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { AttributeValueSchema } from '@/libs/validators/attributeValues.schema'
 import { createAttributeValues, updateAttributeValues } from '@/libs/api/attributeValues.api'
 import { AttributeValueForm, AttributeType } from '@/types/app/productAttributes.type'
 import { errorAttributeMessage } from '@/messages/attributeMessages'
 import { QueryKeys } from '@/types/enums/query-keys'
 import { useFormSubmit } from '../useFormSubmit'
+import { AttributeValueSchema } from '@/libs/validators/attributeValues.schema'
 
 interface UseAttributeValueFormProps {
   initialData?: Partial<AttributeValueForm & { id: string }>
@@ -16,7 +16,7 @@ interface UseAttributeValueFormProps {
   handleModalClose?: () => void
 }
 
-export const useAttributeValueForm = ({ initialData, attributeType, attributeId, isUpdate = false, handleModalClose }: UseAttributeValueFormProps) => {
+export const useAttributeValueForm = ({ initialData, attributeId, isUpdate = false, handleModalClose }: UseAttributeValueFormProps) => {
   const defaultValues: AttributeValueForm = {
     name: initialData?.name ?? '',
     slug: initialData?.slug ?? '',
@@ -32,8 +32,7 @@ export const useAttributeValueForm = ({ initialData, attributeType, attributeId,
     formState: { errors }
   } = useForm<AttributeValueForm>({
     defaultValues,
-    resolver: yupResolver(AttributeValueSchema(attributeType)),
-    context: { type: attributeType }
+    resolver: yupResolver(AttributeValueSchema)
   })
 
   const handleClose = useCallback(() => {

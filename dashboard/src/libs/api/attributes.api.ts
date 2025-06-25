@@ -26,7 +26,7 @@ export const removeAttribute = async (id: string): Promise<{ status: number; dat
   }
 }
 
-export const updateAttribute = async (id: string, data: Partial<AttributeValueForm>): Promise<{ status: number; data: Attribute | null }> => {
+export const updateAttribute = async (id: string, data: Partial<AttributeFormType>): Promise<{ status: number; data: Attribute | null }> => {
   const res = await serverApiFetch(`/attribute/${id}`, {
     method: 'PATCH',
     body: { ...data }

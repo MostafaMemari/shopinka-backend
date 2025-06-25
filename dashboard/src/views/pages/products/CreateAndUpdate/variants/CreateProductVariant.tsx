@@ -51,6 +51,7 @@ const CreateProductVariantModal = ({ children, productId, existingAttributeCombi
 
   useEffect(() => {
     const fields: (keyof ProductVariantForm)[] = ['quantity', 'basePrice', 'salePrice', 'width', 'height', 'length', 'weight']
+
     fields.forEach(field => setValue(field, watch(field) || null))
   }, [watch, setValue])
 
@@ -66,6 +67,7 @@ const CreateProductVariantModal = ({ children, productId, existingAttributeCombi
       .filter((id): id is number => id !== null)
       .sort()
       .join(',')
+
     return existingAttributeCombinations.includes(currentCombination)
   }, [selectedValues, existingAttributeCombinations])
 
@@ -86,8 +88,10 @@ const CreateProductVariantModal = ({ children, productId, existingAttributeCombi
   const handleSubmit = useCallback(() => {
     if (isDuplicate) {
       showToast({ type: 'error', message: 'این ترکیب ویژگی‌ها قبلاً وجود دارد!' })
+
       return
     }
+
     onSubmit()
   }, [isDuplicate, onSubmit])
 

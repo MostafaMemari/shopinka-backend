@@ -1,3 +1,7 @@
+import { attributeSchema } from '@/libs/validators/attribute.schema'
+import { AttributeValueSchema } from '@/libs/validators/attributeValues.schema'
+import * as yup from 'yup'
+
 export enum AttributeType {
   COLOR = 'COLOR',
   BUTTON = 'BUTTON'
@@ -28,20 +32,16 @@ export type AttributeValue = {
   updatedAt: string
 }
 
-export type AttributeFormType = {
-  name: string
-  slug: string
-  type: AttributeType
-  description: string | null
-}
+export type AttributeFormType = yup.InferType<typeof attributeSchema>
+export type AttributeValueForm = yup.InferType<typeof AttributeValueSchema>
 
-export type AttributeValueForm = {
-  name: string
-  slug: string
-  colorCode: string | null
-  buttonLabel: string | null
-  attributeId: string
-}
+// export type AttributeValueForm = {
+//   name: string
+//   slug: string
+//   colorCode: string | null
+//   buttonLabel: string | null
+//   attributeId: string
+// }
 
 export type VariantCombination = {
   [key: string]: string

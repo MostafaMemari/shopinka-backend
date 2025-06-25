@@ -15,5 +15,6 @@ export const attributeSchema = yup.object({
     .max(50, 'نامک نمی‌تواند بیشتر از 50 کاراکتر باشد')
     .default(null),
   type: yup.string().oneOf(Object.values(AttributeType), 'نوع ویژگی نامعتبر است').required('نوع ویژگی الزامی است'),
+
   description: yup.string().nullable().default(null)
 })
