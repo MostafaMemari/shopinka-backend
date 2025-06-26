@@ -78,9 +78,10 @@ function PhoneInputForm({ mobile, setMobile, handleShowOpt }: PhoneInputFormProp
           </div>
           <p className="text-center text-sm text-text/90">
             با ورود به فروشگاه،
-            <a href="./rules-and-terms.html" className="text-primary">
+            <a href="/info/terms-of-service" className="text-primary">
+              {' '}
               کلیه قوانین
-            </a>
+            </a>{' '}
             را می‌پذیرم
           </p>
         </Form>
