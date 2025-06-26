@@ -6,6 +6,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -202,11 +203,14 @@ export class AuthService {
   private async sendSms(mobile: string, verifyCode: string): Promise<void | never> {
     const { SMS_API_KEY, SMS_LINE_NUMBER, SMS_TEMPLATE_ID, SMS_NAME } = process.env;
     const sms = new Smsir(SMS_API_KEY, Number(SMS_LINE_NUMBER));
-    console.log(mobile, verifyCode);
-    //TODO: Uncomment send otp
-    // const result = await sms.SendVerifyCode(mobile, Number(SMS_TEMPLATE_ID), [{ name: SMS_NAME, value: verifyCode }]);
 
-    // if (result.data?.status !== 1) throw new InternalServerErrorException(AuthMessages.ProblemSendingSms);
+    if (process.env.NODE_ENV === 'production') {
+      const result = await sms.SendVerifyCode(mobile, Number(SMS_TEMPLATE_ID), [{ name: SMS_NAME, value: verifyCode }]);
+
+      if (result.data?.status !== 1) throw new InternalServerErrorException(AuthMessages.ProblemSendingSms);
+    } else {
+      console.log(mobile, verifyCode);
+    }
   }
 
   private async clearOtpData(mobile: string): Promise<void | never> {
