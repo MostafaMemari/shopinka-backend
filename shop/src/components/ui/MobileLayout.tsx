@@ -49,7 +49,7 @@ const MobileLayout = ({ showHeader = true, showNav = true }: MobileLayoutProps) 
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
-  if (pathname.startsWith('/product')) return null;
+  if (pathname.startsWith('/product') && !pathname.startsWith('/product-category')) return null;
 
   return (
     <div className="lg:hidden">
