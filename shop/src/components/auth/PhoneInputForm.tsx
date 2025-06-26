@@ -5,6 +5,7 @@ import { sendOtp } from '@/service/authService';
 import { handleApiError } from '@/utils/handleApiError';
 import { validateIranPhoneNumber } from '../../validation/validateIranPhoneNumber';
 import PrimaryButton from '@/components/ui/PrimaryButton';
+import Link from 'next/link';
 
 export const errorPhoneNumberStepMessages: Record<number, string> = {
   400: 'شماره نامعتبر است',
@@ -78,10 +79,10 @@ function PhoneInputForm({ mobile, setMobile, handleShowOpt }: PhoneInputFormProp
           </div>
           <p className="text-center text-sm text-text/90">
             با ورود به فروشگاه،
-            <a href="/info/terms-of-service" className="text-primary">
+            <Link href="/info/terms-of-service" className="text-primary">
               {' '}
               کلیه قوانین
-            </a>{' '}
+            </Link>{' '}
             را می‌پذیرم
           </p>
         </Form>
