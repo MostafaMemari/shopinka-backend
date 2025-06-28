@@ -11,8 +11,8 @@ export class GalleryItemRepository {
     return this.prismaService.galleryItem.create(args);
   }
 
-  createMany(args: Prisma.GalleryItemCreateManyAndReturnArgs): Promise<GalleryItem[]> {
-    return this.prismaService.galleryItem.createManyAndReturn(args);
+  createMany(args: Prisma.GalleryItemCreateManyArgs): Promise<Prisma.BatchPayload> {
+    return this.prismaService.galleryItem.createMany(args);
   }
 
   findOne(args: Prisma.GalleryItemFindFirstArgs): Promise<null | GalleryItem> {
@@ -27,8 +27,8 @@ export class GalleryItemRepository {
     return this.prismaService.galleryItem.update(args);
   }
 
-  updateMany(args: Prisma.GalleryItemUpdateManyAndReturnArgs): Promise<GalleryItem[]> {
-    return this.prismaService.galleryItem.updateManyAndReturn(args);
+  updateMany(args: Prisma.GalleryItemUpdateManyArgs): Promise<Prisma.BatchPayload> {
+    return this.prismaService.galleryItem.updateMany(args);
   }
 
   delete(args: Prisma.GalleryItemDeleteArgs): Promise<GalleryItem> {

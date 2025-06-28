@@ -80,20 +80,24 @@ export class GalleryItemService {
 
       thumbnails = await this.generateAndUploadThumbnails(files, folder);
 
-      const galleryItems = await this.galleryItemRepository.createMany({
-        data: originals.map((file, index) => ({
-          fileKey: file.key,
-          fileUrl: file.url,
-          thumbnailKey: thumbnails[index].key,
-          thumbnailUrl: thumbnails[index].url,
-          mimetype: files[index].mimetype,
-          size: files[index].size,
-          title: createGalleryItemDto.title ?? files[index].originalname,
-          description: createGalleryItemDto.description,
-          galleryId: gallery.id,
-        })),
-        include: { gallery: true },
-      });
+      const galleryItems = await Promise.all(
+        originals.map((file, index) =>
+          this.galleryItemRepository.create({
+            data: {
+              fileKey: file.key,
+              fileUrl: file.url,
+              thumbnailKey: thumbnails[index].key,
+              thumbnailUrl: thumbnails[index].url,
+              mimetype: files[index].mimetype,
+              size: files[index].size,
+              title: createGalleryItemDto.title ?? files[index].originalname,
+              description: createGalleryItemDto.description,
+              galleryId: gallery.id,
+            },
+            include: { gallery: true },
+          }),
+        ),
+      );
 
       return { message: GalleryItemMessages.CreatedGalleryItemsSuccess, galleryItems };
     } catch (error) {
@@ -147,8 +151,8 @@ export class GalleryItemService {
       if (minSize) filters.size.gte = minSize;
       if (maxSize) filters.size.lte = maxSize;
     }
-    if (description) filters.description = { contains: description, mode: 'insensitive' };
-    if (title) filters.title = { contains: title, mode: 'insensitive' };
+    if (description) filters.description = { contains: description };
+    if (title) filters.title = { contains: title };
     if (startDate || endDate) {
       filters.createdAt = {};
       if (startDate) filters.createdAt.gte = new Date(startDate);
@@ -195,12 +199,20 @@ export class GalleryItemService {
       where: { id: { in: galleryItemIds }, gallery: { userId }, NOT: { galleryId }, isDeleted: false },
     });
 
-    const updatedItems = await this.galleryItemRepository.updateMany({
-      where: { id: { in: galleryItems.map((i) => i.id) } },
-      data: { galleryId },
-    });
+    const updatedItems = await Promise.all(
+      galleryItems.map((item) =>
+        this.galleryItemRepository.update({
+          where: { id: item.id },
+          data: { galleryId },
+          include: { gallery: true },
+        }),
+      ),
+    );
 
-    return { message: GalleryItemMessages.MovedGalleryItemsSuccess, galleryItems: updatedItems };
+    return {
+      message: GalleryItemMessages.MovedGalleryItemsSuccess,
+      galleryItems: updatedItems,
+    };
   }
 
   async duplicate(
@@ -213,17 +225,34 @@ export class GalleryItemService {
       where: { id: { in: galleryItemIds }, gallery: { userId }, NOT: { galleryId }, isDeleted: false },
     });
 
-    const updatedItems = await this.galleryItemRepository.createMany({
-      data: galleryItems.map((i) => ({ ...i, galleryId, id: undefined, createdAt: undefined, updatedAt: undefined })),
-    });
+    const duplicatedGalleryItems = await Promise.all(
+      galleryItems.map((i) =>
+        this.galleryItemRepository.create({
+          data: {
+            ...i,
+            id: undefined,
+            galleryId,
+            createdAt: undefined,
+            updatedAt: undefined,
+          },
+        }),
+      ),
+    );
 
-    return { message: GalleryItemMessages.DuplicatedGalleryItemsSuccess, galleryItems: updatedItems };
+    return {
+      message: GalleryItemMessages.DuplicatedGalleryItemsSuccess,
+      galleryItems: duplicatedGalleryItems,
+    };
   }
 
   async restore(userId: number, { galleryItemIds }: RestoreGalleryItemDto): Promise<{ message: string; galleryItems: GalleryItem[] }> {
-    const updatedGalleryItems = await this.galleryItemRepository.updateMany({
+    await this.galleryItemRepository.updateMany({
       where: { id: { in: galleryItemIds }, gallery: { userId } },
       data: { isDeleted: false, deletedAt: null },
+    });
+
+    const updatedGalleryItems = await this.galleryItemRepository.findAll({
+      where: { id: { in: galleryItemIds }, gallery: { userId } },
     });
 
     return { message: GalleryItemMessages.RestoredGalleryItemsSuccess, galleryItems: updatedGalleryItems };
@@ -233,7 +262,9 @@ export class GalleryItemService {
     userId: number,
     { galleryItemIds, isForce }: RemoveGalleryItemDto,
   ): Promise<{ message: string; galleryItems: GalleryItem[] }> {
-    const galleryItems = await this.galleryItemRepository.findAll({ where: { id: { in: galleryItemIds }, gallery: { userId } } });
+    const galleryItems = await this.galleryItemRepository.findAll({
+      where: { id: { in: galleryItemIds }, gallery: { userId } },
+    });
 
     if (isForce) {
       await this.awsService.removeFiles(galleryItems.map((item) => item.fileKey));
@@ -244,12 +275,19 @@ export class GalleryItemService {
       return { message: GalleryItemMessages.RemovedGalleryItemsSuccess, galleryItems };
     }
 
-    const updatedGalleryItem = await this.galleryItemRepository.updateMany({
-      where: { id: { in: galleryItemIds } },
+    await this.galleryItemRepository.updateMany({
+      where: { id: { in: galleryItemIds }, gallery: { userId } },
       data: { deletedAt: new Date(), isDeleted: true },
     });
 
-    return { message: GalleryItemMessages.TrashedGalleryItemsSuccess, galleryItems: updatedGalleryItem };
+    const updatedGalleryItems = await this.galleryItemRepository.findAll({
+      where: { id: { in: galleryItemIds }, gallery: { userId } },
+    });
+
+    return {
+      message: GalleryItemMessages.TrashedGalleryItemsSuccess,
+      galleryItems: updatedGalleryItems,
+    };
   }
 
   private async generateAndUploadThumbnails(files: Express.Multer.File[], folder: string): Promise<IUploadSingleFile[]> {

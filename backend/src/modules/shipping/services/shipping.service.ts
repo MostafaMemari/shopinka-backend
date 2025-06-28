@@ -51,7 +51,7 @@ export class ShippingService {
 
     const filters: Prisma.ShippingWhereInput = {};
 
-    if (name) filters.name = { contains: name, mode: 'insensitive' };
+    if (name) filters.name = { contains: name };
     if (estimatedDays) filters.estimatedDays = estimatedDays;
     if (isActive !== undefined) filters.isActive = isActive;
     if (startDate || endDate) {

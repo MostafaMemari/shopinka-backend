@@ -24,9 +24,10 @@ const SeoKeywordsInputWithContext: React.FC = () => {
             setInputValue(newInputValue)
           }}
           onChange={(_, newValue) => {
-            const uniqueValues = Array.from(new Set(newValue.map(v => v.trim()).filter(v => v)))
-            
+            const uniqueValues = Array.from(new Set((newValue ?? []).map(v => v.trim()).filter(v => v.length > 0)))
+
             setValue('seo_keywords', uniqueValues, { shouldValidate: true })
+
             field.onChange(uniqueValues)
           }}
           renderInput={params => (

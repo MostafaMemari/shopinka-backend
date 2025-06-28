@@ -50,7 +50,7 @@ export class TagService {
     const filters: Prisma.TagWhereInput = {};
     if (type) filters.type = type;
 
-    if (name) filters.name = { contains: name, mode: 'insensitive' };
+    if (name) filters.name = { contains: name };
     if (startDate || endDate) {
       filters.createdAt = {};
       if (startDate) filters.createdAt.gte = new Date(startDate);

@@ -23,7 +23,7 @@ export class GalleryService {
 
   async create(userId: number, createGalleryDto: CreateGalleryDto): Promise<{ message: string; gallery: Gallery }> {
     const existingGallery = await this.galleryRepository.findOne({
-      where: { title: { equals: createGalleryDto.title, mode: 'insensitive' } },
+      where: { title: { equals: createGalleryDto.title } },
     });
 
     if (existingGallery) throw new ConflictException(GalleryMessages.AlreadyExistsGallery);
@@ -47,8 +47,8 @@ export class GalleryService {
 
     const filters: Prisma.GalleryWhereInput = { userId };
 
-    if (description) filters.description = { contains: description, mode: 'insensitive' };
-    if (title) filters.title = { contains: title, mode: 'insensitive' };
+    if (description) filters.description = { contains: description };
+    if (title) filters.title = { contains: title };
     if (startDate || endDate) {
       filters.createdAt = {};
       if (startDate) filters.createdAt.gte = new Date(startDate);
@@ -75,7 +75,6 @@ export class GalleryService {
       where: {
         title: {
           equals: updateGalleryDto.title,
-          mode: 'insensitive',
         },
         NOT: { id: galleryId },
         userId,

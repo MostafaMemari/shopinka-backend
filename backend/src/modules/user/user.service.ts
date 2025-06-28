@@ -39,8 +39,8 @@ export class UserService {
     const filters: Prisma.UserWhereInput = {};
 
     if (isVerifiedMobile !== undefined) filters.isVerifiedMobile = isVerifiedMobile;
-    if (fullName) filters.fullName = { contains: fullName, mode: 'insensitive' };
-    if (mobile) filters.mobile = { contains: mobile, mode: 'insensitive' };
+    if (fullName) filters.fullName = { contains: fullName };
+    if (mobile) filters.mobile = { contains: mobile };
     if (role) filters.role = role;
     if (lastMobileChange) filters.lastMobileChange = lastMobileChange;
     if (startDate || endDate) {

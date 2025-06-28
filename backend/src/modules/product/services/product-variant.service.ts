@@ -94,8 +94,8 @@ export class ProductVariantService {
 
     const filters: Prisma.ProductVariantWhereInput = {};
 
-    if (sku) filters.sku = { contains: sku, mode: 'insensitive' };
-    if (shortDescription) filters.shortDescription = { contains: shortDescription, mode: 'insensitive' };
+    if (sku) filters.sku = { contains: sku };
+    if (shortDescription) filters.shortDescription = { contains: shortDescription };
     if (salePrice) filters.salePrice = salePrice;
     if (height) filters.height = height;
     if (weight) filters.weight = weight;

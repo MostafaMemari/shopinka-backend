@@ -33,6 +33,7 @@ export class SeoService {
     if (ogImageId) {
       await this.galleryItemRepository.findOneOrThrow({ where: { id: ogImageId } });
     }
+
     if (productId && entityType === EntityType.PRODUCT) {
       await this.productRepository.findOneOrThrow({ where: { id: productId } });
     }
@@ -45,6 +46,15 @@ export class SeoService {
     if (categoryId && entityType === EntityType.CATEGORY) {
       await this.categoryRepository.findOneOrThrow({ where: { id: categoryId } });
     }
+
+    const keywords = Array.isArray(seoMetaDto.keywords) ? seoMetaDto.keywords.join(',') : (seoMetaDto.keywords ?? null);
+
+    const relationData: any = {};
+    if (productId) relationData.product = { connect: { id: productId } };
+    if (blogId) relationData.blog = { connect: { id: blogId } };
+    if (tagId) relationData.tag = { connect: { id: tagId } };
+    if (categoryId) relationData.category = { connect: { id: categoryId } };
+    if (ogImageId) relationData.ogImage = { connect: { id: ogImageId } };
 
     const existingSeo = await this.seoMetaRepository.findOne({
       where: {
@@ -59,22 +69,29 @@ export class SeoService {
       },
     });
 
+    const dataForPrisma = {
+      user: { connect: { id: userId } },
+      entityType,
+      keywords,
+      robotsTag: seoMetaDto.robotsTag ?? RobotsMetaTag.IndexFollow,
+      title: seoMetaDto.title,
+      description: seoMetaDto.description,
+      canonicalUrl: seoMetaDto.canonicalUrl,
+      ogTitle: seoMetaDto.ogTitle,
+      ogDescription: seoMetaDto.ogDescription,
+      ...relationData,
+    };
+
     if (existingSeo) {
       const updatedSeo = await this.seoMetaRepository.update({
         where: { id: existingSeo.id, userId },
-        data: { ...seoMetaDto, entityType },
+        data: dataForPrisma,
       });
       return { message: SeoMetaMessages.UpdatedSeoMetaSuccess, seoMeta: updatedSeo };
     }
 
-    // ایجاد سئوی جدید
     const seoMeta = await this.seoMetaRepository.create({
-      data: {
-        userId,
-        ...seoMetaDto,
-        entityType,
-        robotsTag: seoMetaDto.robotsTag ?? RobotsMetaTag.IndexFollow,
-      },
+      data: dataForPrisma,
     });
 
     return { message: SeoMetaMessages.CreatedSeoMetaSuccess, seoMeta };

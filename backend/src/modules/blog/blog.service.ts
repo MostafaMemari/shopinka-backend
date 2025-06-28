@@ -94,7 +94,7 @@ export class BlogService {
       filters.tags = { some: { id: { in: tagIds } } };
     }
 
-    if (search) filters.title = { contains: search, mode: 'insensitive' };
+    if (search) filters.title = { contains: search };
     if (startDate || endDate) {
       filters.createdAt = {};
       if (startDate) filters.createdAt.gte = new Date(startDate);

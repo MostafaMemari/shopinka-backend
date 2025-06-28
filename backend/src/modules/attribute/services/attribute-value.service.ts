@@ -67,10 +67,10 @@ export class AttributeValueService {
 
     const filters: Prisma.AttributeValueWhereInput = {};
 
-    if (colorCode) filters.colorCode = { contains: colorCode, mode: 'insensitive' };
-    if (buttonLabel) filters.buttonLabel = { contains: buttonLabel, mode: 'insensitive' };
-    if (name) filters.name = { contains: name, mode: 'insensitive' };
-    if (slug) filters.slug = { contains: slug, mode: 'insensitive' };
+    if (colorCode) filters.colorCode = { contains: colorCode };
+    if (buttonLabel) filters.buttonLabel = { contains: buttonLabel };
+    if (name) filters.name = { contains: name };
+    if (slug) filters.slug = { contains: slug };
     if (attributeId) filters.attributeId = attributeId;
     if (startDate || endDate) {
       filters.createdAt = {};

@@ -106,7 +106,7 @@ export class ProductService {
     };
 
     if (search) {
-      filters.name = { contains: search, mode: 'insensitive' };
+      filters.name = { contains: search };
     }
 
     if (hasDiscount) {
@@ -303,11 +303,11 @@ export class ProductService {
 
     const filters: Prisma.ProductWhereInput = { status: ProductStatus.PUBLISHED };
 
-    if (sku) filters.sku = { contains: sku, mode: 'insensitive' };
-    if (shortDescription) filters.shortDescription = { contains: shortDescription, mode: 'insensitive' };
-    if (description) filters.description = { contains: description, mode: 'insensitive' };
-    if (name) filters.name = { contains: name, mode: 'insensitive' };
-    if (slug) filters.slug = { contains: slug, mode: 'insensitive' };
+    if (sku) filters.sku = { contains: sku };
+    if (shortDescription) filters.shortDescription = { contains: shortDescription };
+    if (description) filters.description = { contains: description };
+    if (name) filters.name = { contains: name };
+    if (slug) filters.slug = { contains: slug };
     if (type) filters.type = type;
     if (salePrice) filters.salePrice = salePrice;
     if (height) filters.height = height;

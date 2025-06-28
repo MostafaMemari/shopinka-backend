@@ -46,7 +46,7 @@ export class PageService {
 
     const filters: Prisma.PageWhereInput = {};
 
-    if (name) filters.name = { contains: name, mode: 'insensitive' };
+    if (name) filters.name = { contains: name };
 
     const pages = await this.pageRepository.findAll({
       where: filters,

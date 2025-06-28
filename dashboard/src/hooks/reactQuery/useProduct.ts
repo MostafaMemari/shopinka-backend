@@ -122,7 +122,7 @@ export const useProductForm = ({ id, initialData }: UseProductFormProps) => {
           if (product.seoMeta) {
             methods.setValue('seo_title', product?.seoMeta.title || '')
             methods.setValue('seo_description', product?.seoMeta.description || '')
-            methods.setValue('seo_keywords', product?.seoMeta.keywords || [])
+            methods.setValue('seo_keywords', product?.seoMeta.keywords.split(',') || [])
             methods.setValue('seo_canonicalUrl', product?.seoMeta.canonicalUrl || '')
             methods.setValue('seo_ogTitle', product?.seoMeta.ogTitle || '')
             methods.setValue('seo_ogDescription', product?.seoMeta.ogDescription || '')
