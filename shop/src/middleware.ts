@@ -1,15 +1,18 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { COOKIE_NAMES } from './types/constants';
+import { getMe } from './service/userService';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get(COOKIE_NAMES.ACCESS_TOKEN)?.value;
   const refreshToken = request.cookies.get(COOKIE_NAMES.REFRESH_TOKEN)?.value;
   const pathname = request.nextUrl.pathname;
 
   if (pathname === '/login') {
     if (accessToken && refreshToken) {
-      return NextResponse.redirect(new URL('/', request.url));
+      const res = await getMe();
+
+      if (res.status === 200) NextResponse.redirect(new URL('/', request.url));
     }
 
     return NextResponse.next();
@@ -20,7 +23,9 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/', request.url));
     }
 
-    return NextResponse.next();
+    const res = await getMe();
+
+    if (res.status === 200) return NextResponse.next();
   }
 
   if (pathname === '/checkout/shipping') {
@@ -28,7 +33,9 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/login?backUrl=/checkout/shipping', request.url));
     }
 
-    return NextResponse.next();
+    const res = await getMe();
+
+    if (res.status === 200) return NextResponse.next();
   }
 
   return NextResponse.next();

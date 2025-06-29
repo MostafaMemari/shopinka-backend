@@ -120,7 +120,7 @@ model Transaction {
 model Gallery {
   id          Int           @id() @default(autoincrement())
   title       String
-  description String?
+  description String?       @db.Text
   userId      Int
   user        User          @relation(fields: [userId], references: [id])
   items       GalleryItem[]
@@ -133,7 +133,7 @@ model GalleryItem {
   galleryId           Int
   gallery             Gallery          @relation(fields: [galleryId], references: [id], onDelete: Cascade)
   title               String
-  description         String?
+  description         String?          @db.Text
   fileUrl             String
   fileKey             String
   thumbnailUrl        String?
@@ -178,7 +178,7 @@ model Attribute {
   userId      Int?
   user        User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
   type        AttributeType
-  description String?
+  description String?          @db.Text
   values      AttributeValue[]
   products    Product[]
   createdAt   DateTime         @default(now())
@@ -206,8 +206,8 @@ model Product {
   mainImageId      Int?
   userId           Int?
   slug             String           @unique()
-  description      String?
-  shortDescription String?          @map("short_description")
+  description      String?          @db.Text
+  shortDescription String?          @map("short_description") @db.Text
   quantity         Int?
   basePrice        Int?             @map("base_price")
   salePrice        Int?             @map("sale_price")
@@ -242,7 +242,7 @@ model ProductVariant {
   productId        Int
   orderId          Int?
   userId           Int?
-  shortDescription String?          @map("short_description")
+  shortDescription String?          @map("short_description") @db.Text
   quantity         Int?
   basePrice        Int?             @map("base_price")
   salePrice        Int?             @map("sale_price")
@@ -277,7 +277,7 @@ model Category {
   id               Int      @id @default(autoincrement())
   name             String
   slug             String   @unique()
-  description      String?
+  description      String?  @db.Text
   parentId         Int?
   userId           Int?
   thumbnailImageId Int?
@@ -299,7 +299,7 @@ model Category {
 model Comment {
   id            Int       @id() @default(autoincrement())
   title         String
-  content       String
+  content       String    @db.Text
   isActive      Boolean   @default(false)
   isRecommended Boolean   @default(true)
   rate          Int       @default(5)
@@ -391,11 +391,11 @@ model SeoMeta {
   categoryId    Int?     @unique
   entityType    String
   title         String?
-  description   String?
+  description   String?  @db.Text
   keywords      String?  @default("")
   canonicalUrl  String?  @map("canonical_url")
   ogTitle       String?  @map("og_title")
-  ogDescription String?  @map("og_description")
+  ogDescription String?  @map("og_description") @db.Text
   robotsTag     String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt()
@@ -414,7 +414,7 @@ model Blog {
   mainImageId Int?
   slug        String     @unique()
   title       String
-  content     String?
+  content     String?    @db.Text
   status      BlogStatus @default(PUBLISHED)
   readingTime Int?       @map("reading_time")
   createdAt   DateTime   @default(now())
@@ -434,7 +434,7 @@ model Tag {
   thumbnailImageId Int?
   name             String
   slug             String   @unique()
-  description      String?
+  description      String?  @db.Text
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt()
 
@@ -452,7 +452,7 @@ model Page {
   userId      Int?
   name        String
   slug        String   @unique()
-  description String?
+  description String?  @db.Text
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt()
 

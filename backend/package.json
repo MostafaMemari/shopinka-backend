@@ -12,6 +12,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "start:migrate:prod": "npx pnpm prisma migrate deploy && npx pnpm run start",
     "seed": "ts-node prisma/seed.ts",
     "studio": "npx prisma studio",
     "generate": "npx prisma generate",

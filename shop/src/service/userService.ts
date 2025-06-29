@@ -5,6 +5,7 @@ import { User } from '../types/userType';
 import { cookies } from 'next/headers';
 import { COOKIE_NAMES } from '@/types/constants';
 import { FavoriteResponse } from '@/types/favoriteType';
+import { ofetch } from 'ofetch';
 
 export const getMe = async (): Promise<{ status: number; data: User | null }> => {
   const cookieStore = await cookies();
@@ -12,11 +13,25 @@ export const getMe = async (): Promise<{ status: number; data: User | null }> =>
 
   if (!accessToken) return { status: 401, data: null };
 
-  const res = await shopApiFetch('/user/me', { method: 'GET' });
+  try {
+    const res = await ofetch('/user/me', {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${accessToken}` },
+      baseURL: process.env.API_BASE_URL,
+    });
 
-  return {
-    ...res,
-  };
+    return {
+      ...res,
+    };
+  } catch (error: any) {
+    cookieStore.delete(COOKIE_NAMES.ACCESS_TOKEN);
+    cookieStore.delete(COOKIE_NAMES.REFRESH_TOKEN);
+
+    return {
+      status: error.response.status,
+      data: null,
+    };
+  }
 };
 
 export const getFavorites = async (params: { page?: number; take?: number }): Promise<FavoriteResponse> => {

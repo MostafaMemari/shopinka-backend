@@ -1,31 +1,39 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
-import { setCart, addToCart, increaseCount, decreaseCount, deleteFromCart } from '@/store/slices/cartSlice';
+import {
+  setCart,
+  addToCart as addLocalCart,
+  increaseCount,
+  decreaseCount,
+  deleteFromCart as deleteLocalCart,
+} from '@/store/slices/cartSlice';
 import { createCart, getCart, updateQuantityItemCart, removeItemCart, clearCart } from '@/service/cartService';
 import { CartData, CartItemState, CartState } from '@/types/cartType';
 import { QueryOptions } from '@/types/queryOptions';
 import { QueryKeys } from '@/types/query-keys';
 
-export function useCartData({ enabled = true, staleTime = 1 * 60 * 1000 }: QueryOptions) {
-  const { data, isLoading, error, refetch } = useQuery<CartState>({
+const useCartData = ({ enabled = true, staleTime = 60_000 }: QueryOptions) => {
+  const query = useQuery<CartState>({
     queryKey: [QueryKeys.Cart],
     queryFn: getCart,
-    enabled: enabled,
+    enabled,
     staleTime,
   });
 
-  return { data, isLoading, error, refetch };
-}
+  return query;
+};
 
 export const useCart = (isLogin: boolean) => {
   const dispatch = useDispatch<AppDispatch>();
   const queryClient = useQueryClient();
+
   const { items: reduxCart, payablePrice, totalDiscountPrice, totalPrice } = useSelector((state: RootState) => state.cart);
-  const { data, isLoading, error, refetch } = useCartData({});
+
+  const { data, isLoading, error, refetch } = useCartData({ enabled: !!isLogin });
 
   useEffect(() => {
     if (isLogin && data) {
@@ -36,76 +44,83 @@ export const useCart = (isLogin: boolean) => {
     }
   }, [data, dispatch, isLogin]);
 
+  const invalidateCart = () => {
+    queryClient.invalidateQueries({ queryKey: [QueryKeys.Cart] });
+  };
+
   const addToCartMutation = useMutation({
     mutationFn: (cartData: CartData) => createCart({ cartData }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-    },
+    onSuccess: invalidateCart,
   });
 
   const updateQuantityMutation = useMutation({
     mutationFn: ({ quantity, itemId }: { quantity: number; itemId: number }) => updateQuantityItemCart({ quantity, itemId }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-    },
+    onSuccess: invalidateCart,
   });
 
   const removeItemMutation = useMutation({
     mutationFn: ({ itemId }: { itemId: number }) => removeItemCart(itemId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-    },
+    onSuccess: invalidateCart,
   });
 
-  const deleteAllItemCart = useMutation({
-    mutationFn: () => clearCart(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-    },
+  const clearCartMutation = useMutation({
+    mutationFn: clearCart,
+    onSuccess: invalidateCart,
   });
 
-  const currentCart: CartState = isLogin && data?.items ? data : { items: reduxCart, payablePrice, totalDiscountPrice, totalPrice };
+  const currentCart: CartState = useMemo(() => {
+    return isLogin && data?.items ? data : { items: reduxCart, payablePrice, totalDiscountPrice, totalPrice };
+  }, [isLogin, data, reduxCart, payablePrice, totalDiscountPrice, totalPrice]);
+
+  const handleAddToCart = (item: CartItemState) => {
+    if (!isLogin) {
+      dispatch(addLocalCart(item));
+    } else {
+      addToCartMutation.mutate({
+        quantity: item.count,
+        productId: item.type === 'SIMPLE' ? item.id : null,
+        productVariantId: item.type === 'VARIABLE' ? item.id : null,
+      });
+    }
+  };
+
+  const handleIncrease = (item: CartItemState) => {
+    if (!isLogin) {
+      dispatch(increaseCount(item));
+    } else {
+      updateQuantityMutation.mutate({ itemId: Number(item.itemId), quantity: item.count + 1 });
+    }
+  };
+
+  const handleDecrease = (item: CartItemState) => {
+    if (!isLogin) {
+      dispatch(decreaseCount(item));
+    } else {
+      updateQuantityMutation.mutate({ itemId: Number(item.itemId), quantity: item.count - 1 });
+    }
+  };
+
+  const handleDelete = (item: CartItemState) => {
+    if (!isLogin) {
+      dispatch(deleteLocalCart(item.id));
+    } else {
+      removeItemMutation.mutate({ itemId: Number(item.itemId) });
+    }
+  };
+
+  const handleClearAll = () => {
+    if (isLogin) clearCartMutation.mutate();
+  };
 
   return {
     cart: currentCart,
     isLoading,
     error,
-    addToCart: (item: CartItemState) => {
-      if (!isLogin) {
-        dispatch(addToCart(item));
-      } else {
-        addToCartMutation.mutate({
-          quantity: item.count,
-          productId: item.type === 'SIMPLE' ? item.id : null,
-          productVariantId: item.type === 'VARIABLE' ? item.id : null,
-        });
-      }
-    },
-    clearAllCartItems: () => {
-      if (isLogin) {
-        deleteAllItemCart.mutate();
-      }
-    },
-    increaseCount: (item: CartItemState) => {
-      if (!isLogin) {
-        dispatch(increaseCount(item));
-      } else {
-        updateQuantityMutation.mutate({ itemId: Number(item.itemId), quantity: item.count + 1 });
-      }
-    },
-    decreaseCount: (item: CartItemState) => {
-      if (!isLogin) dispatch(decreaseCount(item));
-      else {
-        updateQuantityMutation.mutate({ itemId: Number(item.itemId), quantity: item.count - 1 });
-      }
-    },
-    deleteFromCart: (item: CartItemState) => {
-      if (!isLogin) {
-        dispatch(deleteFromCart(item.id));
-      } else {
-        removeItemMutation.mutate({ itemId: Number(item.itemId) });
-      }
-    },
+    addToCart: handleAddToCart,
+    increaseCount: handleIncrease,
+    decreaseCount: handleDecrease,
+    deleteFromCart: handleDelete,
+    clearAllCartItems: handleClearAll,
     refetchCart: refetch,
     isAddingToCart: addToCartMutation.isPending,
     isUpdatingQuantity: updateQuantityMutation.isPending,

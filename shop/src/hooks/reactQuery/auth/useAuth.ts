@@ -1,79 +1,18 @@
-import { useEffect, useCallback } from 'react';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { useQueryClient } from '@tanstack/react-query';
-import { loginStart, loginSuccess, loginFailure, logout } from '@/store/slices/authSlice';
-import { User, UserState } from '@/types/userType';
-import { QueryKeys } from '@/types/query-keys';
-import { getMe } from '@/service/userService';
-import { useSyncCart } from '../cart/useSyncCart';
+import { useEffect } from 'react';
+import { useAppSelector } from '@/store/hooks';
+import { useCheckAuth } from './useCheckAuth';
+import { useLoginUser } from './useLoginUser';
+import { useLogoutUser } from './useLogoutUser';
 
 export function useAuth() {
-  const dispatch = useAppDispatch();
   const { isLogin, user, isLoading, error } = useAppSelector((state) => state.auth);
-  const queryClient = useQueryClient();
-  const syncCart = useSyncCart();
-
-  const checkAuth = useCallback(async () => {
-    dispatch(loginStart());
-    try {
-      let userData = queryClient.getQueryData<{ status: number; data: User | null }>([QueryKeys.User]);
-
-      if (!userData) {
-        userData = await queryClient.fetchQuery({
-          queryKey: [QueryKeys.User],
-          queryFn: getMe,
-          staleTime: 5 * 60 * 1000,
-          gcTime: 10 * 60 * 1000,
-        });
-      }
-
-      if (userData && userData.status === 200 && userData.data) {
-        dispatch(
-          loginSuccess({
-            mobile: userData.data.mobile,
-            role: userData.data.role,
-            full_name: userData.data.fullName ?? '',
-          }),
-          await syncCart(),
-        );
-      } else {
-        dispatch(loginFailure('No user data found'));
-      }
-    } catch (err) {
-      dispatch(loginFailure('Failed to authenticate'));
-      console.error('Authentication error:', err);
-    }
-  }, [dispatch, queryClient]);
+  const checkAuth = useCheckAuth();
+  const loginUser = useLoginUser();
+  const logoutUser = useLogoutUser();
 
   useEffect(() => {
-    if (!isLogin) checkAuth();
-  }, [checkAuth, isLogin]);
-
-  const loginUser = useCallback(
-    async (userData: UserState) => {
-      dispatch(loginStart());
-      try {
-        dispatch(loginSuccess(userData));
-        await syncCart();
-        queryClient.invalidateQueries({ queryKey: [QueryKeys.User] });
-      } catch (err) {
-        dispatch(loginFailure('Login failed'));
-        console.error('Login error:', err);
-      }
-    },
-    [dispatch, queryClient],
-  );
-
-  const logoutUser = useCallback(async () => {
-    dispatch(loginStart());
-    try {
-      queryClient.removeQueries({ queryKey: [QueryKeys.User, QueryKeys.Cart] });
-      dispatch(logout());
-    } catch (err) {
-      dispatch(loginFailure('Logout failed'));
-      console.error('Logout error:', err);
-    }
-  }, [dispatch, queryClient]);
+    if (isLogin) checkAuth();
+  }, [isLogin, checkAuth]);
 
   return {
     isLogin,

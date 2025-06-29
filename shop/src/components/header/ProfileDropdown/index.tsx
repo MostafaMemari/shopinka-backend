@@ -14,6 +14,7 @@ import ProfileMenu from './ProfileMenu';
 const ProfileDropdown = () => {
   const pathname = usePathname();
   const { isLogin } = useAuth();
+
   const { isOpen, dropdownRef, toggleDropdown, closeDropdown } = useDropdown({
     closeOnOutsideClick: true,
     openOnHover: false,

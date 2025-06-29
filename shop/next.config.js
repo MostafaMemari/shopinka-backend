@@ -6,6 +6,7 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'node-bucket.storage.c2.liara.space',
+        pathname: '/galleryItemImages/**',
       },
     ],
   },

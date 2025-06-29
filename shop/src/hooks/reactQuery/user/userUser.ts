@@ -26,11 +26,5 @@ export function useChangeFullName() {
 }
 
 export function useGetMe() {
-  return useQuery<{
-    status: number;
-    data: User | null;
-  }>({
-    queryKey: [QueryKeys.User],
-    queryFn: getMe,
-  });
+  return useQuery<{ status: number; data: User | null }>({ queryKey: [QueryKeys.User], queryFn: getMe });
 }
