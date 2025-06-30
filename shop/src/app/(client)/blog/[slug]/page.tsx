@@ -3,12 +3,14 @@ import { getBlogBySlug } from '@/service/blogService';
 import { NoImage } from '@/types/noImageEnum';
 import BlogDetailsView from '@/components/features/Blog/BlogDetailsView';
 import Sidebar from '@/components/features/Blog/Sidebar';
+import { Category } from '@/types/categoryType';
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const blog = await getBlogBySlug(slug);
+  const res = await getBlogBySlug(slug);
+  const blog = res?.data;
 
-  if (!blog) return notFound();
+  if (!blog || res.status !== 200) return notFound();
 
   return (
     <>
@@ -22,7 +24,8 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             username={blog.user.fullName ?? 'نامشخص'}
           />
         </div>
-        <Sidebar categoryIds={blog.categories?.map((category) => category.id)} />
+
+        <Sidebar categoryIds={blog.categories?.map((category: Category) => category.id)} />
       </div>
     </>
   );

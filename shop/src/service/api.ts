@@ -17,6 +17,24 @@ interface ApiResponse<T = any> {
   data: T;
 }
 
+async function setAuthCookies(accessToken: string, refreshToken?: string) {
+  const cookieStore = await cookies();
+
+  cookieStore.set(COOKIE_NAMES.ACCESS_TOKEN, accessToken, {
+    httpOnly: true,
+    path: '/',
+    expires: new Date(Date.now() + Number(process.env.ACCESS_TOKEN_EXPIRE_TIME) * 1000),
+  });
+
+  if (refreshToken) {
+    cookieStore.set(COOKIE_NAMES.REFRESH_TOKEN, refreshToken, {
+      httpOnly: true,
+      path: '/',
+      expires: new Date(Date.now() + Number(process.env.REFRESH_TOKEN_EXPIRE_TIME) * 1000),
+    });
+  }
+}
+
 async function refreshAccessToken(): Promise<ApiResponse> {
   try {
     const response = await ofetch('/auth/refresh-token', {
@@ -27,90 +45,70 @@ async function refreshAccessToken(): Promise<ApiResponse> {
     });
 
     const { accessToken, refreshToken } = response;
-    const cookieStore = await cookies();
-
-    cookieStore.set(COOKIE_NAMES.ACCESS_TOKEN, accessToken, {
-      httpOnly: true,
-      path: '/',
-      expires: new Date(Date.now() + Number(process.env.ACCESS_TOKEN_EXPIRE_TIME) * 1000),
-    });
-
-    if (refreshToken) {
-      cookieStore.set(COOKIE_NAMES.REFRESH_TOKEN, refreshToken, {
-        httpOnly: true,
-        path: '/',
-        expires: new Date(Date.now() + Number(process.env.REFRESH_TOKEN_EXPIRE_TIME) * 1000),
-      });
-    }
+    await setAuthCookies(accessToken, refreshToken);
 
     return { status: 200, data: { message: 'Token refreshed' } };
   } catch (error: any) {
-    const statusCode = error?.response?.status || 401;
-    const message = error?.data?.message || 'Failed to refresh token';
-    return { status: statusCode, data: { message } };
+    return {
+      status: error?.response?.status ?? 401,
+      data: { message: error?.data?.message ?? 'Failed to refresh token' },
+    };
   }
 }
 
-export const shopApiFetch = async (path: string, options: FetchOptions = {}): Promise<ApiResponse> => {
+async function doFetch(path: string, options: FetchOptions, token?: string): Promise<any> {
   const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+
+  return ofetch(path, {
+    baseURL: process.env.API_BASE_URL,
+    method: options.method ?? 'GET',
+    query: options.query,
+    body: isFormData ? options.body : options.body ? JSON.stringify(options.body) : undefined,
+    headers: {
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...options.headers,
+    },
+    retry: 0,
+  });
+}
+
+export const shopApiFetch = async (path: string, options: FetchOptions = {}): Promise<ApiResponse> => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(COOKIE_NAMES.ACCESS_TOKEN)?.value;
 
-  const defaultHeaders: HeadersInit = {
-    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
-    ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-    ...options.headers,
-  };
-
   try {
-    const data = await ofetch(path, {
-      baseURL: process.env.API_BASE_URL,
-      method: options.method || 'GET',
-      query: options.query,
-      body: isFormData ? options.body : options.body ? JSON.stringify(options.body) : undefined,
-      headers: defaultHeaders,
-      retry: 0,
-    });
-
+    const data = await doFetch(path, options, accessToken);
     return { status: 200, data };
   } catch (error: any) {
-    const statusCode = error?.response?.status || 500;
-    const message = error?.data?.message || error?.message || 'خطایی در ارتباط با سرور رخ داده است';
+    const status = error?.response?.status ?? 500;
+    const message = error?.data?.message ?? error?.message ?? 'خطایی در ارتباط با سرور رخ داده است';
 
-    if (statusCode === 401) {
-      const refreshResult = await refreshAccessToken();
-      if (refreshResult.status === 200) {
-        const cookieStore = await cookies();
-        const newAccessToken = cookieStore.get(COOKIE_NAMES.ACCESS_TOKEN)?.value;
-
-        try {
-          const retryData = await ofetch(path, {
-            baseURL: process.env.API_BASE_URL,
-            method: options.method || 'GET',
-            query: options.query,
-            body: isFormData ? options.body : options.body ? JSON.stringify(options.body) : undefined,
-            headers: {
-              ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
-              ...(newAccessToken ? { Authorization: `Bearer ${newAccessToken}` } : {}),
-              ...options.headers,
-            },
-            retry: 0,
-          });
-          return { status: 200, data: retryData };
-        } catch (retryError: any) {
-          const retryStatus = retryError?.response?.status || 500;
-          const retryMessage = retryError?.data?.message || retryError?.message || 'خطا در تلاش مجدد';
-          return { status: retryStatus, data: { message: retryMessage } };
-        }
-      } else {
-        return { status: refreshResult.status, data: { message: refreshResult.data.message } };
+    if (status !== 401) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Shop API Error:', { path, error });
       }
+      return { status, data: { message } };
     }
 
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Shop API Error:', { path, error });
+    const refreshResult = await refreshAccessToken();
+    if (refreshResult.status !== 200) {
+      return refreshResult;
     }
 
-    return { status: statusCode, data: { message } };
+    // Retry with new token
+    const cookieStore = await cookies();
+    const newAccessToken = cookieStore.get(COOKIE_NAMES.ACCESS_TOKEN)?.value;
+    try {
+      const retryData = await doFetch(path, options, newAccessToken);
+      return { status: 200, data: retryData };
+    } catch (retryError: any) {
+      return {
+        status: retryError?.response?.status ?? 500,
+        data: {
+          message: retryError?.data?.message ?? retryError?.message ?? 'خطا در تلاش مجدد',
+        },
+      };
+    }
   }
 };

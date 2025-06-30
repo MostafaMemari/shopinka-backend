@@ -9,12 +9,10 @@ export const getBlogs = async (params: BlogParams): Promise<BlogResponse> => {
   };
 };
 
-export const getBlogBySlug = async (slug: string): Promise<BlogItem> => {
+export const getBlogBySlug = async (slug: string) => {
   const res = await shopApiFetch(`/blog/by-slug/${slug}`, { method: 'GET' });
 
-  return {
-    ...res.data,
-  };
+  return res;
 };
 
 export const getBlogById = async (id: string): Promise<BlogItem> => {

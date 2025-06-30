@@ -7,22 +7,22 @@ import CarouselProduct from '@/components/features/product/ProductCarousel';
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = await fetchProductBySlug(slug);
+  const res = await fetchProductBySlug(slug);
+  const product = res?.data;
 
-  if (!product || product.status !== 200 || !product.data) {
-    return notFound();
-  }
-  const lastCategory = product.data.categories?.[product.data.categories.length - 1];
+  if (!product || res.status !== 200) return notFound();
+
+  const lastCategory = product.categories?.[product.categories.length - 1];
   const categoryIds = lastCategory ? [lastCategory.id] : [];
 
   const discountProducts = await getProducts({ take: 14, categoryIds });
 
   return (
     <>
-      <MobileHeader productId={product.data.id} />
-      <ProductDetailsView product={product.data} />
+      <MobileHeader productId={product.id} />
+      <ProductDetailsView product={product} />
       <CarouselProduct title="محصولات مرتبط" products={discountProducts.items} viewAllLink={`/shop?categoryIds=${categoryIds.join(',')}`} />
-      <ProductTabs description={product.data?.description} specifications={product.data?.properties} productId={product.data.id} />
+      <ProductTabs description={product?.description} specifications={product?.properties} productId={product.id} />
     </>
   );
 }

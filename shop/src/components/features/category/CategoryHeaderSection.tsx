@@ -14,7 +14,7 @@ export default function CategoryHeaderSection({ name, description, thumbnailImag
 
   return (
     <section className="mt-8" itemScope itemType="https://schema.org/CollectionPage">
-      <div className="container bg-muted mx-auto rounded-xl p-4 flex flex-col items-center">
+      <div className="bg-muted mx-auto rounded-xl p-4 flex flex-col items-center">
         {thumbnailImage && (
           <div className="w-32 h-32 mb-4 rounded-lg overflow-hidden">
             <Image
@@ -29,11 +29,11 @@ export default function CategoryHeaderSection({ name, description, thumbnailImag
             />
           </div>
         )}
-        <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 text-gray-900 text-center" itemProp="name">
+        <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 text-gray-900 text-right" itemProp="name">
           {name}
         </h1>
         <div
-          className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-2xl text-gray-700 text-center"
+          className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl leading-7 text-gray-700 text-right"
           itemProp="description"
           dangerouslySetInnerHTML={{ __html: safeDescription }}
         />

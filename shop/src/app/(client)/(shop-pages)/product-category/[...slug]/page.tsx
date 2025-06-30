@@ -38,8 +38,8 @@ export default async function ShopPage({ searchParams, params }: PageProps) {
     maxPrice: queryParams.maxPrice ?? undefined,
     stockStatus: queryParams.stockStatus === 'instock' ? 'instock' : 'all',
     search: queryParams.search,
-    includeMainImage: queryParams.includeMainImage ?? false,
-    includeVariants: queryParams.includeVariants ?? false,
+    includeMainImage: true,
+    includeVariants: true,
     sortBy:
       queryParams.sortBy && ['price_asc', 'price_desc', 'newest'].includes(queryParams.sortBy)
         ? (queryParams.sortBy as ProductParams['sortBy'])
@@ -89,7 +89,11 @@ export default async function ShopPage({ searchParams, params }: PageProps) {
         </div>
         <div className="col-span-12 space-y-4 md:col-span-8 lg:col-span-9">
           <SortBar options={PRODUCT_SORT_OPTIONS} queryKey="sortBy" />
-          <ProductListShop initialProducts={products} initialQuery={query} pager={pager} />
+          <ProductListShop
+            initialProducts={products}
+            initialQuery={{ ...query, categoryIds: category ? [category.id] : [] }}
+            pager={pager}
+          />
         </div>
       </div>
 
