@@ -16,6 +16,7 @@ export default function ProductImage({ src, alt, isBlurred = false }: ProductIma
         height={80}
         className={`h-16 w-16 xl:h-20 xl:w-20 ${isBlurred ? 'blur-sm' : ''}`}
         loading="lazy"
+        unoptimized
       />
       {isBlurred && (
         <span className="absolute inset-0 flex items-center justify-center">

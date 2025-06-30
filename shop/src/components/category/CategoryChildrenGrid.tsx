@@ -42,6 +42,7 @@ export default function CategoryChildrenGrid({ name, categories, basePath }: Cat
                     height={80}
                     className="object-contain w-full h-full"
                     loading="lazy"
+                    unoptimized
                   />
                 </div>
                 <span className="text-sm font-medium text-center text-gray-800">{child?.name}</span>

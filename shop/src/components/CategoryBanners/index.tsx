@@ -28,6 +28,7 @@ export default function CategoryCirclesBanners({ categories, basePath }: Categor
                   className="object-cover object-center w-full h-full scale-100 group-hover:scale-105 transition-transform duration-200"
                   sizes="(max-width: 640px) 45vw, (max-width: 1024px) 22vw, 200px"
                   priority
+                  unoptimized
                 />
                 {!category?.thumbnailImage?.fileUrl && <div className="absolute inset-0 bg-white/30 backdrop-blur-sm" />}
               </div>

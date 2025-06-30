@@ -24,6 +24,7 @@ const ProductImage = ({ src, alt }: { src: string; alt: string }) => {
           onLoad={() => setIsLoaded(true)}
           onError={() => setImgSrc(fallbackSrc)}
           sizes="(max-width: 768px) 50vw, 216px"
+          unoptimized
         />
       )}
     </div>

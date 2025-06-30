@@ -23,7 +23,15 @@ function CartPageItem({ cartItem, isLast = false }: CartPageItemProps) {
         <div className="col-span-4 sm:col-span-3 flex flex-col items-center gap-2">
           <div className="w-24 h-24 sm:w-28 sm:h-28">
             <Link href={productUrl}>
-              <Image alt={cartItem.title} className="h-full w-full" src={cartItem.thumbnail} width={80} height={80} loading="lazy" />
+              <Image
+                alt={cartItem.title}
+                className="h-full w-full"
+                src={cartItem.thumbnail}
+                width={80}
+                height={80}
+                loading="lazy"
+                unoptimized
+              />
             </Link>
           </div>
 

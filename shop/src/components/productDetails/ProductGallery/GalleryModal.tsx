@@ -120,6 +120,7 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Props) 
                           fill
                           className="object-contain"
                           sizes="(max-width: 640px) 80px, 96px"
+                          unoptimized
                         />
                       </div>
                     </div>

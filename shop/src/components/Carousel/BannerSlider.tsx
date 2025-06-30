@@ -40,6 +40,7 @@ export default function BannerSlider() {
                   height={450}
                   className="max-h-[450px] w-full object-cover"
                   priority={banner.id === 1}
+                  unoptimized
                 />
               </Link>
             </SwiperSlide>

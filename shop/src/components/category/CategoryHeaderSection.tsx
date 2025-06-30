@@ -25,6 +25,7 @@ export default function CategoryHeaderSection({ name, description, thumbnailImag
               priority
               className="w-full h-32 object-cover"
               itemProp="image"
+              unoptimized
             />
           </div>
         )}

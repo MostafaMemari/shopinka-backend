@@ -18,6 +18,7 @@ function SearchItem({ product }: SearchItemProps) {
           height={48}
           alt={product.name}
           className="h-12 w-12 object-cover rounded-md flex-shrink-0"
+          unoptimized
         />
       )}
       <div className="flex-1 min-w-0">

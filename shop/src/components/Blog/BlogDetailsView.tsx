@@ -34,7 +34,7 @@ const BlogDetailsView: FC<BlogDetailsViewProps> = ({ title, username, createdAt,
         <ShareButton />
       </div>
       <div className="mb-8">
-        <Image src={image || NoImage.BLOG} alt="blog" width={600} height={400} className="w-full rounded-xl" />
+        <Image src={image || NoImage.BLOG} alt="blog" width={600} height={400} className="w-full rounded-xl" unoptimized />
       </div>
       <div
         className="leading-loose prose prose-sm max-w-none p-2 text-text/90"

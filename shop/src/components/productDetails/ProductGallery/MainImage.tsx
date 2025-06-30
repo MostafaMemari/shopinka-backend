@@ -33,6 +33,7 @@ export default function MainImage({ src, alt }: MainImageProps) {
         className="w-full transform transition-transform duration-300 hover:scale-110"
         onError={() => setImgSrc(fallbackSrc)}
         priority
+        unoptimized
       />
     </div>
   );

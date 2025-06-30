@@ -8,7 +8,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted">
       <div className="container flex flex-col items-center justify-center gap-y-8">
-        <Image src="/images/others/maintenance.png" alt="maintenance" className="w-80" width={100} height={100} />
+        <Image src="/images/others/maintenance.png" alt="maintenance" className="w-80" width={100} height={100} unoptimized />
         <div className="text-3xl">بزودی برمیگردیم ...</div>
         <div className="text-center leading-loose text-text/90">
           {error.message || 'برای اطلاع از بروزرسانی ها مارا در شبکه های اجتماعی دنبال کنید'}

@@ -44,7 +44,7 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ orderProductItems }) => {
             "
               >
                 <div className="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center">
-                  <Image alt={productName} src={productImageUrl} className="object-contain w-14 h-14" width={60} height={60} />
+                  <Image alt={productName} src={productImageUrl} className="object-contain w-14 h-14" width={60} height={60} unoptimized />
                 </div>
                 <p className="line-clamp-2 text-xs sm:text-sm text-gray-700 font-medium">{productName}</p>
               </Link>
