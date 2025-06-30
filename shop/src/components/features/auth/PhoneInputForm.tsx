@@ -3,14 +3,15 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { sendOtp } from '@/service/authService';
 import { handleApiError } from '@/utils/handleApiError';
-import { validateIranPhoneNumber } from '../../../validation/validateIranPhoneNumber';
 import PrimaryButton from '@/components/ui/PrimaryButton';
 import Link from 'next/link';
+import { validateIranPhoneNumber } from '@/validation/validateIranPhoneNumber';
+import { extractTimeFromText } from '@/utils/utils';
 
 export const errorPhoneNumberStepMessages: Record<number, string> = {
   400: 'شماره نامعتبر است',
-  403: 'درخواست زیاد بود، بعداً تلاش کنید',
-  409: 'کد قبلاً ارسال شده است',
+  403: 'درخواست بیش‌از‌حد. لطفاً {time} بعد دوباره تلاش کنید',
+  409: 'کد قبلاً ارسال شده، {time} بعد امتحان کنید',
   429: 'تعداد درخواست بیش از حد مجاز بود',
   500: 'خطای سرور',
 };
@@ -34,10 +35,14 @@ function PhoneInputForm({ mobile, setMobile, handleShowOpt }: PhoneInputFormProp
   ) => {
     try {
       const res = await sendOtp(values.mobile);
-      const errorMessage = handleApiError(res.status, errorPhoneNumberStepMessages);
+
+      let errorMessage = handleApiError(res.status, errorPhoneNumberStepMessages);
 
       if (errorMessage) {
-        setErrors({ mobile: errorMessage });
+        if (res.status == 409) errorMessage = errorMessage.replace('{time}', extractTimeFromText(res?.data?.message) ?? 'بعدا');
+        if (res.status == 403) errorMessage = errorMessage.replace('{time}', extractTimeFromText(res?.data?.message) ?? 'بعدا');
+
+        Toast.fire({ icon: 'error', title: errorMessage });
         return;
       }
 

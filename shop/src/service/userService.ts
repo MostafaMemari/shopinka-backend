@@ -20,9 +20,7 @@ export const getMe = async (): Promise<{ status: number; data: User | null }> =>
       baseURL: process.env.API_BASE_URL,
     });
 
-    return {
-      ...res,
-    };
+    return res;
   } catch (error: any) {
     cookieStore.delete(COOKIE_NAMES.ACCESS_TOKEN);
     cookieStore.delete(COOKIE_NAMES.REFRESH_TOKEN);

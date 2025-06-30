@@ -4,16 +4,16 @@ import * as Yup from 'yup';
 import { useRouter } from 'next/navigation';
 import { verifyOtp, sendOtp } from '@/service/authService';
 import { handleApiError } from '@/utils/handleApiError';
-import CountdownTimer from '@/components/features/auth/CountdownTimer';
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
 import { useEffect } from 'react';
 import PrimaryButton from '@/components/ui/PrimaryButton';
 import { errorPhoneNumberStepMessages } from './PhoneInputForm';
+import { extractTimeFromText } from '@/utils/utils';
 
 export const errorOtpStepMessages: Record<number, string> = {
   400: 'کد وارد شده نادرست است.',
-  403: 'تلاش بیش‌از‌حد. بعداً امتحان کنید.',
-  409: 'کد قبلاً ارسال شده است.',
+  403: 'درخواست بیش‌از‌حد. لطفاً {time} بعد دوباره تلاش کنید',
+  409: 'کد قبلاً ارسال شده، {time} بعد امتحان کنید',
   429: 'درخواست زیاد بود. بعداً تلاش کنید.',
   500: 'خطای سرور. دوباره امتحان کنید.',
 };
@@ -53,10 +53,15 @@ export default function OtpForm({ mobile, isExpired, timeLeft, formatTime, reset
 
     try {
       const res = await verifyOtp(mobile, values.otp);
-      const errorMessage = handleApiError(res.status, errorOtpStepMessages);
+
+      let errorMessage = handleApiError(res.status, errorOtpStepMessages);
 
       if (errorMessage) {
-        setErrors({ otp: errorMessage });
+        if (res.status === 403) errorMessage = errorMessage.replace('{time}', extractTimeFromText(res?.data?.message) ?? 'بعدا');
+        if (res.status === 409) errorMessage = errorMessage.replace('{time}', extractTimeFromText(res?.data?.message) ?? 'بعدا');
+
+        Toast.fire({ icon: 'error', title: errorMessage });
+
         resetForm();
         return;
       }
@@ -68,6 +73,7 @@ export default function OtpForm({ mobile, isExpired, timeLeft, formatTime, reset
       }
     } catch (error) {
       setErrors({ otp: 'کد تأیید نامعتبر است' });
+
       resetForm();
     } finally {
       setSubmitting(false);
@@ -77,10 +83,14 @@ export default function OtpForm({ mobile, isExpired, timeLeft, formatTime, reset
   const handleResendOtp = async (setSubmitting: (isSubmitting: boolean) => void, setErrors: (errors: any) => void) => {
     try {
       const res = await sendOtp(mobile);
-      const errorMessage = handleApiError(res.status, errorPhoneNumberStepMessages);
+      let errorMessage = handleApiError(res.status, errorPhoneNumberStepMessages);
 
       if (errorMessage) {
-        setErrors({ otp: errorMessage });
+        if (res.status === 403) errorMessage = errorMessage.replace('{time}', extractTimeFromText(res?.data?.message) ?? 'بعدا');
+        if (res.status === 409) errorMessage = errorMessage.replace('{time}', extractTimeFromText(res?.data?.message) ?? 'بعدا');
+
+        Toast.fire({ icon: 'error', title: errorMessage });
+
         return;
       }
 
@@ -89,7 +99,7 @@ export default function OtpForm({ mobile, isExpired, timeLeft, formatTime, reset
         resetTimer();
       }
     } catch (error) {
-      setErrors({ otp: 'خطا در ارسال کد تأیید. لطفاً دوباره تلاش کنید.' });
+      Toast.fire({ icon: 'error', title: 'خطا در ارسال کد تأیید. لطفاً دوباره تلاش کنید.' });
     } finally {
       setSubmitting(false);
     }
@@ -131,7 +141,13 @@ export default function OtpForm({ mobile, isExpired, timeLeft, formatTime, reset
                   ارسال مجدد کد
                 </button>
               ) : (
-                <CountdownTimer formatTime={formatTime} isExpired={isExpired} timeLeft={timeLeft} />
+                <ul className="mb-8 space-y-4 mt-4">
+                  <li>
+                    <p className={`text-primary text-sm text-center${isExpired ? 'hidden' : ''}`} id="countdownSection">
+                      <span className="font-bold">{formatTime(timeLeft)}</span> مانده تا دریافت مجدد کد
+                    </p>
+                  </li>
+                </ul>
               )}
             </div>
           </Form>

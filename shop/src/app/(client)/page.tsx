@@ -1,9 +1,9 @@
 import { getProducts } from '@/service/productService';
 import CarouselProduct from '@/components/features/product/ProductCarousel';
-import BannerSlider from '@/components/features/Carousel/BannerSlider';
+import BannerSlider from '@/components/features/carousel/BannerSlider';
 import { getBlogs } from '@/service/blogService';
-import CarouselBlog from '@/components/features/Blog/CarouselBlog';
-import CategoryCirclesBanners from '@/components/features/CategoryBanners';
+import CarouselBlog from '@/components/features/blog/CarouselBlog';
+import CategoryCirclesBanners from '@/components/features/categoryBanners';
 import { getCategoryBySlug } from '@/service/categoryService';
 
 export default async function Home() {

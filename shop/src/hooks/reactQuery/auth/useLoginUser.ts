@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useAppDispatch } from '@/store/hooks';
 import { useQueryClient } from '@tanstack/react-query';
-import { loginStart, loginSuccess, loginFailure } from '@/store/slices/authSlice';
+import { loginSuccess, loginFailure } from '@/store/slices/authSlice';
 import { UserState } from '@/types/userType';
 import { QueryKeys } from '@/types/query-keys';
 import { useSyncCart } from '../cart/useSyncCart';
@@ -13,9 +13,8 @@ export function useLoginUser() {
 
   return useCallback(
     async (userData: UserState) => {
-      dispatch(loginStart());
+      dispatch(loginSuccess(userData));
       try {
-        dispatch(loginSuccess(userData));
         await syncCart();
         queryClient.invalidateQueries({ queryKey: [QueryKeys.User] });
       } catch (err) {

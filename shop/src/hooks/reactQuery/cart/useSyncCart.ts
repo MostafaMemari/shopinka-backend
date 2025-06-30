@@ -3,16 +3,20 @@ import { createCartBulk, getCart } from '@/service/cartService';
 import { setCart } from '@/store/slices/cartSlice';
 import { CartData, CartItemState } from '@/types/cartType';
 import { QueryKeys } from '@/types/query-keys';
-import { store } from '@/store';
+import { useAppDispatch } from '@/store/hooks';
 
 export const useSyncCart = () => {
   const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
 
   const sync = async () => {
     let localCart: CartItemState[] = [];
 
     try {
-      localCart = JSON.parse(localStorage.getItem('cart') ?? '[]');
+      const raw = localStorage.getItem('cart');
+      if (raw) {
+        localCart = JSON.parse(raw);
+      }
     } catch {
       localStorage.removeItem('cart');
     }
@@ -23,8 +27,7 @@ export const useSyncCart = () => {
         queryFn: getCart,
         staleTime: 1 * 60 * 1000,
       });
-
-      store.dispatch(setCart({ items: cartData.items }));
+      dispatch(setCart({ items: cartData.items }));
     };
 
     if (localCart.length === 0) {

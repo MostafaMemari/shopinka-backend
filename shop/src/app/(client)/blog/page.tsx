@@ -10,7 +10,7 @@ import SortBar from '@/components/features/filter/SortBar';
 import MobileFilter from '@/components/features/filter/MobileFilter';
 import ResetFilters from '@/components/features/filter/ResetFilters';
 import MobileSort from '@/components/features/filter/MobileSort';
-import BlogListShopClient from '@/components/features/Blog/BlogListClient';
+import BlogListShopClient from '@/components/features/blog/BlogListClient';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;

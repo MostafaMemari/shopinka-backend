@@ -28,7 +28,6 @@ const ProfileMenu = ({ closeDropdown }: ProfileMenuProps) => {
         Toast.fire({ icon: 'success', title: 'خروج با موفقیت انجام شد' });
       }
     } catch (err) {
-      console.error('Logout error:', err);
       Toast.fire({ icon: 'error', title: 'خروج با خطا مواجه شد' });
     } finally {
       setIsLoggingOut(false);

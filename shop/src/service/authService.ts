@@ -13,9 +13,7 @@ export const sendOtp = async (mobile: string): Promise<{ status: number; data: a
     },
   });
 
-  return {
-    ...res,
-  };
+  return res;
 };
 
 interface VerifyOtpResponse {
@@ -23,10 +21,7 @@ interface VerifyOtpResponse {
   refreshToken: string;
 }
 
-export const verifyOtp = async (
-  mobile: string,
-  otp: string,
-): Promise<{ status: number; data: VerifyOtpResponse | { message: string } }> => {
+export const verifyOtp = async (mobile: string, otp: string): Promise<{ status: number; data: any }> => {
   const res = await shopApiFetch('/auth/verify-authenticate-otp', {
     method: 'POST',
     body: { mobile, otp },
@@ -50,9 +45,7 @@ export const verifyOtp = async (
     });
   }
 
-  return {
-    ...res,
-  };
+  return res;
 };
 
 export const logout = async (): Promise<{ status: number; data: any }> => {

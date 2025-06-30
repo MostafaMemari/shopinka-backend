@@ -243,7 +243,7 @@ export class AuthService {
     const requestCountTtl = await this.redis.ttl(requestKey);
     if (requestCount >= this.OTP_REQUEST_LIMIT) {
       const formattedTime = this.formatSecondsToMinutes(requestCountTtl);
-      throw new ForbiddenException(`${AuthMessages.MaxOtpRequests}${formattedTime}.`);
+      throw new ForbiddenException(`${AuthMessages.MaxOtpRequests}${formattedTime}`);
     }
 
     await this.redis.setex(requestKey, this.OTP_REQUEST_TIMEOUT_SEC, requestCount + 1);

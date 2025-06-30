@@ -11,7 +11,7 @@ export function useAuth() {
   const logoutUser = useLogoutUser();
 
   useEffect(() => {
-    if (isLogin) checkAuth();
+    if (!isLogin) checkAuth();
   }, [isLogin, checkAuth]);
 
   return {
