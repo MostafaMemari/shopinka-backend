@@ -1,20 +1,17 @@
 import { useCallback } from 'react';
 import { useAppDispatch } from '@/store/hooks';
-import { useQueryClient } from '@tanstack/react-query';
 import { loginStart, loginSuccess, loginFailure } from '@/store/slices/authSlice';
-import { QueryKeys } from '@/types/query-keys';
+import { useQueryClient } from '@tanstack/react-query';
 import { getMe } from '@/service/userService';
+import { QueryKeys } from '@/types/query-keys';
 import { User } from '@/types/userType';
-import { useSyncCart } from '../cart/useSyncCart';
 
 export function useCheckAuth() {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const syncCart = useSyncCart();
 
   return useCallback(async () => {
     dispatch(loginStart());
-
     try {
       let userData = queryClient.getQueryData<{ status: number; data: User | null }>([QueryKeys.User]);
 
@@ -35,7 +32,6 @@ export function useCheckAuth() {
             full_name: userData.data.fullName ?? '',
           }),
         );
-        await syncCart();
       } else {
         dispatch(loginFailure('No user data found'));
       }
@@ -43,5 +39,5 @@ export function useCheckAuth() {
       dispatch(loginFailure('Failed to authenticate'));
       console.error('Authentication error:', err);
     }
-  }, [dispatch, queryClient, syncCart]);
+  }, [dispatch, queryClient]);
 }

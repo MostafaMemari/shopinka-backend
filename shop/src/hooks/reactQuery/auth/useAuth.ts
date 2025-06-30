@@ -12,7 +12,7 @@ export function useAuth() {
 
   useEffect(() => {
     if (!isLogin) checkAuth();
-  }, [isLogin, checkAuth]);
+  }, [checkAuth, isLogin]);
 
   return {
     isLogin,

@@ -1,10 +1,11 @@
 import { getProducts } from '@/service/productService';
 import CarouselProduct from '@/components/features/product/ProductCarousel';
-import BannerSlider from '@/components/features/carousel/BannerSlider';
 import { getBlogs } from '@/service/blogService';
-import CarouselBlog from '@/components/features/blog/CarouselBlog';
-import CategoryCirclesBanners from '@/components/features/categoryBanners';
+
 import { getCategoryBySlug } from '@/service/categoryService';
+import CategoryCirclesBanners from '@/components/features/CategoryBanners';
+import BannerSlider from '@/components/features/Carousel/BannerSlider';
+import CarouselBlog from '@/components/features/Blog/CarouselBlog';
 
 export default async function Home() {
   const [discountProducts, newestProducts, blogs, categories] = await Promise.all([
