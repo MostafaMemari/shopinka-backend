@@ -4,13 +4,13 @@ import { SearchParams } from 'nuqs';
 import { getBlogs } from '@/service/blogService';
 import { BLOG_SORT_OPTIONS, BlogParams } from '@/types/blogType';
 
-import SearchInput from '@/components/filter/SearchInput';
-import CategorySelector from '@/components/category/CategorySelector';
-import SortBar from '@/components/filter/SortBar';
-import MobileFilter from '@/components/filter/MobileFilter';
-import ResetFilters from '@/components/filter/ResetFilters';
-import MobileSort from '@/components/filter/MobileSort';
-import BlogListShopClient from '@/components/Blog/BlogListClient';
+import SearchInput from '@/components/features/filter/SearchInput';
+import CategorySelector from '@/components/features/category/CategorySelector';
+import SortBar from '@/components/features/filter/SortBar';
+import MobileFilter from '@/components/features/filter/MobileFilter';
+import ResetFilters from '@/components/features/filter/ResetFilters';
+import MobileSort from '@/components/features/filter/MobileSort';
+import BlogListShopClient from '@/components/features/Blog/BlogListClient';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;

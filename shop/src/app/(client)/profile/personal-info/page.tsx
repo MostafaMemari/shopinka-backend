@@ -1,5 +1,5 @@
-import DashboardHeader from '@/components/profile/DashboardHeader';
-import ProfileEditActions from '@/components/profile/ProfileEditActions';
+import DashboardHeader from '@/components/features/profile/DashboardHeader';
+import ProfileEditActions from '@/components/features/profile/ProfileEditActions';
 
 export default function Page() {
   return (

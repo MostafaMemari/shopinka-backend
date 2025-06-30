@@ -1,4 +1,4 @@
-import CheckoutProgress from '@/components/checkout/CheckoutProgress';
+import CheckoutProgress from '@/components/features/checkout/CheckoutProgress';
 import { verifyPayment } from '@/service/paymentService';
 import Link from 'next/link';
 import { BiCheckCircle, BiXCircle } from 'react-icons/bi';

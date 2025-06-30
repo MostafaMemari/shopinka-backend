@@ -1,8 +1,8 @@
 'use client';
 
-import AddressesActions from '@/components/profile/Address/AddressesActions';
-import CreateAddress from '@/components/profile/Address/CreateAddress';
-import DashboardHeader from '@/components/profile/DashboardHeader';
+import AddressesActions from '@/components/features/profile/Address/AddressesActions';
+import CreateAddress from '@/components/features/profile/Address/CreateAddress';
+import DashboardHeader from '@/components/features/profile/DashboardHeader';
 
 export default function Page() {
   return (

@@ -1,9 +1,9 @@
 import { fetchProductBySlug, getProducts } from '@/service/productService';
-import ProductDetailsView from '@/components/productDetails/views/ProductDetailsView';
+import ProductDetailsView from '@/components/features/productDetails/views/ProductDetailsView';
 import { notFound } from 'next/navigation';
-import ProductTabs from '@/components/product/ProductTabs';
-import MobileHeader from '@/components/productDetails/MobileProductHeader';
-import CarouselProduct from '@/components/product/ProductCarousel';
+import ProductTabs from '@/components/features/product/ProductTabs';
+import MobileHeader from '@/components/features/productDetails/MobileProductHeader';
+import CarouselProduct from '@/components/features/product/ProductCarousel';
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

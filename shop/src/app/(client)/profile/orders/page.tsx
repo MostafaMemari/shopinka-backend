@@ -1,5 +1,5 @@
-import DashboardHeader from '@/components/profile/DashboardHeader';
-import TabContent from '@/components/profile/Order/TabContent';
+import DashboardHeader from '@/components/features/profile/DashboardHeader';
+import TabContent from '@/components/features/profile/Order/TabContent';
 import { getCountOrders } from '@/service/orderService';
 import { cn } from '@/utils/utils';
 import Link from 'next/link';

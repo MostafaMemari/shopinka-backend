@@ -1,7 +1,7 @@
 import React from 'react';
 
-import CheckoutProgress from '@/components/checkout/CheckoutProgress';
-import CartPageView from '@/components/cart/views/CartPageView';
+import CheckoutProgress from '@/components/features/checkout/CheckoutProgress';
+import CartPageView from '@/components/features/cart/views/CartPageView';
 
 async function Page() {
   return (

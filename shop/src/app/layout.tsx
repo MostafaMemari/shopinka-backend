@@ -6,7 +6,7 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import NextTopLoader from 'nextjs-toploader';
 import { Suspense } from 'react';
 import Loading from './loading';
-import ScrollToTop from '@/components/ScrollToTop';
+import ScrollToTop from '@/components/ui/ScrollToTop';
 
 export const metadata = {
   title: {

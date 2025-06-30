@@ -4,19 +4,19 @@ import { parseArrayParam } from '@/utils/parseArrayParam';
 import { PRODUCT_SORT_OPTIONS, ProductParams } from '@/types/productType';
 import { SearchParams } from 'nuqs';
 
-import StockStatusFilter from '@/components/shopPage/FilterDesktop/StockStatusFilter';
-import DiscountFilter from '@/components/shopPage/FilterDesktop/DiscountFilter';
-import CategorySelector from '@/components/category/CategorySelector';
-import SearchInput from '@/components/filter/SearchInput';
-import PriceSelector from '@/components/shopPage/PriceSelector';
-import SortBar from '@/components/filter/SortBar';
-import MobileFilter from '@/components/filter/MobileFilter';
-import MobileSortDrawer from '@/components/filter/MobileSortDrawer';
-import ResetFilters from '@/components/filter/ResetFilters';
+import StockStatusFilter from '@/components/features/shopPage/FilterDesktop/StockStatusFilter';
+import DiscountFilter from '@/components/features/shopPage/FilterDesktop/DiscountFilter';
+import CategorySelector from '@/components/features/category/CategorySelector';
+import SearchInput from '@/components/features/filter/SearchInput';
+import PriceSelector from '@/components/features/shopPage/PriceSelector';
+import SortBar from '@/components/features/filter/SortBar';
+import MobileFilter from '@/components/features/filter/MobileFilter';
+import MobileSortDrawer from '@/components/features/filter/MobileSortDrawer';
+import ResetFilters from '@/components/features/filter/ResetFilters';
 import { getCategories } from '@/service/categoryService';
-import CategoryChildrenGrid from '@/components/category/CategoryChildrenGrid';
-import CategoryHeaderSection from '@/components/category/CategoryHeaderSection';
-import ProductListShop from '@/components/shopPage/ProductListShop';
+import CategoryChildrenGrid from '@/components/features/category/CategoryChildrenGrid';
+import CategoryHeaderSection from '@/components/features/category/CategoryHeaderSection';
+import ProductListShop from '@/components/features/shopPage/ProductListShop';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;

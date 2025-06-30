@@ -1,7 +1,7 @@
-import DeliveryAddress from '@/components/profile/Address/DeliveryAddress';
-import DashboardHeader from '@/components/profile/DashboardHeader';
-import OrderCardDetails from '@/components/profile/Order/OrderCardDetails';
-import OrderItems from '@/components/profile/Order/OrderItems';
+import DeliveryAddress from '@/components/features/profile/Address/DeliveryAddress';
+import DashboardHeader from '@/components/features/profile/DashboardHeader';
+import OrderCardDetails from '@/components/features/profile/Order/OrderCardDetails';
+import OrderItems from '@/components/features/profile/Order/OrderItems';
 import { getOrderById } from '@/service/orderService';
 import Link from 'next/link';
 import { FaChevronRight } from 'react-icons/fa';
