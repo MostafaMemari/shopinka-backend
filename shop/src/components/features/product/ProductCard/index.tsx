@@ -14,6 +14,21 @@ const ProductCard: FC<Props> = ({ product }) => {
   const imageUrl = product.mainImage?.fileUrl ?? '/placeholder-image.jpg';
   const slug = product.slug ?? '#';
   const productName = product.name ?? 'محصول بدون نام';
+  const isVariableProduct = product.type === 'VARIABLE';
+
+  const defaultVariant = isVariableProduct
+    ? (product.variants.find((v) => v.id === product.defaultVariantId) ??
+      (product.variants.length > 0
+        ? product.variants.reduce((cheapest, current) => {
+            const cheapestPrice = cheapest.basePrice ?? cheapest.salePrice ?? Infinity;
+            const currentPrice = current.basePrice ?? current.salePrice ?? Infinity;
+            return currentPrice < cheapestPrice ? current : cheapest;
+          })
+        : null))
+    : null;
+
+  const salePrice = isVariableProduct ? defaultVariant?.salePrice : product.salePrice;
+  const basePrice = isVariableProduct ? defaultVariant?.basePrice : product.basePrice;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -24,7 +39,7 @@ const ProductCard: FC<Props> = ({ product }) => {
     offers: {
       '@type': 'Offer',
       priceCurrency: 'IRR',
-      price: product.salePrice ?? product.basePrice ?? 0,
+      price: salePrice ?? basePrice ?? 0,
       availability: product.quantity && product.quantity > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
     },
   };
@@ -42,7 +57,7 @@ const ProductCard: FC<Props> = ({ product }) => {
             <h3 className="text-sm md:text-base">{productName}</h3>
           </Link>
         </div>
-        <ProductPrice salePrice={product.salePrice} basePrice={product.basePrice} />
+        <ProductPrice salePrice={salePrice} basePrice={basePrice} />
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </div>
     </article>

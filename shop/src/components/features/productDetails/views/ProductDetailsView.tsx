@@ -24,7 +24,9 @@ interface ProductDetailsViewProps {
 }
 
 const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
-  const isVariableProduct = product?.variants?.length > 0;
+  const isVariableProduct = product.type === 'VARIABLE';
+  const isEmptyVariants = !product.variants || product.variants.length === 0;
+  const isValidProduct = isVariableProduct ? !isEmptyVariants : true;
 
   const breadcrumbItems =
     product?.categories?.slice(0, 2).map((_, index) => {
@@ -75,7 +77,7 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
                   </div>
 
                   <div className="col-span-1 flex flex-col">
-                    {isVariableProduct && (
+                    {isValidProduct && (
                       <div className="mb-6">
                         <ProductVariants
                           variants={product.variants}
@@ -91,12 +93,16 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
                     <div className="mb-6 flex justify-between items-start w-full">
                       <div className="flex-grow"></div>
 
-                      <div className="text-left">
-                        <PriceDisplay product={{ type: product.type, basePrice: product.basePrice ?? 0, salePrice: product.salePrice }} />
-                      </div>
+                      {isValidProduct ? (
+                        <div className="text-left">
+                          <PriceDisplay product={{ type: product.type, basePrice: product.basePrice ?? 0, salePrice: product.salePrice }} />
+                        </div>
+                      ) : (
+                        ''
+                      )}
                     </div>
 
-                    {product.variants.length > 0 ? (
+                    {isValidProduct ? (
                       <div className="mb-6">
                         <AddToCartButtonDesktop
                           key={product.id}
@@ -163,7 +169,7 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
 
                 <ProductGuaranteeBadge />
 
-                {product.variants.length > 0 ? (
+                {isValidProduct ? (
                   <CartMobileFixContainer>
                     <div className="flex justify-between items-center w-full">
                       <div className="w-1/2 p-3">
@@ -181,15 +187,19 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
                         />
                       </div>
 
-                      <div className="p-2">
-                        <PriceDisplay
-                          product={{
-                            type: product.type,
-                            basePrice: product.basePrice ?? 0,
-                            salePrice: product.salePrice,
-                          }}
-                        />
-                      </div>
+                      {isValidProduct ? (
+                        <div className="p-2">
+                          <PriceDisplay
+                            product={{
+                              type: product.type,
+                              basePrice: product.basePrice ?? 0,
+                              salePrice: product.salePrice,
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        ''
+                      )}
                     </div>
                   </CartMobileFixContainer>
                 ) : (

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import PrimaryButton from '@/components/ui/PrimaryButton';
 import { useCart } from '@/hooks/reactQuery/cart/useCart';
 import CartSummary from '@/components/features/cart/CartSummary';
@@ -10,6 +10,7 @@ import { useCreatePayment } from '@/hooks/reactQuery/payment/useCreatePayment';
 import CartMobileFixContainer from '../../ui/CartMobileFixContainer';
 import { formatPrice } from '@/utils/formatter';
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
+import { useRouter } from 'next/navigation';
 
 interface CartPriceDetailProps {
   selectedAddressId: number | null;
@@ -20,6 +21,15 @@ export default function CartPriceDetail({ selectedAddressId, selectedShippingIte
   const { isLogin } = useAuth();
   const { cart, isLoading } = useCart(isLogin);
   const { items: cartItems, payablePrice, totalDiscountPrice, totalPrice } = cart;
+  const router = useRouter();
+
+  const isEmptyCart = !cartItems || cartItems.length === 0;
+
+  useEffect(() => {
+    if (!isLoading && isEmptyCart) {
+      router.push('/');
+    }
+  }, [isEmptyCart, isLoading]);
 
   const totalQuantity = cartItems?.reduce((sum, item) => sum + item.count, 0) || 0;
   const isCheckoutDisabled = !selectedAddressId;

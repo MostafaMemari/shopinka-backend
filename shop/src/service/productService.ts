@@ -26,12 +26,10 @@ import { ofetch } from 'ofetch';
 // );
 
 export const getProducts = async (params?: ProductParams): Promise<{ items: Product[]; pager: Pager }> => {
-  // await new Promise((resolve) => setTimeout(resolve, 2000));
-
   const response = await ofetch(`/product`, {
     baseURL: process.env.API_BASE_URL,
     method: 'GET',
-    query: { ...params, includeMainImage: true },
+    query: { ...params, includeMainImage: true, includeVariants: true },
   });
 
   return {

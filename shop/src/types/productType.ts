@@ -11,7 +11,9 @@ export type Product = {
   basePrice: number | null;
   slug: string;
   mainImage: Image | null;
+  defaultVariantId: number | null;
   type: 'SIMPLE' | 'VARIABLE';
+  variants: ProductVariant[] | [];
   quantity: number | null;
 };
 
