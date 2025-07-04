@@ -43,10 +43,8 @@ const CommentForm = forwardRef<HTMLFormElement, CommentProps>(
       },
     });
 
-    // Ref برای فیلد title
     const titleInputRef = useRef<HTMLInputElement>(null);
 
-    // فوکوس خودکار روی فیلد title موقع لود
     useEffect(() => {
       if (titleInputRef.current) {
         titleInputRef.current.focus();

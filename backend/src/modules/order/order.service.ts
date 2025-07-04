@@ -110,7 +110,8 @@ export class OrderService {
   private mapCartItemsToOrderItems(cartItems: CartItem[]) {
     return cartItems.map((item) => {
       const base = item['product'] ?? item['productVariant'];
-      const price = (base.basePrice - base.salePrice) * item.quantity;
+
+      const price = (base.salePrice || base.basePrice) * item.quantity;
 
       return {
         productId: item.productId,

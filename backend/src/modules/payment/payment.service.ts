@@ -66,6 +66,7 @@ export class PaymentService {
 
   async getGatewayUrl(user: User, paymentDto: PaymentDto) {
     const cart = await this.cartService.me(user.id);
+
     const shipping = await this.shippingRepository.findOneOrThrow({ where: { id: paymentDto.shippingId } });
 
     const amountPrice = (cart.payablePrice + shipping.price) * 10;
@@ -79,6 +80,7 @@ export class PaymentService {
 
       if (authority && code && gatewayURL) {
         const order = await this.orderService.create(user.id, cart, paymentDto);
+
         await this.paymentRepository.create({
           data: {
             amount: amountPrice,

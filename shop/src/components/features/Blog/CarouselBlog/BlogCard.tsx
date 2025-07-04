@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import Link from 'next/link';
 import { BlogItem } from '@/types/blogType';
-import BlogImage from './BlogImage';
 import { NoImage } from '@/types/noImageEnum';
+import BlogImage from './BlogImage';
 
 interface Props {
   blog: BlogItem;

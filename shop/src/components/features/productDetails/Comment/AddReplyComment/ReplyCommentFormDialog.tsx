@@ -24,7 +24,7 @@ const ReplyCommentFormDialog = ({ productId, parentId, commentTitle }: ReplyComm
   const { isLogin } = useAuth();
 
   const handleFormSubmit = async (values: CommentFormikType) => {
-    createComment({ ...values, productId, isRecommended: true, parentId }, () => {
+    createComment({ ...values, productId, parentId }, () => {
       setIsOpen(false);
       if (formRef.current) {
         formRef.current.reset();

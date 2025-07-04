@@ -43,7 +43,7 @@ const Footer: FC<Props> = ({
 
         <div className="relative mb-10 mt-10 flex flex-col items-center justify-between gap-x-4 gap-y-8 rounded-xl bg-background px-10 py-4 shadow-base backdrop-blur-3xl md:flex-row">
           <SubscribeForm subscribeText={subscribeText} />
-          <SocialLinks socialLinks={socialLinks} />
+          <SocialLinks />
         </div>
 
         <div className="grid grid-cols-12 gap-y-10">

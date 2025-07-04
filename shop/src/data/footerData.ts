@@ -40,12 +40,17 @@ export const menuLinks2: MenuLink[] = [
 ];
 
 export const socialLinks: SocialLink[] = [
-  { id: '1', name: 'instagram', href: '#', icon: 'instagram' },
-  { id: '2', name: 'twitter', href: '#', icon: 'twitter' },
-  { id: '3', name: 'aparat', href: '#', icon: 'aparat' },
+  { id: '1', name: 'instagram', href: 'https://instagram.com/shopinka.ir', icon: 'instagram' },
+  { id: '2', name: 'telegram', href: 'https://t.me/shopinka', icon: 'telegram' },
 ];
 
 export const trustBadges: TrustBadge[] = [
-  { id: '1', name: 'namad', imageSrc: '/images/namad.png', href: '#', isTest: true },
+  {
+    id: '1',
+    name: 'namad',
+    imageSrc: '/images/namad.png',
+    href: "<a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=622800&Code=cLIJRY4HL3Y3AYOJXBHINBZIOaGquUDf'><img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=622800&Code=cLIJRY4HL3Y3AYOJXBHINBZIOaGquUDf' alt='' style='cursor:pointer' code='cLIJRY4HL3Y3AYOJXBHINBZIOaGquUDf'></a>",
+    isTest: false,
+  },
   { id: '2', name: 'samandehi', imageSrc: '/images/samandehi.png', href: '#', isTest: true },
 ];

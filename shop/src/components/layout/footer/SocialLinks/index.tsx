@@ -1,21 +1,16 @@
 'use client';
 
-import { FC } from 'react';
-import { FaInstagram, FaTwitter, FaYoutube } from 'react-icons/fa';
+import { FaInstagram, FaTelegram, FaYoutube } from 'react-icons/fa';
 import { IconType } from 'react-icons';
-import { SocialLink } from '@/data/footerData';
-
-interface Props {
-  socialLinks: SocialLink[];
-}
+import { socialLinks } from '@/data/footerData';
+import Link from 'next/link';
 
 const socialConfig: Record<string, { icon: IconType; hoverColor: string }> = {
   instagram: { icon: FaInstagram, hoverColor: 'hover:text-rose-600' },
-  twitter: { icon: FaTwitter, hoverColor: 'hover:text-blue-500' },
-  youtube: { icon: FaYoutube, hoverColor: 'hover:text-red-600' },
+  telegram: { icon: FaTelegram, hoverColor: 'hover:text-blue-500' },
 };
 
-const SocialLinks: FC<Props> = ({ socialLinks }) => {
+const SocialLinks = () => {
   return (
     <div className="flex items-center justify-center gap-x-6 md:gap-x-6">
       {socialLinks?.map((link) => {

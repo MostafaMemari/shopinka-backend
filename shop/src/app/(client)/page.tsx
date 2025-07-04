@@ -4,8 +4,8 @@ import { getBlogs } from '@/service/blogService';
 
 import { getCategoryBySlug } from '@/service/categoryService';
 import CategoryCirclesBanners from '@/components/features/CategoryBanners';
-import BannerSlider from '@/components/features/Carousel/BannerSlider';
-import CarouselBlog from '@/components/features/Blog/CarouselBlog';
+import BannerSlider from '@/components/features/carousel/BannerSlider';
+import CarouselBlog from '@/components/features/blog/CarouselBlog';
 
 export default async function Home() {
   const [discountProducts, newestProducts, blogs, categories] = await Promise.all([

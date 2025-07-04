@@ -10,6 +10,7 @@ import SkeletonLoader from '../../ui/SkeletonLoader';
 import CartIconTotalQuantity from '../cart/CartIconTotalQuantity';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { useAuth } from '@/hooks/reactQuery/auth/useAuth';
+import ShareProductAction from './ActionButtons/ShareProductAction';
 
 interface MobileHeaderProps {
   productId: number;
@@ -26,10 +27,6 @@ const MobileHeader = ({ productId }: MobileHeaderProps) => {
 
   const handleHome = () => {
     router.push('/');
-  };
-
-  const handleShare = () => {
-    console.log(`Share product with ID: ${productId}`);
   };
 
   const handleCart = () => {
@@ -61,9 +58,7 @@ const MobileHeader = ({ productId }: MobileHeaderProps) => {
             </div>
 
             <div className="flex bg-white items-center rounded-lg shadow-md cursor-pointer">
-              <button onClick={handleShare} className="p-3 cursor-pointer" aria-label="Share">
-                <HiOutlineShare size={22} />
-              </button>
+              <ShareProductAction className="p-3 cursor-pointer" />
 
               <FavoriteProductAction productId={productId} className="p-3 cursor-pointer" />
 

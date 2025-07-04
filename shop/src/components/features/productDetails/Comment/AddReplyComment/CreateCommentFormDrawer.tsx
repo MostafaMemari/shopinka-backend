@@ -23,7 +23,7 @@ const CommentFormDrawer = ({ productId }: CommentFormDrawerProps) => {
 
   const handleFormSubmit = async (values: CommentFormikType) => {
     createComment(
-      { ...values, productId, isRecommended: true },
+      { ...values, productId },
       () => {
         setIsOpen(false);
         if (formRef.current) {

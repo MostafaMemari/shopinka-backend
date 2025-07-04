@@ -24,7 +24,7 @@ const CommentFormDialog = ({ productId }: CommentFormDialogProps) => {
 
   const handleFormSubmit = async (values: CommentFormikType) => {
     createComment(
-      { ...values, productId, isRecommended: true },
+      { ...values, productId },
       () => {
         setIsOpen(false);
         if (formRef.current) {

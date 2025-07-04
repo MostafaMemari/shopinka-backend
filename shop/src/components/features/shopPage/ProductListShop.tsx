@@ -45,7 +45,6 @@ export default function ProductListShop({ initialProducts, initialQuery, pager }
 
       setProducts((prev) => {
         const all = [...prev, ...newProducts];
-        // حذف محصولات تکراری (اگر API تضمین می‌کند که تکراری وجود ندارد، می‌توان این بخش را حذف کرد)
         const unique = Array.from(new Map(all.map((p) => [p.id, p])).values());
         return unique;
       });

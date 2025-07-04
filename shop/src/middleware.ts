@@ -3,39 +3,31 @@ import type { NextRequest } from 'next/server';
 import { COOKIE_NAMES } from './types/constants';
 import { getMe } from './service/userService';
 
+async function isAuthenticated() {
+  const res = await getMe();
+  return res.status === 200;
+}
+
 export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get(COOKIE_NAMES.ACCESS_TOKEN)?.value;
   const refreshToken = request.cookies.get(COOKIE_NAMES.REFRESH_TOKEN)?.value;
   const pathname = request.nextUrl.pathname;
 
-  if (pathname === '/login') {
-    if (accessToken && refreshToken) {
-      const res = await getMe();
+  const isLoggedIn = !!accessToken && !!refreshToken;
 
-      if (res.status === 200) NextResponse.redirect(new URL('/', request.url));
+  if (pathname.startsWith('/login')) {
+    if (isLoggedIn && (await isAuthenticated())) {
+      return NextResponse.redirect(new URL('/', request.url));
     }
-
     return NextResponse.next();
   }
 
-  if (pathname.startsWith('/profile')) {
-    if (!accessToken && !refreshToken) {
-      return NextResponse.redirect(new URL('/', request.url));
+  if (pathname.startsWith('/profile') || pathname === '/checkout/shipping') {
+    if (!isLoggedIn || !(await isAuthenticated())) {
+      const redirectTo = pathname === '/checkout/shipping' ? `/login?backUrl=${encodeURIComponent(pathname)}` : '/';
+      return NextResponse.redirect(new URL(redirectTo, request.url));
     }
-
-    const res = await getMe();
-
-    if (res.status === 200) return NextResponse.next();
-  }
-
-  if (pathname === '/checkout/shipping') {
-    if (!accessToken && !refreshToken) {
-      return NextResponse.redirect(new URL('/login?backUrl=/checkout/shipping', request.url));
-    }
-
-    const res = await getMe();
-
-    if (res.status === 200) return NextResponse.next();
+    return NextResponse.next();
   }
 
   return NextResponse.next();

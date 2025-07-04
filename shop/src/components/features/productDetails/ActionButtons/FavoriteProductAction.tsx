@@ -43,7 +43,7 @@ function FavoriteProductAction({ productId, isTooltip = false, className }: Favo
         type="button"
         onClick={handleAddToFavorite}
         disabled={isFavoriteLoading || isToggleFavoriteLoading}
-        className={cn('text-gray-700 hover:text-red-500 dark:text-white transition-colors duration-200 cursor-pointer', {
+        className={cn('text-gray-700 hover:text-red-500 dark:text-white transition-colors duration-200', {
           'text-red-500': isFavoriteProduct,
           'opacity-60 cursor-not-allowed': isFavoriteLoading || isToggleFavoriteLoading,
           className,
@@ -64,7 +64,7 @@ function FavoriteProductAction({ productId, isTooltip = false, className }: Favo
 
 function Tooltip({ text }: { text: string }) {
   return (
-    <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden w-max rounded bg-zinc-900 px-3 py-1 text-sm text-white group-hover:block opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+    <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden w-max rounded bg-zinc-900 px-3 py-1 text-sm text-white group-hover:block opacity-0 group-hover:opacity-100 transition-opacity duration-200">
       {text}
     </div>
   );
