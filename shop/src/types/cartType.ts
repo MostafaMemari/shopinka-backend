@@ -46,6 +46,7 @@ export interface CartItem {
       name: string;
       mainImage: { fileUrl: string } | null;
       type: 'SIMPLE' | 'VARIABLE';
+      slug: string;
     };
     attributeValues: AttributeValues[] | [];
   } | null;

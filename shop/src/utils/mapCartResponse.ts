@@ -1,33 +1,33 @@
 import { CartItem, CartItemState } from '@/types/cartType';
 
-export const mapCartResponseToCartItemState = (cartItems: CartItem[]): CartItemState[] => {
-  return (
-    cartItems?.map((item: CartItem) => {
-      const productId = item.product?.id ?? item.productVariant?.id ?? 0;
-      const type = item.product?.type === 'SIMPLE' ? 'SIMPLE' : 'VARIABLE';
-      const productTitle = item.product?.name ?? item.productVariant?.product?.name ?? '';
-      const productThumbnail = item.product?.mainImage?.fileUrl ?? item.productVariant?.product?.mainImage?.fileUrl ?? '';
-      const productSlug = item.product?.slug ?? '';
+export const mapCartResponseToCartItemState = (cartItems: CartItem[] = []): CartItemState[] => {
+  return cartItems.map((item) => {
+    const isSimple = item.product?.type === 'SIMPLE';
+    const product = item.product || item.productVariant?.product;
+    const variant = item.productVariant;
 
-      const basePrice = item.product?.basePrice ?? item.productVariant?.basePrice ?? 0;
-      const salePrice = item.product?.salePrice ?? item.productVariant?.salePrice ?? 0;
-      const discount = Math.round(((basePrice - salePrice) / basePrice) * 100) || 0; // درصد تخفیف
+    const id = item.product?.id ?? variant?.id ?? 0;
+    const type: 'SIMPLE' | 'VARIABLE' = isSimple ? 'SIMPLE' : 'VARIABLE';
+    const title = product?.name ?? '';
+    const thumbnail = product?.mainImage?.fileUrl ?? '';
+    const slug = product?.slug ?? '';
 
-      const attributeValues = item.productVariant?.attributeValues ?? [];
+    const basePrice = item.product?.basePrice ?? variant?.basePrice ?? 0;
+    const salePrice = item.product?.salePrice ?? variant?.salePrice ?? 0;
+    const discount = basePrice ? Math.round(((basePrice - salePrice) / basePrice) * 100) : 0;
 
-      return {
-        itemId: item.id,
-        id: productId,
-        count: item.quantity,
-        slug: productSlug,
-        type,
-        title: productTitle,
-        thumbnail: productThumbnail,
-        basePrice,
-        salePrice,
-        discount,
-        attributeValues,
-      };
-    }) || []
-  );
+    return {
+      itemId: item.id,
+      id,
+      count: item.quantity,
+      slug,
+      type,
+      title,
+      thumbnail,
+      basePrice,
+      salePrice,
+      discount,
+      attributeValues: variant?.attributeValues ?? [],
+    };
+  });
 };

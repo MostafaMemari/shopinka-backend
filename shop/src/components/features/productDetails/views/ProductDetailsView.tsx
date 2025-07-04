@@ -96,20 +96,24 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
                       </div>
                     </div>
 
-                    <div className="mb-6">
-                      <AddToCartButtonDesktop
-                        key={product.id}
-                        product={{
-                          id: product.id,
-                          name: product.name,
-                          slug: product.slug,
-                          basePrice: product.basePrice ?? 0,
-                          salePrice: product.salePrice ?? 0,
-                          mainImageUrl: product.mainImage?.fileUrl ?? null,
-                          type: product.type,
-                        }}
-                      />
-                    </div>
+                    {product.variants.length > 0 ? (
+                      <div className="mb-6">
+                        <AddToCartButtonDesktop
+                          key={product.id}
+                          product={{
+                            id: product.id,
+                            name: product.name,
+                            slug: product.slug,
+                            basePrice: product.basePrice ?? 0,
+                            salePrice: product.salePrice ?? 0,
+                            mainImageUrl: product.mainImage?.fileUrl ?? null,
+                            type: product.type,
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      ''
+                    )}
                   </div>
                 </div>
 
@@ -159,33 +163,38 @@ const ProductDetailsView: FC<ProductDetailsViewProps> = ({ product }) => {
 
                 <ProductGuaranteeBadge />
 
-                <CartMobileFixContainer>
-                  <div className="flex justify-between items-center w-full">
-                    <div className="w-1/2 p-3">
-                      <AddToCartButtonMobile
-                        key={product.id}
-                        product={{
-                          id: product.id,
-                          name: product.name,
-                          slug: product.slug,
-                          basePrice: product.basePrice ?? 0,
-                          salePrice: product.salePrice ?? 0,
-                          mainImageUrl: product.mainImage?.fileUrl ?? null,
-                          type: product.type,
-                        }}
-                      />
+                {product.variants.length > 0 ? (
+                  <CartMobileFixContainer>
+                    <div className="flex justify-between items-center w-full">
+                      <div className="w-1/2 p-3">
+                        <AddToCartButtonMobile
+                          key={product.id}
+                          product={{
+                            id: product.id,
+                            name: product.name,
+                            slug: product.slug,
+                            basePrice: product.basePrice ?? 0,
+                            salePrice: product.salePrice ?? 0,
+                            mainImageUrl: product.mainImage?.fileUrl ?? null,
+                            type: product.type,
+                          }}
+                        />
+                      </div>
+
+                      <div className="p-2">
+                        <PriceDisplay
+                          product={{
+                            type: product.type,
+                            basePrice: product.basePrice ?? 0,
+                            salePrice: product.salePrice,
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div className="p-2">
-                      <PriceDisplay
-                        product={{
-                          type: product.type,
-                          basePrice: product.basePrice ?? 0,
-                          salePrice: product.salePrice,
-                        }}
-                      />
-                    </div>
-                  </div>
-                </CartMobileFixContainer>
+                  </CartMobileFixContainer>
+                ) : (
+                  ''
+                )}
               </div>
             </div>
           </div>

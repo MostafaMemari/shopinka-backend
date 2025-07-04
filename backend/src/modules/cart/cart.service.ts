@@ -50,6 +50,7 @@ export class CartService {
                     name: true,
                     type: true,
                     mainImage: { select: { fileUrl: true } },
+                    slug: true,
                   },
                 },
                 attributeValues: {

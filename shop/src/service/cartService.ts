@@ -25,8 +25,6 @@ export const createCartBulk = async ({ items }: { items: CartData[] }): Promise<
 };
 
 export const getCart = async (): Promise<CartState> => {
-  console.log('object');
-
   const res = await shopApiFetch('/cart/me', { method: 'GET' });
 
   const mappedItems = mapCartResponseToCartItemState(res.data.items);
