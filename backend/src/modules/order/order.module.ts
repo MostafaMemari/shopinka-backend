@@ -13,6 +13,7 @@ import { ProductRepository } from '../product/repositories/product.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
 import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 import { ShippingRepository } from '../shipping/repositories/shipping.repository';
+import { CartService } from '../cart/cart.service';
 
 @Module({
   controllers: [OrderController],
@@ -30,6 +31,7 @@ import { ShippingRepository } from '../shipping/repositories/shipping.repository
     ProductVariantRepository,
     CartItemRepository,
     ShippingRepository,
+    CartService,
   ],
 })
 export class OrderModule {}

@@ -19,6 +19,7 @@ import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 import { ShippingRepository } from '../shipping/repositories/shipping.repository';
 import { UpdateOrderStatusDto } from './dto/update-status-order.dto';
 import { QueryOrderStatus } from './enums/order-sort-by.enum';
+import { CartService } from '../cart/cart.service';
 
 @Injectable()
 export class OrderService {
@@ -34,14 +35,17 @@ export class OrderService {
     private readonly productVariantRepository: ProductVariantRepository,
     private readonly cartItemRepository: CartItemRepository,
     private readonly shippingRepository: ShippingRepository,
+    private readonly cartService: CartService,
     private readonly cacheService: CacheService,
   ) {}
 
-  @Cron(CronExpression.EVERY_30_MINUTES)
+  // @Cron(CronExpression.EVERY_30_MINUTES)
+  @Cron(CronExpression.EVERY_10_SECONDS)
   async handleExpiredPendingOrders() {
     this.logger.log('Checking for expired pending orders...');
 
-    const TIMEOUT_MS = 60 * 60 * 1000; // 1 hour
+    // const TIMEOUT_MS = 60 * 60 * 1000; // 1 hour
+    const TIMEOUT_MS = 1 * 60 * 1000; // 1 minute
     const expirationTime = new Date(Date.now() - TIMEOUT_MS);
 
     try {
@@ -64,27 +68,14 @@ export class OrderService {
           });
         }
 
-        for (const item of order.items) {
-          await this.cartItemRepository.upsert({
-            where: {
-              cartId_productId: {
-                cartId: userCart.id,
-                productId: item.productId ?? 0,
-              },
-            },
-            update: {
-              quantity: {
-                increment: item.quantity,
-              },
-            },
-            create: {
-              cartId: userCart.id,
-              productId: item.productId,
-              productVariantId: item.productVariantId,
-              quantity: item.quantity,
-            },
-          });
-        }
+        await this.cartService.addItems(
+          order.userId,
+          order.items.map((item) => ({
+            productId: item?.productId || null,
+            productVariantId: item?.productVariantId || null,
+            quantity: item.quantity,
+          })),
+        );
 
         await this.orderRepository.update({
           where: { id: order.id },
@@ -148,9 +139,7 @@ export class OrderService {
     const { addressId, shippingId } = paymentDto;
     let { items, payablePrice } = cart;
 
-    if (!items.length) {
-      throw new BadRequestException('Your cart list is empty.');
-    }
+    if (!items.length) throw new BadRequestException('Your cart list is empty.');
 
     const shipping = await this.shippingRepository.findOneOrThrow({ where: { id: shippingId } });
     payablePrice += shipping.price;
