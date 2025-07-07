@@ -39,8 +39,8 @@ export class OrderService {
     private readonly cacheService: CacheService,
   ) {}
 
-  // @Cron(CronExpression.EVERY_30_MINUTES)
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron(CronExpression.EVERY_30_MINUTES)
+  // @Cron(CronExpression.EVERY_10_SECONDS)
   async handleExpiredPendingOrders() {
     this.logger.log('Checking for expired pending orders...');
 
