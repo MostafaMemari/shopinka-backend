@@ -13,6 +13,7 @@ import { ProductVariantRepository } from '../product/repositories/product-varian
 import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 import { ShippingRepository } from '../shipping/repositories/shipping.repository';
 import { CartService } from '../cart/cart.service';
+import { CronModule } from '../cron/cron.module';
 
 @Module({
   controllers: [OrderController],

@@ -1,90 +1,31 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { IGetCart } from '../cart/interfaces/cart.interface';
 import { PaymentDto } from '../payment/dto/payment.dto';
 import { AddressRepository } from '../address/address.repository';
-import { CartItem, Order, OrderItem, OrderStatus, Prisma } from '@prisma/client';
+import { CartItem, Order, OrderStatus, Prisma } from '@prisma/client';
 import { OrderRepository } from './repositories/order.repository';
 import { QueryMyOrderDto, QueryOrderDto } from './dto/query-order.dto';
 import { pagination } from '../../common/utils/pagination.utils';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { OrderItemRepository } from './repositories/order-item.repository';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import { CartRepository } from '../cart/repositories/cart.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
 import { ProductRepository } from '../product/repositories/product.repository';
 import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 import { ShippingRepository } from '../shipping/repositories/shipping.repository';
 import { UpdateOrderStatusDto } from './dto/update-status-order.dto';
 import { QueryOrderStatus } from './enums/order-sort-by.enum';
-import { CartService } from '../cart/cart.service';
 
 @Injectable()
 export class OrderService {
-  private readonly logger: Logger = new Logger(OrderService.name);
-
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly orderItemRepository: OrderItemRepository,
     private readonly addressRepository: AddressRepository,
-    private readonly cartRepository: CartRepository,
     private readonly productRepository: ProductRepository,
     private readonly productVariantRepository: ProductVariantRepository,
     private readonly cartItemRepository: CartItemRepository,
     private readonly shippingRepository: ShippingRepository,
-    private readonly cartService: CartService,
   ) {}
-
-  @Cron(CronExpression.EVERY_30_MINUTES)
-  // @Cron(CronExpression.EVERY_10_SECONDS)
-  async handleExpiredPendingOrders() {
-    this.logger.log('Checking for expired pending orders...');
-
-    // const TIMEOUT_MS = 60 * 60 * 1000; // 1 hour
-    const TIMEOUT_MS = 1 * 60 * 1000; // 1 minute
-    const expirationTime = new Date(Date.now() - TIMEOUT_MS);
-
-    try {
-      const expiredOrders = (await this.orderRepository.findAll({
-        where: {
-          status: OrderStatus.PENDING,
-          createdAt: { lt: expirationTime },
-        },
-        include: { items: true },
-      })) as (Order & { items: OrderItem[] })[];
-
-      for (const order of expiredOrders) {
-        if (!order.userId) continue;
-
-        let userCart = await this.cartRepository.findFirst({ where: { userId: order.userId } });
-
-        if (!userCart) {
-          userCart = await this.cartRepository.create({
-            data: { userId: order.userId },
-          });
-        }
-
-        await this.cartService.addItems(
-          order.userId,
-          order.items.map((item) => ({
-            productId: item?.productId || null,
-            productVariantId: item?.productVariantId || null,
-            quantity: item.quantity,
-          })),
-        );
-
-        await this.orderRepository.update({
-          where: { id: order.id },
-          data: { status: OrderStatus.CANCELLED },
-        });
-
-        this.logger.warn(`Order ${order.id} canceled due to timeout (created at ${order.createdAt}). Items returned to cart.`);
-      }
-
-      this.logger.log(`Expired pending orders processed successfully. Count: ${expiredOrders.length}`);
-    } catch (error) {
-      this.logger.error(`Error processing expired pending orders: ${error.message}`, error.stack);
-    }
-  }
 
   private generateOrderNumber(): string {
     const number = Math.floor(Math.random() * 1_000_000_000)

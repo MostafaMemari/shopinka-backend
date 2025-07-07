@@ -20,9 +20,6 @@ import { SendOtpDto } from './dto/authenticate.dto';
 import { UserRepository } from '../user/user.repository';
 import { Role, User } from '@prisma/client';
 import { VerifyMobileDto } from './dto/verify-mobile.dto';
-import { Inject } from '@nestjs/common';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -32,7 +29,6 @@ export class AuthService {
   private readonly OTP_REQUEST_TIMEOUT_SEC = 3600; //* 1 hour
 
   constructor(
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly jwtService: JwtService,
     private readonly userRepository: UserRepository,
     private readonly prisma: PrismaService,

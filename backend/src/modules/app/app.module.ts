@@ -24,16 +24,12 @@ import { ShippingModule } from '../shipping/shipping.module';
 import { AiModule } from '../ai/ai.module';
 import { PageModule } from '../page/page.module';
 import { ContactModule } from '../contact/contact.module';
-import { CacheModule } from '@nestjs/cache-manager';
+import { CronModule } from '../cron/cron.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(envConfig()),
-    CacheModule.register({
-      isGlobal: true,
-      ttl: 30,
-      max: 100,
-    }),
+    CronModule,
     AuthModule,
     UserModule,
     PrismaModule,
