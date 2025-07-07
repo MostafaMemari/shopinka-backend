@@ -8,7 +8,6 @@ import { CategoryRepository } from '../category/category.repository';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { pagination } from '../../common/utils/pagination.utils';
 import { QueryBlogDto } from './dto/query-blog.dto';
-import { CacheService } from '../cache/cache.service';
 import { estimateReadingTime, sortObject } from '../../common/utils/functions.utils';
 import { CacheKeys } from '../../common/enums/cache.enum';
 import { TagRepository } from '../tag/tag.repository';
@@ -17,13 +16,10 @@ import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repo
 
 @Injectable()
 export class BlogService {
-  private readonly CACHE_EXPIRE_TIME: number = 600; //* 5 minutes
-
   constructor(
     private readonly blogRepository: BlogRepository,
     private readonly categoryRepository: CategoryRepository,
     private readonly tagRepository: TagRepository,
-    private readonly cacheService: CacheService,
     private readonly galleryItemRepository: GalleryItemRepository,
   ) {}
 
@@ -67,7 +63,6 @@ export class BlogService {
       sortDirection,
       startDate,
       includeCategories,
-      includeSeoMeta,
       includeTags,
       includeUser,
       search,
@@ -79,10 +74,6 @@ export class BlogService {
     const sortedDto = sortObject(queryBlogDto);
 
     const cacheKey = `${CacheKeys.Blogs}_${JSON.stringify(sortedDto)}`;
-
-    const cachedBlogs = await this.cacheService.get<null | Blog[]>(cacheKey);
-
-    if (cachedBlogs) return { ...pagination(paginationDto, cachedBlogs) };
 
     const filters: Prisma.BlogWhereInput = { status: BlogStatus.PUBLISHED };
 
@@ -111,8 +102,6 @@ export class BlogService {
         user: includeUser && { select: { id: true, fullName: true } },
       },
     });
-
-    await this.cacheService.set(cacheKey, blogs, this.CACHE_EXPIRE_TIME);
 
     return { ...pagination(paginationDto, blogs) };
   }

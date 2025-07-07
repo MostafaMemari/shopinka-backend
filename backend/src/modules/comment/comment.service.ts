@@ -8,18 +8,14 @@ import { CommentMessages } from './enums/comment-messages.enum';
 import { QueryCommentDto } from './dto/query-comment.dto';
 import { sortObject } from '../../common/utils/functions.utils';
 import { CacheKeys } from '../../common/enums/cache.enum';
-import { CacheService } from '../cache/cache.service';
 import { pagination } from '../../common/utils/pagination.utils';
 import { QueryAdminCommentDto } from './dto/query-admin-comment.dto';
 
 @Injectable()
 export class CommentService {
-  private readonly CACHE_EXPIRE_TIME: number = 600; //* 5 minutes
-
   constructor(
     private readonly commentRepository: CommentRepository,
     private readonly productRepository: ProductRepository,
-    private readonly cacheService: CacheService,
   ) {}
   async create(userId: number, createCommentDto: CreateCommentDto): Promise<{ message: string; comment: Comment }> {
     const { productId, parentId } = createCommentDto;
@@ -36,14 +32,6 @@ export class CommentService {
   async findAll({ take, page, ...queryCommentDto }: QueryCommentDto): Promise<unknown> {
     const paginationDto = { page, take };
     const { includeUser, includeReplies, isRecommended, repliesDepth, blogId, productId } = queryCommentDto;
-
-    const sortedDto = sortObject(queryCommentDto);
-
-    const cacheKey = `${CacheKeys.Comments}_${JSON.stringify(sortedDto)}`;
-
-    const cachedComments = await this.cacheService.get<null | Comment[]>(cacheKey);
-
-    if (cachedComments) return { ...pagination(paginationDto, cachedComments) };
 
     const filters: Prisma.CommentWhereInput = { isActive: true, parent: null };
 
@@ -66,8 +54,6 @@ export class CommentService {
     if (includeReplies && repliesDepth > 0) {
       resultComments = await Promise.all(comments.map(async (comment) => await this.loadReplies(comment.id, include, repliesDepth)));
     }
-
-    await this.cacheService.set(cacheKey, resultComments, this.CACHE_EXPIRE_TIME);
 
     return { ...pagination(paginationDto, resultComments) };
   }
@@ -146,10 +132,6 @@ export class CommentService {
 
     const cacheKey = `${CacheKeys.Comments}_${JSON.stringify(sortedDto)}`;
 
-    const cachedComments = await this.cacheService.get<null | Comment[]>(cacheKey);
-
-    if (cachedComments) return { ...pagination(paginationDto, cachedComments) };
-
     const filters: Prisma.CommentWhereInput = { isActive, parent: null };
 
     if (isRecommended !== undefined) filters.isRecommended = isRecommended;
@@ -179,8 +161,6 @@ export class CommentService {
     if (includeReplies && repliesDepth > 0) {
       resultComments = await Promise.all(comments.map(async (comment) => await this.loadReplies(comment.id, include, repliesDepth)));
     }
-
-    await this.cacheService.set(cacheKey, resultComments, this.CACHE_EXPIRE_TIME);
 
     return { ...pagination(paginationDto, resultComments) };
   }

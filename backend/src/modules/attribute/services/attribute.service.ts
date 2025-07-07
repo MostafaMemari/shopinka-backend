@@ -4,7 +4,6 @@ import { UpdateAttributeDto } from '../dto/update-attribute.dto';
 import { AttributeRepository } from '../repositories/attribute.repository';
 import { Attribute, Prisma } from '@prisma/client';
 import slugify from 'slugify';
-import { CacheService } from '../../../modules/cache/cache.service';
 import { QueryAttributeDto } from '../dto/query-attribute.dto';
 import { sortObject } from '../../../common/utils/functions.utils';
 import { CacheKeys } from '../../../common/enums/cache.enum';
@@ -13,12 +12,7 @@ import { AttributeMessages } from '../enums/attribute-messages.enum';
 
 @Injectable()
 export class AttributeService {
-  private readonly CACHE_EXPIRE_TIME: number = 600; //* 5 minutes
-
-  constructor(
-    private readonly attributeRepository: AttributeRepository,
-    private readonly cacheService: CacheService,
-  ) {}
+  constructor(private readonly attributeRepository: AttributeRepository) {}
 
   async create(userId: number, createAttributeDto: CreateAttributeDto): Promise<{ message: string; attribute: Attribute }> {
     if (createAttributeDto.slug) {
@@ -43,10 +37,6 @@ export class AttributeService {
 
     const cacheKey = `${CacheKeys.Attributes}_${JSON.stringify(sortedDto)}`;
 
-    const cachedAttributes = await this.cacheService.get<null | Attribute[]>(cacheKey);
-
-    if (cachedAttributes) return { ...pagination(paginationDto, cachedAttributes) };
-
     const filters: Prisma.AttributeWhereInput = {};
 
     if (description) filters.description = { contains: description };
@@ -65,8 +55,6 @@ export class AttributeService {
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
       include: { user: includeUser, values: includeValues },
     });
-
-    await this.cacheService.set(cacheKey, attributes, this.CACHE_EXPIRE_TIME);
 
     return { ...pagination(paginationDto, attributes) };
   }

@@ -7,19 +7,15 @@ import { Category, Prisma } from '@prisma/client';
 import { QueryCategoryDto } from './dto/query-category.dto';
 import { sortObject } from '../../common/utils/functions.utils';
 import { CacheKeys } from '../../common/enums/cache.enum';
-import { CacheService } from '../cache/cache.service';
 import { pagination } from '../../common/utils/pagination.utils';
 import { CategoryMessages } from './enums/category-messages.enum';
 import slugify from 'slugify';
 
 @Injectable()
 export class CategoryService {
-  private readonly CACHE_EXPIRE_TIME: number = 600; //* 5 minutes
-
   constructor(
     private readonly categoryRepository: CategoryRepository,
     private readonly galleryItemRepository: GalleryItemRepository,
-    private readonly cacheService: CacheService,
   ) {}
 
   async create(userId: number, createCategoryDto: CreateCategoryDto): Promise<{ message: string; category: Category }> {
@@ -64,14 +60,6 @@ export class CategoryService {
       includeOnlyTopLevel,
     } = queryCategoryDto;
 
-    const sortedDto = sortObject(queryCategoryDto);
-
-    const cacheKey = `${CacheKeys.Categories}_${JSON.stringify(sortedDto)}`;
-
-    const cachedCategories = await this.cacheService.get<null | Category[]>(cacheKey);
-
-    if (cachedCategories) return { ...pagination(paginationDto, cachedCategories) };
-
     const filters: Prisma.CategoryWhereInput = {};
 
     if (type) filters.type = type;
@@ -108,8 +96,6 @@ export class CategoryService {
         categories.map(async (category) => await this.loadChildren(category.id, include, childrenDepth)),
       );
     }
-
-    await this.cacheService.set(cacheKey, resultCategories, this.CACHE_EXPIRE_TIME);
 
     return { ...pagination(paginationDto, resultCategories) };
   }

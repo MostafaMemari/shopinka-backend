@@ -3,7 +3,6 @@ import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductRepository } from '../repositories/product.repository';
 import { OrderStatus, Prisma, Product, ProductStatus, ProductType, ProductVariant } from '@prisma/client';
-import { CacheService } from '../../cache/cache.service';
 import { GalleryItemRepository } from '../../gallery/repositories/gallery-item.repository';
 import slugify from 'slugify';
 import { AttributeRepository } from '../../attribute/repositories/attribute.repository';
@@ -23,12 +22,9 @@ import { SetDefaultVariantDto } from '../dto/update-product-variant.dto';
 
 @Injectable()
 export class ProductService {
-  private readonly CACHE_EXPIRE_TIME: number = 600; //* 5 minutes
-
   constructor(
     private readonly productRepository: ProductRepository,
     private readonly favoriteRepository: FavoriteRepository,
-    private readonly cacheService: CacheService,
     private readonly galleryItemRepository: GalleryItemRepository,
     private readonly attributeRepository: AttributeRepository,
     private readonly categoryRepository: CategoryRepository,
@@ -94,12 +90,6 @@ export class ProductService {
       tagIds,
       categoryIds,
     } = query;
-
-    const sortedDto = sortObject(query);
-    const cacheKey = `${CacheKeys.Products}_${JSON.stringify(sortedDto)}`;
-
-    const cachedProducts = await this.cacheService.get<null | Product[]>(cacheKey);
-    if (cachedProducts) return pagination(paginationDto, cachedProducts);
 
     const filters: Prisma.ProductWhereInput = {
       status: ProductStatus.PUBLISHED,
@@ -209,8 +199,6 @@ export class ProductService {
       },
     });
 
-    await this.cacheService.set(cacheKey, products, this.CACHE_EXPIRE_TIME);
-
     return pagination(paginationDto, products);
   }
 
@@ -296,14 +284,6 @@ export class ProductService {
       includeAttributeValues,
     } = queryProductDto;
 
-    const sortedDto = sortObject(queryProductDto);
-
-    const cacheKey = `${CacheKeys.Products}_${JSON.stringify(sortedDto)}`;
-
-    const cachedProducts = await this.cacheService.get<null | Product[]>(cacheKey);
-
-    if (cachedProducts) return { ...pagination(paginationDto, cachedProducts) };
-
     const filters: Prisma.ProductWhereInput = { status: ProductStatus.PUBLISHED };
 
     if (sku) filters.sku = { contains: sku };
@@ -342,8 +322,6 @@ export class ProductService {
         variants: includeVariants && { include: { mainImage: true, attributeValues: includeAttributeValues } },
       },
     });
-
-    await this.cacheService.set(cacheKey, products, this.CACHE_EXPIRE_TIME);
 
     return { ...pagination(paginationDto, products) };
   }

@@ -7,9 +7,8 @@ import { GalleryRepository } from '../repositories/gallery.repository';
 import { IUploadSingleFile } from '../../../common/interfaces/aws.interface';
 import { GalleryItem, Prisma } from '@prisma/client';
 import { GalleryItemQueryDto } from '../dto/gallery-item-query.dto';
-import { CacheService } from '../../../modules/cache/cache.service';
-import { resizeImageWithSharp, sortObject } from '../../../common/utils/functions.utils';
-import { CacheKeys } from '../../../common/enums/cache.enum';
+
+import { resizeImageWithSharp } from '../../../common/utils/functions.utils';
 import { pagination } from '../../../common/utils/pagination.utils';
 import { MoveGalleryItemDto } from '../dto/move-gallery-item.dto';
 import { DuplicateGalleryItemDto } from '../dto/duplicate-gallery-item.dto';
@@ -20,7 +19,6 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class GalleryItemService {
-  private readonly CACHE_EXPIRE_TIME: number = 600; //* 5 minutes
   private readonly GALLERY_ITEM_FOLDER = 'galleryItemImages';
   private readonly logger: Logger = new Logger(GalleryItemService.name);
 
@@ -28,7 +26,6 @@ export class GalleryItemService {
     private readonly galleryItemRepository: GalleryItemRepository,
     private readonly awsService: AwsService,
     private readonly galleryRepository: GalleryRepository,
-    private readonly cacheService: CacheService,
   ) {}
 
   @Cron(CronExpression.EVERY_12_HOURS)
@@ -130,14 +127,6 @@ export class GalleryItemService {
       includeSeoMeta,
     } = galleryItemsDto;
 
-    const sortedDto = sortObject(galleryItemsDto);
-
-    const cacheKey = `${CacheKeys.GalleryItems}_${JSON.stringify(sortedDto)}`;
-
-    const cachedGalleryItems = await this.cacheService.get<null | GalleryItem[]>(cacheKey);
-
-    if (cachedGalleryItems) return { ...pagination(paginationDto, cachedGalleryItems) };
-
     const filters: Prisma.GalleryItemWhereInput = { gallery: { userId } };
 
     if (isDeleted !== undefined) filters.isDeleted = isDeleted;
@@ -164,8 +153,6 @@ export class GalleryItemService {
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
       include: { seoMeta: includeSeoMeta, tags: includeTags, gallery: includeGallery },
     });
-
-    await this.cacheService.set(cacheKey, galleryItems, this.CACHE_EXPIRE_TIME);
 
     return { ...pagination(paginationDto, galleryItems) };
   }

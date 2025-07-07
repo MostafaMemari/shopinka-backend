@@ -7,10 +7,7 @@ import { IVerifyPayment } from '../../common/interfaces/payment.interface';
 import { PaymentMessages } from './enums/payment.messages';
 import { RefundPaymentDto } from './dto/refund.dto';
 import { QueryMyTransactionsDto } from './dto/user-transactions-query.dto';
-import { CacheKeys } from '../../common/enums/cache.enum';
-import { sortObject } from '../../common/utils/functions.utils';
 import { pagination } from '../../common/utils/pagination.utils';
-import { CacheService } from '../cache/cache.service';
 import { QueryTransactionsDto } from './dto/transactions-query.dto';
 import { PaymentDto } from './dto/payment.dto';
 import { CartService } from '../cart/cart.service';
@@ -25,12 +22,11 @@ import { ShippingRepository } from '../shipping/repositories/shipping.repository
 @Injectable()
 export class PaymentService {
   private readonly logger: Logger = new Logger(PaymentService.name);
-  private readonly CACHE_EXPIRE_TIME: number = 600; //* 5 minutes
 
   constructor(
     private readonly paymentRepository: PaymentRepository,
     private readonly zarinpalService: ZarinpalService,
-    private readonly cacheService: CacheService,
+
     private readonly cartService: CartService,
     private readonly orderService: OrderService,
     private readonly shippingRepository: ShippingRepository,
@@ -199,14 +195,6 @@ export class PaymentService {
     const { includeOrder, authority, endDate, maxAmount, minAmount, sortBy, sortDirection, startDate, status, userId, includeUser } =
       transactionsFiltersDto;
 
-    const sortedDto = sortObject(transactionsFiltersDto);
-
-    const cacheKey = `${CacheKeys.Transactions}_${JSON.stringify(sortedDto)}`;
-
-    const cachedTransactions = await this.cacheService.get<null | Transaction[]>(cacheKey);
-
-    if (cachedTransactions) return { ...pagination(paginationDto, cachedTransactions) };
-
     const filters: Prisma.TransactionWhereInput = {};
 
     if (userId) filters.userId = userId;
@@ -228,8 +216,6 @@ export class PaymentService {
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
       include: { order: includeOrder, user: includeUser },
     });
-
-    await this.cacheService.set(cacheKey, transactions, this.CACHE_EXPIRE_TIME);
 
     return { ...pagination(paginationDto, transactions) };
   }

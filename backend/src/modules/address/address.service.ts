@@ -4,20 +4,12 @@ import { UpdateAddressDto } from './dto/update-address.dto';
 import { AddressRepository } from './address.repository';
 import { Address, Prisma } from '@prisma/client';
 import { QueryAddressDto } from './dto/query-address.dto';
-import { sortObject } from '../../common/utils/functions.utils';
-import { CacheKeys } from '../../common/enums/cache.enum';
-import { CacheService } from '../cache/cache.service';
 import { pagination } from '../../common/utils/pagination.utils';
 import { AddressMessages } from './enums/address-messages.enum';
 
 @Injectable()
 export class AddressService {
-  private readonly CACHE_EXPIRE_TIME: number = 600; //* 5 minutes
-
-  constructor(
-    private readonly cacheService: CacheService,
-    private readonly addressRepository: AddressRepository,
-  ) {}
+  constructor(private readonly addressRepository: AddressRepository) {}
 
   async create(userId: number, createAddressDto: CreateAddressDto) {
     const address = await this.addressRepository.findOne({ where: { postalCode: createAddressDto.postalCode } });
@@ -33,14 +25,6 @@ export class AddressService {
     const paginationDto = { page, take };
     const { includeOrders, address, city, description, endDate, postalCode, province, receiverMobile, sortBy, sortDirection, startDate } =
       queryAddressDto;
-
-    const sortedDto = sortObject(queryAddressDto);
-
-    const cacheKey = `${CacheKeys.Addresses}_${JSON.stringify(sortedDto)}`;
-
-    const cachedAddresses = await this.cacheService.get<null | Address[]>(cacheKey);
-
-    if (cachedAddresses) return { ...pagination(paginationDto, cachedAddresses) };
 
     const filters: Prisma.AddressWhereInput = { userId };
 
@@ -58,8 +42,6 @@ export class AddressService {
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
       include: { orders: includeOrders },
     });
-
-    await this.cacheService.set(cacheKey, addresses, this.CACHE_EXPIRE_TIME);
 
     return { ...pagination(paginationDto, addresses) };
   }

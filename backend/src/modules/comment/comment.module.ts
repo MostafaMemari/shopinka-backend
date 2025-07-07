@@ -5,10 +5,9 @@ import { AuthService } from '../auth/auth.service';
 import { UserRepository } from '../user/user.repository';
 import { CommentRepository } from './comment.repository';
 import { ProductRepository } from '../product/repositories/product.repository';
-import { CacheService } from '../cache/cache.service';
 
 @Module({
   controllers: [CommentController],
-  providers: [CommentService, AuthService, UserRepository, CommentRepository, ProductRepository, CacheService],
+  providers: [CommentService, AuthService, UserRepository, CommentRepository, ProductRepository],
 })
 export class CommentModule {}

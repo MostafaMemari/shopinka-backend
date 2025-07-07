@@ -7,24 +7,18 @@ import { ProductRepository } from '../repositories/product.repository';
 import { GalleryItemRepository } from '../../gallery/repositories/gallery-item.repository';
 import { UpdateProductVariantDto } from '../dto/update-product-variant.dto';
 import { QueryProductVariantDto } from '../dto/query-product-variant.dto';
-import { sortObject } from '../../../common/utils/functions.utils';
-import { CacheKeys } from '../../../common/enums/cache.enum';
-import { CacheService } from '../../../modules/cache/cache.service';
 import { pagination } from '../../../common/utils/pagination.utils';
 import { AttributeValueRepository } from '../../attribute/repositories/attribute-value.repository';
 import { OrderItemRepository } from '../../order/repositories/order-item.repository';
 
 @Injectable()
 export class ProductVariantService {
-  private readonly CACHE_EXPIRE_TIME: number = 600; //* 5 minutes
-
   constructor(
     private readonly productVariantRepository: ProductVariantRepository,
     private readonly productRepository: ProductRepository,
     private readonly galleryItemRepository: GalleryItemRepository,
     private readonly attributeValueRepository: AttributeValueRepository,
     private readonly orderItemRepository: OrderItemRepository,
-    private readonly cacheService: CacheService,
   ) {}
 
   async create(
@@ -84,14 +78,6 @@ export class ProductVariantService {
       productId,
     } = queryProductVariantDto;
 
-    const sortedDto = sortObject(queryProductVariantDto);
-
-    const cacheKey = `${CacheKeys.ProductVariants}_${JSON.stringify(sortedDto)}`;
-
-    const cachedProductVariants = await this.cacheService.get<null | ProductVariant[]>(cacheKey);
-
-    if (cachedProductVariants) return { ...pagination(paginationDto, cachedProductVariants) };
-
     const filters: Prisma.ProductVariantWhereInput = {};
 
     if (sku) filters.sku = { contains: sku };
@@ -124,8 +110,6 @@ export class ProductVariantService {
         user: includeUser && { select: { id: true, fullName: true } },
       },
     });
-
-    await this.cacheService.set(cacheKey, productVariants, this.CACHE_EXPIRE_TIME);
 
     return { ...pagination(paginationDto, productVariants) };
   }

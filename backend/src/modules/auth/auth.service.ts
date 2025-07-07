@@ -1,4 +1,3 @@
-import { InjectRedis } from '@nestjs-modules/ioredis';
 import {
   BadRequestException,
   ConflictException,
@@ -10,7 +9,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Redis } from 'ioredis';
 import * as dateFns from 'date-fns';
 import { IGenerateTokens, IRefreshToken } from './auth.interface';
 import { AuthMessages } from './enums/auth.messages';
@@ -22,6 +20,10 @@ import { SendOtpDto } from './dto/authenticate.dto';
 import { UserRepository } from '../user/user.repository';
 import { Role, User } from '@prisma/client';
 import { VerifyMobileDto } from './dto/verify-mobile.dto';
+import { Inject } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
@@ -30,27 +32,31 @@ export class AuthService {
   private readonly OTP_REQUEST_TIMEOUT_SEC = 3600; //* 1 hour
 
   constructor(
-    @InjectRedis() private readonly redis: Redis,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly jwtService: JwtService,
     private readonly userRepository: UserRepository,
+    private readonly prisma: PrismaService,
   ) {}
 
   private generateOtp() {
     return Math.floor(100_000 + Math.random() * 900_000).toString();
   }
 
-  async validateRefreshToken(refreshToken: string): Promise<never | { refreshTokenKey: string }> {
+  async validateRefreshToken(refreshToken: string): Promise<{ refreshTokenId: number }> {
     const jwtResult = this.jwtService.decode<{ id: number } | undefined>(refreshToken);
-
     if (!jwtResult?.id) throw new BadRequestException(AuthMessages.InvalidRefreshToken);
 
-    const refreshTokenKey = `refreshToken_${jwtResult.id}_${refreshToken}`;
+    const found = await this.prisma.refreshToken.findFirst({
+      where: {
+        userId: jwtResult.id,
+        token: refreshToken,
+        expiresAt: { gt: new Date() },
+      },
+    });
 
-    const storedToken = await this.redis.get(refreshTokenKey);
+    if (!found) throw new NotFoundException(AuthMessages.NotFoundRefreshToken);
 
-    if (storedToken !== refreshToken || !storedToken) throw new NotFoundException(AuthMessages.NotFoundRefreshToken);
-
-    return { refreshTokenKey };
+    return { refreshTokenId: found.id };
   }
 
   async verifyAccessToken(verifyTokenDto: { accessToken: string }): Promise<never | User> {
@@ -74,14 +80,6 @@ export class AuthService {
   async generateTokens(user: { id: number }): Promise<IGenerateTokens> {
     const payload = { id: user.id };
 
-    const parseDays: number = Number.parseInt(process.env.REFRESH_TOKEN_EXPIRE_TIME);
-
-    const now = new Date();
-
-    const futureDate = dateFns.addDays(now, parseDays);
-
-    const refreshTokenExpireTime: number = dateFns.differenceInSeconds(futureDate, now);
-
     const accessToken = this.jwtService.sign(payload, {
       secret: process.env.ACCESS_TOKEN_SECRET,
       expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME,
@@ -92,13 +90,17 @@ export class AuthService {
       secret: process.env.REFRESH_TOKEN_SECRET,
     });
 
-    const redisData = {
-      value: refreshToken,
-      key: `refreshToken_${user.id}_${refreshToken}`,
-      expireTime: refreshTokenExpireTime,
-    };
+    const parseDays = Number.parseInt(process.env.REFRESH_TOKEN_EXPIRE_TIME);
+    const now = new Date();
+    const expiresAt = dateFns.addDays(now, parseDays);
 
-    await this.redis.set(redisData.key, redisData.value, 'EX', redisData.expireTime);
+    await this.prisma.refreshToken.create({
+      data: {
+        token: refreshToken,
+        userId: user.id,
+        expiresAt,
+      },
+    });
 
     return { accessToken, refreshToken };
   }
@@ -115,10 +117,9 @@ export class AuthService {
     return { accessToken: newAccessToken, message: AuthMessages.RefreshedTokenSuccess };
   }
 
-  async signout(signoutDto: { refreshToken: string }): Promise<{ message: string }> {
-    const { refreshTokenKey } = await this.validateRefreshToken(signoutDto.refreshToken);
-
-    await this.redis.del(refreshTokenKey);
+  async signout({ refreshToken }: { refreshToken: string }) {
+    const { refreshTokenId } = await this.validateRefreshToken(refreshToken);
+    await this.prisma.refreshToken.delete({ where: { id: refreshTokenId } });
 
     return { message: AuthMessages.SignoutSuccess };
   }
@@ -206,47 +207,76 @@ export class AuthService {
 
     if (process.env.NODE_ENV === 'production') {
       const result = await sms.SendVerifyCode(mobile, Number(SMS_TEMPLATE_ID), [{ name: SMS_NAME, value: verifyCode }]);
-
       if (result.data?.status !== 1) throw new InternalServerErrorException(AuthMessages.ProblemSendingSms);
     } else {
       console.log(mobile, verifyCode);
     }
   }
 
-  private async clearOtpData(mobile: string): Promise<void | never> {
-    await Promise.all([this.redis.del(`${OtpKeys.StoreOtp}${mobile}`), this.redis.del(`${OtpKeys.RequestsOtp}${mobile}`)]);
+  private async clearOtpData(mobile: string): Promise<void> {
+    await this.prisma.otpRequest.deleteMany({
+      where: { mobile },
+    });
   }
 
-  private async validateOtp(otpKey: string, otp: string): Promise<void | never> {
-    const storedOtp = await this.redis.get(otpKey);
-    const isValidOtp = await bcrypt.compare(otp, storedOtp || '');
+  private async validateOtp(mobile: string, otp: string): Promise<void> {
+    const storedOtp = await this.prisma.otpRequest.findFirst({
+      where: {
+        mobile,
+        expiresAt: { gt: new Date() },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
 
-    if (!isValidOtp) {
-      throw new BadRequestException(AuthMessages.NotFoundOrInvalidOtpCode);
+    if (!storedOtp) throw new BadRequestException(AuthMessages.NotFoundOrInvalidOtpCode);
+
+    const isValid = await bcrypt.compare(otp, storedOtp.otp);
+
+    if (!isValid) throw new BadRequestException(AuthMessages.NotFoundOrInvalidOtpCode);
+  }
+
+  private async checkExistingOtp(mobile: string): Promise<void> {
+    const existing = await this.prisma.otpRequest.findFirst({
+      where: {
+        mobile,
+        expiresAt: { gt: new Date() },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (existing) {
+      const remaining = Math.floor((+existing.expiresAt - Date.now()) / 1000);
+      throw new ConflictException(`${AuthMessages.OtpAlreadySentWithWaitTime}${this.formatSecondsToMinutes(remaining)}`);
     }
   }
 
-  private async checkExistingOtp(otpKey: string): Promise<void | never> {
-    const existingOtp = await this.redis.get(otpKey);
-    const otpTtl = await this.redis.ttl(otpKey);
-
-    if (existingOtp) throw new ConflictException(`${AuthMessages.OtpAlreadySentWithWaitTime}${this.formatSecondsToMinutes(otpTtl)}`);
-  }
-
-  private async storeOtp(otpKey: string, otp: string): Promise<void | never> {
+  private async storeOtp(mobile: string, otp: string): Promise<void> {
     const hashedOtp = await bcrypt.hash(otp, 10);
-    await this.redis.setex(otpKey, this.OTP_EXPIRATION_SEC, hashedOtp);
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + this.OTP_EXPIRATION_SEC * 1000);
+
+    await this.prisma.otpRequest.create({
+      data: { mobile, otp: hashedOtp, createdAt: now, expiresAt },
+    });
   }
 
-  private async enforceOtpRequestLimit(requestKey: string): Promise<void | never> {
-    let requestCount = Number(await this.redis.get(requestKey)) || 0;
-    const requestCountTtl = await this.redis.ttl(requestKey);
-    if (requestCount >= this.OTP_REQUEST_LIMIT) {
-      const formattedTime = this.formatSecondsToMinutes(requestCountTtl);
-      throw new ForbiddenException(`${AuthMessages.MaxOtpRequests}${formattedTime}`);
-    }
+  private async enforceOtpRequestLimit(mobile: string): Promise<void> {
+    const oneHourAgo = new Date(Date.now() - this.OTP_REQUEST_TIMEOUT_SEC * 1000);
 
-    await this.redis.setex(requestKey, this.OTP_REQUEST_TIMEOUT_SEC, requestCount + 1);
+    const recentRequests = await this.prisma.otpRequest.findMany({
+      where: {
+        mobile,
+        createdAt: { gte: oneHourAgo },
+      },
+    });
+
+    if (recentRequests.length >= this.OTP_REQUEST_LIMIT) {
+      const firstRequest = recentRequests[0];
+      const secondsPassed = Math.floor((Date.now() - +firstRequest.createdAt) / 1000);
+      const remaining = this.OTP_REQUEST_TIMEOUT_SEC - secondsPassed;
+
+      throw new ForbiddenException(`${AuthMessages.MaxOtpRequests}${this.formatSecondsToMinutes(remaining)}`);
+    }
   }
 
   private formatSecondsToMinutes(seconds: number): string {

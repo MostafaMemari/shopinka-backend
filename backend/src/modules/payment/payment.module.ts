@@ -5,7 +5,7 @@ import { AuthService } from '../auth/auth.service';
 import { UserRepository } from '../user/user.repository';
 import { PaymentRepository } from './payment.repository';
 import { ScheduleModule } from '@nestjs/schedule';
-import { CacheService } from '../cache/cache.service';
+
 import { CartService } from '../cart/cart.service';
 import { OrderService } from '../order/order.service';
 import { CartRepository } from '../cart/repositories/cart.repository';
@@ -25,7 +25,7 @@ import { ShippingRepository } from '../shipping/repositories/shipping.repository
     AuthService,
     UserRepository,
     PaymentRepository,
-    CacheService,
+
     CartService,
     OrderService,
     CartRepository,

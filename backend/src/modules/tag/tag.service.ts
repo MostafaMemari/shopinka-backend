@@ -2,23 +2,18 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { TagRepository } from './tag.repository';
-import { CacheService } from '../cache/cache.service';
 import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
 import { Prisma, Tag } from '@prisma/client';
 import { TagMessages } from './enums/tag-messages.enum';
 import { QueryTagDto } from './dto/query-tag.dto';
-import { sortObject } from '../../common/utils/functions.utils';
-import { CacheKeys } from '../../common/enums/cache.enum';
 import { pagination } from '../../common/utils/pagination.utils';
 import slugify from 'slugify';
 
 @Injectable()
 export class TagService {
-  private readonly CACHE_EXPIRE_TIME: number = 600; //* 5 minutes
-
   constructor(
     private readonly tagRepository: TagRepository,
-    private readonly cacheService: CacheService,
+
     private readonly galleryItemRepository: GalleryItemRepository,
   ) {}
 
@@ -38,14 +33,6 @@ export class TagService {
     const paginationDto = { take, page };
     const { endDate, sortBy, sortDirection, startDate, includeUser, includeBlogs, includeProducts, includeThumbnailImage, name, type } =
       queryTagDto;
-
-    const sortedDto = sortObject(queryTagDto);
-
-    const cacheKey = `${CacheKeys.Tags}_${JSON.stringify(sortedDto)}`;
-
-    const cachedTags = await this.cacheService.get<null | Tag[]>(cacheKey);
-
-    if (cachedTags) return { ...pagination(paginationDto, cachedTags) };
 
     const filters: Prisma.TagWhereInput = {};
     if (type) filters.type = type;
@@ -67,8 +54,6 @@ export class TagService {
         user: includeUser && { select: { id: true, fullName: true } },
       },
     });
-
-    await this.cacheService.set(cacheKey, tags, this.CACHE_EXPIRE_TIME);
 
     return { ...pagination(paginationDto, tags) };
   }

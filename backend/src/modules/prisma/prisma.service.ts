@@ -1,11 +1,9 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { CacheKeys } from '../../common/enums/cache.enum';
-import { CacheService } from '../cache/cache.service';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
-  constructor(private readonly cacheService: CacheService) {
+  constructor() {
     super();
   }
 
@@ -28,7 +26,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 
       if (['create', 'update', 'delete', 'updateMany', 'deleteMany', 'createMany', 'createManyAndReturn'].includes(action)) {
         //* Clear cache
-        for (const key in CacheKeys) await this.cacheService.delByPattern(`${CacheKeys[key]}*`);
+        // for (const key in CacheKeys) await this.cacheService.delByPattern(`${CacheKeys[key]}*`);
       }
 
       return next(params);

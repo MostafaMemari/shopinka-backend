@@ -5,9 +5,6 @@ import { AddressRepository } from '../address/address.repository';
 import { CartItem, Order, OrderItem, OrderStatus, Prisma } from '@prisma/client';
 import { OrderRepository } from './repositories/order.repository';
 import { QueryMyOrderDto, QueryOrderDto } from './dto/query-order.dto';
-import { CacheService } from '../cache/cache.service';
-import { sortObject } from '../../common/utils/functions.utils';
-import { CacheKeys } from '../../common/enums/cache.enum';
 import { pagination } from '../../common/utils/pagination.utils';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { OrderItemRepository } from './repositories/order-item.repository';
@@ -23,7 +20,6 @@ import { CartService } from '../cart/cart.service';
 
 @Injectable()
 export class OrderService {
-  private readonly CACHE_EXPIRE_TIME: number = 600; //* 5 minutes
   private readonly logger: Logger = new Logger(OrderService.name);
 
   constructor(
@@ -36,7 +32,6 @@ export class OrderService {
     private readonly cartItemRepository: CartItemRepository,
     private readonly shippingRepository: ShippingRepository,
     private readonly cartService: CartService,
-    private readonly cacheService: CacheService,
   ) {}
 
   @Cron(CronExpression.EVERY_30_MINUTES)
@@ -187,14 +182,6 @@ export class OrderService {
       includeShippingInfo,
     } = queryOrderDto;
 
-    const sortedDto = sortObject(queryOrderDto);
-
-    const cacheKey = `${CacheKeys.Orders}_${JSON.stringify(sortedDto)}`;
-
-    const cachedOrders = await this.cacheService.get<null | Order[]>(cacheKey);
-
-    if (cachedOrders) return { ...pagination(paginationDto, cachedOrders) };
-
     const filters: Prisma.OrderWhereInput = {
       // OR: [{ user: { products: { some: { userId } } } }, { user: { productVariants: { some: { userId } } } }],
     };
@@ -217,8 +204,6 @@ export class OrderService {
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
       include: { items: includeItems, address: includeAddress, transaction: includeTransaction, shippingInfo: includeShippingInfo },
     });
-
-    await this.cacheService.set(cacheKey, orders, this.CACHE_EXPIRE_TIME);
 
     return { ...pagination(paginationDto, orders) };
   }

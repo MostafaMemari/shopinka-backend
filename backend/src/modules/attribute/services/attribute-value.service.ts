@@ -1,9 +1,8 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { CreateAttributeValueDto } from '../dto/create-attribute-value.dto';
 import { AttributeValueRepository } from '../repositories/attribute-value.repository';
-import { Attribute, AttributeType, AttributeValue, Prisma } from '@prisma/client';
+import { AttributeType, AttributeValue, Prisma } from '@prisma/client';
 import slugify from 'slugify';
-import { CacheService } from '../../../modules/cache/cache.service';
 import { QueryAttributeValueDto } from '../dto/query-attribute-value.dto';
 import { sortObject } from '../../../common/utils/functions.utils';
 import { CacheKeys } from '../../../common/enums/cache.enum';
@@ -14,12 +13,9 @@ import { UpdateAttributeValueDto } from '../dto/update-attribute-value.dto';
 
 @Injectable()
 export class AttributeValueService {
-  private readonly CACHE_EXPIRE_TIME: number = 600; //* 5 minutes
-
   constructor(
     private readonly attributeValueRepository: AttributeValueRepository,
     private readonly attributeRepository: AttributeRepository,
-    private readonly cacheService: CacheService,
   ) {}
 
   async create(createAttributeValueDto: CreateAttributeValueDto): Promise<{ message: string; attribute: AttributeValue }> {
@@ -61,10 +57,6 @@ export class AttributeValueService {
 
     const cacheKey = `${CacheKeys.AttributeValues}_${JSON.stringify(sortedDto)}`;
 
-    const cachedAttributes = await this.cacheService.get<null | Attribute[]>(cacheKey);
-
-    if (cachedAttributes) return { ...pagination(paginationDto, cachedAttributes) };
-
     const filters: Prisma.AttributeValueWhereInput = {};
 
     if (colorCode) filters.colorCode = { contains: colorCode };
@@ -83,8 +75,6 @@ export class AttributeValueService {
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
       include: { attribute: includeAttribute },
     });
-
-    await this.cacheService.set(cacheKey, attributes, this.CACHE_EXPIRE_TIME);
 
     return { ...pagination(paginationDto, attributes) };
   }

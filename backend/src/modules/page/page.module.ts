@@ -5,10 +5,9 @@ import { AuthService } from '../auth/auth.service';
 import { UserRepository } from '../user/user.repository';
 import { PageRepository } from './page.repository';
 import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
-import { CacheService } from '../cache/cache.service';
 
 @Module({
   controllers: [PageController],
-  providers: [PageService, AuthService, UserRepository, PageRepository, GalleryItemRepository, CacheService],
+  providers: [PageService, AuthService, UserRepository, PageRepository, GalleryItemRepository],
 })
 export class PageModule {}

@@ -4,19 +4,15 @@ import { UpdateGalleryDto } from '../dto/update-gallery.dto';
 import { GalleryRepository } from '../repositories/gallery.repository';
 import { Gallery, Prisma } from '@prisma/client';
 import { QueryGalleriesDto } from '../dto/gallery-query.dto';
-import { sortObject } from '../../../common/utils/functions.utils';
-import { CacheKeys } from '../../../common/enums/cache.enum';
-import { CacheService } from '../../../modules/cache/cache.service';
 import { pagination } from '../../../common/utils/pagination.utils';
 import { GalleryMessages } from '../enums/gallery.messages';
 import { GalleryItemService } from './gallery-item.service';
+import { PrismaService } from 'src/modules/prisma/prisma.service';
 
 @Injectable()
 export class GalleryService {
-  private readonly CACHE_EXPIRE_TIME: number = 600; //* minutes
-
   constructor(
-    private readonly cacheService: CacheService,
+    private readonly prisma: PrismaService,
     private readonly galleryRepository: GalleryRepository,
     private readonly galleryItemService: GalleryItemService,
   ) {}
@@ -37,14 +33,6 @@ export class GalleryService {
     const paginationDto = { page, take };
     const { endDate, sortBy, sortDirection, startDate, description, includeItems, title } = galleriesFiltersDto;
 
-    const sortedDto = sortObject(galleriesFiltersDto);
-
-    const cacheKey = `${CacheKeys.Galleries}_${JSON.stringify(sortedDto)}`;
-
-    const cachedGalleries = await this.cacheService.get<null | Gallery[]>(cacheKey);
-
-    if (cachedGalleries) return { ...pagination(paginationDto, cachedGalleries) };
-
     const filters: Prisma.GalleryWhereInput = { userId };
 
     if (description) filters.description = { contains: description };
@@ -60,8 +48,6 @@ export class GalleryService {
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
       include: { items: includeItems },
     });
-
-    await this.cacheService.set(cacheKey, galleries, this.CACHE_EXPIRE_TIME);
 
     return { ...pagination(paginationDto, galleries) };
   }

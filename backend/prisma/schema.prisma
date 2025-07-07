@@ -98,6 +98,25 @@ model User {
   seoMeta          SeoMeta[]
   cart             Cart?            @relation("UserCart")
   Page             Page[]
+  RefreshToken     RefreshToken[]
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
+
+model OtpRequest {
+  id        Int      @id @default(autoincrement())
+  mobile    String
+  otp       String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  attempts  Int      @default(0)
 }
 
 model Transaction {

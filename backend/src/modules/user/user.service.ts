@@ -1,12 +1,10 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './user.repository';
 import { QueryUsersDto } from './dto/users-query.dto';
 import { pagination } from '../../common/utils/pagination.utils';
-import { CacheService } from '../cache/cache.service';
 import { Prisma, User } from '@prisma/client';
-import { sortObject } from '../../common/utils/functions.utils';
-import { CacheKeys } from '../../common/enums/cache.enum';
+
 import { AuthService } from '../auth/auth.service';
 import { UserMessages } from './enums/user.messages';
 import { ChangeRoleDto } from './dto/change-role.dto';
@@ -15,26 +13,16 @@ import { PaginationDto } from '../../common/dtos/pagination.dto';
 
 @Injectable()
 export class UserService {
-  private readonly CACHE_EXPIRE_TIME: number = 600; //* 5 minutes
-
   constructor(
     private readonly favoriteRepository: FavoriteRepository,
     private readonly userRepository: UserRepository,
-    private readonly cacheService: CacheService,
+
     private readonly authService: AuthService,
   ) {}
 
   async findAll({ page, take, ...queryUsersDto }: QueryUsersDto) {
     const paginationDto = { page, take };
     const { endDate, fullName, isVerifiedMobile, lastMobileChange, mobile, role, sortBy, sortDirection, startDate } = queryUsersDto;
-
-    const sortedDto = sortObject(queryUsersDto);
-
-    const cacheKey = `${CacheKeys.Users}_${JSON.stringify(sortedDto)}`;
-
-    const usersCache = await this.cacheService.get<User[] | null>(cacheKey);
-
-    if (usersCache) return { ...pagination(paginationDto, usersCache) };
 
     const filters: Prisma.UserWhereInput = {};
 
@@ -53,8 +41,6 @@ export class UserService {
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
     });
-
-    await this.cacheService.set(cacheKey, users, this.CACHE_EXPIRE_TIME);
 
     return { ...pagination(paginationDto, users) };
   }
