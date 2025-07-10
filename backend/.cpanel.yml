@@ -1,0 +1,6 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/umwrtkni/api.shopinka
+    - /bin/cp -r backend $DEPLOYPATH
+    - /bin/cp -r shop $DEPLOYPATH
