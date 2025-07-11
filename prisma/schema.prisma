@@ -71,6 +71,11 @@ enum TagType {
   BLOG
 }
 
+enum BannerType {
+  MAIN_SLIDER
+  SIDE
+}
+
 model User {
   id               Int              @id @default(autoincrement())
   fullName         String?          @map("full_name")
@@ -170,6 +175,7 @@ model GalleryItem {
   tags                Tag[]
   seoMeta             SeoMeta[]
   blogs               Blog[]
+  Banner              Banner[]
 
   @@index([deletedAt])
 }
@@ -252,6 +258,19 @@ model Product {
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt()
   seoMeta          SeoMeta?
+}
+
+model Banner {
+  id      Int         @id @default(autoincrement())
+  image   GalleryItem @relation(fields: [imageId], references: [id])
+  imageId Int
+
+  link     String
+  type     BannerType
+  isActive Boolean    @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ProductVariant {

@@ -6,8 +6,6 @@ import { ProductRepository } from '../product/repositories/product.repository';
 import { Comment, Prisma } from '@prisma/client';
 import { CommentMessages } from './enums/comment-messages.enum';
 import { QueryCommentDto } from './dto/query-comment.dto';
-import { sortObject } from '../../common/utils/functions.utils';
-import { CacheKeys } from '../../common/enums/cache.enum';
 import { pagination } from '../../common/utils/pagination.utils';
 import { QueryAdminCommentDto } from './dto/query-admin-comment.dto';
 
@@ -127,10 +125,6 @@ export class CommentService {
       sortDirection,
       startDate,
     } = queryCommentDto;
-
-    const sortedDto = sortObject(queryCommentDto);
-
-    const cacheKey = `${CacheKeys.Comments}_${JSON.stringify(sortedDto)}`;
 
     const filters: Prisma.CommentWhereInput = { isActive, parent: null };
 

@@ -25,6 +25,7 @@ import { AiModule } from '../ai/ai.module';
 import { PageModule } from '../page/page.module';
 import { ContactModule } from '../contact/contact.module';
 import { CronModule } from '../cron/cron.module';
+import { BannerModule } from '../banner/banner.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { CronModule } from '../cron/cron.module';
     AiModule,
     PageModule,
     ContactModule,
+    BannerModule,
   ],
   controllers: [],
   providers: [
