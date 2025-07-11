@@ -4,6 +4,9 @@
 /.env
 generated/*
 
+shop/shop.zip
+shop.zip
+
 # Logs
 logs
 *.log
