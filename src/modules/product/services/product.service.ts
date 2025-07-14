@@ -159,6 +159,7 @@ export class ProductService {
 
     if (stockStatus === 'instock') {
       filters.quantity = { gt: 0 };
+      filters.salePrice = { not: null };
     }
 
     const orderBy: Prisma.ProductOrderByWithRelationInput = (() => {
@@ -194,6 +195,7 @@ export class ProductService {
             salePrice: true,
             basePrice: true,
             attributeValues: true,
+            quantity: true,
           },
         },
       },
