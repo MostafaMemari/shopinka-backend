@@ -11,23 +11,21 @@ export class ExpiredOrdersCron {
 
   constructor(
     private readonly orderRepository: OrderRepository,
-    private readonly cartService: CartService,
     private readonly cartRepository: CartRepository,
+    private readonly cartService: CartService,
   ) {}
 
   @Cron(CronExpression.EVERY_10_MINUTES)
   async handleExpiredPendingOrders() {
     this.logger.log('Checking for expired pending orders...');
 
-    // const TIMEOUT_MS = 60 * 60 * 1000; // 1 hour
-    const TIMEOUT_MS = 1 * 60 * 1000; // 1 minute
-    const expirationTime = new Date(Date.now() - TIMEOUT_MS);
-
     try {
+      const now = new Date();
+
       const expiredOrders = (await this.orderRepository.findAll({
         where: {
           status: OrderStatus.PENDING,
-          createdAt: { lt: expirationTime },
+          expiresAt: { lt: now },
         },
         include: { items: true },
       })) as (Order & { items: OrderItem[] })[];
@@ -35,10 +33,12 @@ export class ExpiredOrdersCron {
       for (const order of expiredOrders) {
         if (!order.userId) continue;
 
-        let userCart = await this.cartRepository.findFirst({ where: { userId: order.userId } });
+        let cart = await this.cartRepository.findFirst({
+          where: { userId: order.userId },
+        });
 
-        if (!userCart) {
-          userCart = await this.cartRepository.create({
+        if (!cart) {
+          cart = await this.cartRepository.create({
             data: { userId: order.userId },
           });
         }
@@ -46,8 +46,8 @@ export class ExpiredOrdersCron {
         await this.cartService.addItems(
           order.userId,
           order.items.map((item) => ({
-            productId: item?.productId || null,
-            productVariantId: item?.productVariantId || null,
+            productId: item.productId,
+            productVariantId: item.productVariantId,
             quantity: item.quantity,
           })),
         );
@@ -57,12 +57,12 @@ export class ExpiredOrdersCron {
           data: { status: OrderStatus.CANCELLED },
         });
 
-        this.logger.warn(`Order ${order.id} canceled due to timeout (created at ${order.createdAt}). Items returned to cart.`);
+        this.logger.warn(`Order ${order.id} expired and canceled. Items returned to cart.`);
       }
 
-      this.logger.log(`Expired pending orders processed successfully. Count: ${expiredOrders.length}`);
+      this.logger.log(`Expired orders processed. Count: ${expiredOrders.length}`);
     } catch (error) {
-      this.logger.error(`Error processing expired pending orders: ${error.message}`, error.stack);
+      this.logger.error(`Failed to process expired orders: ${error.message}`, error.stack);
     }
   }
 }

@@ -394,6 +394,7 @@ model Order {
   quantity     Int
   totalPrice   Int
   status       OrderStatus   @default(PENDING)
+  expiresAt    DateTime?
   items        OrderItem[]
   user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
   address      Address?      @relation(fields: [addressId], references: [id], onDelete: SetNull)

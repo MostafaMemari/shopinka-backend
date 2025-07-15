@@ -85,6 +85,8 @@ export class OrderService {
     const orderNumber = this.generateOrderNumber();
     const orderItems = this.mapCartItemsToOrderItems(items);
 
+    const ONE_HOUR = 60 * 60 * 1000;
+
     const newOrder = await this.orderRepository.create({
       data: {
         addressId,
@@ -94,6 +96,7 @@ export class OrderService {
         status: OrderStatus.PENDING,
         userId,
         quantity: items.length,
+        expiresAt: new Date(Date.now() + ONE_HOUR),
         items: { create: orderItems },
       },
       include: { items: true, user: true },
