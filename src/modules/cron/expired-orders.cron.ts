@@ -15,7 +15,7 @@ export class ExpiredOrdersCron {
     private readonly cartService: CartService,
   ) {}
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_5_MINUTES)
   async handleExpiredPendingOrders() {
     this.logger.log('Checking for expired pending orders...');
 

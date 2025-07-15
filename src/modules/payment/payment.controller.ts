@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, Res } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Role, User } from '@prisma/client';
@@ -10,6 +10,9 @@ import { RefundPaymentDto } from './dto/refund.dto';
 import { QueryMyTransactionsDto } from './dto/user-transactions-query.dto';
 import { Roles } from '../../common/decorators/role.decorator';
 import { QueryTransactionsDto } from './dto/transactions-query.dto';
+import { RetryPaymentDto } from './dto/retry-payment.dto';
+import { SkipAuth } from 'src/common/decorators/skip-auth.decorator';
+import { Response } from 'express';
 
 @Controller('payment')
 @ApiTags('payment')
@@ -23,10 +26,18 @@ export class PaymentController {
     return this.paymentService.getGatewayUrl(user, paymentDto);
   }
 
+  @Post('retry')
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  retryPayment(@Body() paymentDto: RetryPaymentDto, @GetUser() user: User) {
+    return this.paymentService.retryPayment(user, paymentDto);
+  }
+
   @Get('verify')
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
-  verifyPayment(@Query('Authority') authority: string, @Query('Status') status: string) {
-    return this.paymentService.verify({ authority, status });
+  @SkipAuth()
+  async verifyPayment(@Query('Authority') authority: string, @Query('Status') status: string, @Res() res: Response) {
+    const redirectUrl = await this.paymentService.verify({ authority, status });
+    return res.redirect(redirectUrl);
   }
 
   @Post('refund/:transactionId')

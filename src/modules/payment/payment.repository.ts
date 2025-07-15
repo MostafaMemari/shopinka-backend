@@ -19,6 +19,10 @@ export class PaymentRepository {
     return this.prismaService.transaction.update(args);
   }
 
+  upsert(args: Prisma.TransactionUpsertArgs): Promise<Transaction> {
+    return this.prismaService.transaction.upsert(args);
+  }
+
   async findOneOrThrow(args: Prisma.TransactionFindFirstArgs): Promise<never | Transaction> {
     const transaction = await this.prismaService.transaction.findFirst(args);
 

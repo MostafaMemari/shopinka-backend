@@ -8,4 +8,5 @@ export enum PaymentMessages {
   VerifiedFailed = 'Payment verification failed.',
   UnknownStatus = 'Unknown status.',
   FailPayment = 'Fail payment.',
+  OrderNotPayable = 'This order is not payable.',
 }

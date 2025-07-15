@@ -18,6 +18,7 @@ import { ProductVariantRepository } from '../product/repositories/product-varian
 import { ProductRepository } from '../product/repositories/product.repository';
 import { CartRepository } from '../cart/repositories/cart.repository';
 import { ShippingRepository } from '../shipping/repositories/shipping.repository';
+import { RetryPaymentDto } from './dto/retry-payment.dto';
 
 @Injectable()
 export class PaymentService {
@@ -97,7 +98,55 @@ export class PaymentService {
     }
   }
 
-  async verify({ authority, status }: IVerifyPayment) {
+  async retryPayment(user: User, dto: RetryPaymentDto) {
+    const order = await this.orderRepository.findOneOrThrow({
+      where: { id: dto.orderId, userId: user.id },
+      include: { shipping: { select: { price: true } } },
+    });
+
+    if (order.status !== 'PENDING') throw new BadRequestException(PaymentMessages.OrderNotPayable);
+
+    const shipping = await this.shippingRepository.findOne({ where: { id: order.shippingId } });
+    const amountPrice = (order.totalPrice + (shipping?.price ?? 0)) * 10;
+
+    try {
+      const { authority, code, gatewayURL } = await this.zarinpalService.sendRequest({
+        amount: amountPrice,
+        description: `پرداخت مجدد سفارش #${order.id}`,
+        user: { email: 'example@gmail.com', mobile: user.mobile },
+      });
+
+      if (authority && code && gatewayURL) {
+        await this.paymentRepository.upsert({
+          where: { orderId: order.id },
+          update: {
+            amount: amountPrice,
+            userId: user.id,
+            authority,
+            invoiceNumber: new Date().getTime().toString(),
+            status: 'PENDING',
+            updatedAt: new Date(),
+          },
+          create: {
+            amount: amountPrice,
+            userId: user.id,
+            authority,
+            orderId: order.id,
+            invoiceNumber: new Date().getTime().toString(),
+            status: 'PENDING',
+          },
+        });
+
+        return { authority, code, gatewayURL };
+      } else {
+        throw new BadRequestException(PaymentMessages.FailPayment);
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async verify({ authority, status }: IVerifyPayment): Promise<string> {
     const baseUrl = process.env.PAYMENT_FRONTEND_URL;
     let payment: Transaction | null = null;
 
@@ -108,7 +157,7 @@ export class PaymentService {
 
       if (status === 'NOK') {
         await this.failPayment(payment);
-        return this.buildResponse(baseUrl, 'failed', PaymentMessages.VerifiedFailed, {
+        return this.buildRedirectUrl(baseUrl, 'failed', {
           ...payment,
           status: TransactionStatus.FAILED,
         });
@@ -125,16 +174,11 @@ export class PaymentService {
         await this.updateOrderStatus(payment.orderId, isSuccess);
         await this.updatePaymentStatus(payment.id, isSuccess, sessionId);
 
-        return this.buildResponse(
-          baseUrl,
-          isSuccess ? 'success' : 'failed',
-          isSuccess ? PaymentMessages.VerifiedSuccess : PaymentMessages.VerifiedFailed,
-          {
-            ...payment,
-            sessionId,
-            status: isSuccess ? TransactionStatus.SUCCESS : TransactionStatus.FAILED,
-          },
-        );
+        return this.buildRedirectUrl(baseUrl, isSuccess ? 'success' : 'failed', {
+          ...payment,
+
+          status: isSuccess ? TransactionStatus.SUCCESS : TransactionStatus.FAILED,
+        });
       }
 
       throw new BadRequestException(PaymentMessages.UnknownStatus);
@@ -143,13 +187,10 @@ export class PaymentService {
         await this.failPayment(payment);
       }
 
-      throw new HttpException(
-        {
-          message: error.message || 'Unexpected error occurred',
-          status: 'failed',
-        },
-        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      return this.buildRedirectUrl(baseUrl, 'failed', {
+        ...payment,
+        status: TransactionStatus.FAILED,
+      });
     }
   }
 
@@ -158,13 +199,13 @@ export class PaymentService {
     await this.updatePaymentStatus(payment.id, false);
   }
 
-  private buildResponse(baseUrl: string, redirectStatus: 'success' | 'failed', message: string, payment: Transaction) {
-    return {
-      redirectUrl: `${baseUrl}?status=${redirectStatus}&orderId=${payment.orderId}`,
-      payment,
-      status: redirectStatus,
-      message,
-    };
+  private buildRedirectUrl(baseUrl: string, status: 'success' | 'failed', payment: Partial<Transaction>): string {
+    const params = new URLSearchParams({
+      status,
+      orderId: payment.orderId?.toString() || '',
+    });
+
+    return `${baseUrl}?${params.toString()}`;
   }
 
   async refund(transactionId: number, refundPaymentDto: RefundPaymentDto) {
@@ -253,7 +294,7 @@ export class PaymentService {
   private async updateOrderStatus(orderId: number, isSuccess: boolean) {
     return this.orderRepository.update({
       where: { id: orderId },
-      data: { status: isSuccess ? OrderStatus.PROCESSING : OrderStatus.CANCELLED },
+      data: { status: isSuccess ? OrderStatus.PROCESSING : OrderStatus.PENDING },
       include: { items: true },
     });
   }
