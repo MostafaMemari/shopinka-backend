@@ -9,6 +9,7 @@ import { TagRepository } from '../tag/tag.repository';
 import { CategoryRepository } from '../category/category.repository';
 import { EntityType, RobotsMetaTag } from './enums/seo-meta.enum';
 import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
+import { QuerySeoMetaDto } from './dto/query-seo-meta.dto';
 
 @Injectable()
 export class SeoService {
@@ -95,5 +96,27 @@ export class SeoService {
     });
 
     return { message: SeoMetaMessages.CreatedSeoMetaSuccess, seoMeta };
+  }
+
+  getSeo(seoMetaDto: QuerySeoMetaDto): Promise<SeoMeta | null> {
+    const { blogId, productId, tagId, categoryId, entityType } = seoMetaDto;
+
+    const values = [blogId, productId, tagId, categoryId];
+    const definedCount = values.filter((v) => v !== undefined && v !== null).length;
+    if (definedCount !== 1) {
+      throw new BadRequestException(SeoMetaMessages.OnlyOneTargetAllowed);
+    }
+
+    return this.seoMetaRepository.findOne({
+      where: {
+        entityType,
+        OR: [
+          { productId: entityType === EntityType.PRODUCT ? productId : undefined },
+          { blogId: entityType === EntityType.BLOG ? blogId : undefined },
+          { tagId: entityType === EntityType.TAG ? tagId : undefined },
+          { categoryId: entityType === EntityType.CATEGORY ? categoryId : undefined },
+        ],
+      },
+    });
   }
 }
