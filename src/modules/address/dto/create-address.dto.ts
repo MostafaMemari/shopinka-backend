@@ -64,15 +64,15 @@ export class CreateAddressDto {
   })
   unit?: string;
 
-  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  @Matches(/^\d{10}$/, { message: 'Postal code must be exactly 10 digits' })
+  @IsNotEmpty({ message: 'کدپستی الزامی است' })
+  @Matches(/^\d{10}$/, { message: 'کدپستی باید دقیقا ۱۰ رقم باشد' })
   @Transform(({ value }) => value?.trim())
   @ApiProperty({
     type: 'string',
-    required: false,
-    nullable: true,
+    required: true,
+    nullable: false,
+    example: '1234567890',
   })
-  postalCode?: string;
+  postalCode: string;
 }

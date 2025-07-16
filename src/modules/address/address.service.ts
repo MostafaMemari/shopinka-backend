@@ -12,13 +12,25 @@ export class AddressService {
   constructor(private readonly addressRepository: AddressRepository) {}
 
   async create(userId: number, createAddressDto: CreateAddressDto) {
-    const address = await this.addressRepository.findOne({ where: { postalCode: createAddressDto.postalCode } });
+    const { postalCode } = createAddressDto;
 
-    if (address) throw new ConflictException(AddressMessages.AlreadyExistsAddress);
+    const existingAddress = await this.addressRepository.findOne({ where: { postalCode } });
 
-    const newAddress = await this.addressRepository.create({ data: { ...createAddressDto, userId } });
+    if (existingAddress) {
+      throw new ConflictException(AddressMessages.AlreadyExistsAddress);
+    }
 
-    return { message: AddressMessages.CreatedAddressSuccess, address: newAddress };
+    const newAddress = await this.addressRepository.create({
+      data: {
+        ...createAddressDto,
+        userId,
+      },
+    });
+
+    return {
+      message: AddressMessages.CreatedAddressSuccess,
+      address: newAddress,
+    };
   }
 
   async findAll(userId: number, { page, take, ...queryAddressDto }: QueryAddressDto): Promise<unknown> {

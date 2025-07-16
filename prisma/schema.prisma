@@ -190,7 +190,7 @@ model Address {
   streetAndAlley String
   plate          String
   unit           String?
-  postalCode     String?  @unique @map("postal_code") @db.VarChar(10)
+  postalCode     String   @unique @map("postal_code") @db.VarChar(10)
   orders         Order[]
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
