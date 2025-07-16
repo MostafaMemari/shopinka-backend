@@ -19,12 +19,7 @@ import { ProductRepository } from '../product/repositories/product.repository';
 import { CartRepository } from '../cart/repositories/cart.repository';
 import { ShippingRepository } from '../shipping/repositories/shipping.repository';
 import { RetryPaymentDto } from './dto/retry-payment.dto';
-
-export type PaymentRedirectResult = {
-  redirectUrl: string;
-  message: string;
-  payment: Transaction;
-};
+import { PaymentRedirectResult } from './types/payment.types';
 
 @Injectable()
 export class PaymentService {

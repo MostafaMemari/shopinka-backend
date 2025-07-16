@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, Res } from '@nestjs/common';
-import { PaymentRedirectResult, PaymentService } from './payment.service';
+import { PaymentService } from './payment.service';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Role, User } from '@prisma/client';
 import { GetUser } from '../../common/decorators/get-user.decorator';
@@ -11,8 +11,7 @@ import { QueryMyTransactionsDto } from './dto/user-transactions-query.dto';
 import { Roles } from '../../common/decorators/role.decorator';
 import { QueryTransactionsDto } from './dto/transactions-query.dto';
 import { RetryPaymentDto } from './dto/retry-payment.dto';
-import { SkipAuth } from 'src/common/decorators/skip-auth.decorator';
-import { Response } from 'express';
+import { PaymentRedirectResult } from './types/payment.types';
 
 @Controller('payment')
 @ApiTags('payment')
@@ -38,7 +37,6 @@ export class PaymentController {
     @Query('Authority') authority: string,
     @Query('Status') status: string,
     @GetUser() user: User,
-    @Res() res: Response,
   ): Promise<PaymentRedirectResult> {
     return await this.paymentService.verify(user, { authority, status });
   }
