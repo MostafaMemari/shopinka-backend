@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, Res } from '@nestjs/common';
-import { PaymentService } from './payment.service';
+import { PaymentRedirectResult, PaymentService } from './payment.service';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Role, User } from '@prisma/client';
 import { GetUser } from '../../common/decorators/get-user.decorator';
@@ -34,10 +34,13 @@ export class PaymentController {
 
   @Get('verify')
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
-  @SkipAuth()
-  async verifyPayment(@Query('Authority') authority: string, @Query('Status') status: string, @Res() res: Response) {
-    const redirectUrl = await this.paymentService.verify({ authority, status });
-    return res.redirect(redirectUrl);
+  async verifyPayment(
+    @Query('Authority') authority: string,
+    @Query('Status') status: string,
+    @GetUser() user: User,
+    @Res() res: Response,
+  ): Promise<PaymentRedirectResult> {
+    return await this.paymentService.verify(user, { authority, status });
   }
 
   @Post('refund/:transactionId')
