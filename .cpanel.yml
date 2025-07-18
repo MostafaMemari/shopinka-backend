@@ -5,4 +5,3 @@ deployment:
     - find "$DEPLOYPATH" -mindepth 1 ! -name 'node_modules' ! -path "$DEPLOYPATH/node_modules/*" -exec rm -rf {} +
     - cp -r * $DEPLOYPATH
     - cd $DEPLOYPATH
-    - pnpm build
