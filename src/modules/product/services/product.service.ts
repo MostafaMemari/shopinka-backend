@@ -507,109 +507,37 @@ export class ProductService {
       where: { variants: { none: {} }, type: ProductType.VARIABLE },
     });
 
+    const attributeIds = [
+      { id: 2, name: 'white' },
+      { id: 4, name: 'black' },
+      { id: 3, name: 'red' },
+      { id: 5, name: 'yellow' },
+      { id: 6, name: 'gold' },
+    ];
+
     for (const product of products) {
-      const white = await this.productVariantRepository.create({
-        data: {
-          productId: product.id,
-          userId: product.userId,
-          basePrice: product.basePrice,
-          salePrice: product.salePrice,
-          width: product.width,
-          length: product.length,
-          weight: product.weight,
-          quantity: 200,
-          attributeValues: { connect: [{ id: 2 }] },
-        },
-      });
-
-      const black = await this.productVariantRepository.create({
-        data: {
-          productId: product.id,
-          userId: product.userId,
-          basePrice: product.basePrice,
-          salePrice: product.salePrice,
-          width: product.width,
-          length: product.length,
-          weight: product.weight,
-          quantity: 200,
-          attributeValues: { connect: [{ id: 4 }] },
-        },
-      });
-
-      const red = await this.productVariantRepository.create({
-        data: {
-          productId: product.id,
-          userId: product.userId,
-          basePrice: product.basePrice,
-          salePrice: product.salePrice,
-          width: product.width,
-          length: product.length,
-          weight: product.weight,
-          quantity: 200,
-          attributeValues: { connect: [{ id: 4 }] },
-        },
-      });
-
-      const yellow = await this.productVariantRepository.create({
-        data: {
-          productId: product.id,
-          userId: product.userId,
-          basePrice: product.basePrice,
-          salePrice: product.salePrice,
-          width: product.width,
-          length: product.length,
-          weight: product.weight,
-          quantity: 200,
-          attributeValues: { connect: [{ id: 4 }] },
-        },
-      });
-
-      const gold = await this.productVariantRepository.create({
-        data: {
-          productId: product.id,
-          userId: product.userId,
-          basePrice: product.basePrice,
-          salePrice: product.salePrice,
-          width: product.width,
-          length: product.length,
-          weight: product.weight,
-          quantity: 200,
-          attributeValues: { connect: [{ id: 4 }] },
-        },
-      });
+      const variants = await Promise.all(
+        attributeIds.map((attr) =>
+          this.productVariantRepository.create({
+            data: {
+              productId: product.id,
+              userId: product.userId,
+              basePrice: product.basePrice,
+              salePrice: product.salePrice,
+              width: product.width,
+              length: product.length,
+              weight: product.weight,
+              quantity: 200,
+              attributeValues: { connect: [{ id: attr.id }] },
+            },
+          }),
+        ),
+      );
 
       await this.productRepository.update({
         where: { id: product.id },
         data: {
-          defaultVariantId: white.id,
-        },
-      });
-
-      await this.productRepository.update({
-        where: { id: product.id },
-        data: {
-          defaultVariantId: black.id,
-        },
-      });
-
-      await this.productRepository.update({
-        where: { id: product.id },
-        data: {
-          defaultVariantId: red.id,
-        },
-      });
-
-      await this.productRepository.update({
-        where: { id: product.id },
-        data: {
-          defaultVariantId: yellow.id,
-        },
-      });
-
-      await this.productRepository.update({
-        where: { id: product.id },
-        data: {
-          defaultVariantId: gold.id,
+          defaultVariantId: variants[0].id,
         },
       });
     }
