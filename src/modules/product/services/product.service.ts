@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductRepository } from '../repositories/product.repository';
@@ -7,8 +7,6 @@ import { GalleryItemRepository } from '../../gallery/repositories/gallery-item.r
 import slugify from 'slugify';
 import { AttributeRepository } from '../../attribute/repositories/attribute.repository';
 import { QueryProductDto } from '../dto/query-product.dto';
-import { sortObject } from '../../../common/utils/functions.utils';
-import { CacheKeys } from '../../../common/enums/cache.enum';
 import { pagination } from '../../../common/utils/pagination.utils';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
 import { ProductMessages } from '../enums/product-messages.enum';
@@ -19,6 +17,7 @@ import { OrderItemRepository } from '../../order/repositories/order-item.reposit
 import { TagRepository } from 'src/modules/tag/tag.repository';
 import { QueryPublicProductDto } from '../dto/query-public-product.dto';
 import { SetDefaultVariantDto } from '../dto/update-product-variant.dto';
+import { ProductVariantRepository } from '../repositories/product-variant.repository';
 
 @Injectable()
 export class ProductService {
@@ -30,6 +29,7 @@ export class ProductService {
     private readonly categoryRepository: CategoryRepository,
     private readonly tagRepository: TagRepository,
     private readonly orderItemRepository: OrderItemRepository,
+    private readonly productVariantRepository: ProductVariantRepository,
   ) {}
 
   async create(userId: number, createProductDto: CreateProductDto): Promise<{ message: string; product: Product }> {
@@ -498,5 +498,120 @@ export class ProductService {
     }
 
     return uniqueSlug;
+  }
+
+  async generateVariantsFromProducts() {
+    await this.productVariantRepository.deleteMany({ where: {} });
+
+    const products = await this.productRepository.findAll({
+      where: { variants: { none: {} }, type: ProductType.VARIABLE },
+    });
+
+    for (const product of products) {
+      const white = await this.productVariantRepository.create({
+        data: {
+          productId: product.id,
+          userId: product.userId,
+          basePrice: product.basePrice,
+          salePrice: product.salePrice,
+          width: product.width,
+          length: product.length,
+          weight: product.weight,
+          quantity: 200,
+          attributeValues: { connect: [{ id: 2 }] },
+        },
+      });
+
+      const black = await this.productVariantRepository.create({
+        data: {
+          productId: product.id,
+          userId: product.userId,
+          basePrice: product.basePrice,
+          salePrice: product.salePrice,
+          width: product.width,
+          length: product.length,
+          weight: product.weight,
+          quantity: 200,
+          attributeValues: { connect: [{ id: 4 }] },
+        },
+      });
+
+      const red = await this.productVariantRepository.create({
+        data: {
+          productId: product.id,
+          userId: product.userId,
+          basePrice: product.basePrice,
+          salePrice: product.salePrice,
+          width: product.width,
+          length: product.length,
+          weight: product.weight,
+          quantity: 200,
+          attributeValues: { connect: [{ id: 4 }] },
+        },
+      });
+
+      const yellow = await this.productVariantRepository.create({
+        data: {
+          productId: product.id,
+          userId: product.userId,
+          basePrice: product.basePrice,
+          salePrice: product.salePrice,
+          width: product.width,
+          length: product.length,
+          weight: product.weight,
+          quantity: 200,
+          attributeValues: { connect: [{ id: 4 }] },
+        },
+      });
+
+      const gold = await this.productVariantRepository.create({
+        data: {
+          productId: product.id,
+          userId: product.userId,
+          basePrice: product.basePrice,
+          salePrice: product.salePrice,
+          width: product.width,
+          length: product.length,
+          weight: product.weight,
+          quantity: 200,
+          attributeValues: { connect: [{ id: 4 }] },
+        },
+      });
+
+      await this.productRepository.update({
+        where: { id: product.id },
+        data: {
+          defaultVariantId: white.id,
+        },
+      });
+
+      await this.productRepository.update({
+        where: { id: product.id },
+        data: {
+          defaultVariantId: black.id,
+        },
+      });
+
+      await this.productRepository.update({
+        where: { id: product.id },
+        data: {
+          defaultVariantId: red.id,
+        },
+      });
+
+      await this.productRepository.update({
+        where: { id: product.id },
+        data: {
+          defaultVariantId: yellow.id,
+        },
+      });
+
+      await this.productRepository.update({
+        where: { id: product.id },
+        data: {
+          defaultVariantId: gold.id,
+        },
+      });
+    }
   }
 }

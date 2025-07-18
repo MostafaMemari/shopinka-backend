@@ -20,6 +20,12 @@ import { SetDefaultVariantDto } from '../dto/update-product-variant.dto';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @Get('generate-variants')
+  @SkipAuth()
+  generateVariants() {
+    return this.productService.generateVariantsFromProducts();
+  }
+
   @Post()
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)

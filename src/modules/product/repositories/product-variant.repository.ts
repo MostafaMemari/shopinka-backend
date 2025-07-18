@@ -27,6 +27,10 @@ export class ProductVariantRepository {
     return this.prismaService.productVariant.delete(args);
   }
 
+  deleteMany(args: Prisma.ProductVariantDeleteManyArgs): Promise<Prisma.BatchPayload> {
+    return this.prismaService.productVariant.deleteMany(args);
+  }
+
   async findOneOrThrow(args: Prisma.ProductVariantFindFirstArgs): Promise<ProductVariant | never> {
     const ProductVariant = await this.findOne(args);
 
