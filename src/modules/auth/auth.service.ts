@@ -211,7 +211,7 @@ export class AuthService {
 
   private async clearOtpData(mobile: string): Promise<void> {
     await this.prisma.otpRequest.deleteMany({
-      where: { mobile },
+      where: { mobile: `${OtpKeys.StoreOtp}${mobile}`, expiresAt: { gt: new Date() } },
     });
   }
 
