@@ -255,6 +255,74 @@ export class CartService {
     });
   }
 
+  async replaceCartItems(userId: number, items: CreateCartItemDto[]): Promise<{ message: string; cartItems: CartItem[] }> {
+    return this.prismaService.$transaction(async (prisma) => {
+      const cart = await prisma.cart.upsert({
+        where: { userId },
+        update: {},
+        create: { userId },
+      });
+
+      await prisma.cartItem.deleteMany({
+        where: { cartId: cart.id },
+      });
+
+      const createdItems: CartItem[] = [];
+
+      const productIds = items.filter((item) => item.productId).map((item) => item.productId!);
+      const productVariantIds = items.filter((item) => item.productVariantId).map((item) => item.productVariantId!);
+
+      const products = productIds.length
+        ? await prisma.product.findMany({
+            where: { id: { in: productIds }, status: ProductStatus.PUBLISHED },
+          })
+        : [];
+
+      const productVariants = productVariantIds.length
+        ? await prisma.productVariant.findMany({
+            where: { id: { in: productVariantIds } },
+          })
+        : [];
+
+      for (const item of items) {
+        const { productId, productVariantId, quantity } = item;
+
+        if (productId && productVariantId) {
+          throw new BadRequestException(CartItemMessages.OneFailedAllowed);
+        }
+
+        if (productId) {
+          const product = products.find((p) => p.id === productId);
+          if (!product || product.quantity < quantity) {
+            throw new BadRequestException(CartItemMessages.ProductNotAvailable);
+          }
+        }
+
+        if (productVariantId) {
+          const productVariant = productVariants.find((pv) => pv.id === productVariantId);
+          if (!productVariant || productVariant.quantity < quantity) {
+            throw new BadRequestException(CartItemMessages.ProductVariantNotAvailable);
+          }
+        }
+
+        const createdItem = await prisma.cartItem.create({
+          data: {
+            ...item,
+            cartId: cart.id,
+          },
+          include: { product: true, productVariant: true },
+        });
+
+        createdItems.push(createdItem);
+      }
+
+      return {
+        message: CartItemMessages.ReplacedCartItemsSuccess,
+        cartItems: createdItems,
+      };
+    });
+  }
+
   async removeItem(userId: number, cartItemId: number): Promise<{ message: string; cartItem: CartItem }> {
     await this.cartRepository.findOneOrThrow({ where: { userId } });
     await this.cartItemRepository.findOneOrThrow({ where: { id: cartItemId, cart: { userId } } });

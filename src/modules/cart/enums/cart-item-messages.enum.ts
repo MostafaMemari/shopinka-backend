@@ -7,4 +7,5 @@ export enum CartItemMessages {
   ProductNotAvailable = 'The requested product is not available in the desired quantity.',
   ProductVariantNotAvailable = 'The requested product variant is not available in the desired quantity.',
   OneFailedAllowed = 'One filed product or productVariant allowed.',
+  ReplacedCartItemsSuccess = 'Cart items replaced successfully',
 }

@@ -42,6 +42,12 @@ export class CartController {
     return this.cartService.addItems(user.id, bulkDto.items);
   }
 
+  @Post('items/replace')
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  replaceItems(@Body() bulkDto: BulkCreateCartItemDto, @GetUser() user: User) {
+    return this.cartService.replaceCartItems(user.id, bulkDto.items);
+  }
+
   @Patch('item/:id')
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   updateItem(@Param('id', ParseIntPipe) id: number, @Body() updateCartItemDto: UpdateCartItemDto, @GetUser() user: User) {
