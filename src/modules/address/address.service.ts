@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 import { AddressRepository } from './address.repository';
@@ -12,14 +12,6 @@ export class AddressService {
   constructor(private readonly addressRepository: AddressRepository) {}
 
   async create(userId: number, createAddressDto: CreateAddressDto) {
-    const { postalCode } = createAddressDto;
-
-    const existingAddress = await this.addressRepository.findOne({ where: { postalCode } });
-
-    if (existingAddress) {
-      throw new ConflictException(AddressMessages.AlreadyExistsAddress);
-    }
-
     const newAddress = await this.addressRepository.create({
       data: {
         ...createAddressDto,
@@ -35,8 +27,7 @@ export class AddressService {
 
   async findAll(userId: number, { page, take, ...queryAddressDto }: QueryAddressDto): Promise<unknown> {
     const paginationDto = { page, take };
-    const { includeOrders, address, city, description, endDate, postalCode, province, receiverMobile, sortBy, sortDirection, startDate } =
-      queryAddressDto;
+    const { includeOrders, city, endDate, postalCode, province, sortBy, sortDirection, startDate } = queryAddressDto;
 
     const filters: Prisma.AddressWhereInput = { userId };
 
@@ -63,10 +54,6 @@ export class AddressService {
   }
 
   async update(userId: number, id: number, updateAddressDto: UpdateAddressDto): Promise<{ message: string; address: Address }> {
-    const address = await this.addressRepository.findOne({ where: { userId: { not: userId }, postalCode: updateAddressDto.postalCode } });
-
-    if (address) throw new ConflictException(AddressMessages.AlreadyExistsAddress);
-
     const updatedAddress = await this.addressRepository.update({ where: { userId, id }, data: updateAddressDto });
 
     return { message: AddressMessages.UpdatedAddressSuccess, address: updatedAddress };
