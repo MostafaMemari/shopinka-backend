@@ -190,6 +190,7 @@ model Address {
   streetAndAlley String
   plate          String
   unit           String?
+  isActive       Boolean  @default(true)
   postalCode     String   @unique @map("postal_code") @db.VarChar(10)
   orders         Order[]
   createdAt      DateTime @default(now())

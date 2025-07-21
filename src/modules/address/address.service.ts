@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 import { AddressRepository } from './address.repository';
-import { Address, Prisma } from '@prisma/client';
+import { Address, Order, Prisma } from '@prisma/client';
 import { QueryAddressDto } from './dto/query-address.dto';
 import { pagination } from '../../common/utils/pagination.utils';
 import { AddressMessages } from './enums/address-messages.enum';
@@ -50,7 +50,7 @@ export class AddressService {
     }
 
     const addresses = await this.addressRepository.findAll({
-      where: filters,
+      where: { ...filters, isActive: true },
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
       include: { orders: includeOrders },
     });
@@ -59,7 +59,7 @@ export class AddressService {
   }
 
   findOne(userId: number, id: number): Promise<never | Address> {
-    return this.addressRepository.findOneOrThrow({ where: { id, userId }, include: { orders: true } });
+    return this.addressRepository.findOneOrThrow({ where: { id, userId, isActive: true }, include: { orders: true } });
   }
 
   async update(userId: number, id: number, updateAddressDto: UpdateAddressDto): Promise<{ message: string; address: Address }> {
@@ -73,10 +73,28 @@ export class AddressService {
   }
 
   async remove(userId: number, id: number): Promise<{ message: string; address: Address }> {
-    await this.addressRepository.findOneOrThrow({ where: { id, userId } });
+    const address = (await this.addressRepository.findOneOrThrow({
+      where: { id, userId },
+      include: { orders: true },
+    })) as Address & { orders: Order[] };
 
-    const removedAddress = await this.addressRepository.delete({ where: { id, userId } });
+    if (address.orders && address.orders.length > 0) {
+      const updatedAddress = await this.addressRepository.update({
+        where: { id },
+        data: { isActive: false },
+      });
 
-    return { message: AddressMessages.RemovedAddressSuccess, address: removedAddress };
+      return {
+        message: AddressMessages.RemovedAddressSuccess,
+        address: updatedAddress,
+      };
+    }
+
+    const removedAddress = await this.addressRepository.delete({ where: { id } });
+
+    return {
+      message: AddressMessages.RemovedAddressSuccess,
+      address: removedAddress,
+    };
   }
 }
