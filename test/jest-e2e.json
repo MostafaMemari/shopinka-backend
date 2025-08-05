@@ -10,5 +10,8 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "coverageDirectory": "./coverage-e2e",
-  "testEnvironment": "node"
+  "testEnvironment": "node",
+  "moduleNameMapper": {
+    "src(.$)": "<rootDir>/src/$1"
+  }
 }
