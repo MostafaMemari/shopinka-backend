@@ -20,7 +20,10 @@ jobs:
           node-version: '22'
 
       - name: Install dependencies
-        run: npx pnpm install
+        run: npx pnpm
+
+      - name: Generate prisma file
+        run: nxp pnpm prisma generate
 
       - name: Run tests
         run: npx pnpm test
