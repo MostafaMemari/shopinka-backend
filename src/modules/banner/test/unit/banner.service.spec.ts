@@ -10,21 +10,22 @@ import { BannerMessages } from '../../enums/banner-messages.enum';
 import { HttpStatus, NotFoundException } from '@nestjs/common';
 import { QueryBannerDto } from '../../dto/query-banner.dto';
 import * as paginationUtils from '../../../../common/utils/pagination.utils';
+import { describe, it, beforeEach, expect, vi } from 'vitest';
 
 describe('BannerService (Unit)', () => {
   let service: BannerService;
 
   const bannerRepositoryMock = {
-    create: jest.fn().mockResolvedValue(bannerStub()),
-    delete: jest.fn().mockResolvedValue(bannerStub()),
-    findOneOrThrow: jest.fn().mockResolvedValue(bannerStub()),
-    update: jest.fn().mockResolvedValue(bannerStub()),
-    findOne: jest.fn().mockResolvedValue(bannerStub()),
-    findAll: jest.fn().mockResolvedValueOnce([bannerStub(), bannerStub()]),
+    create: vi.fn().mockResolvedValue(bannerStub()),
+    delete: vi.fn().mockResolvedValue(bannerStub()),
+    findOneOrThrow: vi.fn().mockResolvedValue(bannerStub()),
+    update: vi.fn().mockResolvedValue(bannerStub()),
+    findOne: vi.fn().mockResolvedValue(bannerStub()),
+    findAll: vi.fn().mockResolvedValueOnce([bannerStub(), bannerStub()]),
   };
 
   const galleryItemRepositoryMock = {
-    findOneOrThrow: jest.fn(),
+    findOneOrThrow: vi.fn(),
   };
 
   beforeEach(async () => {
@@ -62,7 +63,7 @@ describe('BannerService (Unit)', () => {
     });
 
     it('should throw error when not found imageId', async () => {
-      jest.spyOn(galleryItemRepositoryMock, 'findOneOrThrow').mockImplementation((imageId) => {
+      vi.spyOn(galleryItemRepositoryMock, 'findOneOrThrow').mockImplementation((imageId) => {
         if (imageId) return Promise.reject(new NotFoundException('Not found galleryItem.'));
 
         return Promise.reject(new Error('ImageId not provided.'));
@@ -95,7 +96,7 @@ describe('BannerService (Unit)', () => {
     });
 
     it('should throw error when not found banner provided', async () => {
-      jest.spyOn(bannerRepositoryMock, 'findOneOrThrow').mockImplementationOnce((bannerId) => {
+      vi.spyOn(bannerRepositoryMock, 'findOneOrThrow').mockImplementationOnce((bannerId) => {
         if (bannerId) return Promise.reject(new NotFoundException('Not found banner.'));
 
         return Promise.reject(new Error('bannerId not provided.'));
@@ -140,7 +141,7 @@ describe('BannerService (Unit)', () => {
     it('should return list of banners', async () => {
       const pager = { currentPage: 1, hasNextPage: false, hasPreviousPage: false, totalCount: 2, totalPages: 1 };
 
-      jest.spyOn(paginationUtils, 'pagination').mockReturnValue({ items: [bannerStubData, bannerStubData], pager });
+      vi.spyOn(paginationUtils, 'pagination').mockReturnValue({ items: [bannerStubData, bannerStubData], pager });
 
       const { link, isActive, type } = bannerStubData;
       const queryBannerDto: QueryBannerDto = { page: 1, take: 10, name: link, isActive, type, includeImage: true };

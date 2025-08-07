@@ -1,3 +1,3 @@
-describe("BannerService Int" ,()=> {
-    it.todo('should pass')
-})
+describe('BannerService Int', () => {
+  it.todo('should pass');
+});
