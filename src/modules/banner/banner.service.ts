@@ -4,7 +4,7 @@ import { BannerRepository } from './banner.repository';
 import { CreateBannerDto } from './dto/create-banner.dto';
 import { UpdateBannerDto } from './dto/update-banner.dto';
 import { QueryBannerDto } from './dto/query-banner.dto';
-import { pagination } from '../../common/utils/pagination.utils';
+import { OutputPagination, pagination } from '../../common/utils/pagination.utils';
 import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
 import { BannerMessages } from './enums/banner-messages.enum';
 
@@ -32,7 +32,7 @@ export class BannerService {
     return { message: BannerMessages.CreatedBannerSuccess, banner };
   }
 
-  async findAll({ page, take, ...queryBannerDto }: QueryBannerDto): Promise<unknown> {
+  async findAll({ page, take, ...queryBannerDto }: QueryBannerDto): Promise<OutputPagination<Banner>> {
     const paginationDto = { page, take };
 
     const { name, isActive, type, includeImage } = queryBannerDto;

@@ -1,6 +1,6 @@
 import { PaginationDto } from '../dtos/pagination.dto';
 
-interface OutputPagination<T> {
+export interface OutputPagination<T> {
   items: T[];
   pager: {
     totalCount: number;

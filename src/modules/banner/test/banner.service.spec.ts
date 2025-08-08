@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BannerService } from '../../banner.service';
-import { AuthService } from '../../../auth/auth.service';
-import { UserRepository } from '../../../user/user.repository';
-import { BannerRepository } from '../../banner.repository';
-import { GalleryItemRepository } from '../../../gallery/repositories/gallery-item.repository';
-import { CreateBannerDto } from '../../dto/create-banner.dto';
-import { bannerStub } from '../stubs/banner.stub';
-import { BannerMessages } from '../../enums/banner-messages.enum';
+import { BannerService } from '../banner.service';
+import { AuthService } from '../../auth/auth.service';
+import { UserRepository } from '../../user/user.repository';
+import { BannerRepository } from '../banner.repository';
+import { GalleryItemRepository } from '../../gallery/repositories/gallery-item.repository';
+import { CreateBannerDto } from '../dto/create-banner.dto';
+import { bannerStub } from './stubs/banner.stub';
+import { BannerMessages } from '../enums/banner-messages.enum';
 import { HttpStatus, NotFoundException } from '@nestjs/common';
-import { QueryBannerDto } from '../../dto/query-banner.dto';
-import * as paginationUtils from '../../../../common/utils/pagination.utils';
+import { QueryBannerDto } from '../dto/query-banner.dto';
+import * as paginationUtils from '../../../common/utils/pagination.utils';
 import { describe, it, beforeEach, expect, vi } from 'vitest';
 
 describe('BannerService (Unit)', () => {
