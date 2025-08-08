@@ -3,10 +3,6 @@ import swc from 'unplugin-swc';
 
 export default defineConfig({
     plugins: [swc.vite()],
-    test: {
-        globals: true,
-        environment: 'node'
-    },
     optimizeDeps: {
         // Vite does not work well with optionnal dependencies,
         // mark them as ignored for now
