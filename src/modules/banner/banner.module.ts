@@ -5,9 +5,12 @@ import { AuthService } from '../auth/auth.service';
 import { UserRepository } from '../user/user.repository';
 import { BannerRepository } from './banner.repository';
 import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
+  imports: [AuthModule],
   controllers: [BannerController],
-  providers: [BannerService, AuthService, UserRepository, BannerRepository, GalleryItemRepository],
+  providers: [BannerService, BannerRepository, GalleryItemRepository],
+  exports: [BannerService, BannerRepository, GalleryItemRepository, AuthModule],
 })
 export class BannerModule {}
