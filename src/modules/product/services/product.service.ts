@@ -283,6 +283,8 @@ export class ProductService {
       includeTags,
       includeSeoCategories,
       includeAttributeValues,
+      categoryIds,
+      tagIds,
     } = queryProductDto;
 
     const filters: Prisma.ProductWhereInput = { status: ProductStatus.PUBLISHED };
@@ -308,6 +310,18 @@ export class ProductService {
       filters.basePrice = {};
       if (maxPrice) filters.basePrice.gte = maxPrice;
       if (minPrice) filters.basePrice.lte = minPrice;
+    }
+
+    if (categoryIds?.length) {
+      filters.categories = {
+        some: { id: { in: categoryIds } },
+      };
+    }
+
+    if (tagIds?.length) {
+      filters.tags = {
+        some: { id: { in: tagIds } },
+      };
     }
 
     const products = await this.productRepository.findAll({
