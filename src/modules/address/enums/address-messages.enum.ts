@@ -4,4 +4,5 @@ export enum AddressMessages {
   RemovedAddressSuccess = 'Address removed successfully',
   CreatedAddressSuccess = 'Address created successfully',
   UpdatedAddressSuccess = 'Address Updated successfully.',
+  SetDefaultAddressSuccess = 'Default address updated successfully.',
 }

@@ -11,8 +11,9 @@ import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 import { ProductRepository } from '../product/repositories/product.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
 import { OrderItemRepository } from '../order/repositories/order-item.repository';
-import { AddressRepository } from '../address/address.repository';
+import { AddressRepository } from '../address/repositories/address.repository';
 import { ShippingRepository } from '../shipping/repositories/shipping.repository';
+import { AddressSnapshotRepository } from '../address/repositories/address-snapshot.repository';
 
 @Module({
   imports: [ScheduleModule.forRoot(), PrismaModule],
@@ -28,6 +29,7 @@ import { ShippingRepository } from '../shipping/repositories/shipping.repository
     ProductVariantRepository,
     OrderItemRepository,
     AddressRepository,
+    AddressSnapshotRepository,
     ShippingRepository,
   ],
 })

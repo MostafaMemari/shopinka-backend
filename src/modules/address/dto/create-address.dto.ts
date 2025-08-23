@@ -1,6 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
 
 export class CreateAddressDto {
   @IsString()
@@ -12,6 +12,15 @@ export class CreateAddressDto {
     nullable: false,
   })
   fullName: string;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => {
+    if (typeof value == 'string') return value == 'true';
+    return value;
+  })
+  @ApiPropertyOptional({ type: 'boolean', nullable: true, required: false })
+  isDefault?: boolean;
 
   @IsString()
   @IsNotEmpty()
@@ -41,28 +50,25 @@ export class CreateAddressDto {
     required: true,
     nullable: false,
   })
-  streetAndAlley: string;
+  postalAddress: string;
 
-  @IsString()
+  @IsInt()
   @IsNotEmpty()
-  @Transform(({ value }) => value?.trim())
   @ApiProperty({
-    type: 'string',
+    type: 'number',
     required: true,
     nullable: false,
   })
-  plate: string;
+  buildingNumber: number;
 
   @IsOptional()
-  @IsString()
-  @IsNotEmpty()
-  @Transform(({ value }) => value?.trim())
+  @IsInt()
   @ApiProperty({
-    type: 'string',
+    type: 'number',
     required: false,
     nullable: true,
   })
-  unit?: string;
+  unit?: number;
 
   @IsString()
   @IsNotEmpty({ message: 'کدپستی الزامی است' })
