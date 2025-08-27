@@ -40,11 +40,14 @@ export class OrderService {
 
       const price = (base.salePrice || base.basePrice) * item.quantity;
 
+      //TODO: Check for debug
       return {
         productId: item.productId,
         productVariantId: item.productVariantId,
         quantity: item.quantity,
-        price,
+        basePrice: price,
+        unitPrice: price,
+        total: price,
       };
     });
   }
