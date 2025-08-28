@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
 import { BulkPricingService } from './bulk-pricing.service';
 import { CreateBulkPricingDto } from './dto/create-bulk-pricing.dto';
 import { UpdateBulkPricingDto } from './dto/update-bulk-pricing.dto';
@@ -9,6 +9,7 @@ import { Roles } from '../../common/decorators/role.decorator';
 import { Role, User } from '@prisma/client';
 import { GetUser } from '../../common/decorators/get-user.decorator';
 import { SkipAuth } from '../../common/decorators/skip-auth.decorator';
+import { BulkPricingQueryDto } from './dto/bulk-pricing-query-filter.dto';
 
 @Controller('bulk-pricing')
 @ApiTags('bulk-pricing')
@@ -24,8 +25,9 @@ export class BulkPricingController {
   }
 
   @Get()
-  findAll() {
-    return this.bulkPricingService.findAll();
+  @SkipAuth()
+  findAll(@Query() bulkPricingQueryDto: BulkPricingQueryDto) {
+    return this.bulkPricingService.findAll(bulkPricingQueryDto);
   }
 
   @Get(':id')

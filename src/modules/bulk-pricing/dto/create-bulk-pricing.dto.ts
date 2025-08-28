@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { BulkPricingType } from '@prisma/client';
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsEnum, IsNotIn, IsNumber, IsOptional, Max, Min } from 'class-validator';
+import { IsBoolean, IsEnum, IsNotIn, IsNumber, IsOptional, Min } from 'class-validator';
 import { transformToBoolean, transformToNumber } from '../../../common/utils/functions.utils';
 
 export class CreateBulkPricingDto {

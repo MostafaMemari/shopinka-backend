@@ -1,11 +1,13 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { CreateBulkPricingDto } from './dto/create-bulk-pricing.dto';
 import { UpdateBulkPricingDto } from './dto/update-bulk-pricing.dto';
-import { BulkPricing } from '@prisma/client';
+import { BulkPricing, Prisma } from '@prisma/client';
 import { BulkPricingRepository } from './repositories/bulk-pricing.repository';
 import { BulkPricingMessages } from './enums/bulk-pricing-message.enum';
 import { ProductRepository } from '../product/repositories/product.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
+import { BulkPricingQueryDto } from './dto/bulk-pricing-query-filter.dto';
+import { OutputPagination, pagination } from 'src/common/utils/pagination.utils';
 
 @Injectable()
 export class BulkPricingService {
@@ -43,8 +45,53 @@ export class BulkPricingService {
     return { message: BulkPricingMessages.CreatedBulkPricingSuccess, bulkPricing: newBulkPrice };
   }
 
-  findAll() {
-    return `This action returns all bulkPricing`;
+  async findAll({ page, take, ...bulkPricingDto }: BulkPricingQueryDto): Promise<OutputPagination<BulkPricing>> {
+    const paginationDto = { page, take };
+
+    const {
+      discount,
+      endDate,
+      includeProduct,
+      includeUser,
+      includeVariant,
+      isGlobal,
+      minQty,
+      productId,
+      sortBy,
+      sortDirection,
+      startDate,
+      type,
+      variantId,
+    } = bulkPricingDto;
+
+    const filters: Prisma.BulkPricingWhereInput = {};
+
+    if (discount) filters.discount = discount;
+    if (isGlobal !== undefined) filters.isGlobal = isGlobal;
+    if (minQty) filters.minQty = minQty;
+    if (productId) filters.productId = productId;
+    if (type) filters.type = type;
+    if (variantId) filters.variantId = variantId;
+
+    if (startDate || endDate) {
+      filters.createdAt = {};
+      if (startDate) filters.createdAt.gte = new Date(startDate);
+      if (endDate) filters.createdAt.lte = new Date(endDate);
+    }
+
+    const include: Prisma.BulkPricingInclude = {
+      product: includeProduct,
+      variant: includeVariant,
+      user: includeUser && { select: { id: true, fullName: true } },
+    };
+
+    const bulkPricing = await this.bulkPricingRepository.findAll({
+      where: filters,
+      orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
+      include,
+    });
+
+    return pagination(paginationDto, bulkPricing);
   }
 
   findOne(id: number): Promise<BulkPricing> {
