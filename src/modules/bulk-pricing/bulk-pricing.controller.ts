@@ -2,8 +2,12 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { BulkPricingService } from './bulk-pricing.service';
 import { CreateBulkPricingDto } from './dto/create-bulk-pricing.dto';
 import { UpdateBulkPricingDto } from './dto/update-bulk-pricing.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthDecorator } from '../../common/decorators/auth.decorator';
+import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
+import { Roles } from 'src/common/decorators/role.decorator';
+import { Role, User } from '@prisma/client';
+import { GetUser } from 'src/common/decorators/get-user.decorator';
 
 @Controller('bulk-pricing')
 @ApiTags('bulk-pricing')
@@ -12,8 +16,10 @@ export class BulkPricingController {
   constructor(private readonly bulkPricingService: BulkPricingService) {}
 
   @Post()
-  create(@Body() createBulkPricingDto: CreateBulkPricingDto) {
-    return this.bulkPricingService.create(createBulkPricingDto);
+  @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  create(@Body() createBulkPricingDto: CreateBulkPricingDto, @GetUser() user: User) {
+    return this.bulkPricingService.create(user.id, createBulkPricingDto);
   }
 
   @Get()
