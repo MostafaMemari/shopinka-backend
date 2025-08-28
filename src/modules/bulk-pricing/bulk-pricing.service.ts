@@ -13,7 +13,7 @@ export class BulkPricingService {
     private readonly bulkPricingRepository: BulkPricingRepository,
     private readonly productRepository: ProductRepository,
     private readonly productVariantRepository: ProductVariantRepository,
-  ) { }
+  ) {}
 
   async create(userId: number, createBulkPricingDto: CreateBulkPricingDto): Promise<{ message: string; bulkPricing: BulkPricing }> {
     const { discount, minQty, type, isGlobal, productId, variantId } = createBulkPricingDto;
@@ -48,14 +48,21 @@ export class BulkPricingService {
   }
 
   findOne(id: number): Promise<BulkPricing> {
-    return this.bulkPricingRepository.findOneOrThrow({ where: { id }, include: { product: true, variant: true, user: { select: { id: true, fullName: true } } } })
+    return this.bulkPricingRepository.findOneOrThrow({
+      where: { id },
+      include: { product: true, variant: true, user: { select: { id: true, fullName: true } } },
+    });
   }
 
   update(id: number, updateBulkPricingDto: UpdateBulkPricingDto) {
     return `This action updates a #${id} bulkPricing`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} bulkPricing`;
+  async remove(id: number): Promise<{ message: string; bulkPricing: BulkPricing }> {
+    await this.bulkPricingRepository.findOneOrThrow({ where: { id } });
+
+    const removedBulkPrice = await this.bulkPricingRepository.delete({ where: { id } });
+
+    return { message: BulkPricingMessages.RemovedBulkPricingSuccess, bulkPricing: removedBulkPrice };
   }
 }
