@@ -111,3 +111,15 @@ export function calculateCartTotals(items: CartItemInput[]): CartTotals {
     },
   );
 }
+
+export const transformToBoolean = (value: string | boolean): boolean => {
+  if (typeof value == 'string') return value == 'true';
+
+  return !!value;
+};
+
+export const transformToNumber = (value: string | number): number => {
+  if (typeof value == 'string') return value.includes('.') ? Number.parseFloat(value) : Number.parseInt(value);
+
+  return value;
+};
