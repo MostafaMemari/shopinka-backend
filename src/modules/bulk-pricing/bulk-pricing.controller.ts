@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { BulkPricingService } from './bulk-pricing.service';
 import { CreateBulkPricingDto } from './dto/create-bulk-pricing.dto';
 import { UpdateBulkPricingDto } from './dto/update-bulk-pricing.dto';
@@ -8,12 +8,13 @@ import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 import { Roles } from 'src/common/decorators/role.decorator';
 import { Role, User } from '@prisma/client';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
+import { SkipAuth } from 'src/common/decorators/skip-auth.decorator';
 
 @Controller('bulk-pricing')
 @ApiTags('bulk-pricing')
 @AuthDecorator()
 export class BulkPricingController {
-  constructor(private readonly bulkPricingService: BulkPricingService) {}
+  constructor(private readonly bulkPricingService: BulkPricingService) { }
 
   @Post()
   @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
@@ -28,8 +29,9 @@ export class BulkPricingController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bulkPricingService.findOne(+id);
+  @SkipAuth()
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.bulkPricingService.findOne(id);
   }
 
   @Patch(':id')

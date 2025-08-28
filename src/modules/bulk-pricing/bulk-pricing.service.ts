@@ -13,7 +13,7 @@ export class BulkPricingService {
     private readonly bulkPricingRepository: BulkPricingRepository,
     private readonly productRepository: ProductRepository,
     private readonly productVariantRepository: ProductVariantRepository,
-  ) {}
+  ) { }
 
   async create(userId: number, createBulkPricingDto: CreateBulkPricingDto): Promise<{ message: string; bulkPricing: BulkPricing }> {
     const { discount, minQty, type, isGlobal, productId, variantId } = createBulkPricingDto;
@@ -47,8 +47,8 @@ export class BulkPricingService {
     return `This action returns all bulkPricing`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} bulkPricing`;
+  findOne(id: number): Promise<BulkPricing> {
+    return this.bulkPricingRepository.findOneOrThrow({ where: { id }, include: { product: true, variant: true, user: { select: { id: true, fullName: true } } } })
   }
 
   update(id: number, updateBulkPricingDto: UpdateBulkPricingDto) {
