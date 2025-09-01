@@ -109,7 +109,7 @@ model User {
   cart             Cart?            @relation("UserCart")
   Page             Page[]
   RefreshToken     RefreshToken[]
-  bulkPricing      BulkPricing[]
+  bulkPrices       BulkPricing[]
 }
 
 model RefreshToken {
@@ -265,7 +265,7 @@ model Product {
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt()
   seoMeta          SeoMeta?
-  bulkPricing      BulkPricing[]
+  bulkPrices       BulkPricing[]
 }
 
 model Banner {
@@ -305,7 +305,7 @@ model ProductVariant {
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt()
   defaultFor       Product[]        @relation("DefaultVariant")
-  bulkPricing      BulkPricing[]
+  bulkPrices       BulkPricing[]
 }
 
 model Favorite {
