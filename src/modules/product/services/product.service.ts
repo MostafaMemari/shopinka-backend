@@ -14,7 +14,7 @@ import { FavoriteRepository } from '../repositories/favorite.repository';
 import { FavoriteMessages } from '../enums/favorite-messages.enum';
 import { CategoryRepository } from '../../category/category.repository';
 import { OrderItemRepository } from '../../order/repositories/order-item.repository';
-import { TagRepository } from 'src/modules/tag/tag.repository';
+import { TagRepository } from '../../tag/tag.repository';
 import { QueryPublicProductDto } from '../dto/query-public-product.dto';
 import { SetDefaultVariantDto } from '../dto/update-product-variant.dto';
 import { ProductVariantRepository } from '../repositories/product-variant.repository';
@@ -89,6 +89,7 @@ export class ProductService {
       sortBy,
       tagIds,
       categoryIds,
+      includeBulkPrices,
     } = query;
 
     const filters: Prisma.ProductWhereInput = {
@@ -197,6 +198,7 @@ export class ProductService {
             quantity: true,
           },
         },
+        bulkPrices: includeBulkPrices,
       },
     });
 
@@ -283,6 +285,7 @@ export class ProductService {
       includeTags,
       includeSeoCategories,
       includeAttributeValues,
+      includeBulkPrices,
     } = queryProductDto;
 
     const filters: Prisma.ProductWhereInput = { status: ProductStatus.PUBLISHED };
@@ -321,6 +324,7 @@ export class ProductService {
         mainImage: includeMainImage,
         user: includeUser,
         variants: includeVariants && { include: { mainImage: true, attributeValues: includeAttributeValues } },
+        bulkPrices: includeBulkPrices,
       },
     });
 
@@ -339,6 +343,7 @@ export class ProductService {
         attributes: true,
         variants: { include: { attributeValues: true } },
         seoMeta: true,
+        bulkPrices: true,
       },
     });
   }
@@ -361,6 +366,7 @@ export class ProductService {
         attributes: true,
         variants: { include: { attributeValues: true, mainImage: true } },
         seoMeta: true,
+        bulkPrices: true,
       },
     });
   }
@@ -368,7 +374,7 @@ export class ProductService {
   findOneDraft(userId: number, id: number): Promise<Product> {
     return this.productRepository.findOneOrThrow({
       where: { userId, id, status: ProductStatus.DRAFT },
-      include: { attributes: { include: { values: true } }, galleryImages: true, mainImage: true, user: true },
+      include: { attributes: { include: { values: true } }, galleryImages: true, mainImage: true, user: true, bulkPrices: true },
     });
   }
 
@@ -465,6 +471,7 @@ export class ProductService {
         mainImage: true,
         user: true,
         variants: { include: { attributeValues: true } },
+        bulkPrices: true,
       },
     });
     return pagination(paginationDto, products);

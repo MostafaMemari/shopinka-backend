@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsBoolean, IsInt, IsString, IsIn, IsArray, ArrayUnique, IsNotEmpty } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
-import { transformNumberArray } from '../../../common/utils/functions.utils';
+import { transformNumberArray, transformToBoolean } from '../../../common/utils/functions.utils';
 
 export class QueryPublicProductDto extends PaginationDto {
   @IsOptional()
@@ -101,6 +101,11 @@ export class QueryPublicProductDto extends PaginationDto {
   })
   @ApiPropertyOptional({ type: 'boolean', nullable: true, required: false })
   includeVariants?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => transformToBoolean(value))
+  includeBulkPrices?: boolean;
 
   @ApiPropertyOptional({
     enum: ['price_asc', 'price_desc', 'newest'],

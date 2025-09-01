@@ -4,6 +4,7 @@ import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
 import { ProductVariantSortBy } from '../enums/product-variant-sortby.enum';
+import { transformToBoolean } from '../../../common/utils/functions.utils';
 
 export class QueryProductVariantDto extends PaginationDto {
   @IsOptional()
@@ -104,6 +105,11 @@ export class QueryProductVariantDto extends PaginationDto {
   })
   @ApiPropertyOptional({ type: 'boolean', nullable: true, required: false })
   includeAttributeValues?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => transformToBoolean(value))
+  includeBulkPrices?: boolean;
 
   @IsOptional()
   @IsBoolean()

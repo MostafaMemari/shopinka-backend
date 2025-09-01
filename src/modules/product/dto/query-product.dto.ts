@@ -18,7 +18,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ProductType } from '@prisma/client';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
 import { ProductSortBy } from '../enums/product-sortby.enum';
-import { transformNumberArray } from 'src/common/utils/functions.utils';
+import { transformNumberArray, transformToBoolean } from '../../../common/utils/functions.utils';
 
 export class QueryProductDto extends PaginationDto {
   @IsOptional()
@@ -202,6 +202,11 @@ export class QueryProductDto extends PaginationDto {
   })
   @ApiPropertyOptional({ type: 'boolean', nullable: true, required: false })
   includeVariants?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => transformToBoolean(value))
+  includeBulkPrices?: boolean;
 
   @IsOptional()
   @IsBoolean()

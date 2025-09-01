@@ -76,6 +76,7 @@ export class ProductVariantService {
       includeProduct,
       includeAttributeValues,
       productId,
+      includeBulkPrices,
     } = queryProductVariantDto;
 
     const filters: Prisma.ProductVariantWhereInput = {};
@@ -107,6 +108,7 @@ export class ProductVariantService {
         attributeValues: includeAttributeValues,
         mainImage: includeMainImage,
         product: includeProduct,
+        bulkPrices: includeBulkPrices,
         user: includeUser && { select: { id: true, fullName: true } },
       },
     });
@@ -117,7 +119,7 @@ export class ProductVariantService {
   findOne(id: number): Promise<ProductVariant> {
     return this.productVariantRepository.findOneOrThrow({
       where: { id },
-      include: { mainImage: true, user: { select: { id: true, fullName: true } }, attributeValues: true, product: true },
+      include: { mainImage: true, user: { select: { id: true, fullName: true } }, attributeValues: true, product: true, bulkPrices: true },
     });
   }
 
