@@ -1,7 +1,6 @@
 export enum ContactMessages {
-  AlreadyExistsContact = 'Contact with this postal code already exists.',
-  NotFoundContact = 'Contact not found',
-  RemovedContactSuccess = 'Contact removed successfully',
-  CreatedContactSuccess = 'Contact created successfully',
-  UpdatedContactSuccess = 'Contact Updated successfully.',
+  NotFoundContact = 'تماس یافت نشد',
+  RemovedContactSuccess = 'تماس با موفقیت حذف شد',
+  CreatedContactSuccess = 'ثبت پیام با موفقیت انجام شد',
+  UpdatedContactSuccess = 'پیام با موفقیت به‌روزرسانی شد',
 }

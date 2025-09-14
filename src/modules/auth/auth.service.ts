@@ -242,7 +242,7 @@ export class AuthService {
 
     if (existing) {
       const remaining = Math.floor((+existing.expiresAt - Date.now()) / 1000);
-      throw new ConflictException(`${AuthMessages.OtpAlreadySentWithWaitTime}${this.formatSecondsToMinutes(remaining)}`);
+      throw new ConflictException(AuthMessages.OtpAlreadySentWithWaitTime.replace('{time}', this.formatSecondsToMinutes(remaining)));
     }
   }
 
@@ -271,7 +271,7 @@ export class AuthService {
       const secondsPassed = Math.floor((Date.now() - +firstRequest.createdAt) / 1000);
       const remaining = this.OTP_REQUEST_TIMEOUT_SEC - secondsPassed;
 
-      throw new ForbiddenException(`${AuthMessages.MaxOtpRequests}${this.formatSecondsToMinutes(remaining)}`);
+      throw new ForbiddenException(AuthMessages.MaxOtpRequests.replace('{time}', this.formatSecondsToMinutes(remaining)));
     }
   }
 
