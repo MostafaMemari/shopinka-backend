@@ -24,7 +24,7 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
-  private readonly OTP_EXPIRATION_SEC = 300; //* 5 minutes
+  private readonly OTP_EXPIRATION_SEC = 120; //* 2 minutes
   private readonly OTP_REQUEST_LIMIT = 5;
   private readonly OTP_REQUEST_TIMEOUT_SEC = 3600; //* 1 hour
 
