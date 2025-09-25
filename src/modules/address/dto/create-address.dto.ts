@@ -63,7 +63,7 @@ export class CreateAddressDto {
 
   @IsOptional()
   @IsInt()
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: 'number',
     required: false,
     nullable: true,
