@@ -57,7 +57,13 @@ export class AddressService {
   }
 
   async update(userId: number, id: number, updateAddressDto: UpdateAddressDto): Promise<{ message: string; address: Address }> {
-    const updatedAddress = await this.addressRepository.update({ where: { userId, id }, data: updateAddressDto });
+    const updatedAddress = await this.addressRepository.update({
+      where: { userId, id },
+      data: {
+        ...updateAddressDto,
+        unit: updateAddressDto.unit ?? null,
+      },
+    });
 
     return { message: AddressMessages.UpdatedAddressSuccess, address: updatedAddress };
   }
