@@ -24,6 +24,13 @@ export class ProductVariantController {
     return this.productVariantService.create(user.id, createProductVariantDto);
   }
 
+  @Post('create-bulk')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  createBulk(@GetUser() user: User) {
+    return this.productVariantService.createBulk(user.id);
+  }
+
   @Get()
   @SkipAuth()
   findAll(@Query() queryProductVariantDto: QueryProductVariantDto) {

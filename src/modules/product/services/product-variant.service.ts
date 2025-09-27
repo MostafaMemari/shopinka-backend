@@ -54,6 +54,65 @@ export class ProductVariantService {
     return { message: ProductVariantMessages.CreatedProductVariantSuccess, productVariant: newProductVariant };
   }
 
+  async createBulk(userId: number): Promise<{ message: string }> {
+    await this.productVariantRepository.deleteMany({});
+
+    const products = await this.productRepository.findAll({});
+
+    const attribute = await this.attributeValueRepository.findAll({});
+
+    const grouped = attribute.reduce(
+      (acc, item) => {
+        acc[item.attributeId] = acc[item.attributeId] || [];
+        acc[item.attributeId].push(item.id);
+        return acc;
+      },
+      {} as Record<number, number[]>,
+    );
+
+    const keys = Object.keys(grouped);
+    let attributeValueIds: number[][] = [];
+
+    for (let i = 0; i < keys.length; i++) {
+      for (let j = i + 1; j < keys.length; j++) {
+        const arr1 = grouped[Number(keys[i])];
+        const arr2 = grouped[Number(keys[j])];
+        attributeValueIds = attributeValueIds.concat(arr1.flatMap((id1) => arr2.map((id2) => [id1, id2])));
+      }
+    }
+
+    products.map((product) => {
+      const { id, salePrice, basePrice, height, width } = product;
+
+      [
+        [2, 10],
+        [3, 10],
+        [4, 9],
+        [4, 10],
+        [5, 10],
+        [6, 10],
+      ].forEach(async (attributeValueId) => {
+        const attributeValues =
+          attributeValueIds && (await this.attributeValueRepository.findAll({ where: { id: { in: attributeValueId } } }));
+
+        await this.productVariantRepository.create({
+          data: {
+            productId: id,
+            basePrice,
+            salePrice,
+            userId,
+            quantity: 1000,
+            height,
+            width,
+            attributeValues: attributeValueIds && { connect: attributeValues.map((attribute) => ({ id: attribute.id })) },
+          },
+        });
+      });
+    });
+
+    return { message: ProductVariantMessages.CreatedProductVariantSuccess };
+  }
+
   async findAll({ page, take, ...queryProductVariantDto }: QueryProductVariantDto): Promise<unknown> {
     const paginationDto = { page, take };
     const {
