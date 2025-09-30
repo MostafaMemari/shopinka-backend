@@ -37,8 +37,10 @@ export class BulkPricingController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBulkPricingDto: UpdateBulkPricingDto) {
-    return this.bulkPricingService.update(+id, updateBulkPricingDto);
+  @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateBulkPricingDto: UpdateBulkPricingDto) {
+    return this.bulkPricingService.update(id, updateBulkPricingDto);
   }
 
   @Delete(':id')

@@ -7,7 +7,7 @@ import { BulkPricingMessages } from './enums/bulk-pricing-message.enum';
 import { ProductRepository } from '../product/repositories/product.repository';
 import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
 import { BulkPricingQueryDto } from './dto/bulk-pricing-query-filter.dto';
-import { OutputPagination, pagination } from 'src/common/utils/pagination.utils';
+import { OutputPagination, pagination } from '../../common/utils/pagination.utils';
 
 @Injectable()
 export class BulkPricingService {
@@ -101,8 +101,38 @@ export class BulkPricingService {
     });
   }
 
-  update(id: number, updateBulkPricingDto: UpdateBulkPricingDto) {
-    return `This action updates a #${id} bulkPricing`;
+  async update(id: number, updateBulkPricingDto: UpdateBulkPricingDto): Promise<{ message: string; bulkPricing: BulkPricing }> {
+    const { discount, isGlobal, minQty, productId, type, variantId } = updateBulkPricingDto;
+
+    const bulkPrice = await this.bulkPricingRepository.findOneOrThrow({ where: { id } });
+
+    if ((isGlobal && bulkPrice.variantId) || bulkPrice.productId) throw new BadRequestException('Global is not allowed.');
+    if (productId && variantId) throw new BadRequestException(BulkPricingMessages.InvalidProductOrVariant);
+    if (isGlobal && (productId || variantId)) throw new BadRequestException(BulkPricingMessages.GlobalWithProductOrVariant);
+    if (!isGlobal && !variantId && !productId) throw new BadRequestException(BulkPricingMessages.GlobalRequired);
+
+    if (productId) await this.productRepository.findOneOrThrow({ where: { id: productId } });
+    if (variantId) await this.productVariantRepository.findOneOrThrow({ where: { id: variantId } });
+
+    if (!type && discount) throw new BadRequestException('Type is required');
+    if (type && !discount) throw new BadRequestException('Discount is required');
+
+    if (type && type == 'FIXED' && discount < 1000) throw new BadRequestException(BulkPricingMessages.InvalidFixedDiscount);
+
+    if (type && type == 'PERCENT' && discount > 100) throw new BadRequestException(BulkPricingMessages.InvalidPercentDiscount);
+
+    if (isGlobal && minQty) {
+      const existingGlobalBulkPrice = await this.bulkPricingRepository.findOne({ where: { isGlobal: true, minQty } });
+      if (existingGlobalBulkPrice) throw new ConflictException(BulkPricingMessages.GlobalBulkPriceExists);
+    }
+
+    const existingNonGlobalBulkPrice = minQty && (await this.bulkPricingRepository.findOne({ where: { minQty, isGlobal: false } }));
+
+    if (existingNonGlobalBulkPrice) throw new BadRequestException(BulkPricingMessages.MinQtyBulkPriceExists);
+
+    const updatedBulkPricing = await this.bulkPricingRepository.update({ where: { id }, data: updateBulkPricingDto });
+
+    return { message: BulkPricingMessages.CreatedBulkPricingSuccess, bulkPricing: updatedBulkPricing };
   }
 
   async remove(id: number): Promise<{ message: string; bulkPricing: BulkPricing }> {
