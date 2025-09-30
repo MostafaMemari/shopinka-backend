@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ZarinpalService } from '../http/zarinpal.service';
 import { PaymentRepository } from './payment.repository';
 import { OrderItem, OrderStatus, Prisma, Transaction, TransactionStatus, User } from '@prisma/client';
@@ -20,6 +20,7 @@ import { CartRepository } from '../cart/repositories/cart.repository';
 import { ShippingRepository } from '../shipping/repositories/shipping.repository';
 import { RetryPaymentDto } from './dto/retry-payment.dto';
 import { PaymentRedirectResult } from './types/payment.types';
+import { ProductService } from '../product/services/product.service';
 
 @Injectable()
 export class PaymentService {
@@ -28,7 +29,6 @@ export class PaymentService {
   constructor(
     private readonly paymentRepository: PaymentRepository,
     private readonly zarinpalService: ZarinpalService,
-
     private readonly cartService: CartService,
     private readonly orderService: OrderService,
     private readonly shippingRepository: ShippingRepository,
@@ -36,6 +36,7 @@ export class PaymentService {
     private readonly cartItemRepository: CartItemRepository,
     private readonly cartRepository: CartRepository,
     private readonly productRepository: ProductRepository,
+    private readonly productService: ProductService,
     private readonly productVariantRepository: ProductVariantRepository,
   ) {}
 
@@ -67,7 +68,18 @@ export class PaymentService {
 
     const shipping = await this.shippingRepository.findOneOrThrow({ where: { id: paymentDto.shippingId } });
 
-    const amountPrice = (cart.payablePrice + shipping.price) * 10;
+    let payablePrice = 0;
+
+    for (const item of cart.items) {
+      payablePrice += (
+        await this.productService.calculateBestDiscount({
+          productOrVariantId: item.productId || item.productVariantId,
+          quantity: item.quantity,
+        })
+      ).finalPrice;
+    }
+
+    const amountPrice = (payablePrice + shipping.price) * 10;
 
     try {
       const { authority, code, gatewayURL } = await this.zarinpalService.sendRequest({
@@ -77,7 +89,7 @@ export class PaymentService {
       });
 
       if (authority && code && gatewayURL) {
-        const order = await this.orderService.create(user.id, cart, paymentDto);
+        const order = await this.orderService.create(user.id, { ...cart, payablePrice }, paymentDto);
 
         await this.paymentRepository.create({
           data: {
@@ -107,8 +119,7 @@ export class PaymentService {
 
     if (order.status !== 'PENDING') throw new BadRequestException(PaymentMessages.OrderNotPayable);
 
-    const shipping = await this.shippingRepository.findOne({ where: { id: order.shippingId } });
-    const amountPrice = (order.totalPrice + (shipping?.price ?? 0)) * 10;
+    const amountPrice = order.totalPrice * 10;
 
     try {
       const { authority, code, gatewayURL } = await this.zarinpalService.sendRequest({
@@ -177,7 +188,6 @@ export class PaymentService {
 
         return this.buildRedirectUrl(paymentFrontEndUrl, isSuccess ? 'success' : 'failed', {
           ...payment,
-
           status: isSuccess ? TransactionStatus.SUCCESS : TransactionStatus.FAILED,
         });
       }

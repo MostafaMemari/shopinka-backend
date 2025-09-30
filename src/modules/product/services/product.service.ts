@@ -515,6 +515,7 @@ export class ProductService {
       include: { bulkPrices: true },
     });
 
+    //TODO: add messages to enum
     if (!product && !productVariant) throw new BadRequestException('Product and variant not found.');
 
     if (product?.quantity < quantity || productVariant?.quantity < quantity) throw new BadRequestException('Invalid count.');
@@ -527,8 +528,10 @@ export class ProductService {
     ];
 
     const basePrice = product ? product.basePrice : productVariant.basePrice;
+    const salePrice = product ? product.salePrice : productVariant.salePrice;
+    const originalPrice = basePrice * quantity - salePrice * quantity;
 
-    if (validDiscounts.length == 0) return { finalPrice: basePrice * quantity, discount: 0, originalPrice: basePrice * quantity };
+    if (validDiscounts.length == 0) return { finalPrice: originalPrice, discount: 0, originalPrice };
 
     let bestDiscountPrice = 0;
 
@@ -539,14 +542,13 @@ export class ProductService {
         discountAmount = basePrice * quantity * (+discount.discount / 100);
       } else if (discount.type == 'FIXED') discountAmount = +discount.discount * quantity;
 
-      console.log(discountAmount);
       if (discountAmount > bestDiscountPrice) bestDiscountPrice = discountAmount;
     }
 
-    const finalPrice = basePrice * quantity - bestDiscountPrice;
+    const finalPrice = basePrice * quantity - bestDiscountPrice - salePrice * quantity;
 
     return {
-      originalPrice: basePrice * quantity,
+      originalPrice,
       discount: bestDiscountPrice,
       finalPrice,
     };

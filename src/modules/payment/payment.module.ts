@@ -5,7 +5,6 @@ import { AuthService } from '../auth/auth.service';
 import { UserRepository } from '../user/user.repository';
 import { PaymentRepository } from './payment.repository';
 import { ScheduleModule } from '@nestjs/schedule';
-
 import { CartService } from '../cart/cart.service';
 import { OrderService } from '../order/order.service';
 import { CartRepository } from '../cart/repositories/cart.repository';
@@ -17,16 +16,16 @@ import { OrderRepository } from '../order/repositories/order.repository';
 import { OrderItemRepository } from '../order/repositories/order-item.repository';
 import { ShippingRepository } from '../shipping/repositories/shipping.repository';
 import { AddressSnapshotRepository } from '../address/repositories/address-snapshot.repository';
+import { ProductModule } from '../product/product.module';
 
 @Module({
-  imports: [ScheduleModule.forRoot()],
+  imports: [ScheduleModule.forRoot(), ProductModule],
   controllers: [PaymentController],
   providers: [
     PaymentService,
     AuthService,
     UserRepository,
     PaymentRepository,
-
     CartService,
     OrderService,
     CartRepository,
