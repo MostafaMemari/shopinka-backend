@@ -1,28 +1,23 @@
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CartRepository } from './repositories/cart.repository';
 import { Cart, CartItem, ProductStatus } from '@prisma/client';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { CartItemRepository } from './repositories/cardItem.repository';
-import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
-import { ProductRepository } from '../product/repositories/product.repository';
 import { CartItemMessages } from './enums/cart-item-messages.enum';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { pagination } from '../../common/utils/pagination.utils';
 import { PrismaService } from '../prisma/prisma.service';
-import { calculateCartTotals } from '../../common/utils/functions.utils';
 
 @Injectable()
 export class CartService {
   constructor(
     private readonly cartRepository: CartRepository,
     private readonly cartItemRepository: CartItemRepository,
-    private readonly productRepository: ProductRepository,
-    private readonly productVariantRepository: ProductVariantRepository,
     private readonly prismaService: PrismaService,
   ) {}
 
-  async me(userId: number): Promise<any> {
+  async me(userId: number) {
     const cart = await this.prismaService.cart.findFirst({
       where: { userId },
       include: {
@@ -65,12 +60,7 @@ export class CartService {
 
     if (!cart) return null;
 
-    const totals = calculateCartTotals(cart.items);
-
-    return {
-      ...cart,
-      ...totals,
-    };
+    return cart;
   }
 
   async clear(userId: number): Promise<Cart> {
