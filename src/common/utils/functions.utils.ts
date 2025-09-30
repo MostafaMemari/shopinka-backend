@@ -1,5 +1,4 @@
 import * as sharp from 'sharp';
-import { CartItemInput, CartTotals } from 'src/modules/cart/interfaces/cart.interface';
 
 type SortedObject<T = object> = (object: T) => T;
 
@@ -81,35 +80,6 @@ export function estimateReadingTime(content: string): number {
   const wordsPerMinute = 200;
   const wordCount = content.trim().split(/\s+/).length;
   return Math.ceil(wordCount / wordsPerMinute);
-}
-
-export function calculateCartTotals(items: CartItemInput[]): CartTotals {
-  const validItems = Array.isArray(items) ? items : [];
-
-  return validItems.reduce(
-    (acc, item) => {
-      const count = item.quantity ?? 1;
-
-      const basePrice = item.productVariant?.basePrice ?? item.product?.basePrice ?? 0;
-
-      const salePrice = item.productVariant?.salePrice ?? item.product?.salePrice ?? basePrice;
-
-      const priceToUse = Math.max(salePrice, 0);
-
-      const discount = Math.max(basePrice - priceToUse, 0);
-
-      acc.totalPrice += basePrice * count;
-      acc.totalDiscountPrice += discount * count;
-      acc.payablePrice += priceToUse * count;
-
-      return acc;
-    },
-    {
-      totalPrice: 0,
-      totalDiscountPrice: 0,
-      payablePrice: 0,
-    },
-  );
 }
 
 export const transformToBoolean = (value: string | boolean): boolean => {
