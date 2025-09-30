@@ -95,21 +95,13 @@ export class ProductService {
       status: ProductStatus.PUBLISHED,
     };
 
-    if (search) {
-      filters.name = { contains: search };
-    }
+    if (search) filters.name = { contains: search };
 
-    if (hasDiscount) {
-      filters.salePrice = { not: null };
-    }
+    if (hasDiscount) filters.salePrice = { not: null };
 
-    if (categoryIds) {
-      filters.categories = { some: { id: { in: categoryIds } } };
-    }
+    if (categoryIds) filters.categories = { some: { id: { in: categoryIds } } };
 
-    if (tagIds) {
-      filters.tags = { some: { id: { in: tagIds } } };
-    }
+    if (tagIds) filters.tags = { some: { id: { in: tagIds } } };
 
     if (categoryIds?.length) {
       filters.categories = {
