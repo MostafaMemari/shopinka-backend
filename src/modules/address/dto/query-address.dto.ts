@@ -67,19 +67,6 @@ export class QueryAddressDto extends PaginationDto {
   })
   description?: string;
 
-  @IsBoolean()
-  @IsOptional()
-  @Transform(({ value }) => {
-    if (typeof value == 'string') return value == 'true';
-    return value;
-  })
-  @ApiProperty({
-    type: 'boolean',
-    nullable: true,
-    required: false,
-  })
-  includeOrders?: boolean;
-
   @IsOptional()
   @IsDate()
   @Transform(({ value }) => new Date(value))

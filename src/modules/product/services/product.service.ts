@@ -99,21 +99,13 @@ export class ProductService {
       status: ProductStatus.PUBLISHED,
     };
 
-    if (search) {
-      filters.name = { contains: search };
-    }
+    if (search) filters.name = { contains: search };
 
-    if (hasDiscount) {
-      filters.salePrice = { not: null };
-    }
+    if (hasDiscount) filters.salePrice = { not: null };
 
-    if (categoryIds) {
-      filters.categories = { some: { id: { in: categoryIds } } };
-    }
+    if (categoryIds) filters.categories = { some: { id: { in: categoryIds } } };
 
-    if (tagIds) {
-      filters.tags = { some: { id: { in: tagIds } } };
-    }
+    if (tagIds) filters.tags = { some: { id: { in: tagIds } } };
 
     if (categoryIds?.length) {
       filters.categories = {
@@ -289,6 +281,9 @@ export class ProductService {
       includeSeoCategories,
       includeAttributeValues,
       includeBulkPrices,
+      includeSeoMeta,
+      categoryIds,
+      tagIds,
     } = queryProductDto;
 
     const filters: Prisma.ProductWhereInput = { status: ProductStatus.PUBLISHED };
@@ -316,6 +311,18 @@ export class ProductService {
       if (minPrice) filters.basePrice.lte = minPrice;
     }
 
+    if (categoryIds?.length) {
+      filters.categories = {
+        some: { id: { in: categoryIds } },
+      };
+    }
+
+    if (tagIds?.length) {
+      filters.tags = {
+        some: { id: { in: tagIds } },
+      };
+    }
+
     const products = await this.productRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
@@ -328,6 +335,7 @@ export class ProductService {
         user: includeUser,
         variants: includeVariants && { include: { mainImage: true, attributeValues: includeAttributeValues } },
         bulkPrices: includeBulkPrices,
+        seoMeta: includeSeoMeta,
       },
     });
 

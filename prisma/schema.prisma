@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -84,31 +78,31 @@ enum BulkPricingType {
 model User {
   id               Int              @id @default(autoincrement())
   fullName         String?          @map("full_name")
-  mobile           String           @unique()
-  transactions     Transaction[]
-  attributes       Attribute[]
+  mobile           String           @unique
   perviousMobile   String?
   lastMobileChange DateTime?
   isVerifiedMobile Boolean          @default(false)
   role             Role             @default(CUSTOMER)
   createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt()
-  galleries        Gallery[]
+  updatedAt        DateTime         @updatedAt
   addresses        Address[]
-  products         Product[]
-  productVariants  ProductVariant[]
-  favorites        Favorite[]
+  attributes       Attribute[]
+  blogs            Blog[]
+  cart             Cart?            @relation("UserCart")
   categories       Category[]
   comments         Comment[]
+  favorites        Favorite[]
+  galleries        Gallery[]
   orders           Order[]
-  blogs            Blog[]
-  tags             Tag[]
+  Page             Page[]
+  products         Product[]
+  productVariants  ProductVariant[]
+  RefreshToken     RefreshToken[]
+  seoMeta          SeoMeta[]
   shippings        Shipping[]
   shippingInfos    ShippingInfo[]
-  seoMeta          SeoMeta[]
-  cart             Cart?            @relation("UserCart")
-  Page             Page[]
-  RefreshToken     RefreshToken[]
+  tags             Tag[]
+  transactions     Transaction[]
   bulkPrices       BulkPricing[]
 }
 
@@ -116,9 +110,11 @@ model RefreshToken {
   id        Int      @id @default(autoincrement())
   token     String   @unique
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "RefreshToken_userId_fkey")
 }
 
 model OtpRequest {
@@ -132,36 +128,37 @@ model OtpRequest {
 
 model Transaction {
   id            Int               @id @default(autoincrement())
-  user          User?             @relation(references: [id], fields: [userId], onDelete: SetNull)
   userId        Int?
-  orderId       Int               @unique()
+  orderId       Int               @unique
   amount        Int
-  invoiceNumber String            @unique() @map("invoice_number")
+  invoiceNumber String            @unique @map("invoice_number")
   status        TransactionStatus @default(PENDING)
   authority     String
   sessionId     String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  order         Order             @relation("TransactionOrder", fields: [orderId], references: [id], onDelete: Cascade)
+  user          User?             @relation(fields: [userId], references: [id])
 
-  order Order @relation("TransactionOrder", fields: [orderId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
+  @@index([userId], map: "Transaction_userId_fkey")
 }
 
 model Gallery {
-  id          Int           @id() @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   title       String
   description String?       @db.Text
   userId      Int
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   user        User          @relation(fields: [userId], references: [id])
   items       GalleryItem[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt()
+
+  @@index([userId], map: "Gallery_userId_fkey")
 }
 
 model GalleryItem {
-  id                  Int              @id() @default(autoincrement())
+  id                  Int              @id @default(autoincrement())
   galleryId           Int
-  gallery             Gallery          @relation(fields: [galleryId], references: [id], onDelete: Cascade)
   title               String
   description         String?          @db.Text
   fileUrl             String
@@ -173,71 +170,91 @@ model GalleryItem {
   isDeleted           Boolean          @default(false)
   deletedAt           DateTime?
   createdAt           DateTime         @default(now())
-  updatedAt           DateTime         @updatedAt()
+  updatedAt           DateTime         @updatedAt
+  Banner              Banner[]
+  blogs               Blog[]
+  categories          Category[]
+  gallery             Gallery          @relation(fields: [galleryId], references: [id], onDelete: Cascade)
   mainImageOf         Product[]        @relation("MainImage")
   mainImageOfVariants ProductVariant[] @relation("VariantMainImage")
-  sharedIn            Product[]        @relation("ProductToGalleryItem")
-  categories          Category[]
-  tags                Tag[]
   seoMeta             SeoMeta[]
-  blogs               Blog[]
-  Banner              Banner[]
+  tags                Tag[]
+  sharedIn            Product[]        @relation("ProductToGalleryItem")
 
   @@index([deletedAt])
+  @@index([galleryId], map: "GalleryItem_galleryId_fkey")
 }
 
 model Address {
   id             Int      @id @default(autoincrement())
   userId         Int
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   fullName       String
   province       String
   city           String
-  streetAndAlley String
-  plate          String
-  unit           String?
-  isActive       Boolean  @default(true)
+  postalAddress  String   @map("postal_address") @db.Text
+  buildingNumber Int      @map("building_number")
+  unit           Int?     @map("unit")
+  isDefault      Boolean  @default(false)
   postalCode     String   @map("postal_code") @db.VarChar(10)
-  orders         Order[]
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "Address_userId_fkey")
+}
+
+model AddressSnapshot {
+  id             Int      @id @default(autoincrement())
+  fullName       String
+  province       String
+  city           String
+  postalAddress  String   @map("postal_address") @db.Text
+  buildingNumber Int      @map("building_number")
+  unit           Int?     @map("unit")
+  postalCode     String   @map("postal_code") @db.VarChar(10)
+  createdAt      DateTime @default(now())
+
+  order Order?
 }
 
 model Attribute {
-  id          Int              @id() @default(autoincrement())
+  id          Int              @id @default(autoincrement())
   name        String
-  slug        String           @unique()
+  slug        String           @unique
   userId      Int?
-  user        User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
   type        AttributeType
   description String?          @db.Text
-  values      AttributeValue[]
-  products    Product[]
   createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt()
+  updatedAt   DateTime         @updatedAt
+  user        User?            @relation(fields: [userId], references: [id])
+  values      AttributeValue[]
+  products    Product[]        @relation("AttributeToProduct")
+
+  @@index([userId], map: "Attribute_userId_fkey")
 }
 
 model AttributeValue {
-  id              Int              @id() @default(autoincrement())
+  id              Int              @id @default(autoincrement())
   name            String
-  slug            String           @unique()
+  slug            String           @unique
   colorCode       String?          @map("color_code")
   buttonLabel     String?          @map("button_label")
   attributeId     Int?
-  productVariants ProductVariant[]
   createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt()
+  updatedAt       DateTime         @updatedAt
+  attribute       Attribute?       @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  productVariants ProductVariant[] @relation("AttributeValueToProductVariant")
 
-  attribute Attribute? @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  @@index([attributeId], map: "AttributeValue_attributeId_fkey")
 }
 
 model Product {
   id               Int              @id @default(autoincrement())
-  sku              String?          @unique()
+  sku              String?          @unique
   name             String
   mainImageId      Int?
   userId           Int?
-  slug             String           @unique()
+  slug             String           @unique
   description      String?          @db.Text
   shortDescription String?          @map("short_description") @db.Text
   quantity         Int?
@@ -245,45 +262,49 @@ model Product {
   salePrice        Int?             @map("sale_price")
   status           ProductStatus    @default(PUBLISHED)
   type             ProductType      @default(SIMPLE)
-  mainImage        GalleryItem?     @relation("MainImage", fields: [mainImageId], references: [id], onDelete: SetNull)
-  galleryImages    GalleryItem[]    @relation("ProductToGalleryItem")
-  user             User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
-  attributes       Attribute[]
-  variants         ProductVariant[] @relation("ProductVariants")
   defaultVariantId Int?
-  defaultVariant   ProductVariant?  @relation("DefaultVariant", fields: [defaultVariantId], references: [id], onDelete: SetNull)
-  favorites        Favorite[]
-  categories       Category[]
-  comments         Comment[]
-  cartItems        CartItem[]
-  orderItems       OrderItem[]
-  tags             Tag[]
   width            Int?
   height           Int?
   length           Int?
   weight           Int?
   createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt()
+  updatedAt        DateTime         @updatedAt
+  cartItems        CartItem[]
+  comments         Comment[]
+  favorites        Favorite[]
+  orderItems       OrderItem[]
+  defaultVariant   ProductVariant?  @relation("DefaultVariant", fields: [defaultVariantId], references: [id])
+  mainImage        GalleryItem?     @relation("MainImage", fields: [mainImageId], references: [id])
+  user             User?            @relation(fields: [userId], references: [id])
+  variants         ProductVariant[] @relation("ProductVariants")
   seoMeta          SeoMeta?
+  attributes       Attribute[]      @relation("AttributeToProduct")
+  categories       Category[]       @relation("CategoryToProduct")
+  galleryImages    GalleryItem[]    @relation("ProductToGalleryItem")
+  tags             Tag[]            @relation("ProductToTag")
+
+  @@index([defaultVariantId], map: "Product_defaultVariantId_fkey")
+  @@index([mainImageId], map: "Product_mainImageId_fkey")
+  @@index([userId], map: "Product_userId_fkey")
   bulkPrices       BulkPricing[]
 }
 
 model Banner {
-  id      Int         @id @default(autoincrement())
-  image   GalleryItem @relation(fields: [imageId], references: [id])
-  imageId Int
+  id        Int         @id @default(autoincrement())
+  imageId   Int
+  link      String
+  type      BannerType
+  isActive  Boolean     @default(true)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  image     GalleryItem @relation(fields: [imageId], references: [id])
 
-  link     String
-  type     BannerType
-  isActive Boolean    @default(true)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@index([imageId], map: "Banner_imageId_fkey")
 }
 
 model ProductVariant {
   id               Int              @id @default(autoincrement())
-  sku              String?          @unique()
+  sku              String?          @unique
   mainImageId      Int?
   productId        Int
   orderId          Int?
@@ -292,59 +313,64 @@ model ProductVariant {
   quantity         Int?
   basePrice        Int?             @map("base_price")
   salePrice        Int?             @map("sale_price")
-  mainImage        GalleryItem?     @relation("VariantMainImage", fields: [mainImageId], references: [id], onDelete: SetNull)
-  product          Product          @relation("ProductVariants", fields: [productId], references: [id], onDelete: Cascade)
-  user             User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
-  attributeValues  AttributeValue[]
-  cartItems        CartItem[]
-  orderItems       OrderItem[]
   width            Int?
   height           Int?
   length           Int?
   weight           Int?
   createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt()
+  updatedAt        DateTime         @updatedAt
+  cartItems        CartItem[]
+  orderItems       OrderItem[]
   defaultFor       Product[]        @relation("DefaultVariant")
+  mainImage        GalleryItem?     @relation("VariantMainImage", fields: [mainImageId], references: [id])
+  product          Product          @relation("ProductVariants", fields: [productId], references: [id], onDelete: Cascade)
+  user             User?            @relation(fields: [userId], references: [id])
+  attributeValues  AttributeValue[] @relation("AttributeValueToProductVariant")
+
+  @@index([mainImageId], map: "ProductVariant_mainImageId_fkey")
+  @@index([productId], map: "ProductVariant_productId_fkey")
+  @@index([userId], map: "ProductVariant_userId_fkey")
   bulkPrices       BulkPricing[]
 }
 
 model Favorite {
-  id        Int      @id() @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   userId    Int
   productId Int
   createdAt DateTime @default(now())
-
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, productId])
+  @@index([productId], map: "Favorite_productId_fkey")
 }
 
 model Category {
-  id               Int      @id @default(autoincrement())
+  id               Int          @id @default(autoincrement())
   name             String
-  slug             String   @unique()
-  description      String?  @db.Text
+  slug             String       @unique
+  description      String?      @db.Text
   parentId         Int?
   userId           Int?
   thumbnailImageId Int?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt()
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  type             CategoryType @default(PRODUCT)
+  parent           Category?    @relation("CategoryToCategory", fields: [parentId], references: [id], onDelete: Cascade)
+  children         Category[]   @relation("CategoryToCategory")
+  thumbnailImage   GalleryItem? @relation(fields: [thumbnailImageId], references: [id])
+  user             User?        @relation(fields: [userId], references: [id])
+  seoMeta          SeoMeta?
+  blogs            Blog[]       @relation("BlogToCategory")
+  products         Product[]    @relation("CategoryToProduct")
 
-  type CategoryType @default(PRODUCT)
-
-  parent   Category?  @relation("CategoryToCategory", fields: [parentId], references: [id], onDelete: Cascade)
-  children Category[] @relation("CategoryToCategory")
-  user     User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
-  products Product[]
-  blogs    Blog[]
-
-  thumbnailImage GalleryItem? @relation(fields: [thumbnailImageId], references: [id], onDelete: SetNull)
-  seoMeta        SeoMeta?
+  @@index([parentId], map: "Category_parentId_fkey")
+  @@index([thumbnailImageId], map: "Category_thumbnailImageId_fkey")
+  @@index([userId], map: "Category_userId_fkey")
 }
 
 model Comment {
-  id            Int       @id() @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   title         String
   content       String    @db.Text
   isActive      Boolean   @default(false)
@@ -354,68 +380,74 @@ model Comment {
   productId     Int?
   blogId        Int?
   parentId      Int?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  blog          Blog?     @relation(fields: [blogId], references: [id], onDelete: Cascade)
   parent        Comment?  @relation("CommentToComment", fields: [parentId], references: [id], onDelete: Cascade)
   replies       Comment[] @relation("CommentToComment")
+  product       Product?  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  product Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
-  blog    Blog?    @relation(fields: [blogId], references: [id], onDelete: Cascade)
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
+  @@index([blogId], map: "Comment_blogId_fkey")
+  @@index([parentId], map: "Comment_parentId_fkey")
+  @@index([productId], map: "Comment_productId_fkey")
+  @@index([userId], map: "Comment_userId_fkey")
 }
 
 model Cart {
-  id     Int @id() @default(autoincrement())
-  userId Int @unique()
-
-  user  User       @relation("UserCart", fields: [userId], references: [id], onDelete: Cascade)
-  items CartItem[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  user      User       @relation("UserCart", fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
 }
 
 model CartItem {
-  id               Int  @id @default(autoincrement())
+  id               Int             @id @default(autoincrement())
   cartId           Int
   productId        Int?
   productVariantId Int?
-
-  cart           Cart            @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  product        Product?        @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productVariant ProductVariant? @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
-
-  quantity  Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
+  quantity         Int
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  cart             Cart            @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product          Product?        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productVariant   ProductVariant? @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
 
   @@unique([cartId, productId])
   @@unique([cartId, productVariantId])
+  @@index([productId], map: "CartItem_productId_fkey")
+  @@index([productVariantId], map: "CartItem_productVariantId_fkey")
 }
 
 model Order {
-  id           Int           @id() @default(autoincrement())
-  userId       Int?
-  addressId    Int?
-  shippingId   Int?
-  orderNumber  String        @unique()
-  quantity     Int
-  totalPrice   Int
-  status       OrderStatus   @default(PENDING)
-  expiresAt    DateTime?
-  items        OrderItem[]
+  id          Int         @id @default(autoincrement())
+  userId      Int?
+  shippingId  Int?
+  orderNumber String      @unique
+  quantity    Int
+  totalPrice  Int
+  status      OrderStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  expiresAt   DateTime?
+
+  addressSnapshotId Int             @unique
+  addressSnapshot   AddressSnapshot @relation(fields: [addressSnapshotId], references: [id])
+
+  shipping     Shipping?     @relation(fields: [shippingId], references: [id])
   user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  address      Address?      @relation(fields: [addressId], references: [id], onDelete: SetNull)
-  transaction  Transaction?  @relation("TransactionOrder")
+  items        OrderItem[]
   shippingInfo ShippingInfo? @relation("ShippingInfoOrder")
-  shipping     Shipping?     @relation(fields: [shippingId], references: [id], onDelete: SetNull)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt()
+  transaction  Transaction?  @relation("TransactionOrder")
+
+  @@index([shippingId], map: "Order_shippingId_fkey")
+  @@index([userId], map: "Order_userId_fkey")
 }
 
 model OrderItem {
-  id               Int     @id() @default(autoincrement())
+  id               Int             @id @default(autoincrement())
   orderId          Int
   productId        Int?
   productVariantId Int?
@@ -432,111 +464,119 @@ model OrderItem {
 }
 
 model SeoMeta {
-  id            Int      @id @default(autoincrement())
+  id            Int          @id @default(autoincrement())
   userId        Int?
   ogImageId     Int?
-  productId     Int?     @unique
-  blogId        Int?     @unique
-  tagId         Int?     @unique
-  categoryId    Int?     @unique
+  productId     Int?         @unique
+  blogId        Int?         @unique
+  tagId         Int?         @unique
+  categoryId    Int?         @unique
   entityType    String
   title         String?
-  description   String?  @db.Text
-  keywords      String?  @default("")
-  canonicalUrl  String?  @map("canonical_url")
-  ogTitle       String?  @map("og_title")
-  ogDescription String?  @map("og_description") @db.Text
+  description   String?      @db.Text
+  keywords      String?      @default("")
+  canonicalUrl  String?      @map("canonical_url")
+  ogTitle       String?      @map("og_title")
+  ogDescription String?      @map("og_description") @db.Text
   robotsTag     String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt()
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  blog          Blog?        @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  category      Category?    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  ogImage       GalleryItem? @relation(fields: [ogImageId], references: [id])
+  product       Product?     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tag           Tag?         @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  user          User?        @relation(fields: [userId], references: [id])
 
-  user     User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
-  ogImage  GalleryItem? @relation(fields: [ogImageId], references: [id], onDelete: SetNull)
-  product  Product?     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  blog     Blog?        @relation(fields: [blogId], references: [id], onDelete: Cascade)
-  tag      Tag?         @relation(fields: [tagId], references: [id], onDelete: Cascade)
-  category Category?    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  @@index([ogImageId], map: "SeoMeta_ogImageId_fkey")
+  @@index([userId], map: "SeoMeta_userId_fkey")
 }
 
 model Blog {
-  id          Int        @id() @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   userId      Int?
   mainImageId Int?
-  slug        String     @unique()
+  slug        String       @unique
   title       String
-  content     String?    @db.Text
-  status      BlogStatus @default(PUBLISHED)
-  readingTime Int?       @map("reading_time")
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt()
+  content     String?      @db.Text
+  status      BlogStatus   @default(PUBLISHED)
+  readingTime Int?         @map("reading_time")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  mainImage   GalleryItem? @relation(fields: [mainImageId], references: [id])
+  user        User?        @relation(fields: [userId], references: [id])
+  comments    Comment[]
+  seoMeta     SeoMeta?
+  categories  Category[]   @relation("BlogToCategory")
+  tags        Tag[]        @relation("BlogToTag")
 
-  user       User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
-  mainImage  GalleryItem? @relation(fields: [mainImageId], references: [id], onDelete: SetNull)
-  comments   Comment[]
-  categories Category[]
-  tags       Tag[]
-  seoMeta    SeoMeta?
+  @@index([mainImageId], map: "Blog_mainImageId_fkey")
+  @@index([userId], map: "Blog_userId_fkey")
 }
 
 model Tag {
-  id               Int      @id() @default(autoincrement())
+  id               Int          @id @default(autoincrement())
   userId           Int?
   thumbnailImageId Int?
   name             String
-  slug             String   @unique()
-  description      String?  @db.Text
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt()
+  slug             String       @unique
+  description      String?      @db.Text
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  type             TagType      @default(PRODUCT)
+  seoMeta          SeoMeta?
+  thumbnailImage   GalleryItem? @relation(fields: [thumbnailImageId], references: [id])
+  user             User?        @relation(fields: [userId], references: [id])
+  blogs            Blog[]       @relation("BlogToTag")
+  products         Product[]    @relation("ProductToTag")
 
-  type TagType @default(PRODUCT)
-
-  products       Product[]
-  blogs          Blog[]
-  user           User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
-  thumbnailImage GalleryItem? @relation(fields: [thumbnailImageId], references: [id], onDelete: SetNull)
-  seoMeta        SeoMeta?
+  @@index([thumbnailImageId], map: "Tag_thumbnailImageId_fkey")
+  @@index([userId], map: "Tag_userId_fkey")
 }
 
 model Page {
-  id          Int      @id() @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   userId      Int?
   name        String
-  slug        String   @unique()
+  slug        String   @unique
   description String?  @db.Text
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt()
+  updatedAt   DateTime @updatedAt
+  user        User?    @relation(fields: [userId], references: [id])
 
-  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  @@index([userId], map: "Page_userId_fkey")
 }
 
 model Shipping {
-  id            Int      @id() @default(autoincrement())
+  id            Int            @id @default(autoincrement())
   userId        Int?
   name          String
   price         Int
   estimatedDays Int?
-  isActive      Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt()
-
-  user          User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   orders        Order[]
+  user          User?          @relation(fields: [userId], references: [id])
   shippingInfos ShippingInfo[]
+
+  @@index([userId], map: "Shipping_userId_fkey")
 }
 
 model ShippingInfo {
-  id           Int    @id() @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   shippingId   Int
-  orderId      Int    @unique()
+  orderId      Int      @unique
   userId       Int?
-  trackingCode String @unique()
+  trackingCode String   @unique
+  sentAt       DateTime @default(now())
+  createdAt    DateTime @default(now())
+  order        Order    @relation("ShippingInfoOrder", fields: [orderId], references: [id], onDelete: Cascade)
+  shipping     Shipping @relation(fields: [shippingId], references: [id], onDelete: Cascade)
+  user         User?    @relation(fields: [userId], references: [id])
 
-  shipping Shipping @relation(fields: [shippingId], references: [id], onDelete: Cascade)
-  order    Order    @relation("ShippingInfoOrder", fields: [orderId], references: [id], onDelete: Cascade)
-  user     User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-
-  sentAt    DateTime @default(now())
-  createdAt DateTime @default(now())
+  @@index([shippingId], map: "ShippingInfo_shippingId_fkey")
+  @@index([userId], map: "ShippingInfo_userId_fkey")
 }
 
 model ContactMessage {

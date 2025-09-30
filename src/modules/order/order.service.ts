@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { IGetCart } from '../cart/interfaces/cart.interface';
 import { PaymentDto } from '../payment/dto/payment.dto';
-import { AddressRepository } from '../address/address.repository';
+import { AddressRepository } from '../address/repositories/address.repository';
 import { CartItem, Order, OrderStatus, Prisma } from '@prisma/client';
 import { OrderRepository } from './repositories/order.repository';
 import { QueryMyOrderDto, QueryOrderDto } from './dto/query-order.dto';
@@ -14,6 +14,7 @@ import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 import { ShippingRepository } from '../shipping/repositories/shipping.repository';
 import { UpdateOrderStatusDto } from './dto/update-status-order.dto';
 import { QueryOrderStatus } from './enums/order-sort-by.enum';
+import { AddressSnapshotRepository } from '../address/repositories/address-snapshot.repository';
 
 @Injectable()
 export class OrderService {
@@ -21,6 +22,7 @@ export class OrderService {
     private readonly orderRepository: OrderRepository,
     private readonly orderItemRepository: OrderItemRepository,
     private readonly addressRepository: AddressRepository,
+    private readonly addressSnapshotRepository: AddressSnapshotRepository,
     private readonly productRepository: ProductRepository,
     private readonly productVariantRepository: ProductVariantRepository,
     private readonly cartItemRepository: CartItemRepository,
@@ -78,12 +80,25 @@ export class OrderService {
     const { addressId, shippingId } = paymentDto;
     let { items, payablePrice } = cart;
 
-    if (!items.length) throw new BadRequestException('Your cart list is empty.');
+    if (!items.length) throw new BadRequestException('Your cart list is empty');
 
     const shipping = await this.shippingRepository.findOneOrThrow({ where: { id: shippingId } });
     payablePrice += shipping.price;
 
-    await this.addressRepository.findOneOrThrow({ where: { userId, id: addressId } });
+    const address = await this.addressRepository.findOneOrThrow({ where: { userId, id: addressId } });
+    if (!address.isDefault) throw new BadRequestException('Please select your default address or set this address as default.');
+
+    const addressSnapshot = await this.addressSnapshotRepository.create({
+      data: {
+        fullName: address.fullName,
+        province: address.province,
+        city: address.city,
+        postalAddress: address.postalAddress,
+        buildingNumber: address.buildingNumber,
+        unit: address.unit,
+        postalCode: address.postalCode,
+      },
+    });
 
     const orderNumber = this.generateOrderNumber();
     const orderItems = this.mapCartItemsToOrderItems(items);
@@ -92,12 +107,12 @@ export class OrderService {
 
     const newOrder = await this.orderRepository.create({
       data: {
-        addressId,
         shippingId,
         orderNumber,
         totalPrice: payablePrice,
         status: OrderStatus.PENDING,
         userId,
+        addressSnapshotId: addressSnapshot.id,
         quantity: items.length,
         expiresAt: new Date(Date.now() + OrderExpireMinutes),
         items: { create: orderItems },
@@ -106,7 +121,6 @@ export class OrderService {
     });
 
     await this.cartItemRepository.deleteMany({ where: { cart: { userId } } });
-
     await this.decreaseCartItemsStock(userId);
 
     return newOrder;
@@ -120,8 +134,6 @@ export class OrderService {
       sortDirection,
       startDate,
       includeItems,
-      addressId,
-      includeAddress,
       maxPrice,
       minPrice,
       quantity,
@@ -133,7 +145,6 @@ export class OrderService {
       // OR: [{ user: { products: { some: { userId } } } }, { user: { productVariants: { some: { userId } } } }],
     };
 
-    if (addressId) filters.addressId = addressId;
     if (quantity) filters.quantity = quantity;
     if (maxPrice || minPrice) {
       filters.totalPrice = {};
@@ -149,7 +160,7 @@ export class OrderService {
     const orders = await this.orderRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { items: includeItems, address: includeAddress, transaction: includeTransaction, shippingInfo: includeShippingInfo },
+      include: { items: includeItems, transaction: includeTransaction, shippingInfo: includeShippingInfo },
     });
 
     return { ...pagination(paginationDto, orders) };
@@ -176,7 +187,6 @@ export class OrderService {
       where: whereCondition,
       orderBy: { createdAt: 'desc' },
       include: {
-        address: true,
         transaction: true,
         items: {
           include: {
@@ -271,7 +281,7 @@ export class OrderService {
   findOneForAdmin(userId: number, orderId: number): Promise<Order> {
     return this.orderRepository.findOneOrThrow({
       where: { id: orderId, OR: [{ items: { some: { product: { userId } } } }, { items: { some: { productVariant: { userId } } } }] },
-      include: { items: true, address: true, shipping: true, shippingInfo: true, transaction: true, user: true },
+      include: { items: true, shipping: true, shippingInfo: true, transaction: true, user: true },
     });
   }
 
@@ -279,7 +289,6 @@ export class OrderService {
     return this.orderRepository.findOneOrThrow({
       where: { userId, id: orderId },
       include: {
-        address: true,
         items: {
           include: {
             product: {
@@ -313,6 +322,7 @@ export class OrderService {
             },
           },
         },
+        addressSnapshot: true,
         shipping: true,
         shippingInfo: true,
         transaction: true,

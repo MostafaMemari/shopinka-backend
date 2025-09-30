@@ -37,6 +37,12 @@ export class AddressController {
     return this.addressService.update(user.id, id, updateAddressDto);
   }
 
+  @Patch(':id/set-default')
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  setDefault(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.addressService.setDefault(user.id, id);
+  }
+
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
     return this.addressService.remove(user.id, id);

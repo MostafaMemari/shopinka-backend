@@ -1,7 +1,7 @@
 export enum AddressMessages {
-  AlreadyExistsAddress = 'Address with this postal code already exists.',
-  NotFoundAddress = 'Address not found',
-  RemovedAddressSuccess = 'Address removed successfully',
-  CreatedAddressSuccess = 'Address created successfully',
-  UpdatedAddressSuccess = 'Address Updated successfully.',
+  NotFoundAddress = 'آدرس یافت نشد',
+  RemovedAddressSuccess = 'آدرس با موفقیت حذف شد',
+  CreatedAddressSuccess = 'آدرس با موفقیت ایجاد شد',
+  UpdatedAddressSuccess = 'آدرس با موفقیت به‌روزرسانی شد',
+  SetDefaultAddressSuccess = 'آدرس پیش‌فرض با موفقیت تنظیم شد',
 }

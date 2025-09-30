@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { AddressRepository } from '../address/address.repository';
+import { AddressRepository } from '../address/repositories/address.repository';
 import { OrderRepository } from './repositories/order.repository';
 import { OrderController } from './order.controller';
 import { AuthService } from '../auth/auth.service';
@@ -13,7 +13,7 @@ import { ProductVariantRepository } from '../product/repositories/product-varian
 import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 import { ShippingRepository } from '../shipping/repositories/shipping.repository';
 import { CartService } from '../cart/cart.service';
-import { CronModule } from '../cron/cron.module';
+import { AddressSnapshotRepository } from '../address/repositories/address-snapshot.repository';
 
 @Module({
   controllers: [OrderController],
@@ -21,6 +21,7 @@ import { CronModule } from '../cron/cron.module';
     OrderService,
     PrismaService,
     AddressRepository,
+    AddressSnapshotRepository,
     OrderRepository,
     AuthService,
     UserRepository,
