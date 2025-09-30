@@ -13,6 +13,7 @@ import { QueryProductDto } from '../dto/query-product.dto';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
 import { QueryPublicProductDto } from '../dto/query-public-product.dto';
 import { SetDefaultVariantDto } from '../dto/update-product-variant.dto';
+import { CalculateBulkPriceDto } from '../dto/calculate-bulk-price.dto';
 
 @Controller('product')
 @ApiTags('product')
@@ -82,6 +83,12 @@ export class ProductController {
   @Patch('favorite-toggle/:id')
   favoriteToggle(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
     return this.productService.favoriteToggle(user.id, id);
+  }
+
+  @Patch('calculate-bulk-price')
+  @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
+  calculateBulkPrice(@Body() calculateBulkPriceDto: CalculateBulkPriceDto) {
+    return this.productService.calculateBestDiscount(calculateBulkPriceDto);
   }
 
   @Patch(':id')

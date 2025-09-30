@@ -9,6 +9,7 @@ export interface IGetCart {
 export interface CartItemInput {
   quantity: number;
   product?: {
+    id: number;
     basePrice: number;
     salePrice: number;
   };

@@ -4,7 +4,6 @@ import { ProductController } from './controllers/product.controller';
 import { ProductRepository } from './repositories/product.repository';
 import { UserRepository } from '../user/user.repository';
 import { AuthService } from '../auth/auth.service';
-
 import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
 import { AttributeRepository } from '../attribute/repositories/attribute.repository';
 import { ProductVariantRepository } from './repositories/product-variant.repository';
@@ -15,6 +14,7 @@ import { CategoryRepository } from '../category/category.repository';
 import { AttributeValueRepository } from '../attribute/repositories/attribute-value.repository';
 import { OrderItemRepository } from '../order/repositories/order-item.repository';
 import { TagRepository } from '../tag/tag.repository';
+import { BulkPricingRepository } from '../bulk-pricing/repositories/bulk-pricing.repository';
 
 @Module({
   controllers: [ProductController, ProductVariantController],
@@ -23,7 +23,23 @@ import { TagRepository } from '../tag/tag.repository';
     ProductRepository,
     UserRepository,
     AuthService,
-
+    BulkPricingRepository,
+    GalleryItemRepository,
+    AttributeRepository,
+    ProductVariantRepository,
+    ProductVariantService,
+    FavoriteRepository,
+    CategoryRepository,
+    AttributeValueRepository,
+    OrderItemRepository,
+    TagRepository,
+  ],
+  exports: [
+    ProductService,
+    ProductRepository,
+    UserRepository,
+    AuthService,
+    BulkPricingRepository,
     GalleryItemRepository,
     AttributeRepository,
     ProductVariantRepository,

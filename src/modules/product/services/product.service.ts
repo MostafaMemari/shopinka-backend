@@ -2,7 +2,7 @@ import { BadRequestException, ConflictException, ForbiddenException, Injectable 
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductRepository } from '../repositories/product.repository';
-import { OrderStatus, Prisma, Product, ProductStatus, ProductType, ProductVariant } from '@prisma/client';
+import { BulkPricing, OrderStatus, Prisma, Product, ProductStatus, ProductType, ProductVariant } from '@prisma/client';
 import { GalleryItemRepository } from '../../gallery/repositories/gallery-item.repository';
 import slugify from 'slugify';
 import { AttributeRepository } from '../../attribute/repositories/attribute.repository';
@@ -18,6 +18,8 @@ import { TagRepository } from '../../tag/tag.repository';
 import { QueryPublicProductDto } from '../dto/query-public-product.dto';
 import { SetDefaultVariantDto } from '../dto/update-product-variant.dto';
 import { ProductVariantRepository } from '../repositories/product-variant.repository';
+import { BulkPricingRepository } from '../../bulk-pricing/repositories/bulk-pricing.repository';
+import { CalculateBulkPriceDto } from '../dto/calculate-bulk-price.dto';
 
 @Injectable()
 export class ProductService {
@@ -30,6 +32,7 @@ export class ProductService {
     private readonly tagRepository: TagRepository,
     private readonly orderItemRepository: OrderItemRepository,
     private readonly productVariantRepository: ProductVariantRepository,
+    private readonly bulkPricingRepository: BulkPricingRepository,
   ) {}
 
   async create(userId: number, createProductDto: CreateProductDto): Promise<{ message: string; product: Product }> {
@@ -393,7 +396,7 @@ export class ProductService {
       if (existingProduct) throw new ConflictException(ProductMessages.AlreadyExistsProduct);
     }
 
-    if (mainImageId !== null) await this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } });
+    if (mainImageId) await this.galleryItemRepository.findOneOrThrow({ where: { id: mainImageId } });
 
     const orderItems = await this.orderItemRepository.findAll({
       where: {
@@ -491,6 +494,54 @@ export class ProductService {
     const newFavorite = await this.favoriteRepository.create({ data: { productId, userId } });
 
     return { message: FavoriteMessages.CreatedFavoriteSuccess, favorite: newFavorite };
+  }
+
+  async calculateBestDiscount(
+    calculateBulkPriceDto: CalculateBulkPriceDto,
+  ): Promise<{ originalPrice: number; finalPrice: number; discount: number }> {
+    const { productOrVariantId, quantity } = calculateBulkPriceDto;
+
+    const product = await this.productRepository.findOne({ where: { id: productOrVariantId }, include: { bulkPrices: true } });
+    const productVariant = await this.productVariantRepository.findOne({
+      where: { id: productOrVariantId },
+      include: { bulkPrices: true },
+    });
+
+    if (!product && !productVariant) throw new BadRequestException('Product and variant not found.');
+
+    if (product?.quantity < quantity || productVariant?.quantity < quantity) throw new BadRequestException('Invalid count.');
+
+    const globalBulkPrices = await this.bulkPricingRepository.findAll({ where: { isGlobal: true } });
+
+    const validDiscounts = [
+      ...((product || productVariant)['bulkPrices'] as BulkPricing[]).filter((bp) => quantity >= bp.minQty),
+      ...globalBulkPrices.filter((bp) => quantity >= bp.minQty),
+    ];
+
+    const basePrice = product ? product.basePrice : productVariant.basePrice;
+
+    if (validDiscounts.length == 0) return { finalPrice: basePrice * quantity, discount: 0, originalPrice: basePrice * quantity };
+
+    let bestDiscountPrice = 0;
+
+    for (const discount of validDiscounts) {
+      let discountAmount = 0;
+
+      if (discount.type == 'PERCENT') {
+        discountAmount = basePrice * quantity * (+discount.discount / 100);
+      } else if (discount.type == 'FIXED') discountAmount = +discount.discount * quantity;
+
+      console.log(discountAmount);
+      if (discountAmount > bestDiscountPrice) bestDiscountPrice = discountAmount;
+    }
+
+    const finalPrice = basePrice * quantity - bestDiscountPrice;
+
+    return {
+      originalPrice: basePrice * quantity,
+      discount: bestDiscountPrice,
+      finalPrice,
+    };
   }
 
   private async generateUniqueSlug(name: string): Promise<string> {
