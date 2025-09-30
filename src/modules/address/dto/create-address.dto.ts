@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
+import { transformToNumber } from 'src/common/utils/functions.utils';
 
 export class CreateAddressDto {
   @IsString()
@@ -53,6 +54,7 @@ export class CreateAddressDto {
   postalAddress: string;
 
   @IsInt()
+  @Transform(({ value }) => transformToNumber(value))
   @IsNotEmpty()
   @ApiProperty({
     type: 'number',
