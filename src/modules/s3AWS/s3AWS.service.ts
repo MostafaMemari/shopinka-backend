@@ -68,13 +68,15 @@ export class AwsService {
 
     const optimizeBuffer = await this.optimizeBuffer(bufferFile);
 
+    const isSqlFile = fileName.includes('.sql') || extractedContentType == '.sql'
+
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
       Key: key,
-      Body: optimizeBuffer,
+      Body: isSqlFile ? bufferFile : optimizeBuffer,
       ContentType: contentType,
       ACL: isPublic ? 'public-read' : 'private',
-      ContentLength: optimizeBuffer.length,
+      ContentLength: isSqlFile ? bufferFile.length : optimizeBuffer.length,
     });
 
     const uploadResult = await this.client.send(command);

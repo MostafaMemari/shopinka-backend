@@ -99,7 +99,7 @@ export function parseDbUrl(url: string) {
 
   return {
     user: parsedUrl.username,
-    password: parsedUrl.password,
+    password: parsedUrl.password.includes("%40") ? parsedUrl.password.replace("%40", '@') : parsedUrl.password,
     host: parsedUrl.hostname,
     port: parsedUrl.port,
     dbName: parsedUrl.pathname.slice(1),
