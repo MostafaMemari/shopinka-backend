@@ -278,7 +278,46 @@ export class OrderService {
   findOneForAdmin(userId: number, orderId: number): Promise<Order> {
     return this.orderRepository.findOneOrThrow({
       where: { id: orderId, OR: [{ items: { some: { product: { userId } } } }, { items: { some: { productVariant: { userId } } } }] },
-      include: { items: true, shipping: true, shippingInfo: true, transaction: true, user: true },
+      include: {
+        items: {
+          include: {
+            product: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                type: true,
+                salePrice: true,
+                basePrice: true,
+                mainImage: { select: { fileUrl: true } },
+              },
+            },
+            productVariant: {
+              select: {
+                id: true,
+                salePrice: true,
+                basePrice: true,
+                product: {
+                  select: {
+                    name: true,
+                    type: true,
+                    slug: true,
+                    mainImage: { select: { fileUrl: true, thumbnailUrl: true } },
+                  },
+                },
+                attributeValues: {
+                  select: { name: true, colorCode: true, buttonLabel: true },
+                },
+              },
+            },
+          },
+        },
+        shipping: true,
+        shippingInfo: true,
+        transaction: true,
+        user: true,
+        addressSnapshot: true,
+      },
     });
   }
 
