@@ -30,7 +30,7 @@ export class ZarinpalService {
         .pipe(map((res) => res.data))
         .pipe(
           catchError((err) => {
-            throw new InternalServerErrorException('Zarinpal error');
+            throw new InternalServerErrorException(`Zarinpal error: ${err.message}`);
           }),
         ),
     );
