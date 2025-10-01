@@ -17,7 +17,7 @@ export class BackupService {
   async create(): Promise<{ message: string }> {
     let filePath: null | string = null;
     try {
-      const { dbName, host, password, port, user } = parseDbUrl(process.env.DATABASE_URL);
+      const { dbName, host, password, port } = parseDbUrl(process.env.DATABASE_URL);
 
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const fileName = `backup-${timestamp}.sql`;
@@ -25,7 +25,7 @@ export class BackupService {
 
       fs.mkdirSync(path.dirname(filePath), { recursive: true });
 
-      const command = `MYSQL_PWD=${password} mysqldump -u ${user} -h ${host} -P ${port} ${dbName} > ${filePath}`;
+      const command = `MYSQL_PWD=${password} mysqldump -u root -h ${host} -P ${port} ${dbName} > ${filePath}`;
 
       await execPromise(command);
 
@@ -55,14 +55,14 @@ export class BackupService {
     const filePath = `${process.cwd()}/asserts/restored-backups/${timestamp}.sql`;
 
     try {
-      const { dbName, host, password, port, user } = parseDbUrl(process.env.DATABASE_URL);
+      const { dbName, host, password, port } = parseDbUrl(process.env.DATABASE_URL);
 
       const backupBuffer = await this.awsService.getFileBuffer(key);
 
       fs.mkdirSync(path.dirname(filePath));
       await fs.promises.writeFile(filePath, backupBuffer);
 
-      const command = `MYSQL_PWD=${password} mysql -u ${user} -h ${host} -P ${port} -D ${dbName} < ${filePath}`;
+      const command = `MYSQL_PWD=${password} mysql -u root -h ${host} -P ${port} -D ${dbName} < ${filePath}`;
 
       await execPromise(command);
 
