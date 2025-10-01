@@ -27,6 +27,7 @@ import { ContactModule } from '../contact/contact.module';
 import { CronModule } from '../cron/cron.module';
 import { BannerModule } from '../banner/banner.module';
 import { BulkPricingModule } from '../bulk-pricing/bulk-pricing.module';
+import { BackupModule } from '../backup/backup.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { BulkPricingModule } from '../bulk-pricing/bulk-pricing.module';
     ContactModule,
     BannerModule,
     BulkPricingModule,
+    BackupModule,
   ],
   controllers: [],
   providers: [

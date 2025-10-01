@@ -14,9 +14,11 @@ import { OrderItemRepository } from '../order/repositories/order-item.repository
 import { AddressRepository } from '../address/repositories/address.repository';
 import { ShippingRepository } from '../shipping/repositories/shipping.repository';
 import { AddressSnapshotRepository } from '../address/repositories/address-snapshot.repository';
+import { CronService } from './cron.service';
+import { BackupModule } from '../backup/backup.module';
 
 @Module({
-  imports: [ScheduleModule.forRoot(), PrismaModule],
+  imports: [ScheduleModule.forRoot(), PrismaModule, BackupModule],
   providers: [
     OtpCleanupCron,
     ExpiredOrdersCron,
@@ -31,6 +33,7 @@ import { AddressSnapshotRepository } from '../address/repositories/address-snaps
     AddressRepository,
     AddressSnapshotRepository,
     ShippingRepository,
+    CronService,
   ],
 })
 export class CronModule {}
