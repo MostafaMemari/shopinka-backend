@@ -528,10 +528,10 @@ export class ProductService {
     ];
 
     const basePrice = product ? product.basePrice : productVariant.basePrice;
-    const salePrice = product ? product.salePrice : productVariant.salePrice;
+    const salePrice = product ? product.salePrice || 0 : productVariant.salePrice || 0;
     const originalPrice = basePrice * quantity - salePrice * quantity;
 
-    if (validDiscounts.length == 0) return { finalPrice: originalPrice, discount: 0, originalPrice };
+    if (validDiscounts.length == 0 || salePrice) return { finalPrice: originalPrice, discount: 0, originalPrice };
 
     let bestDiscountPrice = 0;
 
@@ -545,7 +545,7 @@ export class ProductService {
       if (discountAmount > bestDiscountPrice) bestDiscountPrice = discountAmount;
     }
 
-    const finalPrice = basePrice * quantity - bestDiscountPrice - salePrice * quantity;
+    const finalPrice = basePrice * quantity - bestDiscountPrice;
 
     return {
       originalPrice,
