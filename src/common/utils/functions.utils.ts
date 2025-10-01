@@ -93,3 +93,15 @@ export const transformToNumber = (value: string | number): number => {
 
   return value;
 };
+
+export function parseDbUrl(url: string) {
+  const parsedUrl = new URL(url);
+
+  return {
+    user: parsedUrl.username,
+    password: parsedUrl.password,
+    host: parsedUrl.hostname,
+    port: parsedUrl.port,
+    dbName: parsedUrl.pathname.slice(1),
+  };
+}
