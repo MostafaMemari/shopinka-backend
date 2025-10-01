@@ -1,0 +1,35 @@
+services:
+    ### Backend Api ###
+    backend:
+      container_name: backend
+      build:
+        dockerfile: Dockerfile
+      env_file:
+        - ./.env
+      ports:
+        - ${PORT}:${PORT}
+      volumes:
+        - ./src:/app/src
+
+    ### Backend DB ###
+    backend_db:
+      container_name: backend_db
+      image: mysql:latest
+      ports:
+        - ${MYSQL_PORT}:${MYSQL_PORT}
+      env_file:
+        - .env
+      environment:
+        - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_DB=${MYSQL_DB}
+      networks:
+        - app
+      volumes:
+        - backend_db_data:/var/lib/mysql
+
+volumes:
+  backend_db_data:
+
+networks:
+  app:
+    driver: bridge
