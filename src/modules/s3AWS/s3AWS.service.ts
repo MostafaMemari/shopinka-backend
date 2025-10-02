@@ -68,7 +68,7 @@ export class AwsService {
 
     const optimizeBuffer = await this.optimizeBuffer(bufferFile);
 
-    const isSqlFile = fileName.includes('.sql') || extractedContentType == '.sql'
+    const isSqlFile = fileName.includes('.sql') || extractedContentType == '.sql';
 
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
