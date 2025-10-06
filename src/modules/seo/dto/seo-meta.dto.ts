@@ -31,18 +31,6 @@ export class SeoMetaDto {
   canonicalUrl?: string;
 
   @IsOptional()
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ type: 'string', required: false, nullable: true })
-  ogTitle?: string;
-
-  @IsOptional()
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ type: 'string', required: false, nullable: true })
-  ogDescription?: string;
-
-  @IsOptional()
   @IsEnum(RobotsMetaTag)
   @IsNotEmpty()
   @ApiProperty({ enum: RobotsMetaTag, type: 'string', required: false, nullable: true })
@@ -52,14 +40,6 @@ export class SeoMetaDto {
   @IsNotEmpty()
   @ApiProperty({ enum: EntityType, type: 'string', required: true, nullable: false })
   entityType?: EntityType;
-
-  @IsOptional()
-  @Transform(({ value }) => {
-    if (value === 'null' || value === null) return null;
-    return Number.parseInt(String(value)) || 0;
-  })
-  @ApiProperty({ required: false, nullable: true })
-  ogImageId?: number | null;
 
   @IsOptional()
   @IsNumber()

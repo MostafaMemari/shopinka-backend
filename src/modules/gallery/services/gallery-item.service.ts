@@ -151,7 +151,7 @@ export class GalleryItemService {
     const galleryItems = await this.galleryItemRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { seoMeta: includeSeoMeta, tags: includeTags, gallery: includeGallery },
+      include: { tags: includeTags, gallery: includeGallery },
     });
 
     return { ...pagination(paginationDto, galleryItems) };
@@ -160,7 +160,7 @@ export class GalleryItemService {
   findOne(id: number, userId: number): Promise<never | GalleryItem> {
     return this.galleryItemRepository.findOneOrThrow({
       where: { id, gallery: { userId } },
-      include: { tags: true, seoMeta: true, gallery: true },
+      include: { tags: true, gallery: true },
     });
   }
 

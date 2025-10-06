@@ -441,7 +441,7 @@ export class ProductService {
         ...updateProductDto,
         galleryImages: images ? { set: images.map((image) => ({ id: image.id })) } : undefined,
         attributes: isAllowedProductType ? { set: attributes.map((attribute) => ({ id: attribute.id })) } : undefined,
-        tags: tags && { connect: tags.map((tag) => ({ id: tag.id })) },
+        tags: tagIds && { set: tags.map((cat) => ({ id: cat.id })) },
         categories: categoryIds && { set: categories.map((cat) => ({ id: cat.id })) },
         variants: type && type == ProductType.SIMPLE ? { deleteMany: { productId } } : undefined,
         orderItems: status && status == ProductStatus.DRAFT ? { deleteMany: { productId } } : undefined,

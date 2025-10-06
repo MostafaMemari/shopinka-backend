@@ -56,6 +56,7 @@ export class CategoryService {
       childrenDepth,
       includeBlogs,
       includeProducts,
+      includeSeoMeta,
       type,
       includeOnlyTopLevel,
     } = queryCategoryDto;
@@ -82,6 +83,7 @@ export class CategoryService {
       blogs: includeBlogs,
       children: includeChildren,
       products: includeProducts,
+      seoMeta: includeSeoMeta,
     };
 
     const categories = await this.categoryRepository.findAll({

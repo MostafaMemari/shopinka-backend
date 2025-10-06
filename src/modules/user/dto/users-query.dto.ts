@@ -15,6 +15,16 @@ export class QueryUsersDto extends PaginationDto {
     nullable: true,
     required: false,
   })
+  search?: string;
+
+  @IsString()
+  @IsOptional()
+  @IsNotEmpty()
+  @ApiPropertyOptional({
+    type: 'string',
+    nullable: true,
+    required: false,
+  })
   fullName?: string;
 
   @IsString()

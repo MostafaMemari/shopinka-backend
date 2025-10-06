@@ -26,6 +26,17 @@ export class QueryOrderDto extends PaginationDto {
     nullable: true,
     required: false,
   })
+  userId?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  @Transform(({ value }) => +value)
+  @ApiProperty({
+    type: 'number',
+    nullable: true,
+    required: false,
+  })
   quantity?: number;
 
   @IsOptional()
