@@ -11,7 +11,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { lookup } from 'mime-types';
 import * as path from 'path';
-import * as sharp from 'sharp';
+import sharp from 'sharp';
 import { IUploadSingleFile } from '../../common/interfaces/aws.interface';
 
 @Injectable()
@@ -68,7 +68,7 @@ export class AwsService {
 
     const optimizeBuffer = await this.optimizeBuffer(bufferFile);
 
-    const isSqlFile = fileName.includes('.sql') || extractedContentType == '.sql';
+    const isSqlFile = ext == '.sql';
 
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
@@ -117,14 +117,18 @@ export class AwsService {
 
   async uploadMultiFiles(folderName: string, files: Express.Multer.File[], isPublic: boolean = false) {
     const uploadedFiles: IUploadSingleFile[] = [];
+
     try {
       for (const file of files) {
         const uploadedFile = await this.uploadSingleFile({ fileMetadata: file, folderName, isPublic });
+
         uploadedFiles.push(uploadedFile);
       }
 
       return uploadedFiles;
     } catch (error) {
+      console.log(error);
+
       await this.removeFiles(uploadedFiles.map((file) => file.key));
     }
   }

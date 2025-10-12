@@ -57,15 +57,13 @@ export class GalleryService {
   }
 
   async update(galleryId: number, userId: number, updateGalleryDto: UpdateGalleryDto): Promise<{ message: string; gallery: Gallery }> {
-    const existingGallery = await this.galleryRepository.findOne({
-      where: {
-        title: {
-          equals: updateGalleryDto.title,
-        },
-        NOT: { id: galleryId },
-        userId,
-      },
-    });
+    let existingGallery: Gallery;
+
+    if (updateGalleryDto.title) {
+      existingGallery = await this.galleryRepository.findOne({
+        where: { title: { equals: updateGalleryDto.title }, NOT: { id: galleryId }, userId },
+      });
+    }
 
     if (existingGallery) throw new ConflictException(GalleryMessages.AlreadyExistsGallery);
 

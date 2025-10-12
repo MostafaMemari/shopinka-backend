@@ -140,6 +140,7 @@ export class OrderService {
       includeTransaction,
       includeShippingInfo,
       userId,
+      includeUser,
     } = queryOrderDto;
 
     const filters: Prisma.OrderWhereInput = {
@@ -163,7 +164,7 @@ export class OrderService {
     const orders = await this.orderRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { items: includeItems, transaction: includeTransaction, shippingInfo: includeShippingInfo },
+      include: { items: includeItems, transaction: includeTransaction, shippingInfo: includeShippingInfo, user: includeUser },
     });
 
     return { ...pagination(paginationDto, orders) };

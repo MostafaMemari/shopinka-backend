@@ -141,7 +141,7 @@ export class CommentService {
       user: includeUser,
       parent: includeParent,
       blog: includeBlog,
-      product: includeProduct,
+      product: includeProduct && { include: { mainImage: true } },
       replies: includeReplies,
     };
 
