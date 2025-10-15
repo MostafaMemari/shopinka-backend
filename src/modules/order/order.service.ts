@@ -141,6 +141,7 @@ export class OrderService {
       includeShippingInfo,
       userId,
       includeUser,
+      orderNumber,
     } = queryOrderDto;
 
     const filters: Prisma.OrderWhereInput = {
@@ -148,6 +149,7 @@ export class OrderService {
     };
 
     if (userId) filters.userId = userId;
+    if (orderNumber) filters.orderNumber = { contains: orderNumber };
 
     if (quantity) filters.quantity = quantity;
     if (maxPrice || minPrice) {

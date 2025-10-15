@@ -78,8 +78,6 @@ export class ShippingInfoService {
 
     const updatedShippingInfo = await this.shippingInfoRepository.update({ where: { id: shippingInfoId }, data: updateShippingInfoDto });
 
-    console.log(updatedShippingInfo);
-
     return { message: ShippingInfoMessages.UpdatedShippingInfoSuccess, shippingInfo: updatedShippingInfo };
   }
 }

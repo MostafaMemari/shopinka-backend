@@ -1,11 +1,17 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsNumber, IsPositive, IsBoolean, IsDate, IsString, IsEnum, Max, Min } from 'class-validator';
+import { IsOptional, IsNumber, IsPositive, IsBoolean, IsDate, IsString, IsEnum, Max, Min, IsNotEmpty } from 'class-validator';
 import { SortOrder } from 'src/common/enums/shared.enum';
 import { Transform } from 'class-transformer';
 import { OrderSortBy, QueryOrderStatus } from '../enums/order-sort-by.enum';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
 
 export class QueryOrderDto extends PaginationDto {
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @ApiPropertyOptional({ type: 'string', nullable: true, required: false })
+  orderNumber?: string;
+
   @IsOptional()
   @IsNumber()
   @IsPositive()
