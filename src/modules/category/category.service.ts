@@ -190,7 +190,8 @@ export class CategoryService {
       where: { id: categoryId },
       include: {
         ...include,
-        children: true,
+        thumbnailImage: include.thumbnailImage,
+        children: { include: { thumbnailImage: include.thumbnailImage } },
       },
     });
 
