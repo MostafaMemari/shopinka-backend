@@ -25,18 +25,14 @@ export class CreateFontDto {
   @ApiProperty({ type: 'string', required: true, nullable: false })
   displayName: string;
 
-  @IsOptional()
   @IsNumber()
   @Transform(({ value }) => transformToNumber(value))
-  @Min(1)
-  @ApiPropertyOptional({ type: 'number' })
+  @ApiProperty({ type: 'number' })
   lineHeight: number;
 
-  @IsOptional()
   @IsNumber()
   @Transform(({ value }) => transformToNumber(value))
-  @Min(1)
-  @ApiPropertyOptional({ type: 'number' })
+  @ApiProperty({ type: 'number' })
   size: number;
 
   @IsOptional()

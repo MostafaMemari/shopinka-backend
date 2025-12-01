@@ -8,12 +8,13 @@ import { Roles } from '../../common/decorators/role.decorator';
 import { Role } from '@prisma/client';
 import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 import { FontQueryDto } from './dto/font-query-filter.dto';
+import { SkipAuth } from '../../common/decorators/skip-auth.decorator';
 
 @Controller('font')
 @AuthDecorator()
 @ApiTags('font')
 export class FontController {
-  constructor(private readonly fontService: FontService) { }
+  constructor(private readonly fontService: FontService) {}
 
   @Post()
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
@@ -23,17 +24,20 @@ export class FontController {
   }
 
   @Get()
+  @SkipAuth()
   findAll(@Query() fontQueryFilterDto: FontQueryDto) {
     return this.fontService.findAll(fontQueryFilterDto);
   }
 
   @Get(':id')
+  @SkipAuth()
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.fontService.findOne(id);
   }
 
   @Patch(':id')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateFontDto: UpdateFontDto) {
     return this.fontService.update(id, updateFontDto);
   }
