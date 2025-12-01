@@ -56,6 +56,7 @@ export class CategoryService {
       childrenDepth,
       includeBlogs,
       includeProducts,
+      includeSeoMeta,
       type,
       includeOnlyTopLevel,
     } = queryCategoryDto;
@@ -71,17 +72,16 @@ export class CategoryService {
       if (startDate) filters.createdAt.gte = new Date(startDate);
       if (endDate) filters.createdAt.lte = new Date(endDate);
     }
-    if (includeOnlyTopLevel === true) {
-      filters.parent = null;
-    }
+    if (includeOnlyTopLevel === true) filters.parent = null;
 
     const include: Prisma.CategoryInclude = {
       user: includeUser && { select: { id: true, fullName: true } },
       parent: includeParent,
       thumbnailImage: includeThumbnailImage,
       blogs: includeBlogs,
-      children: includeChildren,
+      children: { include: { thumbnailImage: includeThumbnailImage } },
       products: includeProducts,
+      seoMeta: includeSeoMeta,
     };
 
     const categories = await this.categoryRepository.findAll({
@@ -190,7 +190,8 @@ export class CategoryService {
       where: { id: categoryId },
       include: {
         ...include,
-        children: true,
+        thumbnailImage: include.thumbnailImage,
+        children: { include: { thumbnailImage: include.thumbnailImage } },
       },
     });
 

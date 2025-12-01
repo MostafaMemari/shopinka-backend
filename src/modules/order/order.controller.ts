@@ -18,8 +18,8 @@ export class OrderController {
 
   @Get()
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
-  findAllForAdmin(@Query() queryOrderDto: QueryOrderDto, @GetUser() user: User) {
-    return this.orderService.findAllForAdmin(user.id, queryOrderDto);
+  findAllForAdmin(@Query() queryOrderDto: QueryOrderDto) {
+    return this.orderService.findAllForAdmin(queryOrderDto);
   }
 
   @Get('my')

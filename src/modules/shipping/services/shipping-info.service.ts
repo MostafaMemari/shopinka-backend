@@ -57,25 +57,26 @@ export class ShippingInfoService {
 
     const shippingInfo = await this.shippingInfoRepository.findOneOrThrow({ where: { id: shippingInfoId } });
 
+    const orderId = shippingInfo.orderId;
+
     if (trackingCode) {
       const existingShippingInfo = await this.shippingInfoRepository.findOne({ where: { trackingCode, id: { not: shippingInfoId } } });
 
       if (existingShippingInfo) throw new ConflictException(ShippingInfoMessages.AlreadyExistsShippingInfo);
     }
 
-    // if (orderId) {
-    //   await this.orderRepository.findOneOrThrow({ where: { id: orderId } });
+    if (orderId) {
+      await this.orderRepository.findOneOrThrow({ where: { id: orderId } });
 
-    //   const product = await this.productRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } });
-    //   const productVariant = await this.productVariantRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } });
+      const product = await this.productRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } });
+      const productVariant = await this.productVariantRepository.findOne({ where: { userId, orderItems: { some: { orderId } } } });
 
-    //   if (!product && !productVariant) throw new BadRequestException(ShippingInfoMessages.NoAccessToCreateShippingInfo);
+      if (!product && !productVariant) throw new BadRequestException(ShippingInfoMessages.NoAccessToCreateShippingInfo);
 
-    //   await this.orderRepository.update({ where: { id: orderId }, data: { status: OrderStatus.SHIPPED } });
-    //   await this.orderRepository.update({ where: { id: shippingInfo.orderId }, data: { status: OrderStatus.PROCESSING } });
-    // }
+      await this.orderRepository.update({ where: { id: orderId }, data: { status: OrderStatus.SHIPPED } });
+    }
 
-    const updatedShippingInfo = this.shippingInfoRepository.update({ where: { id: shippingInfoId }, data: updateShippingInfoDto });
+    const updatedShippingInfo = await this.shippingInfoRepository.update({ where: { id: shippingInfoId }, data: updateShippingInfoDto });
 
     return { message: ShippingInfoMessages.UpdatedShippingInfoSuccess, shippingInfo: updatedShippingInfo };
   }

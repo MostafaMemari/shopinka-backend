@@ -1,4 +1,4 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsBoolean, IsDate, IsEnum, IsNumber, IsString, IsPositive } from 'class-validator';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
 import { Transform } from 'class-transformer';
@@ -6,6 +6,15 @@ import { SortOrder } from '../../../common/enums/shared.enum';
 import { CommentSortBy } from '../enums/comment-sortby.enum';
 
 export class QueryAdminCommentDto extends PaginationDto {
+  @IsOptional()
+  @IsString()
+  @ApiProperty({
+    type: 'string',
+    nullable: true,
+    required: false,
+  })
+  title?: string;
+
   @IsOptional()
   @IsBoolean()
   @Transform(({ value }) => {

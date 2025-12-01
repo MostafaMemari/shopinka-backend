@@ -1,11 +1,17 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsNumber, IsPositive, IsBoolean, IsDate, IsString, IsEnum, Max, Min } from 'class-validator';
+import { IsOptional, IsNumber, IsPositive, IsBoolean, IsDate, IsString, IsEnum, Max, Min, IsNotEmpty } from 'class-validator';
 import { SortOrder } from 'src/common/enums/shared.enum';
 import { Transform } from 'class-transformer';
 import { OrderSortBy, QueryOrderStatus } from '../enums/order-sort-by.enum';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
 
 export class QueryOrderDto extends PaginationDto {
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @ApiPropertyOptional({ type: 'string', nullable: true, required: false })
+  orderNumber?: string;
+
   @IsOptional()
   @IsNumber()
   @IsPositive()
@@ -16,6 +22,17 @@ export class QueryOrderDto extends PaginationDto {
     required: false,
   })
   addressId?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  @Transform(({ value }) => +value)
+  @ApiProperty({
+    type: 'number',
+    nullable: true,
+    required: false,
+  })
+  userId?: number;
 
   @IsOptional()
   @IsNumber()
@@ -45,6 +62,15 @@ export class QueryOrderDto extends PaginationDto {
   })
   @ApiPropertyOptional({ type: 'boolean', nullable: true, required: false })
   includeItems?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => {
+    if (typeof value == 'string') return value == 'true';
+    return value;
+  })
+  @ApiPropertyOptional({ type: 'boolean', nullable: true, required: false })
+  includeUser?: boolean;
 
   @IsOptional()
   @IsBoolean()

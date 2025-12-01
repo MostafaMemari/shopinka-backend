@@ -1,4 +1,4 @@
-import * as sharp from 'sharp';
+import sharp from 'sharp';
 
 type SortedObject<T = object> = (object: T) => T;
 

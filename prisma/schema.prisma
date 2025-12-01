@@ -177,7 +177,6 @@ model GalleryItem {
   gallery             Gallery          @relation(fields: [galleryId], references: [id], onDelete: Cascade)
   mainImageOf         Product[]        @relation("MainImage")
   mainImageOfVariants ProductVariant[] @relation("VariantMainImage")
-  seoMeta             SeoMeta[]
   tags                Tag[]
   sharedIn            Product[]        @relation("ProductToGalleryItem")
 
@@ -282,11 +281,11 @@ model Product {
   categories       Category[]       @relation("CategoryToProduct")
   galleryImages    GalleryItem[]    @relation("ProductToGalleryItem")
   tags             Tag[]            @relation("ProductToTag")
+  bulkPrices       BulkPricing[]
 
   @@index([defaultVariantId], map: "Product_defaultVariantId_fkey")
   @@index([mainImageId], map: "Product_mainImageId_fkey")
   @@index([userId], map: "Product_userId_fkey")
-  bulkPrices       BulkPricing[]
 }
 
 model Banner {
@@ -326,11 +325,11 @@ model ProductVariant {
   product          Product          @relation("ProductVariants", fields: [productId], references: [id], onDelete: Cascade)
   user             User?            @relation(fields: [userId], references: [id])
   attributeValues  AttributeValue[] @relation("AttributeValueToProductVariant")
+  bulkPrices       BulkPricing[]
 
   @@index([mainImageId], map: "ProductVariant_mainImageId_fkey")
   @@index([productId], map: "ProductVariant_productId_fkey")
   @@index([userId], map: "ProductVariant_userId_fkey")
-  bulkPrices       BulkPricing[]
 }
 
 model Favorite {
@@ -447,7 +446,7 @@ model Order {
 }
 
 model OrderItem {
-  id               Int             @id @default(autoincrement())
+  id               Int     @id @default(autoincrement())
   orderId          Int
   productId        Int?
   productVariantId Int?
@@ -464,31 +463,28 @@ model OrderItem {
 }
 
 model SeoMeta {
-  id            Int          @id @default(autoincrement())
-  userId        Int?
-  ogImageId     Int?
-  productId     Int?         @unique
-  blogId        Int?         @unique
-  tagId         Int?         @unique
-  categoryId    Int?         @unique
-  entityType    String
-  title         String?
-  description   String?      @db.Text
-  keywords      String?      @default("")
-  canonicalUrl  String?      @map("canonical_url")
-  ogTitle       String?      @map("og_title")
-  ogDescription String?      @map("og_description") @db.Text
-  robotsTag     String?
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  blog          Blog?        @relation(fields: [blogId], references: [id], onDelete: Cascade)
-  category      Category?    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  ogImage       GalleryItem? @relation(fields: [ogImageId], references: [id])
-  product       Product?     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  tag           Tag?         @relation(fields: [tagId], references: [id], onDelete: Cascade)
-  user          User?        @relation(fields: [userId], references: [id])
+  id         Int  @id @default(autoincrement())
+  userId     Int?
+  productId  Int? @unique
+  blogId     Int? @unique
+  tagId      Int? @unique
+  categoryId Int? @unique
 
-  @@index([ogImageId], map: "SeoMeta_ogImageId_fkey")
+  entityType   String
+  title        String?
+  description  String?  @db.Text
+  keywords     String?  @default("")
+  canonicalUrl String?  @map("canonical_url")
+  robotsTag    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  blog     Blog?     @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  product  Product?  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tag      Tag?      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  user     User?     @relation(fields: [userId], references: [id])
+
   @@index([userId], map: "SeoMeta_userId_fkey")
 }
 

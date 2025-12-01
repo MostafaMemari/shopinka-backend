@@ -15,7 +15,6 @@ export class CreateGalleryItemDto {
 
   @IsOptional()
   @IsString()
-  @IsNotEmpty()
   @Transform(({ value }) => value?.trim())
   @ApiProperty({
     type: 'string',
@@ -26,7 +25,6 @@ export class CreateGalleryItemDto {
 
   @IsOptional()
   @IsString()
-  @IsNotEmpty()
   @Transform(({ value }) => value?.trim())
   @ApiProperty({
     type: 'string',

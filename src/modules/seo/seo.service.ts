@@ -23,16 +23,12 @@ export class SeoService {
   ) {}
 
   async upsertSeoMeta(userId: number, seoMetaDto: SeoMetaDto): Promise<{ message: string; seoMeta: SeoMeta }> {
-    const { blogId, productId, tagId, categoryId, ogImageId, entityType } = seoMetaDto;
+    const { blogId, productId, tagId, categoryId, entityType } = seoMetaDto;
 
     const values = [blogId, productId, tagId, categoryId];
     const definedCount = values.filter((v) => v !== undefined && v !== null).length;
     if (definedCount !== 1) {
       throw new BadRequestException(SeoMetaMessages.OnlyOneTargetAllowed);
-    }
-
-    if (ogImageId) {
-      await this.galleryItemRepository.findOneOrThrow({ where: { id: ogImageId } });
     }
 
     if (productId && entityType === EntityType.PRODUCT) {
@@ -55,7 +51,6 @@ export class SeoService {
     if (blogId) relationData.blog = { connect: { id: blogId } };
     if (tagId) relationData.tag = { connect: { id: tagId } };
     if (categoryId) relationData.category = { connect: { id: categoryId } };
-    if (ogImageId) relationData.ogImage = { connect: { id: ogImageId } };
 
     const existingSeo = await this.seoMetaRepository.findOne({
       where: {
@@ -78,8 +73,6 @@ export class SeoService {
       title: seoMetaDto.title,
       description: seoMetaDto.description,
       canonicalUrl: seoMetaDto.canonicalUrl,
-      ogTitle: seoMetaDto.ogTitle,
-      ogDescription: seoMetaDto.ogDescription,
       ...relationData,
     };
 

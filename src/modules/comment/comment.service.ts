@@ -29,10 +29,11 @@ export class CommentService {
 
   async findAll({ take, page, ...queryCommentDto }: QueryCommentDto): Promise<unknown> {
     const paginationDto = { page, take };
-    const { includeUser, includeReplies, isRecommended, repliesDepth, blogId, productId } = queryCommentDto;
+    const { title, includeUser, includeReplies, isRecommended, repliesDepth, blogId, productId } = queryCommentDto;
 
     const filters: Prisma.CommentWhereInput = { isActive: true, parent: null };
 
+    if (title) filters.title = { contains: title };
     if (isRecommended !== undefined) filters.isRecommended = isRecommended;
     if (blogId) filters.blogId = blogId;
     if (productId) filters.productId = productId;
@@ -124,10 +125,12 @@ export class CommentService {
       sortBy,
       sortDirection,
       startDate,
+      title,
     } = queryCommentDto;
 
     const filters: Prisma.CommentWhereInput = { isActive, parent: null };
 
+    if (title) filters.title = { contains: title };
     if (isRecommended !== undefined) filters.isRecommended = isRecommended;
     if (blogId) filters.blog = { userId, id: blogId };
     if (productId) filters.product = { userId, id: productId };
@@ -141,7 +144,7 @@ export class CommentService {
       user: includeUser,
       parent: includeParent,
       blog: includeBlog,
-      product: includeProduct,
+      product: includeProduct && { include: { mainImage: true } },
       replies: includeReplies,
     };
 

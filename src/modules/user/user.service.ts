@@ -22,10 +22,11 @@ export class UserService {
 
   async findAll({ page, take, ...queryUsersDto }: QueryUsersDto) {
     const paginationDto = { page, take };
-    const { endDate, fullName, isVerifiedMobile, lastMobileChange, mobile, role, sortBy, sortDirection, startDate } = queryUsersDto;
+    const { endDate, fullName, isVerifiedMobile, lastMobileChange, mobile, role, sortBy, sortDirection, startDate, search } = queryUsersDto;
 
     const filters: Prisma.UserWhereInput = {};
 
+    if (search) filters.OR = [{ fullName: { contains: search } }, { mobile: { contains: search } }];
     if (isVerifiedMobile !== undefined) filters.isVerifiedMobile = isVerifiedMobile;
     if (fullName) filters.fullName = { contains: fullName };
     if (mobile) filters.mobile = { contains: mobile };

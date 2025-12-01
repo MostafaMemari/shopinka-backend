@@ -126,7 +126,7 @@ export class OrderService {
     return newOrder;
   }
 
-  async findAllForAdmin(userId: number, { page, take, ...queryOrderDto }: QueryOrderDto): Promise<unknown> {
+  async findAllForAdmin({ page, take, ...queryOrderDto }: QueryOrderDto): Promise<unknown> {
     const paginationDto = { page, take };
     const {
       endDate,
@@ -139,11 +139,17 @@ export class OrderService {
       quantity,
       includeTransaction,
       includeShippingInfo,
+      userId,
+      includeUser,
+      orderNumber,
     } = queryOrderDto;
 
     const filters: Prisma.OrderWhereInput = {
       // OR: [{ user: { products: { some: { userId } } } }, { user: { productVariants: { some: { userId } } } }],
     };
+
+    if (userId) filters.userId = userId;
+    if (orderNumber) filters.orderNumber = { contains: orderNumber };
 
     if (quantity) filters.quantity = quantity;
     if (maxPrice || minPrice) {
@@ -160,7 +166,7 @@ export class OrderService {
     const orders = await this.orderRepository.findAll({
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
-      include: { items: includeItems, transaction: includeTransaction, shippingInfo: includeShippingInfo },
+      include: { items: includeItems, transaction: includeTransaction, shippingInfo: includeShippingInfo, user: includeUser },
     });
 
     return { ...pagination(paginationDto, orders) };
