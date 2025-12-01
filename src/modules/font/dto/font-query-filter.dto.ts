@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, IsNumber, Min, IsBoolean, IsDate, IsEnum } from 'class-validator';
+import { IsOptional, IsString, IsNumber, IsBoolean, IsDate, IsEnum } from 'class-validator';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
 import { SortOrder } from '../../../common/enums/shared.enum';
 import { transformToNumber, transformToBoolean } from '../../../common/utils/functions.utils';
@@ -20,14 +20,12 @@ export class FontQueryDto extends PaginationDto {
   @IsOptional()
   @IsNumber()
   @Transform(({ value }) => transformToNumber(value))
-  @Min(1)
   @ApiPropertyOptional({ type: 'number' })
   lineHeight?: number;
 
   @IsOptional()
   @IsNumber()
   @Transform(({ value }) => transformToNumber(value))
-  @Min(1)
   @ApiPropertyOptional({ type: 'number' })
   size?: number;
 
@@ -40,7 +38,6 @@ export class FontQueryDto extends PaginationDto {
   @IsOptional()
   @IsNumber()
   @Transform(({ value }) => transformToNumber(value))
-  @Min(1)
   @ApiPropertyOptional({ type: 'number' })
   difficultyRatio?: number;
 

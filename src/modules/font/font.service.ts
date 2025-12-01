@@ -83,9 +83,11 @@ export class FontService {
 
     await this.fontRepository.findOneOrThrow({ where: { id } });
 
-    const existingFont = await this.fontRepository.findOne({ where: { name: updateFontDto.name, id: { not: id } } });
+    if (updateFontDto.name) {
+      const existingFont = await this.fontRepository.findOne({ where: { name: updateFontDto.name, id: { not: id } } });
 
-    if (existingFont) throw new ConflictException(FontMessages.AlreadyExistsFont);
+      if (existingFont) throw new ConflictException(FontMessages.AlreadyExistsFont);
+    }
 
     if (fileId) await this.galleryItemRepository.findOneOrThrow({ where: { id: fileId } });
     if (thumbnailId) await this.galleryItemRepository.findOneOrThrow({ where: { id: thumbnailId } });
