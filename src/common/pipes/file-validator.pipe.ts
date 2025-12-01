@@ -1,5 +1,7 @@
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 
+export const allowedImageFormats = ['image/jpg', 'image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
+
 @Injectable()
 export class FileValidatorPipe implements PipeTransform {
   transform(files: Express.Multer.File[] | Express.Multer.File) {
@@ -14,25 +16,32 @@ export class FileValidatorPipe implements PipeTransform {
   }
 
   private validateFile(file: Express.Multer.File) {
-    const allowedFormats = [
-      'image/jpg',
-      'image/jpeg',
-      'image/png',
-      'image/webp',
-      'image/svg+xml',
-      'font/ttf',
-      'font/otf',
-      'font/woff',
-      'font/woff2',
-    ];
+    if (file.mimetype == 'application/octet-stream') return this.validateFontFormat(file);
+
     const maxSizeInBytes = 5 * 1024 * 1024;
 
-    if (!allowedFormats.includes(file.mimetype)) {
+    if (!allowedImageFormats.includes(file.mimetype)) {
       throw new BadRequestException(`Invalid file format for '${file.originalname}'`);
     }
 
     if (file.size > maxSizeInBytes) {
       throw new BadRequestException(`File '${file.originalname}' exceeds 5MB limit`);
+    }
+  }
+
+  validateFontFormat(file: Express.Multer.File): never | void {
+    const allowedFontFormats = ['ttf', 'otf', 'woff', 'woff2'];
+
+    const maxSizeInBytes = 2 * 1024 * 1024;
+
+    const ext = file.originalname.toLowerCase().split('.').pop();
+
+    if (!allowedFontFormats.includes(ext || file.mimetype)) {
+      throw new BadRequestException(`Invalid font format for '${file.originalname}'`);
+    }
+
+    if (file.size > maxSizeInBytes) {
+      throw new BadRequestException(`Font file '${file.originalname}' exceeds 2MB limit`);
     }
   }
 }
