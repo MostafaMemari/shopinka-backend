@@ -7,7 +7,6 @@ import { GalleryRepository } from '../repositories/gallery.repository';
 import { IUploadSingleFile } from '../../../common/interfaces/aws.interface';
 import { GalleryItem, Prisma } from '@prisma/client';
 import { GalleryItemQueryDto } from '../dto/gallery-item-query.dto';
-
 import { resizeImageWithSharp } from '../../../common/utils/functions.utils';
 import { pagination } from '../../../common/utils/pagination.utils';
 import { MoveGalleryItemDto } from '../dto/move-gallery-item.dto';
@@ -16,6 +15,8 @@ import { RemoveGalleryItemDto } from '../dto/remove-gallery-item.dto';
 import { GalleryItemMessages } from '../enums/gallery-item-messages.enum';
 import { RestoreGalleryItemDto } from '../dto/restore-gallery-item.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { allowedImageFormats } from '../../../common/pipes/file-validator.pipe';
+import * as path from 'path';
 
 @Injectable()
 export class GalleryItemService {
@@ -83,8 +84,8 @@ export class GalleryItemService {
             data: {
               fileKey: file.key,
               fileUrl: file.url,
-              thumbnailKey: thumbnails[index].key,
-              thumbnailUrl: thumbnails[index].url,
+              thumbnailKey: thumbnails.length ? thumbnails[index].key : undefined,
+              thumbnailUrl: thumbnails.length ? thumbnails[index].url : undefined,
               mimetype: files[index].mimetype,
               size: files[index].size,
               title: createGalleryItemDto.title ?? files[index].originalname,
@@ -281,6 +282,8 @@ export class GalleryItemService {
     const thumbnails: IUploadSingleFile[] = [];
 
     for (const file of files) {
+      if (!allowedImageFormats.includes(path.extname(file.originalname))) continue;
+
       const thumbnail = await resizeImageWithSharp(file.buffer, {
         height: 100,
         width: 100,
