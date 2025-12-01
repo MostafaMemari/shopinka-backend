@@ -13,6 +13,7 @@ import { lookup } from 'mime-types';
 import * as path from 'path';
 import sharp from 'sharp';
 import { IUploadSingleFile } from '../../common/interfaces/aws.interface';
+import { allowedImageFormats } from '../../common/pipes/file-validator.pipe';
 
 @Injectable()
 export class AwsService {
@@ -66,17 +67,16 @@ export class AwsService {
 
     extractedContentType = contentType || lookup(ext) || 'application/octet-stream';
 
-    const optimizeBuffer = await this.optimizeBuffer(bufferFile);
-
-    const isSqlFile = ext == '.sql';
+    const isImageFile = allowedImageFormats.includes(ext);
+    const optimizeBuffer = isImageFile ? await this.optimizeBuffer(bufferFile) : bufferFile;
 
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
       Key: key,
-      Body: isSqlFile ? bufferFile : optimizeBuffer,
+      Body: optimizeBuffer,
       ContentType: contentType,
       ACL: isPublic ? 'public-read' : 'private',
-      ContentLength: isSqlFile ? bufferFile.length : optimizeBuffer.length,
+      ContentLength: optimizeBuffer.length,
     });
 
     const uploadResult = await this.client.send(command);
