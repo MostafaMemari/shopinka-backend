@@ -8,8 +8,12 @@ services:
         - ./.env
       ports:
         - ${PORT}:${PORT}
+      depends_on:
+        - backend_db
       volumes:
         - ./src:/app/src
+      networks: 
+        - app
 
     ### Backend DB ###
     backend_db:
