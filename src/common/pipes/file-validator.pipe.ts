@@ -14,7 +14,17 @@ export class FileValidatorPipe implements PipeTransform {
   }
 
   private validateFile(file: Express.Multer.File) {
-    const allowedFormats = ['image/jpg', 'image/jpeg', 'image/png', 'image/webp'];
+    const allowedFormats = [
+      'image/jpg',
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'image/svg+xml',
+      'font/ttf',
+      'font/otf',
+      'font/woff',
+      'font/woff2',
+    ];
     const maxSizeInBytes = 5 * 1024 * 1024;
 
     if (!allowedFormats.includes(file.mimetype)) {
