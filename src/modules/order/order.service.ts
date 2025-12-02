@@ -40,16 +40,17 @@ export class OrderService {
     return cartItems.map((item) => {
       const base = item['product'] ?? item['productVariant'];
 
-      const price = (base.salePrice || base.basePrice) * item.quantity;
+      const price = (base?.salePrice || base?.basePrice) * item.quantity;
 
       //TODO: Check for debug
       return {
         productId: item.productId,
         productVariantId: item.productVariantId,
+        customStickerId: item.customStickerId,
         quantity: item.quantity,
-        basePrice: price,
-        unitPrice: price,
-        total: price,
+        basePrice: item['customSticker'] ? item['customSticker'].finalPrice * item.quantity : price,
+        unitPrice: item['customSticker'] ? item['customSticker'].finalPrice * item.quantity : price,
+        total: item['customSticker'] ? item['customSticker'].finalPrice * item.quantity : price,
       };
     });
   }

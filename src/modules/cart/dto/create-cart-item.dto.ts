@@ -17,6 +17,13 @@ export class CreateCartItemDto {
   @ApiProperty({ type: 'number', required: false, nullable: true })
   productVariantId?: number;
 
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  @Transform(({ value }) => +value)
+  @ApiProperty({ type: 'number', required: false, nullable: true })
+  customStickerId?: number;
+
   @IsNumber()
   @IsPositive()
   @Transform(({ value }) => +value)

@@ -48,6 +48,7 @@ export class ExpiredOrdersCron {
           order.items.map((item) => ({
             productId: item.productId,
             productVariantId: item.productVariantId,
+            customStickerId: item.customStickerId,
             quantity: item.quantity,
           })),
         );

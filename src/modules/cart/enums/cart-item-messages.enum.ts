@@ -8,4 +8,5 @@ export enum CartItemMessages {
   ProductVariantNotAvailable = 'The requested product variant is not available in the desired quantity.',
   OneFailedAllowed = 'One filed product or productVariant allowed.',
   ReplacedCartItemsSuccess = 'Cart items replaced successfully',
+  NotFoundCustomSticker = 'Custom sticker not found.',
 }

@@ -15,6 +15,7 @@ import { AttributeValueRepository } from '../attribute/repositories/attribute-va
 import { OrderItemRepository } from '../order/repositories/order-item.repository';
 import { TagRepository } from '../tag/tag.repository';
 import { BulkPricingRepository } from '../bulk-pricing/repositories/bulk-pricing.repository';
+import { CustomStickerRepository } from '../custom-sticker/custom-sticker.repository';
 
 @Module({
   controllers: [ProductController, ProductVariantController],
@@ -33,6 +34,7 @@ import { BulkPricingRepository } from '../bulk-pricing/repositories/bulk-pricing
     AttributeValueRepository,
     OrderItemRepository,
     TagRepository,
+    CustomStickerRepository,
   ],
   exports: [
     ProductService,
