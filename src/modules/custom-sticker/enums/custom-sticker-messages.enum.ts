@@ -5,4 +5,5 @@ export enum CustomStickerMessages {
   CreatedCustomStickerSuccess = 'Custom sticker created successfully.',
   NotPendingCustomSticker = 'This custom sticker status not pending.',
   PreviewImageNotAImage = 'This preview image is not a image, allowed formats: ${formats}',
+  CannotRemoveCustomSticker = 'You cannot remove this custom sticker. this sticker in order is PENDING  status.',
 }

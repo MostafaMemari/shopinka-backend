@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCustomStickerDto } from './dto/create-custom-sticker.dto';
 import { UpdateCustomStickerDto } from './dto/update-custom-sticker.dto';
 import { CustomStickerRepository } from './custom-sticker.repository';
-import { CustomSticker, Prisma } from '@prisma/client';
+import { CustomSticker, OrderItem, Prisma } from '@prisma/client';
 import { FontRepository } from '../font/font.repository';
 import { MaterialStickerRepository } from '../material-sticker/material-sticker.repository';
 import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
@@ -11,11 +11,10 @@ import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { OutputPagination, pagination } from '../../common/utils/pagination.utils';
 import { CustomStickerQueryDto } from './dto/custom-sticker-query-filter.dto';
 import { allowedImageFormats } from '../../common/pipes/file-validator.pipe';
+import { calculateStickerPrice } from '../../common/utils/functions.utils';
 
 @Injectable()
 export class CustomStickerService {
-  private totalPrice: number = 100_000;
-
   constructor(
     private readonly customStickerRepository: CustomStickerRepository,
     private readonly fontRepository: FontRepository,
@@ -24,7 +23,7 @@ export class CustomStickerService {
   ) {}
 
   async create(userId: number, createCustomStickerDto: CreateCustomStickerDto): Promise<{ message: string; customSticker: CustomSticker }> {
-    const { fontId, materialId, previewImageId } = createCustomStickerDto;
+    const { fontId, materialId, previewImageId, width, height } = createCustomStickerDto;
 
     if (previewImageId) {
       const image = await this.galleryItemRepository.findOneOrThrow({ where: { id: previewImageId } });
@@ -32,12 +31,12 @@ export class CustomStickerService {
       if (!allowedImageFormats.includes(image.mimetype))
         throw new BadRequestException(CustomStickerMessages.PreviewImageNotAImage.replaceAll('${formats}', allowedImageFormats.join(',')));
     }
-    await this.materialStickerRepository.findOneOrThrow({ where: { id: materialId } });
-    await this.fontRepository.findOneOrThrow({ where: { id: fontId } });
+    const material = await this.materialStickerRepository.findOneOrThrow({ where: { id: materialId } });
+    const font = await this.fontRepository.findOneOrThrow({ where: { id: fontId } });
 
-    const customSticker = await this.customStickerRepository.create({
-      data: { userId, ...createCustomStickerDto, finalPrice: this.totalPrice },
-    });
+    const finalPrice = calculateStickerPrice({ font, material, height, width });
+
+    const customSticker = await this.customStickerRepository.create({ data: { userId, ...createCustomStickerDto, finalPrice } });
 
     return { message: CustomStickerMessages.CreatedCustomStickerSuccess, customSticker };
   }
@@ -122,9 +121,11 @@ export class CustomStickerService {
     id: number,
     updateCustomStickerDto: UpdateCustomStickerDto,
   ): Promise<{ message: string; customSticker: CustomSticker }> {
-    const { fontId, previewImageId, materialId } = updateCustomStickerDto;
+    const { fontId, previewImageId, materialId, width, height } = updateCustomStickerDto;
 
-    await this.customStickerRepository.findOneOrThrow({ where: { id } });
+    const customSticker = await this.customStickerRepository.findOneOrThrow({ where: { id }, include: { font: true, material: true } });
+    let font = customSticker['font'];
+    let material = customSticker['material'];
 
     if (previewImageId) {
       const image = await this.galleryItemRepository.findOneOrThrow({ where: { id: previewImageId } });
@@ -132,10 +133,20 @@ export class CustomStickerService {
       if (!allowedImageFormats.includes(image.mimetype))
         throw new BadRequestException(CustomStickerMessages.PreviewImageNotAImage.replaceAll('${formats}', allowedImageFormats.join(',')));
     }
-    if (materialId) await this.materialStickerRepository.findOneOrThrow({ where: { id: materialId } });
-    if (fontId) await this.fontRepository.findOneOrThrow({ where: { id: fontId } });
+    if (materialId) material = await this.materialStickerRepository.findOneOrThrow({ where: { id: materialId } });
+    if (fontId) font = await this.fontRepository.findOneOrThrow({ where: { id: fontId } });
 
-    const updatedCustomSticker = await this.customStickerRepository.update({ where: { id }, data: { ...updateCustomStickerDto } });
+    const finalPrice = calculateStickerPrice({
+      font,
+      material,
+      width: width ? width : customSticker.weight,
+      height: height ? height : customSticker.height,
+    });
+
+    const updatedCustomSticker = await this.customStickerRepository.update({
+      where: { id },
+      data: { ...updateCustomStickerDto, finalPrice },
+    });
 
     return { message: CustomStickerMessages.UpdatedCustomStickerSuccess, customSticker: updatedCustomSticker };
   }
@@ -145,9 +156,14 @@ export class CustomStickerService {
     id: number,
     updateCustomStickerDto: UpdateCustomStickerDto,
   ): Promise<{ message: string; customSticker: CustomSticker }> {
-    const { fontId, previewImageId, materialId } = updateCustomStickerDto;
+    const { fontId, previewImageId, materialId, height, width } = updateCustomStickerDto;
 
-    const customSticker = await this.customStickerRepository.findOneOrThrow({ where: { id, userId } });
+    const customSticker = await this.customStickerRepository.findOneOrThrow({
+      where: { id, userId },
+      include: { font: true, material: true },
+    });
+    let font = customSticker['font'];
+    let material = customSticker['material'];
 
     if (customSticker.status != 'PENDING') throw new BadRequestException(CustomStickerMessages.NotPendingCustomSticker);
 
@@ -158,8 +174,15 @@ export class CustomStickerService {
         throw new BadRequestException(CustomStickerMessages.PreviewImageNotAImage.replaceAll('${formats}', allowedImageFormats.join(',')));
     }
 
-    if (materialId) await this.materialStickerRepository.findOneOrThrow({ where: { id: materialId } });
-    if (fontId) await this.fontRepository.findOneOrThrow({ where: { id: fontId } });
+    if (materialId) material = await this.materialStickerRepository.findOneOrThrow({ where: { id: materialId } });
+    if (fontId) font = await this.fontRepository.findOneOrThrow({ where: { id: fontId } });
+
+    const finalPrice = calculateStickerPrice({
+      font,
+      material,
+      width: width ? width : customSticker.weight,
+      height: height ? height : customSticker.height,
+    });
 
     const updatedCustomSticker = await this.customStickerRepository.update({ where: { id }, data: { ...updateCustomStickerDto } });
 
@@ -167,7 +190,12 @@ export class CustomStickerService {
   }
 
   async remove(userId: number, id: number): Promise<{ message: string; customSticker: CustomSticker }> {
-    await this.customStickerRepository.findOneOrThrow({ where: { userId, id } });
+    const customSticker = await this.customStickerRepository.findOneOrThrow({ where: { userId, id }, include: { orderItems: true } });
+
+    const orderItem = customSticker['orderItems'] as OrderItem[];
+
+    if (orderItem.find((item) => item.customStickerId === id))
+      throw new BadRequestException(CustomStickerMessages.CannotRemoveCustomSticker);
 
     const removedCustomSticker = await this.customStickerRepository.delete({ where: { userId, id } });
 

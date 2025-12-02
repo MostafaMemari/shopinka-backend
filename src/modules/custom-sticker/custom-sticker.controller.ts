@@ -44,16 +44,27 @@ export class CustomStickerController {
     return this.customStickerService.findOneByAdmin(id);
   }
 
+  @Patch(':id')
+  @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateCustomStickerDto: UpdateCustomStickerDto, @GetUser() user: User) {
+    return this.customStickerService.update(user.id, id, updateCustomStickerDto);
+  }
+
   @Patch('admin/:id')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateCustomStickerDto: UpdateCustomStickerDto) {
+  updateByAdmin(@Param('id', ParseIntPipe) id: number, @Body() updateCustomStickerDto: UpdateCustomStickerDto) {
     return this.customStickerService.updateByAdmin(id, updateCustomStickerDto);
   }
 
   @Delete('admin/:id')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
-  remove(@Param('id', ParseIntPipe) id: number) {
+  removeByAdmin(@Param('id', ParseIntPipe) id: number) {
     return this.customStickerService.removeByAdmin(id);
+  }
+
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.customStickerService.remove(user.id, id);
   }
 }
