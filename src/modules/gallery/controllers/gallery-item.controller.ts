@@ -30,6 +30,7 @@ import { MoveGalleryItemDto } from '../dto/move-gallery-item.dto';
 import { DuplicateGalleryItemDto } from '../dto/duplicate-gallery-item.dto';
 import { RemoveGalleryItemDto } from '../dto/remove-gallery-item.dto';
 import { RestoreGalleryItemDto } from '../dto/restore-gallery-item.dto';
+import { UploadCustomStickerPreviewImageDto } from '../dto/upload-custom-sticker.dto';
 
 @Controller('gallery-item')
 @ApiTags('gallery-item')
@@ -48,6 +49,16 @@ export class GalleryItemController {
     @GetUser() user: User,
   ) {
     return this.galleryItemService.create(user.id, files, createGalleryItemDto);
+  }
+
+  @Post('custom-sticker-image')
+  @UseInterceptors(FilesInterceptor('image', 1, { storage: memoryStorage(), limits: { files: 1 } }))
+  @ApiConsumes(SwaggerConsumes.MultipartData)
+  uploadCustomStickerPreviewImage(
+    @UploadedFiles(FileValidatorPipe) files: Express.Multer.File[],
+    @Body() _: UploadCustomStickerPreviewImageDto,
+  ) {
+    return this.galleryItemService.uploadCustomStickerPreviewImage(files[0]);
   }
 
   @Get()

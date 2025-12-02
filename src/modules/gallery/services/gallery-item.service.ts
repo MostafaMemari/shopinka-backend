@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { CreateGalleryItemDto } from '../dto/create-gallery-item.dto';
 import { UpdateGalleryItemDto } from '../dto/update-gallery-item.dto';
 import { GalleryItemRepository } from '../repositories/gallery-item.repository';
@@ -299,5 +299,41 @@ export class GalleryItemService {
     }
 
     return thumbnails;
+  }
+
+  async uploadCustomStickerPreviewImage(file: Express.Multer.File): Promise<{ message: string; galleryItem: GalleryItem }> {
+    const galleryId = Number(process.env.CUSTOM_STICKER_GALLERY_ID);
+
+    if (!file) throw new BadRequestException('File is required.');
+
+    if (!galleryId) throw new BadRequestException("GalleryId is'nt set in env.");
+
+    if (!allowedImageFormats.includes(file.mimetype))
+      throw new BadRequestException(`This file format is not allowed. allowed formats: ${allowedImageFormats.join(',')}`);
+
+    const gallery = await this.galleryItemRepository.findOneOrThrow({ where: { id: galleryId } });
+
+    let uploaded: IUploadSingleFile;
+    try {
+      uploaded = await this.awsService.uploadSingleFile({ fileMetadata: file, isPublic: false, folderName: this.GALLERY_ITEM_FOLDER });
+
+      const galleryItem = await this.galleryItemRepository.create({
+        data: {
+          fileKey: uploaded.key,
+          fileUrl: uploaded.url,
+          mimetype: file.mimetype,
+          size: file.size,
+          title: file.originalname,
+          galleryId: gallery.id,
+        },
+        include: { gallery: true },
+      });
+
+      return { message: GalleryItemMessages.CreatedGalleryItemsSuccess, galleryItem };
+    } catch (error) {
+      if (uploaded) await this.awsService.removeFile(uploaded.key);
+
+      throw error;
+    }
   }
 }
