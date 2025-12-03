@@ -7,7 +7,7 @@ export class CalculateBulkPriceDto {
   @IsNumber()
   @Transform(({ value }) => transformToNumber(value))
   @ApiProperty({ type: 'number' })
-  productOrVariantId: number;
+  targetId: number;
 
   @IsNumber()
   @Transform(({ value }) => transformToNumber(value))

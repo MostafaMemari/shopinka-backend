@@ -75,6 +75,20 @@ enum BulkPricingType {
   FIXED
 }
 
+enum SurfaceType {
+  MATTE
+  GLOSSY
+  RAINBOW
+  REFLECTIVE
+}
+
+enum CustomStickerStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  PUBLISHED
+}
+
 model User {
   id               Int              @id @default(autoincrement())
   fullName         String?          @map("full_name")
@@ -104,6 +118,7 @@ model User {
   tags             Tag[]
   transactions     Transaction[]
   bulkPrices       BulkPricing[]
+  customStickers   CustomSticker[]
 }
 
 model RefreshToken {
@@ -157,28 +172,31 @@ model Gallery {
 }
 
 model GalleryItem {
-  id                  Int              @id @default(autoincrement())
-  galleryId           Int
-  title               String
-  description         String?          @db.Text
-  fileUrl             String
-  fileKey             String
-  thumbnailUrl        String?
-  thumbnailKey        String?
-  mimetype            String
-  size                Int
-  isDeleted           Boolean          @default(false)
-  deletedAt           DateTime?
-  createdAt           DateTime         @default(now())
-  updatedAt           DateTime         @updatedAt
-  Banner              Banner[]
-  blogs               Blog[]
-  categories          Category[]
-  gallery             Gallery          @relation(fields: [galleryId], references: [id], onDelete: Cascade)
-  mainImageOf         Product[]        @relation("MainImage")
-  mainImageOfVariants ProductVariant[] @relation("VariantMainImage")
-  tags                Tag[]
-  sharedIn            Product[]        @relation("ProductToGalleryItem")
+  id                         Int              @id @default(autoincrement())
+  galleryId                  Int
+  title                      String
+  description                String?          @db.Text
+  fileUrl                    String
+  fileKey                    String
+  thumbnailUrl               String?
+  thumbnailKey               String?
+  mimetype                   String
+  size                       Int
+  isDeleted                  Boolean          @default(false)
+  deletedAt                  DateTime?
+  createdAt                  DateTime         @default(now())
+  updatedAt                  DateTime         @updatedAt
+  Banner                     Banner[]
+  blogs                      Blog[]
+  categories                 Category[]
+  gallery                    Gallery          @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+  mainImageOf                Product[]        @relation("MainImage")
+  mainImageOfVariants        ProductVariant[] @relation("VariantMainImage")
+  tags                       Tag[]
+  sharedIn                   Product[]        @relation("ProductToGalleryItem")
+  fontFiles                  Font[]           @relation("FontFile")
+  fontThumbnails             Font[]           @relation("FontThumbnail")
+  customStickerPreviewImages CustomSticker[]
 
   @@index([deletedAt])
   @@index([galleryId], map: "GalleryItem_galleryId_fkey")
@@ -407,17 +425,21 @@ model CartItem {
   cartId           Int
   productId        Int?
   productVariantId Int?
+  customStickerId  Int?
   quantity         Int
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
   cart             Cart            @relation(fields: [cartId], references: [id], onDelete: Cascade)
   product          Product?        @relation(fields: [productId], references: [id], onDelete: Cascade)
   productVariant   ProductVariant? @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  customSticker    CustomSticker?  @relation(fields: [customStickerId], references: [id], onDelete: Cascade)
 
   @@unique([cartId, productId])
   @@unique([cartId, productVariantId])
+  @@unique([cartId, customStickerId])
   @@index([productId], map: "CartItem_productId_fkey")
   @@index([productVariantId], map: "CartItem_productVariantId_fkey")
+  @@index([customStickerId], map: "CartItem_customStickerId_fkey")
 }
 
 model Order {
@@ -450,6 +472,7 @@ model OrderItem {
   orderId          Int
   productId        Int?
   productVariantId Int?
+  customStickerId  Int?
   basePrice        Decimal
   unitPrice        Decimal
   quantity         Int
@@ -457,6 +480,7 @@ model OrderItem {
 
   product        Product?        @relation(fields: [productId], references: [id], onDelete: Cascade)
   productVariant ProductVariant? @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  customSticker  CustomSticker?  @relation(fields: [customStickerId], references: [id], onDelete: Cascade)
   order          Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
@@ -599,4 +623,67 @@ model BulkPricing {
   user    User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
   product Product?        @relation(fields: [productId], references: [id], onDelete: Cascade)
   variant ProductVariant? @relation(fields: [variantId], references: [id], onDelete: Cascade)
+}
+
+model Font {
+  id              Int      @id @default(autoincrement())
+  name            String
+  fileId          Int?
+  thumbnailId     Int?
+  displayName     String
+  lineHeight      Float
+  size            Float
+  isPersian       Boolean  @default(true)
+  difficultyRatio Float    @default(1.0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  file           GalleryItem?    @relation("FontFile", fields: [fileId], references: [id], onDelete: SetNull)
+  thumbnail      GalleryItem?    @relation("FontThumbnail", fields: [thumbnailId], references: [id], onDelete: SetNull)
+  customStickers CustomSticker[]
+}
+
+model MaterialSticker {
+  id             Int         @id @default(autoincrement())
+  name           String
+  colorCode      String
+  surface        SurfaceType
+  pricePerCM     Float
+  profitPercent  Float       @default(0.25)
+  backgroundFrom String?
+  backgroundTo   String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  customStickers CustomSticker[]
+}
+
+model CustomSticker {
+  id             Int     @id @default(autoincrement())
+  userId         Int
+  fontId         Int?
+  materialId     Int?
+  previewImageId Int?
+  width          Float
+  height         Float
+  text           String  @db.Text
+  lineHeight     Float   @default(1.0)
+  size           Float   @default(1.0)
+  style          String?
+  weight         String?
+  letterSpacing  Float   @default(0)
+  textAlign      String?
+  finalPrice     Float
+
+  status    CustomStickerStatus @default(PENDING)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  font         Font?            @relation(fields: [fontId], references: [id], onDelete: SetNull)
+  material     MaterialSticker? @relation(fields: [materialId], references: [id], onDelete: SetNull)
+  previewImage GalleryItem?     @relation(fields: [previewImageId], references: [id], onDelete: SetNull)
+
+  cartItems  CartItem[]
+  orderItems OrderItem[]
 }

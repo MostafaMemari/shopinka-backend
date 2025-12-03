@@ -73,7 +73,7 @@ export class PaymentService {
     for (const item of cart.items) {
       payablePrice += (
         await this.productService.calculateBestDiscount({
-          productOrVariantId: item.productId || item.productVariantId,
+          targetId: item.productId || item.productVariantId || item.customStickerId,
           quantity: item.quantity,
         })
       ).finalPrice;

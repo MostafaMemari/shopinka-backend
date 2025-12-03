@@ -20,6 +20,7 @@ import { SetDefaultVariantDto } from '../dto/update-product-variant.dto';
 import { ProductVariantRepository } from '../repositories/product-variant.repository';
 import { BulkPricingRepository } from '../../bulk-pricing/repositories/bulk-pricing.repository';
 import { CalculateBulkPriceDto } from '../dto/calculate-bulk-price.dto';
+import { CustomStickerRepository } from '../../custom-sticker/custom-sticker.repository';
 
 @Injectable()
 export class ProductService {
@@ -33,6 +34,7 @@ export class ProductService {
     private readonly orderItemRepository: OrderItemRepository,
     private readonly productVariantRepository: ProductVariantRepository,
     private readonly bulkPricingRepository: BulkPricingRepository,
+    private readonly customStickerRepository: CustomStickerRepository,
   ) {}
 
   async create(userId: number, createProductDto: CreateProductDto): Promise<{ message: string; product: Product }> {
@@ -507,30 +509,36 @@ export class ProductService {
   async calculateBestDiscount(
     calculateBulkPriceDto: CalculateBulkPriceDto,
   ): Promise<{ originalPrice: number; finalPrice: number; discount: number }> {
-    const { productOrVariantId, quantity } = calculateBulkPriceDto;
+    const { targetId, quantity } = calculateBulkPriceDto;
 
-    const product = await this.productRepository.findOne({ where: { id: productOrVariantId }, include: { bulkPrices: true } });
+    const product = await this.productRepository.findOne({ where: { id: targetId }, include: { bulkPrices: true } });
     const productVariant = await this.productVariantRepository.findOne({
-      where: { id: productOrVariantId },
+      where: { id: targetId },
       include: { bulkPrices: true },
     });
 
+    const customSticker = await this.customStickerRepository.findOne({ where: { id: targetId } });
+
+    const targets = [customSticker, product, productVariant].filter((item) => item !== null);
+
     //TODO: add messages to enum
-    if (!product && !productVariant) throw new BadRequestException('Product and variant not found.');
+    if (targets.length !== 1) throw new BadRequestException('One target filed allowed.');
 
     if (product?.quantity < quantity || productVariant?.quantity < quantity) throw new BadRequestException('Invalid count.');
 
     const globalBulkPrices = await this.bulkPricingRepository.findAll({ where: { isGlobal: true } });
 
     const validDiscounts = [
-      ...((product || productVariant)['bulkPrices'] as BulkPricing[]).filter((bp) => quantity >= bp.minQty),
+      ...(((product || productVariant)?.['bulkPrices'] as BulkPricing[]) || [])?.filter((bp) => quantity >= bp.minQty),
       ...globalBulkPrices.filter((bp) => quantity >= bp.minQty),
     ];
 
-    const basePrice = product ? product.basePrice : productVariant.basePrice;
-    const salePrice = product ? product.salePrice || 0 : productVariant.salePrice || 0;
+    const basePrice = product ? product.basePrice : productVariant?.basePrice;
+    const salePrice = product ? product.salePrice || 0 : productVariant?.salePrice || 0;
     const originalPrice = basePrice * quantity - salePrice * quantity;
 
+    if (customSticker && !validDiscounts.length)
+      return { finalPrice: customSticker.finalPrice * quantity, discount: 0, originalPrice: customSticker.finalPrice };
     if (validDiscounts.length == 0 || salePrice) return { finalPrice: originalPrice, discount: 0, originalPrice };
 
     let bestDiscountPrice = 0;
@@ -539,6 +547,7 @@ export class ProductService {
       let discountAmount = 0;
 
       if (discount.type == 'PERCENT') {
+        if (customSticker) discountAmount = customSticker.finalPrice * quantity * (+discount.discount / 100);
         discountAmount = basePrice * quantity * (+discount.discount / 100);
       } else if (discount.type == 'FIXED') discountAmount = +discount.discount * quantity;
 
@@ -548,9 +557,9 @@ export class ProductService {
     const finalPrice = basePrice * quantity - bestDiscountPrice;
 
     return {
-      originalPrice,
+      originalPrice: customSticker ? customSticker.finalPrice : originalPrice,
       discount: bestDiscountPrice,
-      finalPrice,
+      finalPrice: customSticker ? customSticker.finalPrice * quantity - bestDiscountPrice : finalPrice,
     };
   }
 

@@ -105,3 +105,28 @@ export function parseDbUrl(url: string) {
     dbName: parsedUrl.pathname.slice(1),
   };
 }
+
+function roundToThousand(num) {
+  return Math.round(num / 1000) * 1000;
+}
+
+export function calculateStickerPrice({ width, height, material, font }) {
+  const area = width * height;
+
+  let price = area * material.pricePerCM;
+
+  price *= font.difficultyRatio;
+
+  price += price * (material.profitPercent / 100);
+
+  const cutPrice = Number(process.env.CUT_PRICE || 0);
+  price += cutPrice;
+
+  const minPrice = Number(process.env.MIN_STICKER_PRICE || 0);
+
+  let finalPrice = price < minPrice ? minPrice : price;
+
+  finalPrice = roundToThousand(finalPrice);
+
+  return finalPrice;
+}
