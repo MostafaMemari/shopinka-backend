@@ -62,6 +62,12 @@ export class ProductController {
     return this.productService.findAllDrafts(user.id, paginationDto);
   }
 
+  @Get('calculate-bulk-price')
+  @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
+  calculateBulkPrice(@Body() calculateBulkPriceDto: CalculateBulkPriceDto) {
+    return this.productService.calculateBestDiscount(calculateBulkPriceDto);
+  }
+
   @Get(':id')
   @SkipAuth()
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -83,12 +89,6 @@ export class ProductController {
   @Patch('favorite-toggle/:id')
   favoriteToggle(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
     return this.productService.favoriteToggle(user.id, id);
-  }
-
-  @Patch('calculate-bulk-price')
-  @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
-  calculateBulkPrice(@Body() calculateBulkPriceDto: CalculateBulkPriceDto) {
-    return this.productService.calculateBestDiscount(calculateBulkPriceDto);
   }
 
   @Patch(':id')
