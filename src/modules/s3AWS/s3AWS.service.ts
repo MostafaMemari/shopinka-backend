@@ -73,7 +73,7 @@ export class AwsService {
       Bucket: this.bucketName,
       Key: key,
       Body: optimizeBuffer,
-      ContentType: contentType,
+      ContentType: extractedContentType,
       ACL: isPublic ? 'public-read' : 'private',
       ContentLength: optimizeBuffer.length,
     });
@@ -171,6 +171,7 @@ export class AwsService {
       throw new InternalServerErrorException(error);
     }
   }
+
   async removeFiles(keys: string[]) {
     if (keys.length === 0) return;
 

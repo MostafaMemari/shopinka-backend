@@ -255,12 +255,20 @@ export class GalleryItemService {
     });
 
     if (isForce) {
-      await this.awsService.removeFiles(galleryItems.map((item) => item.fileKey));
-      await this.awsService.removeFiles(galleryItems.map((item) => item.thumbnailKey));
+      const fileKeys = galleryItems.map((item) => item.fileKey).filter((key): key is string => !!key);
+      const thumbKeys = galleryItems.map((item) => item.thumbnailKey).filter((key): key is string => !!key);
 
-      await this.galleryItemRepository.deleteMany({ where: { id: { in: galleryItemIds }, gallery: { userId } } });
+      if (fileKeys.length > 0) await this.awsService.removeFiles(fileKeys);
+      if (thumbKeys.length > 0) await this.awsService.removeFiles(thumbKeys);
 
-      return { message: GalleryItemMessages.RemovedGalleryItemsSuccess, galleryItems };
+      await this.galleryItemRepository.deleteMany({
+        where: { id: { in: galleryItemIds }, gallery: { userId } },
+      });
+
+      return {
+        message: GalleryItemMessages.RemovedGalleryItemsSuccess,
+        galleryItems,
+      };
     }
 
     await this.galleryItemRepository.updateMany({
