@@ -6,10 +6,14 @@ import { MaterialSticker, Prisma } from '@prisma/client';
 import { MaterialStickerMessages } from './enums/material-sticker-messages.enum';
 import { MaterialStickerQueryFilterDto } from './dto/material-sticker-query-filter.dto';
 import { OutputPagination, pagination } from 'src/common/utils/pagination.utils';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class MaterialStickerService {
-  constructor(private readonly materialStickerRepository: MaterialStickerRepository) {}
+  constructor(
+    private readonly materialStickerRepository: MaterialStickerRepository,
+    private readonly prismaService: PrismaService,
+  ) {}
 
   async create(createMaterialStickerDto: CreateMaterialStickerDto): Promise<{ message: string; materialSticker: MaterialSticker }> {
     const { name } = createMaterialStickerDto;
@@ -74,6 +78,21 @@ export class MaterialStickerService {
     const updatedMaterial = await this.materialStickerRepository.update({ where: { id }, data: { ...updateMaterialStickerDto } });
 
     return { message: MaterialStickerMessages.UpdatedMaterialSuccess, materialSticker: updatedMaterial };
+  }
+
+  async reorder(fonts: { id: number; displayOrder: number }[]): Promise<{ message: string }> {
+    if (!fonts || fonts.length === 0) return { message: MaterialStickerMessages.ReorderedMaterialsSuccess };
+
+    await this.prismaService.$transaction(
+      fonts.map((font) =>
+        this.prismaService.materialSticker.update({
+          where: { id: font.id },
+          data: { displayOrder: font.displayOrder },
+        }),
+      ),
+    );
+
+    return { message: MaterialStickerMessages.ReorderedMaterialsSuccess };
   }
 
   async remove(id: number): Promise<{ message: string; materialSticker: MaterialSticker }> {

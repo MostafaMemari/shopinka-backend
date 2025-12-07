@@ -7,11 +7,13 @@ import { FontMessages } from './enums/font-messages.enum';
 import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
 import { OutputPagination, pagination } from '../../common/utils/pagination.utils';
 import { FontQueryDto } from './dto/font-query-filter.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class FontService {
   constructor(
     private readonly fontRepository: FontRepository,
+    private readonly prismaService: PrismaService,
     private readonly galleryItemRepository: GalleryItemRepository,
   ) {}
 
@@ -95,6 +97,21 @@ export class FontService {
     const updatedFont = await this.fontRepository.update({ where: { id }, data: updateFontDto });
 
     return { message: FontMessages.UpdatedFontSuccess, font: updatedFont };
+  }
+
+  async reorder(fonts: { id: number; displayOrder: number }[]): Promise<{ message: string }> {
+    if (!fonts || fonts.length === 0) return { message: FontMessages.ReorderedFontsSuccess };
+
+    await this.prismaService.$transaction(
+      fonts.map((font) =>
+        this.prismaService.font.update({
+          where: { id: font.id },
+          data: { displayOrder: font.displayOrder },
+        }),
+      ),
+    );
+
+    return { message: FontMessages.ReorderedFontsSuccess };
   }
 
   async remove(id: number): Promise<Font> {

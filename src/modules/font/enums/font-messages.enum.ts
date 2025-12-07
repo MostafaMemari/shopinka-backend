@@ -3,4 +3,5 @@ export enum FontMessages {
   CreatedFontSuccess = 'Font created successfully.',
   AlreadyExistsFont = 'Font already exists with this name.',
   UpdatedFontSuccess = 'Font updated successfully.',
+  ReorderedFontsSuccess = 'Fonts reordered successfully.',
 }

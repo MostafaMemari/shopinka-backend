@@ -9,6 +9,7 @@ import { Role } from '@prisma/client';
 import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 import { FontQueryDto } from './dto/font-query-filter.dto';
 import { SkipAuth } from '../../common/decorators/skip-auth.decorator';
+import { ReorderFontDto } from './dto/reorder-font.dto';
 
 @Controller('font')
 @AuthDecorator()
@@ -33,6 +34,15 @@ export class FontController {
   @SkipAuth()
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.fontService.findOne(id);
+  }
+
+  @Patch('reorder')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
+  async reorder(@Body() fonts: ReorderFontDto[]) {
+    console.log(fonts);
+
+    return this.fontService.reorder(fonts);
   }
 
   @Patch(':id')

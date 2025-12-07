@@ -4,4 +4,5 @@ export enum MaterialStickerMessages {
   CreatedMaterialSuccess = 'Material created successfully.',
   UpdatedMaterialSuccess = 'Material updated successfully.',
   RemovedMaterialSuccess = 'Material removed successfully.',
+  ReorderedMaterialsSuccess = 'Materials reordered successfully.',
 }

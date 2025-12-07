@@ -9,6 +9,7 @@ import { Role } from '@prisma/client';
 import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 import { MaterialStickerQueryFilterDto } from './dto/material-sticker-query-filter.dto';
 import { SkipAuth } from '../../common/decorators/skip-auth.decorator';
+import { ReorderMaterialStickerDto } from './dto/reorder-material-sticker.dto';
 
 @Controller('material-sticker')
 @ApiTags('material-sticker')
@@ -33,6 +34,15 @@ export class MaterialStickerController {
   @SkipAuth()
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.materialStickerService.findOne(id);
+  }
+
+  @Patch('reorder')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
+  async reorder(@Body() materialStickers: ReorderMaterialStickerDto[]) {
+    console.log(materialStickers);
+
+    return this.materialStickerService.reorder(materialStickers);
   }
 
   @Patch(':id')
