@@ -39,6 +39,8 @@ export class MaterialStickerController {
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateMaterialStickerDto: UpdateMaterialStickerDto) {
+    console.log(updateMaterialStickerDto);
+
     return this.materialStickerService.update(id, updateMaterialStickerDto);
   }
 

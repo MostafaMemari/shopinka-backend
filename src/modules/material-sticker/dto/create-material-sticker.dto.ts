@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { SurfaceType } from '@prisma/client';
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
-import { transformToNumber } from '../../../common/utils/functions.utils';
+import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { transformToBoolean, transformToNumber } from '../../../common/utils/functions.utils';
 import { Transform } from 'class-transformer';
 
 export class CreateMaterialStickerDto {
@@ -40,4 +40,10 @@ export class CreateMaterialStickerDto {
   @IsString()
   @ApiPropertyOptional({ type: 'string' })
   backgroundTo?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => transformToBoolean(value))
+  @ApiPropertyOptional({ type: 'boolean', nullable: true, required: false })
+  isDefault?: boolean;
 }

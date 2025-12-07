@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString, IsNotEmpty } from 'class-validator';
-import { transformToNumber } from '../../../common/utils/functions.utils';
+import { IsNumber, IsOptional, IsString, IsNotEmpty, IsBoolean } from 'class-validator';
+import { transformToBoolean, transformToNumber } from '../../../common/utils/functions.utils';
 import { Transform } from 'class-transformer';
 
 export class CreateCustomStickerDto {

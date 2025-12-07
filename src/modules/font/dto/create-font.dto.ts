@@ -39,6 +39,12 @@ export class CreateFontDto {
   @IsBoolean()
   @Transform(({ value }) => transformToBoolean(value))
   @ApiPropertyOptional({ type: 'boolean', nullable: true, required: false })
+  isDefault?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => transformToBoolean(value))
+  @ApiPropertyOptional({ type: 'boolean', nullable: true, required: false })
   isPersian?: boolean;
 
   @IsOptional()
