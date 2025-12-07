@@ -636,6 +636,7 @@ model Font {
   isPersian       Boolean  @default(true)
   difficultyRatio Float    @default(1.0)
   isDefault       Boolean  @default(false)
+  displayOrder    Int      @default(0)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -654,6 +655,7 @@ model MaterialSticker {
   backgroundFrom String?
   backgroundTo   String?
   isDefault      Boolean     @default(false)
+  displayOrder   Int         @default(0)
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 

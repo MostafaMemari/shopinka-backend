@@ -33,6 +33,11 @@ export class CreateFontDto {
   @IsNumber()
   @Transform(({ value }) => transformToNumber(value))
   @ApiProperty({ type: 'number' })
+  displayOrder: number;
+
+  @IsNumber()
+  @Transform(({ value }) => transformToNumber(value))
+  @ApiProperty({ type: 'number' })
   size: number;
 
   @IsOptional()
