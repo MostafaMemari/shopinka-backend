@@ -36,12 +36,17 @@ export class FontController {
     return this.fontService.findOne(id);
   }
 
+  @Patch(':id/default')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
+  async setDefault(@Param('id', ParseIntPipe) id: number) {
+    return this.fontService.setDefault(id);
+  }
+
   @Patch('reorder')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
   async reorder(@Body() fonts: ReorderFontDto[]) {
-    console.log(fonts);
-
     return this.fontService.reorder(fonts);
   }
 

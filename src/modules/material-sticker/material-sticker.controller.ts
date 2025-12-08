@@ -36,6 +36,13 @@ export class MaterialStickerController {
     return this.materialStickerService.findOne(id);
   }
 
+  @Patch(':id/default')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
+  async setDefault(@Param('id', ParseIntPipe) id: number) {
+    return this.materialStickerService.setDefault(id);
+  }
+
   @Patch('reorder')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)

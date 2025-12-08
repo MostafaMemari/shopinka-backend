@@ -80,6 +80,27 @@ export class MaterialStickerService {
     return { message: MaterialStickerMessages.UpdatedMaterialSuccess, materialSticker: updatedMaterial };
   }
 
+  async setDefault(id: number): Promise<{ message: string }> {
+    const materialToSetDefault = await this.materialStickerRepository.findOneOrThrow({ where: { id } });
+    if (materialToSetDefault.isDefault) return { message: MaterialStickerMessages.SetDefaultMaterialSuccess };
+
+    const currentDefaultMaterial = await this.materialStickerRepository.findOne({ where: { isDefault: true } });
+
+    await this.prismaService.$transaction(async (tx) => {
+      if (currentDefaultMaterial) {
+        await tx.materialSticker.update({
+          where: { id: currentDefaultMaterial.id },
+          data: { isDefault: false },
+        });
+      }
+      await tx.materialSticker.update({
+        where: { id: materialToSetDefault.id },
+        data: { isDefault: true },
+      });
+    });
+    return { message: MaterialStickerMessages.SetDefaultMaterialSuccess };
+  }
+
   async reorder(fonts: { id: number; displayOrder: number }[]): Promise<{ message: string }> {
     if (!fonts || fonts.length === 0) return { message: MaterialStickerMessages.ReorderedMaterialsSuccess };
 

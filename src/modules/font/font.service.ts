@@ -99,6 +99,27 @@ export class FontService {
     return { message: FontMessages.UpdatedFontSuccess, font: updatedFont };
   }
 
+  async setDefault(id: number): Promise<{ message: string }> {
+    const fontToSetDefault = await this.fontRepository.findOneOrThrow({ where: { id } });
+    if (fontToSetDefault.isDefault) return { message: FontMessages.SetDefaultFontSuccess };
+
+    const currentDefaultFont = await this.fontRepository.findOne({ where: { isDefault: true } });
+
+    await this.prismaService.$transaction(async (tx) => {
+      if (currentDefaultFont) {
+        await tx.font.update({
+          where: { id: currentDefaultFont.id },
+          data: { isDefault: false },
+        });
+      }
+      await tx.font.update({
+        where: { id: fontToSetDefault.id },
+        data: { isDefault: true },
+      });
+    });
+    return { message: FontMessages.SetDefaultFontSuccess };
+  }
+
   async reorder(fonts: { id: number; displayOrder: number }[]): Promise<{ message: string }> {
     if (!fonts || fonts.length === 0) return { message: FontMessages.ReorderedFontsSuccess };
 
@@ -114,9 +135,11 @@ export class FontService {
     return { message: FontMessages.ReorderedFontsSuccess };
   }
 
-  async remove(id: number): Promise<Font> {
+  async remove(id: number): Promise<{ message: string; font: Font }> {
     await this.fontRepository.findOneOrThrow({ where: { id } });
 
-    return this.fontRepository.delete({ where: { id } });
+    const removedFont = await this.fontRepository.delete({ where: { id } });
+
+    return { message: FontMessages.RemovedFontSuccess, font: removedFont };
   }
 }
