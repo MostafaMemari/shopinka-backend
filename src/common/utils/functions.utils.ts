@@ -1,3 +1,4 @@
+import { Font, MaterialSticker } from '@prisma/client';
 import sharp from 'sharp';
 
 type SortedObject<T = object> = (object: T) => T;
@@ -124,6 +125,34 @@ export function calculateStickerPrice({ width, height, material, font }) {
 
   const minPrice = Number(process.env.MIN_STICKER_PRICE || 0);
 
+  let finalPrice = price < minPrice ? minPrice : price;
+
+  finalPrice = roundToThousand(finalPrice);
+
+  return finalPrice;
+}
+
+interface CalculateStickerPriceParams {
+  lines: { width: number; height: number }[];
+  material: MaterialSticker;
+  font: Font;
+}
+
+export function calculateStickerTotalPrice({ lines, material, font }: CalculateStickerPriceParams): number {
+  const totalArea = lines.reduce((sum, line) => {
+    return sum + line.width * line.height;
+  }, 0);
+
+  let price = totalArea * material.pricePerCM;
+
+  price *= font.difficultyRatio ?? 1;
+
+  price += price * (material.profitPercent / 100);
+
+  const cutPrice = Number(process.env.CUT_PRICE || 0);
+  price += cutPrice;
+
+  const minPrice = Number(process.env.MIN_STICKER_PRICE || 0);
   let finalPrice = price < minPrice ? minPrice : price;
 
   finalPrice = roundToThousand(finalPrice);

@@ -11,7 +11,8 @@ import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { OutputPagination, pagination } from '../../common/utils/pagination.utils';
 import { CustomStickerQueryDto } from './dto/custom-sticker-query-filter.dto';
 import { allowedImageFormats } from '../../common/pipes/file-validator.pipe';
-import { calculateStickerPrice } from '../../common/utils/functions.utils';
+import { calculateStickerPrice, calculateStickerTotalPrice } from '../../common/utils/functions.utils';
+import { CalculateStickerPriceDto } from './dto/calculate-sticker-price.dto';
 
 @Injectable()
 export class CustomStickerService {
@@ -39,6 +40,17 @@ export class CustomStickerService {
     const customSticker = await this.customStickerRepository.create({ data: { userId, ...createCustomStickerDto, finalPrice } });
 
     return { message: CustomStickerMessages.CreatedCustomStickerSuccess, customSticker };
+  }
+
+  async calculateStickerPrice(calculateStickerPriceDto: CalculateStickerPriceDto): Promise<{ message: string; pricing: number }> {
+    const { lines, fontId, materialId } = calculateStickerPriceDto;
+
+    const material = await this.materialStickerRepository.findOneOrThrow({ where: { id: materialId } });
+    const font = await this.fontRepository.findOneOrThrow({ where: { id: fontId } });
+
+    const pricing = calculateStickerTotalPrice({ font, material, lines });
+
+    return { message: CustomStickerMessages.CalculatedStickerPriceSuccess, pricing };
   }
 
   async findAllByAdmin({ page, take, ...customStickerQueryDto }: CustomStickerQueryDto): Promise<OutputPagination<CustomSticker>> {

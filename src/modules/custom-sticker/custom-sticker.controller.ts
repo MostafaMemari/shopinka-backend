@@ -10,6 +10,8 @@ import { SwaggerConsumes } from '../../common/enums/swagger-consumes.enum';
 import { Roles } from '../../common/decorators/role.decorator';
 import { CustomStickerQueryDto } from './dto/custom-sticker-query-filter.dto';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
+import { CalculateStickerPriceDto } from './dto/calculate-sticker-price.dto';
+import { SkipAuth } from '../../common/decorators/skip-auth.decorator';
 
 @Controller('custom-sticker')
 @ApiTags('custom-sticker')
@@ -20,6 +22,13 @@ export class CustomStickerController {
   @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
   create(@Body() createCustomStickerDto: CreateCustomStickerDto, @GetUser() user: User) {
     return this.customStickerService.create(user.id, createCustomStickerDto);
+  }
+
+  @Post('pricing')
+  @SkipAuth()
+  @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
+  calculateStickerPrice(@Body() calculateStickerPriceDto: CalculateStickerPriceDto) {
+    return this.customStickerService.calculateStickerPrice(calculateStickerPriceDto);
   }
 
   @Get()
