@@ -1,7 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString, IsNotEmpty, IsBoolean } from 'class-validator';
-import { transformToBoolean, transformToNumber } from '../../../common/utils/functions.utils';
-import { Transform } from 'class-transformer';
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { transformToNumber } from '../../../common/utils/functions.utils';
+import { Transform, Type } from 'class-transformer';
+import { CustomStickerLineDto } from './custom-sticker-line.dto';
 
 export class CreateCustomStickerDto {
   @IsNumber()
@@ -14,38 +15,19 @@ export class CreateCustomStickerDto {
   @ApiProperty({ type: 'number' })
   materialId: number;
 
+  @ApiProperty({
+    type: [CustomStickerLineDto],
+  })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CustomStickerLineDto)
+  lines: CustomStickerLineDto[];
+
   @IsOptional()
   @IsNumber()
   @Transform(({ value }) => transformToNumber(value))
   @ApiPropertyOptional({ type: 'number' })
   previewImageId?: number;
-
-  @IsNumber()
-  @Transform(({ value }) => transformToNumber(value))
-  @ApiProperty({ type: 'number' })
-  width: number;
-
-  @IsNumber()
-  @Transform(({ value }) => transformToNumber(value))
-  @ApiProperty({ type: 'number' })
-  height: number;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ type: 'string', required: true, nullable: false })
-  text: string;
-
-  @IsOptional()
-  @IsNumber()
-  @Transform(({ value }) => transformToNumber(value))
-  @ApiPropertyOptional({ type: 'number' })
-  lineHeight?: number;
-
-  @IsOptional()
-  @IsNumber()
-  @Transform(({ value }) => transformToNumber(value))
-  @ApiPropertyOptional({ type: 'number' })
-  size?: number;
 
   @IsOptional()
   @IsString()
@@ -65,6 +47,7 @@ export class CreateCustomStickerDto {
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional({ type: 'string' })
-  textAlign?: string;
+  @IsNotEmpty()
+  @ApiProperty({ type: 'string', required: false, nullable: true })
+  description?: string;
 }

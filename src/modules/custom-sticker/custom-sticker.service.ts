@@ -24,7 +24,7 @@ export class CustomStickerService {
   ) {}
 
   async create(userId: number, createCustomStickerDto: CreateCustomStickerDto): Promise<{ message: string; customSticker: CustomSticker }> {
-    const { fontId, materialId, previewImageId, width, height } = createCustomStickerDto;
+    const { fontId, materialId, previewImageId, lines } = createCustomStickerDto;
 
     if (previewImageId) {
       const image = await this.galleryItemRepository.findOneOrThrow({ where: { id: previewImageId } });
@@ -35,9 +35,26 @@ export class CustomStickerService {
     const material = await this.materialStickerRepository.findOneOrThrow({ where: { id: materialId } });
     const font = await this.fontRepository.findOneOrThrow({ where: { id: fontId } });
 
-    const finalPrice = calculateStickerPrice({ font, material, height, width });
+    const finalPrice = calculateStickerTotalPrice({
+      font,
+      material,
+      lines: lines.map((line) => ({ width: line.width, height: line.height })),
+    });
 
-    const customSticker = await this.customStickerRepository.create({ data: { userId, ...createCustomStickerDto, finalPrice } });
+    const customSticker = await this.customStickerRepository.create({
+      data: {
+        userId,
+        ...createCustomStickerDto,
+        lines: lines.map((line) => ({
+          text: line.text,
+          width: line.width,
+          height: line.height,
+          lineNumber: line.lineNumber,
+          ratio: line.ratio,
+        })),
+        finalPrice,
+      },
+    });
 
     return { message: CustomStickerMessages.CreatedCustomStickerSuccess, customSticker };
   }
@@ -61,16 +78,11 @@ export class CustomStickerService {
       sortBy,
       sortDirection,
       startDate,
-      size,
-      height,
-      text,
-      width,
       fontId,
       includeFont,
       includePreviewImage,
       includeUser,
       letterSpacing,
-      lineHeight,
       materialId,
       style,
       textAlign,
@@ -79,13 +91,8 @@ export class CustomStickerService {
 
     const filters: Prisma.CustomStickerWhereInput = {};
 
-    if (size) filters.size = size;
-    if (height) filters.height = height;
-    if (text) filters.text = { contains: text };
-    if (width) filters.width = width;
     if (fontId) filters.fontId = fontId;
     if (letterSpacing) filters.letterSpacing = letterSpacing;
-    if (lineHeight) filters.lineHeight = lineHeight;
     if (materialId) filters.materialId = materialId;
     if (style) filters.style = style;
     if (textAlign) filters.textAlign = textAlign;
@@ -133,7 +140,7 @@ export class CustomStickerService {
     id: number,
     updateCustomStickerDto: UpdateCustomStickerDto,
   ): Promise<{ message: string; customSticker: CustomSticker }> {
-    const { fontId, previewImageId, materialId, width, height } = updateCustomStickerDto;
+    const { fontId, previewImageId, materialId, lines } = updateCustomStickerDto;
 
     const customSticker = await this.customStickerRepository.findOneOrThrow({ where: { id }, include: { font: true, material: true } });
     let font = customSticker['font'];
@@ -148,16 +155,27 @@ export class CustomStickerService {
     if (materialId) material = await this.materialStickerRepository.findOneOrThrow({ where: { id: materialId } });
     if (fontId) font = await this.fontRepository.findOneOrThrow({ where: { id: fontId } });
 
-    const finalPrice = calculateStickerPrice({
+    const finalPrice = calculateStickerTotalPrice({
       font,
       material,
-      width: width ? width : customSticker.weight,
-      height: height ? height : customSticker.height,
+      lines: lines ? lines.map((line) => ({ width: line.width, height: line.height })) : undefined,
     });
 
     const updatedCustomSticker = await this.customStickerRepository.update({
       where: { id },
-      data: { ...updateCustomStickerDto, finalPrice },
+      data: {
+        ...updateCustomStickerDto,
+        finalPrice,
+        lines: lines
+          ? lines.map((line) => ({
+              text: line.text,
+              width: line.width,
+              height: line.height,
+              lineNumber: line.lineNumber,
+              ratio: line.ratio,
+            }))
+          : undefined,
+      },
     });
 
     return { message: CustomStickerMessages.UpdatedCustomStickerSuccess, customSticker: updatedCustomSticker };
@@ -168,7 +186,7 @@ export class CustomStickerService {
     id: number,
     updateCustomStickerDto: UpdateCustomStickerDto,
   ): Promise<{ message: string; customSticker: CustomSticker }> {
-    const { fontId, previewImageId, materialId, height, width } = updateCustomStickerDto;
+    const { fontId, previewImageId, materialId, lines } = updateCustomStickerDto;
 
     const customSticker = await this.customStickerRepository.findOneOrThrow({
       where: { id, userId },
@@ -189,14 +207,28 @@ export class CustomStickerService {
     if (materialId) material = await this.materialStickerRepository.findOneOrThrow({ where: { id: materialId } });
     if (fontId) font = await this.fontRepository.findOneOrThrow({ where: { id: fontId } });
 
-    const finalPrice = calculateStickerPrice({
+    const finalPrice = calculateStickerTotalPrice({
       font,
       material,
-      width: width ? width : customSticker.weight,
-      height: height ? height : customSticker.height,
+      lines: lines ? lines.map((line) => ({ width: line.width, height: line.height })) : undefined,
     });
 
-    const updatedCustomSticker = await this.customStickerRepository.update({ where: { id }, data: { ...updateCustomStickerDto } });
+    const updatedCustomSticker = await this.customStickerRepository.update({
+      where: { id },
+      data: {
+        ...updateCustomStickerDto,
+        finalPrice,
+        lines: lines
+          ? lines.map((line) => ({
+              text: line.text,
+              width: line.width,
+              height: line.height,
+              lineNumber: line.lineNumber,
+              ratio: line.ratio,
+            }))
+          : undefined,
+      },
+    });
 
     return { message: CustomStickerMessages.UpdatedCustomStickerSuccess, customSticker: updatedCustomSticker };
   }

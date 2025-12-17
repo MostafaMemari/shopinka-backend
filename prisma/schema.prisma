@@ -668,16 +668,12 @@ model CustomSticker {
   fontId         Int?
   materialId     Int?
   previewImageId Int?
-  width          Float
-  height         Float
-  text           String  @db.Text
-  lineHeight     Float   @default(1.0)
-  size           Float   @default(1.0)
   style          String?
   weight         String?
   letterSpacing  Float   @default(0)
-  textAlign      String?
   finalPrice     Float
+  lines          Json
+  description    String? @db.Text
 
   status    CustomStickerStatus @default(PENDING)
   createdAt DateTime            @default(now())
