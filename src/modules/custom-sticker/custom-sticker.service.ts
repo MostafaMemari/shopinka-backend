@@ -95,7 +95,6 @@ export class CustomStickerService {
     if (letterSpacing) filters.letterSpacing = letterSpacing;
     if (materialId) filters.materialId = materialId;
     if (style) filters.style = style;
-    if (textAlign) filters.textAlign = textAlign;
     if (weight) filters.weight = weight;
 
     if (startDate || endDate) {
