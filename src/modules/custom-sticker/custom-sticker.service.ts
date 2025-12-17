@@ -85,7 +85,6 @@ export class CustomStickerService {
       letterSpacing,
       materialId,
       style,
-      textAlign,
       weight,
     } = customStickerQueryDto;
 
