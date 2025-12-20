@@ -8,6 +8,7 @@ import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { pagination } from '../../common/utils/pagination.utils';
 import { PrismaService } from '../prisma/prisma.service';
+import { calculateCartTotal } from 'src/common/utils/functions.utils';
 
 @Injectable()
 export class CartService {
@@ -35,7 +36,16 @@ export class CartService {
                 mainImage: { select: { fileUrl: true } },
               },
             },
-            customSticker: true,
+            customSticker: {
+              select: {
+                id: true,
+                finalPrice: true,
+                lines: true,
+                previewImage: { select: { fileUrl: true } },
+                material: { select: { name: true, surface: true, colorCode: true } },
+                font: { select: { displayName: true } },
+              },
+            },
             productVariant: {
               select: {
                 id: true,
@@ -61,7 +71,12 @@ export class CartService {
 
     if (!cart) return null;
 
-    return cart;
+    const payablePrice = calculateCartTotal(cart.items);
+
+    return {
+      payablePrice,
+      ...cart,
+    };
   }
 
   async clear(userId: number): Promise<Cart> {
@@ -160,7 +175,13 @@ export class CartService {
     });
   }
 
-  async addItems(userId: number, items: CreateCartItemDto[]): Promise<{ message: string; cartItems: CartItem[] }> {
+  async addItems(
+    userId: number,
+    items: CreateCartItemDto[],
+    options?: { systemMode?: boolean },
+  ): Promise<{ message: string; cartItems: CartItem[] }> {
+    const systemMode = options?.systemMode ?? false;
+
     return this.prismaService.$transaction(async (prisma) => {
       const cart = await prisma.cart.upsert({
         where: { userId },
@@ -171,9 +192,9 @@ export class CartService {
 
       const createdOrUpdatedItems: CartItem[] = [];
 
-      const productIds = items.filter((item) => item.productId).map((item) => item.productId!);
-      const productVariantIds = items.filter((item) => item.productVariantId).map((item) => item.productVariantId!);
-      const customStickerIds = items.filter((item) => item.customStickerId).map((item) => item.customStickerId);
+      const productIds = items.filter((i) => i.productId).map((i) => i.productId!);
+      const productVariantIds = items.filter((i) => i.productVariantId).map((i) => i.productVariantId!);
+      const customStickerIds = items.filter((i) => i.customStickerId).map((i) => i.customStickerId!);
 
       const products = productIds.length
         ? await prisma.product.findMany({
@@ -187,84 +208,68 @@ export class CartService {
           })
         : [];
 
-      const customStickers = customStickerIds.length ? await prisma.product.findMany({ where: { id: { in: customStickerIds } } }) : [];
-
       for (const item of items) {
-        const { productId, productVariantId, quantity, customStickerId } = item;
+        const { productId, productVariantId, customStickerId, quantity } = item;
 
-        const items = [productId, productVariantId, customStickerId];
-
-        if (items.filter((item) => typeof item == 'number').length !== 1) {
-          throw new BadRequestException(CartItemMessages.OneFailedAllowed);
+        const definedCount = [productId, productVariantId, customStickerId].filter((v) => typeof v === 'number').length;
+        if (definedCount !== 1) {
+          if (!systemMode) {
+            throw new BadRequestException(CartItemMessages.OneFailedAllowed);
+          }
+          continue;
         }
 
         const existingCartItem = await prisma.cartItem.findFirst({
           where: {
             cartId: cart.id,
-            OR: [{ productId }, { productVariantId }, { customStickerId }],
+            ...(productId && { productId }),
+            ...(productVariantId && { productVariantId }),
+            ...(customStickerId && { customStickerId }),
           },
-          include: { product: true, productVariant: true, customSticker: true },
         });
 
-        if (existingCartItem) {
-          const newQuantity = existingCartItem.quantity + quantity;
+        const newQuantity = existingCartItem ? existingCartItem.quantity + quantity : quantity;
 
-          if (productId) {
-            const product = products.find((p) => p.id === productId);
-            if (!product || product.quantity < newQuantity) {
+        if (productId) {
+          const product = products.find((p) => p.id === productId);
+          if (!product || product.quantity < newQuantity) {
+            if (!systemMode) {
               throw new BadRequestException(CartItemMessages.ProductNotAvailable);
             }
+            continue;
           }
+        }
 
-          if (productVariantId) {
-            const productVariant = productVariants.find((pv) => pv.id === productVariantId);
-            if (!productVariant || productVariant.quantity < newQuantity) {
+        if (productVariantId) {
+          const variant = productVariants.find((v) => v.id === productVariantId);
+          if (!variant || variant.quantity < newQuantity) {
+            if (!systemMode) {
               throw new BadRequestException(CartItemMessages.ProductVariantNotAvailable);
             }
+            continue;
           }
+        }
 
-          if (customStickerId) {
-            const customSticker = await prisma.customSticker.findFirst({ where: { id: customStickerId } });
-            if (!customSticker) throw new NotFoundException(CartItemMessages.NotFoundCustomSticker);
-          }
-
+        if (existingCartItem) {
           const updatedItem = await prisma.cartItem.update({
             where: { id: existingCartItem.id },
             data: { quantity: newQuantity },
             include: { product: true, productVariant: true, customSticker: true },
           });
-
           createdOrUpdatedItems.push(updatedItem);
         } else {
-          if (productId) {
-            const product = products.find((p) => p.id === productId);
-            if (!product || product.quantity < quantity) {
-              throw new BadRequestException(CartItemMessages.ProductNotAvailable);
-            }
-          }
-
-          if (productVariantId) {
-            const productVariant = productVariants.find((pv) => pv.id === productVariantId);
-            if (!productVariant || productVariant.quantity < quantity) {
-              throw new BadRequestException(CartItemMessages.ProductVariantNotAvailable);
-            }
-          }
-
-          if (customStickerId) {
-            const customSticker = await prisma.customSticker.findFirst({ where: { id: customStickerId } });
-            if (!customSticker) throw new NotFoundException(CartItemMessages.NotFoundCustomSticker);
-          }
-
           const newItem = await prisma.cartItem.create({
             data: { ...item, cartId: cart.id },
             include: { product: true, productVariant: true, customSticker: true },
           });
-
           createdOrUpdatedItems.push(newItem);
         }
       }
 
-      return { message: CartItemMessages.CreatedCartItemSuccess, cartItems: createdOrUpdatedItems };
+      return {
+        message: CartItemMessages.CreatedCartItemSuccess,
+        cartItems: createdOrUpdatedItems,
+      };
     });
   }
 

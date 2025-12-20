@@ -102,6 +102,7 @@ export class OrderService {
     });
 
     const orderNumber = this.generateOrderNumber();
+
     const orderItems = this.mapCartItemsToOrderItems(items);
 
     const OrderExpireMinutes = parseInt(process.env.ORDER_EXPIRE_MINUTES, 10) * 1000 * 60 || 1000 * 60 * 60;
@@ -206,6 +207,14 @@ export class OrderService {
                 salePrice: true,
                 basePrice: true,
                 mainImage: { select: { fileUrl: true } },
+              },
+            },
+            customSticker: {
+              select: {
+                id: true,
+                finalPrice: true,
+                previewImage: { select: { fileUrl: true } },
+                lines: true,
               },
             },
             productVariant: {
@@ -346,6 +355,14 @@ export class OrderService {
                 salePrice: true,
                 basePrice: true,
                 mainImage: { select: { fileUrl: true } },
+              },
+            },
+            customSticker: {
+              select: {
+                id: true,
+                finalPrice: true,
+                previewImage: { select: { fileUrl: true } },
+                lines: true,
               },
             },
             productVariant: {

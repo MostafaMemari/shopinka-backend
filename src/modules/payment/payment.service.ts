@@ -68,18 +68,18 @@ export class PaymentService {
 
     const shipping = await this.shippingRepository.findOneOrThrow({ where: { id: paymentDto.shippingId } });
 
-    let payablePrice = 0;
+    // let payablePrice = 0;
 
-    for (const item of cart.items) {
-      payablePrice += (
-        await this.productService.calculateBestDiscount({
-          targetId: item.productId || item.productVariantId || item.customStickerId,
-          quantity: item.quantity,
-        })
-      ).finalPrice;
-    }
+    // for (const item of cart.items) {
+    //   payablePrice += (
+    //     await this.productService.calculateBestDiscount({
+    //       targetId: item.productId || item.productVariantId || item.customStickerId,
+    //       quantity: item.quantity,
+    //     })
+    //   ).finalPrice;
+    // }
 
-    const amountPrice = (payablePrice + shipping.price) * 10;
+    const amountPrice = (cart.payablePrice + shipping.price) * 10;
 
     try {
       const { authority, code, gatewayURL } = await this.zarinpalService.sendRequest({
@@ -89,7 +89,7 @@ export class PaymentService {
       });
 
       if (authority && code && gatewayURL) {
-        const order = await this.orderService.create(user.id, { ...cart, payablePrice }, paymentDto);
+        const order = await this.orderService.create(user.id, { ...cart }, paymentDto);
 
         await this.paymentRepository.create({
           data: {

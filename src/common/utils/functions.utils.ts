@@ -159,3 +159,19 @@ export function calculateStickerTotalPrice({ lines, material, font }: CalculateS
 
   return finalPrice;
 }
+
+export const calculateCartTotal = (items: any[]) => {
+  return items.reduce((total, item) => {
+    let price = 0;
+
+    if (item.product) {
+      price = item.product.salePrice ?? item.product.basePrice;
+    } else if (item.productVariant) {
+      price = item.productVariant.salePrice ?? item.productVariant.basePrice;
+    } else if (item.customSticker) {
+      price = item.customSticker.finalPrice;
+    }
+
+    return total + price * item.quantity;
+  }, 0);
+};
