@@ -1,10 +1,16 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength, ValidateNested } from 'class-validator';
 import { transformToNumber } from '../../../common/utils/functions.utils';
 import { Transform, Type } from 'class-transformer';
 import { CustomStickerLineDto } from './custom-sticker-line.dto';
 
 export class CreateCustomStickerDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(200)
+  @ApiProperty({ type: 'string', required: true, nullable: false, maxLength: 200 })
+  name: string;
+
   @IsNumber()
   @Transform(({ value }) => transformToNumber(value))
   @ApiProperty({ type: 'number' })

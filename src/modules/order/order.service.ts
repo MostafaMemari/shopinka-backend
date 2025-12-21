@@ -213,6 +213,7 @@ export class OrderService {
               select: {
                 id: true,
                 finalPrice: true,
+                name: true,
                 previewImage: { select: { fileUrl: true } },
                 lines: true,
               },
@@ -311,6 +312,13 @@ export class OrderService {
                 mainImage: { select: { fileUrl: true } },
               },
             },
+            customSticker: {
+              include: {
+                previewImage: true,
+                font: true,
+                material: true,
+              },
+            },
             productVariant: {
               select: {
                 id: true,
@@ -361,6 +369,7 @@ export class OrderService {
               select: {
                 id: true,
                 finalPrice: true,
+                name: true,
                 previewImage: { select: { fileUrl: true } },
                 lines: true,
               },

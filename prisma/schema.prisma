@@ -664,6 +664,7 @@ model MaterialSticker {
 
 model CustomSticker {
   id             Int     @id @default(autoincrement())
+  name           String
   userId         Int
   fontId         Int?
   materialId     Int?
