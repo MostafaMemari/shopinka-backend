@@ -25,9 +25,10 @@ export class CreateMaterialStickerDto {
   @ApiProperty({ type: 'number' })
   pricePerCM: number;
 
+  @IsOptional()
   @IsNumber()
   @Transform(({ value }) => transformToNumber(value))
-  @ApiProperty({ type: 'number' })
+  @ApiPropertyOptional({ type: 'number' })
   displayOrder: number;
 
   @IsOptional()

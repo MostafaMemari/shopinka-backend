@@ -30,9 +30,10 @@ export class CreateFontDto {
   @ApiProperty({ type: 'number' })
   lineHeight: number;
 
+  @IsOptional()
   @IsNumber()
   @Transform(({ value }) => transformToNumber(value))
-  @ApiProperty({ type: 'number' })
+  @ApiPropertyOptional({ type: 'number' })
   displayOrder: number;
 
   @IsNumber()
