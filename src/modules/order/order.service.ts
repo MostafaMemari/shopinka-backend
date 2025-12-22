@@ -297,7 +297,8 @@ export class OrderService {
 
   findOneForAdmin(userId: number, orderId: number): Promise<Order> {
     return this.orderRepository.findOneOrThrow({
-      where: { id: orderId, OR: [{ items: { some: { product: { userId } } } }, { items: { some: { productVariant: { userId } } } }] },
+      // , OR: [{ items: { some: { product: { userId } } } }, { items: { some: { productVariant: { userId } } } }]
+      where: { id: orderId },
       include: {
         items: {
           include: {
