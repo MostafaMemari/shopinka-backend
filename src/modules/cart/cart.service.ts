@@ -41,6 +41,7 @@ export class CartService {
                 id: true,
                 finalPrice: true,
                 lines: true,
+                name: true,
                 previewImage: { select: { fileUrl: true } },
                 material: { select: { name: true, surface: true, colorCode: true } },
                 font: { select: { displayName: true } },

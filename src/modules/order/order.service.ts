@@ -213,9 +213,11 @@ export class OrderService {
               select: {
                 id: true,
                 finalPrice: true,
+                lines: true,
                 name: true,
                 previewImage: { select: { fileUrl: true } },
-                lines: true,
+                material: { select: { name: true, surface: true, colorCode: true } },
+                font: { select: { displayName: true } },
               },
             },
             productVariant: {
@@ -370,9 +372,11 @@ export class OrderService {
               select: {
                 id: true,
                 finalPrice: true,
+                lines: true,
                 name: true,
                 previewImage: { select: { fileUrl: true } },
-                lines: true,
+                material: { select: { name: true, surface: true, colorCode: true } },
+                font: { select: { displayName: true } },
               },
             },
             productVariant: {
