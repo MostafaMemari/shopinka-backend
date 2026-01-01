@@ -1,6 +1,8 @@
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 
-export const allowedImageFormats = ['image/jpg', 'image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
+export const ALLOWED_IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
+export const ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.svg'];
+export const ALLOWED_FONT_EXTENSIONS = ['.ttf', '.otf', '.woff', '.woff2'];
 
 @Injectable()
 export class FileValidatorPipe implements PipeTransform {
@@ -20,7 +22,7 @@ export class FileValidatorPipe implements PipeTransform {
 
     const maxSizeInBytes = 5 * 1024 * 1024;
 
-    if (!allowedImageFormats.includes(file.mimetype)) {
+    if (!ALLOWED_IMAGE_MIME_TYPES.includes(file.mimetype)) {
       throw new BadRequestException(`Invalid file format for '${file.originalname}'`);
     }
 
@@ -30,13 +32,11 @@ export class FileValidatorPipe implements PipeTransform {
   }
 
   validateFontFormat(file: Express.Multer.File): never | void {
-    const allowedFontFormats = ['ttf', 'otf', 'woff', 'woff2'];
-
     const maxSizeInBytes = 2 * 1024 * 1024;
 
     const ext = file.originalname.toLowerCase().split('.').pop();
 
-    if (!allowedFontFormats.includes(ext || file.mimetype)) {
+    if (!ALLOWED_FONT_EXTENSIONS.includes(ext || file.mimetype)) {
       throw new BadRequestException(`Invalid font format for '${file.originalname}'`);
     }
 

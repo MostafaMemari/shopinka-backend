@@ -15,7 +15,7 @@ import { RemoveGalleryItemDto } from '../dto/remove-gallery-item.dto';
 import { GalleryItemMessages } from '../enums/gallery-item-messages.enum';
 import { RestoreGalleryItemDto } from '../dto/restore-gallery-item.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { allowedImageFormats } from '../../../common/pipes/file-validator.pipe';
+import { ALLOWED_IMAGE_MIME_TYPES } from '../../../common/pipes/file-validator.pipe';
 import * as path from 'path';
 
 @Injectable()
@@ -67,6 +67,8 @@ export class GalleryItemService {
     let originals: IUploadSingleFile[] = [];
     let thumbnails: IUploadSingleFile[] = [];
 
+    const isWatermarked = createGalleryItemDto.isWatermarked ?? false;
+
     const gallery = await this.galleryRepository.findOneOrThrow({
       where: { id: createGalleryItemDto.galleryId, userId },
     });
@@ -74,7 +76,7 @@ export class GalleryItemService {
     const folder = this.GALLERY_ITEM_FOLDER;
 
     try {
-      originals = await this.awsService.uploadMultiFiles(folder, files);
+      originals = await this.awsService.uploadMultiFiles(folder, files, false, isWatermarked);
 
       thumbnails = await this.generateAndUploadThumbnails(files, folder);
 
@@ -290,7 +292,7 @@ export class GalleryItemService {
     const thumbnails: IUploadSingleFile[] = [];
 
     for (const file of files) {
-      if (!allowedImageFormats.includes(path.extname(file.originalname))) continue;
+      if (!ALLOWED_IMAGE_MIME_TYPES.includes(path.extname(file.originalname))) continue;
 
       const thumbnail = await resizeImageWithSharp(file.buffer, {
         height: 100,
@@ -316,8 +318,8 @@ export class GalleryItemService {
 
     if (!galleryId) throw new BadRequestException("GalleryId is'nt set in env.");
 
-    if (!allowedImageFormats.includes(file.mimetype))
-      throw new BadRequestException(`This file format is not allowed. allowed formats: ${allowedImageFormats.join(',')}`);
+    if (!ALLOWED_IMAGE_MIME_TYPES.includes(file.mimetype))
+      throw new BadRequestException(`This file format is not allowed. allowed formats: ${ALLOWED_IMAGE_MIME_TYPES.join(',')}`);
 
     const gallery = await this.galleryItemRepository.findOneOrThrow({ where: { id: galleryId } });
 

@@ -12,7 +12,8 @@ import { lookup } from 'mime-types';
 import * as path from 'path';
 import sharp from 'sharp';
 import { IUploadSingleFile } from '../../common/interfaces/aws.interface';
-import { allowedImageFormats } from '../../common/pipes/file-validator.pipe';
+import { ALLOWED_IMAGE_EXTENSIONS } from '../../common/pipes/file-validator.pipe';
+import * as fs from 'fs';
 
 @Injectable()
 export class AwsService {
@@ -42,11 +43,13 @@ export class AwsService {
     folderName = '',
     isPublic = true,
     contentType,
+    watermark = false,
   }: {
     fileMetadata: Partial<Express.Multer.File> | { file: Buffer; fileName: string };
     folderName?: string;
     isPublic?: boolean;
     contentType?: string;
+    watermark?: boolean;
   }): Promise<IUploadSingleFile> {
     let ext: string;
     let extractedContentType: string;
@@ -57,6 +60,7 @@ export class AwsService {
     if (`file` in fileMetadata) {
       bufferFile = Buffer.from(fileMetadata.file);
       fileName = fileMetadata.fileName;
+      ext = path.extname(fileName);
       key = `${folderName}/${Date.now()}-${fileName}`;
     } else {
       ext = path.extname(fileMetadata.originalname);
@@ -66,21 +70,30 @@ export class AwsService {
 
     extractedContentType = contentType || lookup(ext) || 'application/octet-stream';
 
-    const isImageFile = allowedImageFormats.includes(ext);
-    const optimizeBuffer = isImageFile ? await this.optimizeBuffer(bufferFile) : bufferFile;
+    const isImageFile = ALLOWED_IMAGE_EXTENSIONS.includes(ext);
+
+    let processedBuffer = bufferFile;
+
+    if (isImageFile) {
+      if (watermark) processedBuffer = await this.addFullPageWatermark(processedBuffer);
+
+      processedBuffer = await this.optimizeBuffer(processedBuffer);
+    }
 
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
       Key: key,
-      Body: optimizeBuffer,
+      Body: processedBuffer,
       ContentType: extractedContentType,
       ACL: isPublic ? 'public-read' : 'private',
-      ContentLength: optimizeBuffer.length,
+      ContentLength: processedBuffer.length,
     });
 
     const uploadResult = await this.client.send(command);
 
-    if (uploadResult.$metadata.httpStatusCode !== 200) throw new BadRequestException('File upload failed');
+    if (uploadResult.$metadata.httpStatusCode !== 200) {
+      throw new BadRequestException('File upload failed');
+    }
 
     return {
       url: (await this.getFileUrl(key)).url,
@@ -114,12 +127,17 @@ export class AwsService {
     return Buffer.concat(chunks);
   }
 
-  async uploadMultiFiles(folderName: string, files: Express.Multer.File[], isPublic: boolean = false) {
+  async uploadMultiFiles(
+    folderName: string,
+    files: Express.Multer.File[],
+    isPublic: boolean = false,
+    isWatermarked: boolean = false,
+  ): Promise<IUploadSingleFile[] | undefined> {
     const uploadedFiles: IUploadSingleFile[] = [];
 
     try {
       for (const file of files) {
-        const uploadedFile = await this.uploadSingleFile({ fileMetadata: file, folderName, isPublic });
+        const uploadedFile = await this.uploadSingleFile({ fileMetadata: file, folderName, isPublic, watermark: isWatermarked });
 
         uploadedFiles.push(uploadedFile);
       }
@@ -208,6 +226,28 @@ export class AwsService {
     const copyResult = await this.client.send(command);
 
     if (copyResult.$metadata.httpStatusCode !== 200) throw new BadRequestException('Copy file failed.');
+  }
+
+  private async addFullPageWatermark(imageBuffer: Buffer): Promise<Buffer> {
+    const watermarkPath = process.env.WATERMARK_IMAGE_PATH;
+    if (!watermarkPath) return imageBuffer;
+
+    const { width, height } = await sharp(imageBuffer).metadata();
+    if (!width || !height) return imageBuffer;
+
+    const resizedWatermark = await sharp(fs.readFileSync(path.resolve(watermarkPath)))
+      .resize(width, height)
+      .toBuffer();
+
+    const outputBuffer = await sharp(imageBuffer)
+      .composite([
+        {
+          input: resizedWatermark,
+        },
+      ])
+      .toBuffer();
+
+    return outputBuffer;
   }
 
   private optimizeBuffer(buffer: Buffer): Promise<Buffer> {

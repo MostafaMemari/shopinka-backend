@@ -1,6 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
 
 export class CreateGalleryItemDto {
   @IsNumber()
@@ -12,6 +12,15 @@ export class CreateGalleryItemDto {
     required: true,
   })
   galleryId: number;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => {
+    if (typeof value == 'string') return value == 'true';
+    return value;
+  })
+  @ApiPropertyOptional({ type: 'boolean', nullable: true, required: false })
+  isWatermarked?: boolean;
 
   @IsOptional()
   @IsString()

@@ -10,7 +10,7 @@ import { CustomStickerMessages } from './enums/custom-sticker-messages.enum';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { OutputPagination, pagination } from '../../common/utils/pagination.utils';
 import { CustomStickerQueryDto } from './dto/custom-sticker-query-filter.dto';
-import { allowedImageFormats } from '../../common/pipes/file-validator.pipe';
+import { ALLOWED_IMAGE_MIME_TYPES } from '../../common/pipes/file-validator.pipe';
 import { calculateStickerPrice, calculateStickerTotalPrice } from '../../common/utils/functions.utils';
 import { CalculateStickerPriceDto } from './dto/calculate-sticker-price.dto';
 
@@ -29,8 +29,10 @@ export class CustomStickerService {
     if (previewImageId) {
       const image = await this.galleryItemRepository.findOneOrThrow({ where: { id: previewImageId } });
 
-      if (!allowedImageFormats.includes(image.mimetype))
-        throw new BadRequestException(CustomStickerMessages.PreviewImageNotAImage.replaceAll('${formats}', allowedImageFormats.join(',')));
+      if (!ALLOWED_IMAGE_MIME_TYPES.includes(image.mimetype))
+        throw new BadRequestException(
+          CustomStickerMessages.PreviewImageNotAImage.replaceAll('${formats}', ALLOWED_IMAGE_MIME_TYPES.join(',')),
+        );
     }
     const material = await this.materialStickerRepository.findOneOrThrow({ where: { id: materialId } });
     const font = await this.fontRepository.findOneOrThrow({ where: { id: fontId } });
@@ -147,8 +149,10 @@ export class CustomStickerService {
     if (previewImageId) {
       const image = await this.galleryItemRepository.findOneOrThrow({ where: { id: previewImageId } });
 
-      if (!allowedImageFormats.includes(image.mimetype))
-        throw new BadRequestException(CustomStickerMessages.PreviewImageNotAImage.replaceAll('${formats}', allowedImageFormats.join(',')));
+      if (!ALLOWED_IMAGE_MIME_TYPES.includes(image.mimetype))
+        throw new BadRequestException(
+          CustomStickerMessages.PreviewImageNotAImage.replaceAll('${formats}', ALLOWED_IMAGE_MIME_TYPES.join(',')),
+        );
     }
     if (materialId) material = await this.materialStickerRepository.findOneOrThrow({ where: { id: materialId } });
     if (fontId) font = await this.fontRepository.findOneOrThrow({ where: { id: fontId } });
@@ -198,8 +202,10 @@ export class CustomStickerService {
     if (previewImageId) {
       const image = await this.galleryItemRepository.findOneOrThrow({ where: { id: previewImageId } });
 
-      if (!allowedImageFormats.includes(image.mimetype))
-        throw new BadRequestException(CustomStickerMessages.PreviewImageNotAImage.replaceAll('${formats}', allowedImageFormats.join(',')));
+      if (!ALLOWED_IMAGE_MIME_TYPES.includes(image.mimetype))
+        throw new BadRequestException(
+          CustomStickerMessages.PreviewImageNotAImage.replaceAll('${formats}', ALLOWED_IMAGE_MIME_TYPES.join(',')),
+        );
     }
 
     if (materialId) material = await this.materialStickerRepository.findOneOrThrow({ where: { id: materialId } });
