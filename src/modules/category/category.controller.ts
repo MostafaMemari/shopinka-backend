@@ -30,6 +30,12 @@ export class CategoryController {
     return this.categoryService.findAll(queryCategoryDto);
   }
 
+  @Get('sitemap')
+  @SkipAuth()
+  findAllForSitemap() {
+    return this.categoryService.findAllForSitemap();
+  }
+
   @Get(':id')
   @SkipAuth()
   findOne(@Param('id', ParseIntPipe) id: number) {

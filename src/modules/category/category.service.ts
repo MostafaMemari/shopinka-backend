@@ -116,6 +116,37 @@ export class CategoryService {
     );
   }
 
+  async findAllForSitemap() {
+    const categories = await this.categoryRepository.findAll({
+      where: { parent: null },
+      select: { id: true, name: true, slug: true, parentId: true, type: true, createdAt: true, updatedAt: true },
+    });
+
+    const buildTree = async (parent: any, parentSlugPath: string = ''): Promise<any> => {
+      const currentSlugPath = parentSlugPath ? `${parentSlugPath}/${parent.slug}` : parent.slug;
+      parent.slugParent = currentSlugPath;
+
+      const children = await this.categoryRepository.findAll({
+        where: { parentId: parent.id },
+        select: { id: true, name: true, slug: true, parentId: true, type: true, createdAt: true, updatedAt: true },
+      });
+
+      parent.children = [];
+      for (const child of children) {
+        parent.children.push(await buildTree(child, currentSlugPath));
+      }
+
+      return parent;
+    };
+
+    const tree = [];
+    for (const cat of categories) {
+      tree.push(await buildTree(cat));
+    }
+
+    return tree;
+  }
+
   async findOneBySlug(slug: string): Promise<Category | never> {
     return await this.categoryRepository.findOneOrThrow({
       where: { slug },

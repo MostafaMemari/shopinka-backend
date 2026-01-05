@@ -179,6 +179,8 @@ export class ProductService {
         name: true,
         salePrice: true,
         basePrice: true,
+        updatedAt: true,
+        createdAt: true,
         slug: true,
         type: true,
         quantity: true,
