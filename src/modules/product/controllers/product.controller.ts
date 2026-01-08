@@ -40,6 +40,12 @@ export class ProductController {
     return this.productService.findAllPublic(queryPublicProductDto);
   }
 
+  @Post('migrate-slugs')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  async migrateSlugs() {
+    return this.productService.migrateProductSlugs();
+  }
+
   @Patch(':id/default-variant')
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)
   async setDefaultVariant(@Param('id', ParseIntPipe) id: number, @Body() defaultVariantDto: SetDefaultVariantDto, @GetUser() user: User) {
