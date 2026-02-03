@@ -31,6 +31,8 @@ import { BackupModule } from '../backup/backup.module';
 import { FontModule } from '../font/font.module';
 import { MaterialStickerModule } from '../material-sticker/material-sticker.module';
 import { CustomStickerModule } from '../custom-sticker/custom-sticker.module';
+import { Seo404LogModule } from '../seo-404-log/seo-404-log.module';
+import { SeoRedirectModule } from '../seo-redirect/seo-redirect.module';
 
 @Module({
   imports: [
@@ -63,6 +65,8 @@ import { CustomStickerModule } from '../custom-sticker/custom-sticker.module';
     FontModule,
     MaterialStickerModule,
     CustomStickerModule,
+    Seo404LogModule,
+    SeoRedirectModule,
   ],
   controllers: [],
   providers: [

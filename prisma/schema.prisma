@@ -306,6 +306,28 @@ model Product {
   @@index([userId], map: "Product_userId_fkey")
 }
 
+model Seo404Log {
+  id        Int     @id @default(autoincrement())
+  path      String  @unique
+  referrer  String?
+  userAgent String?
+
+  hitCount   Int      @default(1)
+  lastSeenAt DateTime @updatedAt
+
+  createdAt DateTime @default(now())
+}
+
+model SeoRedirect {
+  id         Int       @id @default(autoincrement())
+  fromPath   String    @unique
+  toPath     String
+  statusCode Int
+  hitCount   Int       @default(0)
+  lastHitAt  DateTime?
+  note       String?
+}
+
 model Banner {
   id        Int         @id @default(autoincrement())
   imageId   Int
