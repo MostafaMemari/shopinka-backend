@@ -186,7 +186,7 @@ export class ProductService {
         quantity: true,
         defaultVariantId: true,
         mainImage: includeMainImage && {
-          select: { fileUrl: true, id: true, title: true, description: true },
+          select: { fileUrl: true, thumbnailUrl: true, id: true, title: true, description: true },
         },
         variants: includeVariants && {
           select: {
