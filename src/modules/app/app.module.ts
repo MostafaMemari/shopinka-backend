@@ -1,9 +1,11 @@
+import { RedisModule } from '@nestjs-modules/ioredis';
+import { APP_PIPE } from '@nestjs/core';
+
 import { Module, ValidationPipe } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import envConfig from '../../configs/env.config';
-import { APP_PIPE } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { HttpApiModule } from '../http/http.module';
@@ -33,10 +35,13 @@ import { MaterialStickerModule } from '../material-sticker/material-sticker.modu
 import { CustomStickerModule } from '../custom-sticker/custom-sticker.module';
 import { Seo404LogModule } from '../seo-404-log/seo-404-log.module';
 import { SeoRedirectModule } from '../seo-redirect/seo-redirect.module';
+import { CacheModule } from '../cache/cache.module';
+import { redisConfig } from '../../configs/redis.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot(envConfig()),
+    RedisModule.forRoot(redisConfig()),
     CronModule,
     AuthModule,
     UserModule,
@@ -67,6 +72,7 @@ import { SeoRedirectModule } from '../seo-redirect/seo-redirect.module';
     CustomStickerModule,
     Seo404LogModule,
     SeoRedirectModule,
+    CacheModule,
   ],
   controllers: [],
   providers: [

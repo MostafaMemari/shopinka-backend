@@ -18,4 +18,5 @@ export enum AuthMessages {
   MaxOtpRequests = 'درخواست‌ها تمام شد، پس از {time} دوباره تلاش کنید',
   OtpAlreadySentWithWaitTime = 'کد ارسال شده، پس از {time} دوباره تلاش کنید',
   ProblemSendingSms = 'خطا در ارسال پیامک، بعداً دوباره تلاش کنید',
+  InvalidAccessToken = 'توکن دسترسی نامعتبر است',
 }

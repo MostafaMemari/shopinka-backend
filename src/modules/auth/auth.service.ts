@@ -3,23 +3,27 @@ import {
   ConflictException,
   ForbiddenException,
   HttpException,
-  HttpStatus,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import Redis from 'ioredis';
 import * as dateFns from 'date-fns';
+import { Smsir } from 'sms-typescript/lib';
+import { Role, User } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
+
 import { IGenerateTokens, IRefreshToken } from './auth.interface';
 import { AuthMessages } from './enums/auth.messages';
 import { OtpKeys } from './enums/otp.keys';
 import { VerifyOtpDto } from './dto/verifyOtp.dto';
-import * as bcrypt from 'bcryptjs';
-import { Smsir } from 'sms-typescript/lib';
 import { SendOtpDto } from './dto/authenticate.dto';
-import { UserRepository } from '../user/user.repository';
-import { Role, User } from '@prisma/client';
 import { VerifyMobileDto } from './dto/verify-mobile.dto';
+
+import { UserRepository } from '../user/user.repository';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -29,6 +33,8 @@ export class AuthService {
   private readonly OTP_REQUEST_TIMEOUT_SEC = 3600; //* 1 hour
 
   constructor(
+    @InjectRedis() private readonly redis: Redis,
+
     private readonly jwtService: JwtService,
     private readonly userRepository: UserRepository,
     private readonly prisma: PrismaService,
@@ -55,21 +61,25 @@ export class AuthService {
     return { refreshTokenId: found.id };
   }
 
-  async verifyAccessToken(verifyTokenDto: { accessToken: string }): Promise<never | User> {
+  async verifyAccessToken(verifyTokenDto: { accessToken: string }): Promise<User> {
     try {
       const { ACCESS_TOKEN_SECRET } = process.env;
 
       const verifiedToken = this.jwtService.verify<{ id: number }>(verifyTokenDto.accessToken, { secret: ACCESS_TOKEN_SECRET });
 
-      if (!verifiedToken.id) {
+      if (!verifiedToken?.id) {
         throw new BadRequestException(AuthMessages.InvalidAccessTokenPayload);
       }
 
-      const user = await this.userRepository.findOneOrThrow({ where: { id: verifiedToken.id } });
-
-      return user;
+      return await this.userRepository.findOneOrThrow({
+        where: { id: verifiedToken.id },
+      });
     } catch (error) {
-      throw new HttpException(error.message, error.status || HttpStatus.UNAUTHORIZED);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new UnauthorizedException(AuthMessages.InvalidAccessToken);
     }
   }
 
@@ -121,26 +131,24 @@ export class AuthService {
   }
 
   async sendOtp({ mobile }: SendOtpDto): Promise<{ message: string }> {
-    await this.checkExistingOtp(`${OtpKeys.StoreOtp}${mobile}`);
+    await this.checkExistingOtpRedis(mobile);
 
     const otpCode = this.generateOtp();
 
     await this.sendSms(mobile, otpCode);
 
-    await this.enforceOtpRequestLimit(`${OtpKeys.RequestsOtp}${mobile}`);
-    await this.storeOtp(`${OtpKeys.StoreOtp}${mobile}`, otpCode);
+    await this.enforceOtpRequestLimitRedis(mobile);
+    await this.storeOtpRedis(mobile, otpCode);
 
     return { message: AuthMessages.OtpSentSuccessfully };
   }
 
-  async verifyOtp(verifyOtpDto: VerifyOtpDto): Promise<{ message: string }> {
-    const { mobile, otp } = verifyOtpDto;
+  async verifyOtp({ mobile, otp }: VerifyOtpDto): Promise<{ message: string }> {
+    await this.enforceOtpRequestLimitRedis(mobile);
 
-    await this.enforceOtpRequestLimit(`${OtpKeys.RequestsOtp}${mobile}`);
+    await this.validateOtpRedis(mobile, otp);
 
-    await this.validateOtp(`${OtpKeys.StoreOtp}${mobile}`, otp);
-
-    await this.clearOtpData(mobile);
+    await this.clearOtpRedis(mobile);
 
     return { message: AuthMessages.VerifiedOtpSuccess };
   }
@@ -231,31 +239,6 @@ export class AuthService {
     if (!isValid) throw new BadRequestException(AuthMessages.NotFoundOrInvalidOtpCode);
   }
 
-  private async checkExistingOtp(mobile: string): Promise<void> {
-    const existing = await this.prisma.otpRequest.findFirst({
-      where: {
-        mobile,
-        expiresAt: { gt: new Date() },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
-
-    if (existing) {
-      const remaining = Math.floor((+existing.expiresAt - Date.now()) / 1000);
-      throw new ConflictException(AuthMessages.OtpAlreadySentWithWaitTime.replace('{time}', this.formatSecondsToMinutes(remaining)));
-    }
-  }
-
-  private async storeOtp(mobile: string, otp: string): Promise<void> {
-    const hashedOtp = await bcrypt.hash(otp, 10);
-    const now = new Date();
-    const expiresAt = new Date(now.getTime() + this.OTP_EXPIRATION_SEC * 1000);
-
-    await this.prisma.otpRequest.create({
-      data: { mobile, otp: hashedOtp, createdAt: now, expiresAt },
-    });
-  }
-
   private async enforceOtpRequestLimit(mobile: string): Promise<void> {
     const oneHourAgo = new Date(Date.now() - this.OTP_REQUEST_TIMEOUT_SEC * 1000);
 
@@ -280,5 +263,49 @@ export class AuthService {
     const remainingSeconds = seconds % 60;
 
     return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+  }
+
+  private async storeOtpRedis(mobile: string, otp: string): Promise<void> {
+    const hashedOtp = await bcrypt.hash(otp, 10);
+
+    await this.redis.set(`otp:code:${mobile}`, hashedOtp, 'EX', this.OTP_EXPIRATION_SEC);
+  }
+
+  private async checkExistingOtpRedis(mobile: string): Promise<void> {
+    const ttl = await this.redis.ttl(`otp:code:${mobile}`);
+
+    if (ttl > 0) {
+      throw new ConflictException(AuthMessages.OtpAlreadySentWithWaitTime.replace('{time}', this.formatSecondsToMinutes(ttl)));
+    }
+  }
+
+  private async validateOtpRedis(mobile: string, otp: string): Promise<void> {
+    const storedOtp = await this.redis.get(`otp:code:${mobile}`);
+
+    if (!storedOtp) throw new BadRequestException(AuthMessages.NotFoundOrInvalidOtpCode);
+
+    const isValid = await bcrypt.compare(otp, storedOtp);
+
+    if (!isValid) throw new BadRequestException(AuthMessages.NotFoundOrInvalidOtpCode);
+  }
+
+  private async clearOtpRedis(mobile: string): Promise<void> {
+    await this.redis.del(`otp:code:${mobile}`);
+  }
+
+  private async enforceOtpRequestLimitRedis(mobile: string): Promise<void> {
+    const key = `otp:requests:${mobile}`;
+
+    const requests = await this.redis.incr(key);
+
+    if (requests === 1) {
+      await this.redis.expire(key, this.OTP_REQUEST_TIMEOUT_SEC); // 1 ساعت
+    }
+
+    if (requests > this.OTP_REQUEST_LIMIT) {
+      const ttl = await this.redis.ttl(key);
+
+      throw new ForbiddenException(AuthMessages.MaxOtpRequests.replace('{time}', this.formatSecondsToMinutes(ttl)));
+    }
   }
 }

@@ -1,27 +1,4 @@
 services:
-  ### MySQL ###
-  mysql:
-    image: mysql:8.0
-    container_name: mysql_shopinka
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_HOST: "%"
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    volumes:
-      - mysql_local:/var/lib/mysql
-    ports:
-      - "3306:3306"
-    networks:
-      - app
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   ### Backend API (NestJS) ###
   backend:
     container_name: backend_shopinka
@@ -35,6 +12,8 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - app
     restart: unless-stopped
@@ -44,10 +23,53 @@ services:
       timeout: 3s
       retries: 10
 
-  ### Prisma Migration ###
+  ### MySQL ###
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_shopinka
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - app
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ### Redis ###
+  redis: 
+    container_name: redis_shopinka
+    image: redis:7
+    command: /bin/sh -c "redis-server --requirepass $$REDIS_PASSWORD"
+    env_file:
+      - .env
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    networks:
+      - app
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "$$REDIS_PASSWORD", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
   migrate:
     build:
-      context: ./backend
+      context: .
       dockerfile: Dockerfile
     env_file:
       - .env
@@ -60,7 +82,8 @@ services:
     restart: "no"
 
 volumes:
-  mysql_local:
+  mysql_data:
+  redis_data:
 
 networks:
   app:
