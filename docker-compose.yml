@@ -1,39 +1,66 @@
 services:
-    ### Backend Api ###
-    backend:
-      container_name: backend
-      build:
-        dockerfile: Dockerfile
-      env_file:
-        - ./.env
-      ports:
-        - ${PORT}:${PORT}
-      depends_on:
-        - backend_db
-      volumes:
-        - ./src:/app/src
-      networks: 
-        - app
+  ### MySQL ###
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_shopinka
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql_local:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - app
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-    ### Backend DB ###
-    backend_db:
-      container_name: backend_db
-      image: mysql:latest
-      ports:
-        - ${MYSQL_PORT}:${MYSQL_PORT}
-      env_file:
-        - .env
-      environment:
-        - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
-        - MYSQL_DB=${MYSQL_DB}
-      networks:
-        - app
-      volumes:
-        - backend_db_data:/var/lib/mysql
+  ### Backend API (NestJS) ###
+  backend:
+    container_name: backend_shopinka
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env
+    ports:
+      - "3500:3500"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3500/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  ### Prisma Migration ###
+  migrate:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env
+    depends_on:
+      mysql:
+        condition: service_healthy
+    command: npx prisma migrate deploy
+    networks:
+      - app
+    restart: "no"
 
 volumes:
-  backend_db_data:
+  mysql_local:
 
 networks:
   app:
-    driver: bridge
