@@ -67,19 +67,6 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
-  migrate:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    env_file:
-      - .env
-    depends_on:
-      mysql:
-        condition: service_healthy
-    command: npx prisma migrate deploy
-    networks:
-      - app
-    restart: "no"
 
 volumes:
   mysql_data:
