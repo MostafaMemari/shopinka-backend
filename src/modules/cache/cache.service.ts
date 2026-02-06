@@ -8,8 +8,10 @@ export class CacheService {
 
   async set(key: string, value: any, ttl: number = 30): Promise<void> {
     const data = JSON.stringify(value);
+    const ttlSeconds = Math.ceil(ttl / 1000);
+
     if (ttl) {
-      await this.redis.set(key, data, 'EX', ttl);
+      await this.redis.set(key, data, 'EX', ttlSeconds);
     } else {
       await this.redis.set(key, data);
     }

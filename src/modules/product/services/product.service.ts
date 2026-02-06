@@ -7,7 +7,7 @@ import { GalleryItemRepository } from '../../gallery/repositories/gallery-item.r
 import slugify from 'slugify';
 import { AttributeRepository } from '../../attribute/repositories/attribute.repository';
 import { QueryProductDto } from '../dto/query-product.dto';
-import { pagination } from '../../../common/utils/pagination.utils';
+import { OutputPagination, pagination } from '../../../common/utils/pagination.utils';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
 import { ProductMessages } from '../enums/product-messages.enum';
 import { FavoriteRepository } from '../repositories/favorite.repository';
@@ -21,6 +21,8 @@ import { ProductVariantRepository } from '../repositories/product-variant.reposi
 import { BulkPricingRepository } from '../../bulk-pricing/repositories/bulk-pricing.repository';
 import { CalculateBulkPriceDto } from '../dto/calculate-bulk-price.dto';
 import { CustomStickerRepository } from '../../custom-sticker/custom-sticker.repository';
+import { CacheService } from '../../../modules/cache/cache.service';
+import { buildCacheKey, parseTTL } from '../../../common/utils/functions.utils';
 
 @Injectable()
 export class ProductService {
@@ -35,6 +37,7 @@ export class ProductService {
     private readonly productVariantRepository: ProductVariantRepository,
     private readonly bulkPricingRepository: BulkPricingRepository,
     private readonly customStickerRepository: CustomStickerRepository,
+    private readonly cacheService: CacheService,
   ) {}
 
   async create(userId: number, createProductDto: CreateProductDto): Promise<{ message: string; product: Product }> {
@@ -79,7 +82,7 @@ export class ProductService {
     return { message: ProductMessages.CreatedProductSuccess, product: newProduct };
   }
 
-  async findAllPublic({ page, take, ...query }: QueryPublicProductDto): Promise<unknown> {
+  async findAllPublic({ page, take, ...query }: QueryPublicProductDto): Promise<OutputPagination<Product>> {
     const paginationDto = { page, take };
 
     const {
@@ -96,6 +99,10 @@ export class ProductService {
       categoryIds,
       includeBulkPrices,
     } = query;
+
+    const cacheKey = buildCacheKey(Prisma.ModelName.Product, query, page, take);
+    const cachedProducts = await this.cacheService.get<Product[] | null>(cacheKey);
+    if (cachedProducts) return pagination(paginationDto, cachedProducts);
 
     const filters: Prisma.ProductWhereInput = {
       status: ProductStatus.PUBLISHED,
@@ -201,6 +208,10 @@ export class ProductService {
       },
     });
 
+    const cacheTtl = parseTTL(process.env.CACHE_TTL);
+
+    await this.cacheService.set(cacheKey, products, cacheTtl);
+
     return pagination(paginationDto, products);
   }
 
@@ -255,7 +266,7 @@ export class ProductService {
     return existingFavorite ? true : false;
   }
 
-  async findAllAdmin({ page, take, ...queryProductDto }: QueryProductDto): Promise<unknown> {
+  async findAllAdmin({ page, take, ...queryProductDto }: QueryProductDto): Promise<OutputPagination<Product>> {
     const paginationDto = { page, take };
     const {
       description,

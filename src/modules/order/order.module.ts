@@ -14,6 +14,7 @@ import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 import { ShippingRepository } from '../shipping/repositories/shipping.repository';
 import { CartService } from '../cart/cart.service';
 import { AddressSnapshotRepository } from '../address/repositories/address-snapshot.repository';
+import { CacheService } from '../cache/cache.service';
 
 @Module({
   controllers: [OrderController],
@@ -32,6 +33,7 @@ import { AddressSnapshotRepository } from '../address/repositories/address-snaps
     CartItemRepository,
     ShippingRepository,
     CartService,
+    CacheService,
   ],
 })
 export class OrderModule {}

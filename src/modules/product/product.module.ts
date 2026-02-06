@@ -16,6 +16,7 @@ import { OrderItemRepository } from '../order/repositories/order-item.repository
 import { TagRepository } from '../tag/tag.repository';
 import { BulkPricingRepository } from '../bulk-pricing/repositories/bulk-pricing.repository';
 import { CustomStickerRepository } from '../custom-sticker/custom-sticker.repository';
+import { CacheService } from '../cache/cache.service';
 
 @Module({
   controllers: [ProductController, ProductVariantController],
@@ -35,6 +36,7 @@ import { CustomStickerRepository } from '../custom-sticker/custom-sticker.reposi
     OrderItemRepository,
     TagRepository,
     CustomStickerRepository,
+    CacheService,
   ],
   exports: [
     ProductService,

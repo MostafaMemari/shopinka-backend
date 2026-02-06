@@ -5,7 +5,6 @@ import {
   HttpException,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -15,6 +14,7 @@ import * as dateFns from 'date-fns';
 import { Smsir } from 'sms-typescript/lib';
 import { Role, User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
+import { randomUUID } from 'crypto';
 
 import { IGenerateTokens, IRefreshToken } from './auth.interface';
 import { AuthMessages } from './enums/auth.messages';
@@ -24,7 +24,6 @@ import { VerifyMobileDto } from './dto/verify-mobile.dto';
 
 import { UserRepository } from '../user/user.repository';
 import { PrismaService } from '../prisma/prisma.service';
-import { randomUUID } from 'crypto';
 
 @Injectable()
 export class AuthService {

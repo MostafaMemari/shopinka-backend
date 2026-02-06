@@ -1,5 +1,6 @@
-import { Font, MaterialSticker } from '@prisma/client';
+import { Font, MaterialSticker, Prisma } from '@prisma/client';
 import sharp from 'sharp';
+import { createHash } from 'node:crypto';
 
 type SortedObject<T = object> = (object: T) => T;
 
@@ -175,3 +176,35 @@ export const calculateCartTotal = (items: any[]) => {
     return total + price * item.quantity;
   }, 0);
 };
+
+export function parseTTL(value: string): number {
+  const match = value.trim().match(/^(\d+)\s*(ms|[smhdw])$/i);
+
+  if (!match) {
+    throw new Error('Invalid CACHE_TTL format. Examples: 500ms | 10s | 5m | 2h | 1d | 1w');
+  }
+
+  const amount = Number(match[1]);
+  const unit = match[2].toLowerCase();
+
+  const multipliers: Record<string, number> = {
+    ms: 1,
+    s: 1000,
+    m: 60 * 1000,
+    h: 60 * 60 * 1000,
+    d: 24 * 60 * 60 * 1000,
+    w: 7 * 24 * 60 * 60 * 1000,
+  };
+
+  return amount * multipliers[unit];
+}
+
+export function canonicalize(obj: Record<string, any>): string {
+  return JSON.stringify(sortObject(obj));
+}
+
+export function buildCacheKey(model: Prisma.ModelName, filters: Record<string, any>, page: number, take: number): string {
+  const hash = createHash('md5').update(canonicalize(filters)).digest('hex').slice(0, 10);
+
+  return `${model}:${hash}:page=${page}_take=${take}`;
+}

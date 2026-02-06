@@ -1,9 +1,10 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { CacheService } from '../cache/cache.service';
+import { Prisma, PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
-  constructor() {
+  constructor(private readonly cacheService: CacheService) {
     super();
   }
 
@@ -22,25 +23,18 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 
   useMiddleware(): void {
     this.$use(async (params, next) => {
-      const { action } = params;
+      const { action, model } = params;
 
-      if (['create', 'update', 'delete', 'updateMany', 'deleteMany', 'createMany', 'createManyAndReturn'].includes(action)) {
+      if (
+        ['create', 'update', 'delete', 'updateMany', 'deleteMany', 'createMany', 'createManyAndReturn', 'updateManyAndReturn'].includes(
+          action,
+        )
+      ) {
         //* Clear cache
-        // for (const key in CacheKeys) await this.cacheService.delByPattern(`${CacheKeys[key]}*`);
+        await this.cacheService.delByPattern(`${Prisma.ModelName[model]}:*`);
       }
 
       return next(params);
     });
-  }
-
-  async cleanDatabase() {
-    if (process.env.NODE_ENV == 'production') return;
-
-    const models = Reflect.ownKeys(this).filter((key) => key[0] !== '_');
-
-    await this.banner.deleteMany();
-    await this.gallery.deleteMany();
-
-    return Promise.all(models.map((modelKey) => this[modelKey].deleteMany?.()));
   }
 }
