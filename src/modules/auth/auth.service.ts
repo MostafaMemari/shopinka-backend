@@ -18,13 +18,13 @@ import * as bcrypt from 'bcryptjs';
 
 import { IGenerateTokens, IRefreshToken } from './auth.interface';
 import { AuthMessages } from './enums/auth.messages';
-import { OtpKeys } from './enums/otp.keys';
 import { VerifyOtpDto } from './dto/verifyOtp.dto';
 import { SendOtpDto } from './dto/authenticate.dto';
 import { VerifyMobileDto } from './dto/verify-mobile.dto';
 
 import { UserRepository } from '../user/user.repository';
 import { PrismaService } from '../prisma/prisma.service';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -44,21 +44,24 @@ export class AuthService {
     return Math.floor(100_000 + Math.random() * 900_000).toString();
   }
 
-  async validateRefreshToken(refreshToken: string): Promise<{ refreshTokenId: number }> {
-    const jwtResult = this.jwtService.decode<{ id: number } | undefined>(refreshToken);
-    if (!jwtResult?.id) throw new BadRequestException(AuthMessages.InvalidRefreshToken);
+  async validateRefreshToken(refreshToken: string): Promise<{ userId: number; jti: string }> {
+    const payload = this.jwtService.verify<{ id: number; jti: string }>(refreshToken, { secret: process.env.REFRESH_TOKEN_SECRET });
 
-    const found = await this.prisma.refreshToken.findFirst({
-      where: {
-        userId: jwtResult.id,
-        token: refreshToken,
-        expiresAt: { gt: new Date() },
-      },
-    });
+    if (!payload?.jti) {
+      throw new BadRequestException(AuthMessages.InvalidRefreshToken);
+    }
 
-    if (!found) throw new NotFoundException(AuthMessages.NotFoundRefreshToken);
+    const storedUserId = await this.redis.get(`refresh:${payload.jti}`);
 
-    return { refreshTokenId: found.id };
+    if (!storedUserId) {
+      throw new UnauthorizedException(AuthMessages.NotFoundRefreshToken);
+    }
+
+    if (Number(storedUserId) !== payload.id) {
+      throw new UnauthorizedException(AuthMessages.InvalidRefreshToken);
+    }
+
+    return { userId: payload.id, jti: payload.jti };
   }
 
   async verifyAccessToken(verifyTokenDto: { accessToken: string }): Promise<User> {
@@ -84,7 +87,12 @@ export class AuthService {
   }
 
   async generateTokens(user: { id: number }): Promise<IGenerateTokens> {
-    const payload = { id: user.id };
+    const jti = randomUUID();
+
+    const payload = {
+      id: user.id,
+      jti,
+    };
 
     const accessToken = this.jwtService.sign(payload, {
       secret: process.env.ACCESS_TOKEN_SECRET,
@@ -92,40 +100,42 @@ export class AuthService {
     });
 
     const refreshToken = this.jwtService.sign(payload, {
-      expiresIn: process.env.REFRESH_TOKEN_EXPIRE_TIME,
       secret: process.env.REFRESH_TOKEN_SECRET,
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRE_TIME,
     });
 
-    const parseDays = Number.parseInt(process.env.REFRESH_TOKEN_EXPIRE_TIME);
+    const parseDays: number = Number.parseInt(process.env.REFRESH_TOKEN_EXPIRE_TIME);
     const now = new Date();
-    const expiresAt = dateFns.addDays(now, parseDays);
+    const futureDate = dateFns.addDays(now, parseDays);
+    const refreshTokenExpireTime: number = dateFns.differenceInSeconds(futureDate, now);
 
-    await this.prisma.refreshToken.create({
-      data: {
-        token: refreshToken,
-        userId: user.id,
-        expiresAt,
-      },
-    });
+    await this.redis.set(`refresh:${jti}`, user.id.toString(), 'EX', refreshTokenExpireTime);
 
     return { accessToken, refreshToken };
   }
 
   async refreshToken({ refreshToken }: { refreshToken: string }): Promise<IRefreshToken> {
-    await this.validateRefreshToken(refreshToken);
+    const { userId, jti } = await this.validateRefreshToken(refreshToken);
 
-    const { REFRESH_TOKEN_SECRET, ACCESS_TOKEN_SECRET, ACCESS_TOKEN_EXPIRE_TIME } = process.env;
+    // await this.redis.del(`refresh:${jti}`);
 
-    const { id } = this.jwtService.verify<{ id: number }>(refreshToken, { secret: REFRESH_TOKEN_SECRET });
+    const payload = { id: userId, jti };
 
-    const newAccessToken = this.jwtService.sign({ id }, { secret: ACCESS_TOKEN_SECRET, expiresIn: ACCESS_TOKEN_EXPIRE_TIME });
+    const accessToken = this.jwtService.sign(payload, {
+      secret: process.env.ACCESS_TOKEN_SECRET,
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME,
+    });
 
-    return { accessToken: newAccessToken, message: AuthMessages.RefreshedTokenSuccess };
+    return {
+      accessToken: accessToken,
+      message: AuthMessages.RefreshedTokenSuccess,
+    };
   }
 
   async signout({ refreshToken }: { refreshToken: string }) {
-    const { refreshTokenId } = await this.validateRefreshToken(refreshToken);
-    await this.prisma.refreshToken.delete({ where: { id: refreshTokenId } });
+    const { jti } = await this.validateRefreshToken(refreshToken);
+
+    await this.redis.del(`refresh:${jti}`);
 
     return { message: AuthMessages.SignoutSuccess };
   }
@@ -180,29 +190,33 @@ export class AuthService {
   async verifyAuthenticateOtp(verifyOtpDto: VerifyOtpDto): Promise<{ message: string } & IGenerateTokens> {
     const { mobile, otp } = verifyOtpDto;
 
-    await this.enforceOtpRequestLimit(`${OtpKeys.RequestsOtp}${mobile}`);
+    await this.validateOtpRedis(mobile, otp);
 
-    await this.validateOtp(`${OtpKeys.StoreOtp}${mobile}`, otp);
-
-    await this.clearOtpData(mobile);
+    let jwtTokens: IGenerateTokens;
 
     const existingUser = await this.userRepository.findOne({ where: { mobile } });
 
     if (existingUser) {
-      const jwtTokens = await this.generateTokens({ id: existingUser.id });
+      jwtTokens = await this.generateTokens({ id: existingUser.id });
+    } else {
+      const usersCount = await this.userRepository.count();
+      const role = usersCount === 0 ? Role.SUPER_ADMIN : Role.CUSTOMER;
 
-      return { message: AuthMessages.VerifiedOtpSuccess, ...jwtTokens };
+      const user = await this.userRepository.create({
+        mobile,
+        isVerifiedMobile: true,
+        role,
+      });
+
+      jwtTokens = await this.generateTokens({ id: user.id });
     }
 
-    const usersCount = await this.userRepository.count();
+    await this.clearOtpRedisAll(mobile);
 
-    const userRole = usersCount == 0 ? Role.SUPER_ADMIN : Role.CUSTOMER;
-
-    const user = await this.userRepository.create({ mobile, isVerifiedMobile: true, role: userRole });
-
-    const jwtTokens = await this.generateTokens({ id: user.id });
-
-    return { message: AuthMessages.VerifiedOtpSuccess, ...jwtTokens };
+    return {
+      message: AuthMessages.VerifiedOtpSuccess,
+      ...jwtTokens,
+    };
   }
 
   private async sendSms(mobile: string, verifyCode: string): Promise<void | never> {
@@ -214,47 +228,6 @@ export class AuthService {
       if (result.data?.status !== 1) throw new InternalServerErrorException(AuthMessages.ProblemSendingSms);
     } else {
       console.log(mobile, verifyCode);
-    }
-  }
-
-  private async clearOtpData(mobile: string): Promise<void> {
-    await this.prisma.otpRequest.deleteMany({
-      where: { mobile: `${OtpKeys.StoreOtp}${mobile}`, expiresAt: { gt: new Date() } },
-    });
-  }
-
-  private async validateOtp(mobile: string, otp: string): Promise<void> {
-    const storedOtp = await this.prisma.otpRequest.findFirst({
-      where: {
-        mobile,
-        expiresAt: { gt: new Date() },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
-
-    if (!storedOtp) throw new BadRequestException(AuthMessages.NotFoundOrInvalidOtpCode);
-
-    const isValid = await bcrypt.compare(otp, storedOtp.otp);
-
-    if (!isValid) throw new BadRequestException(AuthMessages.NotFoundOrInvalidOtpCode);
-  }
-
-  private async enforceOtpRequestLimit(mobile: string): Promise<void> {
-    const oneHourAgo = new Date(Date.now() - this.OTP_REQUEST_TIMEOUT_SEC * 1000);
-
-    const recentRequests = await this.prisma.otpRequest.findMany({
-      where: {
-        mobile,
-        createdAt: { gte: oneHourAgo },
-      },
-    });
-
-    if (recentRequests.length >= this.OTP_REQUEST_LIMIT) {
-      const firstRequest = recentRequests[0];
-      const secondsPassed = Math.floor((Date.now() - +firstRequest.createdAt) / 1000);
-      const remaining = this.OTP_REQUEST_TIMEOUT_SEC - secondsPassed;
-
-      throw new ForbiddenException(AuthMessages.MaxOtpRequests.replace('{time}', this.formatSecondsToMinutes(remaining)));
     }
   }
 
@@ -299,7 +272,7 @@ export class AuthService {
     const requests = await this.redis.incr(key);
 
     if (requests === 1) {
-      await this.redis.expire(key, this.OTP_REQUEST_TIMEOUT_SEC); // 1 ساعت
+      await this.redis.expire(key, this.OTP_REQUEST_TIMEOUT_SEC);
     }
 
     if (requests > this.OTP_REQUEST_LIMIT) {
@@ -307,5 +280,9 @@ export class AuthService {
 
       throw new ForbiddenException(AuthMessages.MaxOtpRequests.replace('{time}', this.formatSecondsToMinutes(ttl)));
     }
+  }
+
+  private async clearOtpRedisAll(mobile: string): Promise<void> {
+    await this.redis.del(`otp:code:${mobile}`, `otp:requests:${mobile}`);
   }
 }

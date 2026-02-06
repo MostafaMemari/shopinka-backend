@@ -111,7 +111,6 @@ model User {
   Page             Page[]
   products         Product[]
   productVariants  ProductVariant[]
-  RefreshToken     RefreshToken[]
   seoMeta          SeoMeta[]
   shippings        Shipping[]
   shippingInfos    ShippingInfo[]
@@ -119,17 +118,6 @@ model User {
   transactions     Transaction[]
   bulkPrices       BulkPricing[]
   customStickers   CustomSticker[]
-}
-
-model RefreshToken {
-  id        Int      @id @default(autoincrement())
-  token     String   @unique
-  userId    Int
-  createdAt DateTime @default(now())
-  expiresAt DateTime
-  user      User     @relation(fields: [userId], references: [id])
-
-  @@index([userId], map: "RefreshToken_userId_fkey")
 }
 
 model OtpRequest {
