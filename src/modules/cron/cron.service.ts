@@ -9,8 +9,8 @@ export class CronService {
     private readonly backupService: BackupService,
   ) {}
 
-  // @Cron(CronExpression.EVERY_12_HOURS)
-  // async handleCreateBackup() {
-  //   await this.backupService.create();
-  // }
+  @Cron(CronExpression.EVERY_12_HOURS, { timeZone: 'Asia/Tehran' })
+  async handleCreateBackup() {
+    await this.backupService.create();
+  }
 }

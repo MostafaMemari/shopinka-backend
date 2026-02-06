@@ -8,6 +8,8 @@ import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repo
 import { OutputPagination, pagination } from '../../common/utils/pagination.utils';
 import { FontQueryDto } from './dto/font-query-filter.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { buildCacheKey, parseTTL } from 'src/common/utils/functions.utils';
+import { CacheService } from '../cache/cache.service';
 
 @Injectable()
 export class FontService {
@@ -15,6 +17,7 @@ export class FontService {
     private readonly fontRepository: FontRepository,
     private readonly prismaService: PrismaService,
     private readonly galleryItemRepository: GalleryItemRepository,
+    private readonly cacheService: CacheService,
   ) {}
 
   async create(createFontDto: CreateFontDto): Promise<{ message: string; font: Font }> {
@@ -34,6 +37,10 @@ export class FontService {
 
   async findAll({ page, take, ...fontQueryDto }: FontQueryDto): Promise<OutputPagination<Font>> {
     const paginationDto = { page, take };
+
+    const cacheKey = buildCacheKey(Prisma.ModelName.Font, fontQueryDto, page, take);
+    const cachedFonts = await this.cacheService.get<Font[] | null>(cacheKey);
+    if (cachedFonts) return pagination(paginationDto, cachedFonts);
 
     const {
       endDate,
@@ -72,6 +79,9 @@ export class FontService {
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
       include,
     });
+
+    const cacheTtl = parseTTL(process.env.CACHE_TTL);
+    await this.cacheService.set(cacheKey, fonts, cacheTtl);
 
     return pagination(paginationDto, fonts);
   }

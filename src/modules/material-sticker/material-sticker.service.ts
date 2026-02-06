@@ -1,18 +1,21 @@
+import { MaterialSticker, Prisma } from '@prisma/client';
 import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateMaterialStickerDto } from './dto/create-material-sticker.dto';
 import { UpdateMaterialStickerDto } from './dto/update-material-sticker.dto';
 import { MaterialStickerRepository } from './material-sticker.repository';
-import { MaterialSticker, Prisma } from '@prisma/client';
 import { MaterialStickerMessages } from './enums/material-sticker-messages.enum';
 import { MaterialStickerQueryFilterDto } from './dto/material-sticker-query-filter.dto';
 import { OutputPagination, pagination } from 'src/common/utils/pagination.utils';
 import { PrismaService } from '../prisma/prisma.service';
+import { buildCacheKey, parseTTL } from '../../common/utils/functions.utils';
+import { CacheService } from '../cache/cache.service';
 
 @Injectable()
 export class MaterialStickerService {
   constructor(
     private readonly materialStickerRepository: MaterialStickerRepository,
     private readonly prismaService: PrismaService,
+    private readonly cacheService: CacheService,
   ) {}
 
   async create(createMaterialStickerDto: CreateMaterialStickerDto): Promise<{ message: string; materialSticker: MaterialSticker }> {
@@ -32,6 +35,10 @@ export class MaterialStickerService {
 
     const { endDate, sortBy, sortDirection, startDate, name, backgroundFrom, backgroundTo, colorCode, pricePerCM, profitPercent, surface } =
       materialQueryDto;
+
+    const cacheKey = buildCacheKey(Prisma.ModelName.MaterialSticker, materialQueryDto, page, take);
+    const cachedMaterials = await this.cacheService.get<MaterialSticker[] | null>(cacheKey);
+    if (cachedMaterials) return pagination(paginationDto, cachedMaterials);
 
     const filters: Prisma.MaterialStickerWhereInput = {};
 
@@ -53,6 +60,9 @@ export class MaterialStickerService {
       where: filters,
       orderBy: { [sortBy || 'createdAt']: sortDirection || 'desc' },
     });
+
+    const cacheTtl = parseTTL(process.env.CACHE_TTL);
+    await this.cacheService.set(cacheKey, materials, cacheTtl);
 
     return pagination(paginationDto, materials);
   }

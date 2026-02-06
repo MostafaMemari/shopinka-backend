@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { parseDbUrl } from '../../common/utils/functions.utils';
 import { AwsService } from '../s3AWS/s3AWS.service';
 import * as fs from 'fs';
@@ -44,7 +44,8 @@ export class BackupService {
     } catch (error) {
       filePath || fs.rmSync(filePath, { force: true });
 
-      throw new HttpException(error.message, error.status || error.statusCode);
+      // throw new HttpException(error.message, error.status || error.statusCode);
+      throw new InternalServerErrorException('Internal server error');
     }
   }
 
@@ -72,7 +73,8 @@ export class BackupService {
     } catch (error) {
       fs.rmSync(filePath, { force: true });
 
-      throw new HttpException(error.message, error.status || error.statusCode);
+      // throw new HttpException(error.message, error.status || error.statusCode);
+      throw new InternalServerErrorException('Internal server error');
     }
   }
 }

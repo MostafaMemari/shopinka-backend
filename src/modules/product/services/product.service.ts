@@ -209,7 +209,6 @@ export class ProductService {
     });
 
     const cacheTtl = parseTTL(process.env.CACHE_TTL);
-
     await this.cacheService.set(cacheKey, products, cacheTtl);
 
     return pagination(paginationDto, products);

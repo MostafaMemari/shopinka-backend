@@ -1,21 +1,23 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import slugify from 'slugify';
+import { Category, Prisma } from '@prisma/client';
+
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryRepository } from './category.repository';
 import { GalleryItemRepository } from '../gallery/repositories/gallery-item.repository';
-import { Category, Prisma } from '@prisma/client';
 import { QueryCategoryDto } from './dto/query-category.dto';
-import { sortObject } from '../../common/utils/functions.utils';
-import { CacheKeys } from '../../common/enums/cache.enum';
+import { buildCacheKey, parseTTL } from '../../common/utils/functions.utils';
 import { pagination } from '../../common/utils/pagination.utils';
 import { CategoryMessages } from './enums/category-messages.enum';
-import slugify from 'slugify';
+import { CacheService } from '../cache/cache.service';
 
 @Injectable()
 export class CategoryService {
   constructor(
     private readonly categoryRepository: CategoryRepository,
     private readonly galleryItemRepository: GalleryItemRepository,
+    private readonly cacheService: CacheService,
   ) {}
 
   async create(userId: number, createCategoryDto: CreateCategoryDto): Promise<{ message: string; category: Category }> {
@@ -61,6 +63,10 @@ export class CategoryService {
       includeOnlyTopLevel,
     } = queryCategoryDto;
 
+    const cacheKey = buildCacheKey(Prisma.ModelName.Product, queryCategoryDto, page, take);
+    const cachedCategories = await this.cacheService.get<Category[] | null>(cacheKey);
+    if (cachedCategories) return pagination(paginationDto, cachedCategories);
+
     const filters: Prisma.CategoryWhereInput = {};
 
     if (type) filters.type = type;
@@ -91,11 +97,15 @@ export class CategoryService {
     });
 
     let resultCategories = categories;
+
     if (includeChildren && childrenDepth > 0) {
       resultCategories = await Promise.all(
         categories.map(async (category) => await this.loadChildren(category.id, include, childrenDepth)),
       );
     }
+
+    const cacheTtl = parseTTL(process.env.CACHE_TTL);
+    await this.cacheService.set(cacheKey, categories, cacheTtl);
 
     return { ...pagination(paginationDto, resultCategories) };
   }
