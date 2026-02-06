@@ -22,4 +22,5 @@ COPY --from=builder /app/prisma ./prisma
 COPY package.json ./
 
 EXPOSE 3500
-CMD ["node", "dist/main.js"]
+
+ENTRYPOINT ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
