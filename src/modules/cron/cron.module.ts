@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PrismaModule } from '../prisma/prisma.module';
 import { ExpiredOrdersCron } from './expired-orders.cron';
-import { OtpCleanupCron } from './otp-cleanup.cron';
 import { CartService } from '../cart/cart.service';
 import { OrderService } from '../order/order.service';
 import { OrderRepository } from '../order/repositories/order.repository';
@@ -20,7 +19,6 @@ import { BackupModule } from '../backup/backup.module';
 @Module({
   imports: [ScheduleModule.forRoot(), PrismaModule, BackupModule],
   providers: [
-    OtpCleanupCron,
     ExpiredOrdersCron,
     CartService,
     OrderService,
