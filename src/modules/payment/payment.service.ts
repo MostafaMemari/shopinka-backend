@@ -58,7 +58,7 @@ export class PaymentService {
       }
 
       this.logger.log('Expired transactions processing completed.');
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Error processing stale transactions: ${error.message}`, error.stack);
     }
   }

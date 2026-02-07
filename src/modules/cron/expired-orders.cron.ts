@@ -27,6 +27,10 @@ export class ExpiredOrdersCron {
       include: { items: true },
     })) as (Order & { items: OrderItem[] })[];
 
+    if (expiredOrders.length === 0) {
+      return;
+    }
+
     for (const order of expiredOrders) {
       if (!order.userId) continue;
 
@@ -47,8 +51,8 @@ export class ExpiredOrdersCron {
           data: { status: OrderStatus.CANCELLED },
         });
 
-        this.logger.warn(`Order ${order.id} expired and canceled. Items attempted to return to cart.`);
-      } catch (error) {
+        this.logger.warn(`Order ${order.id} expired and canceled. Items returned to cart.`);
+      } catch (error: any) {
         this.logger.error(`Failed processing expired order ${order.id}: ${error.message}`, error.stack);
       }
     }

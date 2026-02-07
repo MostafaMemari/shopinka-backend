@@ -29,7 +29,6 @@ import { ContactModule } from '../contact/contact.module';
 import { CronModule } from '../cron/cron.module';
 import { BannerModule } from '../banner/banner.module';
 import { BulkPricingModule } from '../bulk-pricing/bulk-pricing.module';
-import { BackupModule } from '../backup/backup.module';
 import { FontModule } from '../font/font.module';
 import { MaterialStickerModule } from '../material-sticker/material-sticker.module';
 import { CustomStickerModule } from '../custom-sticker/custom-sticker.module';
@@ -66,7 +65,6 @@ import { redisConfig } from '../../configs/redis.config';
     ContactModule,
     BannerModule,
     BulkPricingModule,
-    BackupModule,
     FontModule,
     MaterialStickerModule,
     CustomStickerModule,
