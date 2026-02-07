@@ -15,36 +15,42 @@ export class BackupService {
   constructor(private readonly awsService: AwsService) {}
 
   async create(): Promise<{ message: string }> {
-    let filePath: null | string = null;
+    let filePath: string | null = null;
+
     try {
       const { dbName, host, password, port } = parseDbUrl(process.env.DATABASE_URL);
 
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const fileName = `backup-${timestamp}.sql`;
-      filePath = `${process.cwd()}/asserts/created-backups/${fileName}`;
+      filePath = path.join(process.cwd(), 'asserts/created-backups', fileName);
 
       fs.mkdirSync(path.dirname(filePath), { recursive: true });
 
-      const command = `MYSQL_PWD=${password} mysqldump -u root -h ${host} -P ${port} ${dbName} > ${filePath}`;
+      const command = `mysqldump -u root -h ${host} -P ${port} ${dbName} > "${filePath}"`;
 
-      await execPromise(command);
+      await execPromise(command, {
+        env: {
+          ...process.env,
+          MYSQL_PWD: password,
+        },
+      });
 
-      fs.readFileSync(filePath);
+      const fileBuffer = fs.readFileSync(filePath);
 
       await this.awsService.uploadSingleFile({
         contentType: 'application/sql',
         isPublic: false,
         folderName: 'backups',
-        fileMetadata: { file: fs.readFileSync(filePath), fileName },
+        fileMetadata: { file: fileBuffer, fileName },
       });
 
       fs.unlinkSync(filePath);
 
       return { message: BackupMessages.CreatedBackupSuccess };
     } catch (error: any) {
-      filePath || fs.rmSync(filePath, { force: true });
+      if (filePath) fs.rmSync(filePath, { force: true });
 
-      throw new HttpException(error.message, error.status || error.statusCode);
+      throw new HttpException(error.message || 'Backup failed', error.status || 500);
     }
   }
 
@@ -52,21 +58,24 @@ export class BackupService {
     await this.create();
 
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const filePath = `${process.cwd()}/asserts/restored-backups/${timestamp}.sql`;
+    const filePath = path.join(process.cwd(), 'asserts/restored-backups', `${timestamp}.sql`);
 
     try {
       const { dbName, host, password, port } = parseDbUrl(process.env.DATABASE_URL);
 
-      console.log({ dbName, host, password, port });
-
       const backupBuffer = await this.awsService.getFileBuffer(key);
 
-      fs.mkdirSync(path.dirname(filePath));
+      fs.mkdirSync(path.dirname(filePath), { recursive: true });
       await fs.promises.writeFile(filePath, backupBuffer);
 
-      const command = `MYSQL_PWD=${password} mysql -u root -h ${host} -P ${port} -D ${dbName} < ${filePath}`;
+      const command = `mysql -u root -h ${host} -P ${port} ${dbName} < "${filePath}"`;
 
-      await execPromise(command);
+      await execPromise(command, {
+        env: {
+          ...process.env,
+          MYSQL_PWD: password,
+        },
+      });
 
       fs.unlinkSync(filePath);
 
@@ -74,7 +83,7 @@ export class BackupService {
     } catch (error: any) {
       fs.rmSync(filePath, { force: true });
 
-      throw new HttpException(error.message, error.status || error.statusCode);
+      throw new HttpException(error.message || 'Restore failed', error.status || 500);
     }
   }
 }
