@@ -13,6 +13,8 @@ RUN pnpm build
 FROM node:20-alpine AS runner
 WORKDIR /app
 
+RUN apk add --no-cache mysql-client
+
 ENV NODE_ENV=production
 ENV PORT=3500
 
@@ -24,3 +26,6 @@ COPY package.json ./
 EXPOSE 3500
 
 ENTRYPOINT ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
+
+
+

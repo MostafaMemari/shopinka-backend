@@ -1,4 +1,4 @@
-import { HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { parseDbUrl } from '../../common/utils/functions.utils';
 import { AwsService } from '../s3AWS/s3AWS.service';
 import * as fs from 'fs';
@@ -41,11 +41,10 @@ export class BackupService {
       fs.unlinkSync(filePath);
 
       return { message: BackupMessages.CreatedBackupSuccess };
-    } catch (error) {
+    } catch (error: any) {
       filePath || fs.rmSync(filePath, { force: true });
 
-      // throw new HttpException(error.message, error.status || error.statusCode);
-      throw new InternalServerErrorException('Internal server error');
+      throw new HttpException(error.message, error.status || error.statusCode);
     }
   }
 
@@ -57,6 +56,8 @@ export class BackupService {
 
     try {
       const { dbName, host, password, port } = parseDbUrl(process.env.DATABASE_URL);
+
+      console.log({ dbName, host, password, port });
 
       const backupBuffer = await this.awsService.getFileBuffer(key);
 
@@ -70,11 +71,10 @@ export class BackupService {
       fs.unlinkSync(filePath);
 
       return { message: BackupMessages.RestoredBackupSuccess };
-    } catch (error) {
+    } catch (error: any) {
       fs.rmSync(filePath, { force: true });
 
-      // throw new HttpException(error.message, error.status || error.statusCode);
-      throw new InternalServerErrorException('Internal server error');
+      throw new HttpException(error.message, error.status || error.statusCode);
     }
   }
 }
