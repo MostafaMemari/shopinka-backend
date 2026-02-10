@@ -6,7 +6,7 @@ on:
 
 env:
   SERVICE_NAME: Shopinka Backend
-  SERVICE_PATH: ~/projects/shopinka/shopinka-backend/
+  SERVICE_PATH: /home/deploy/projects/shopinka/shopinka-backend
 
 jobs:
   deploy:
