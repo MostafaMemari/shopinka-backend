@@ -1,0 +1,56 @@
+name: Deploy Shopinka Backend
+
+on:
+  push:
+    branches: ['main']
+
+env:
+  SERVICE_NAME: Shopinka Backend
+  SERVICE_PATH: ~/projects/shopinka/shopinka-backend
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Telegram - Deploy Started
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -d text=$'🟡 Deploy STARTED\nService: ${{ env.SERVICE_NAME }}\nRepo: ${{ github.repository }}\nCommit:\nhttps://github.com/${{ github.repository }}/commit/${{ github.sha }}'
+
+      - name: Telegram - Connecting to VPS
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -d text=$'🔐 Connecting to VPS\nService: ${{ env.SERVICE_NAME }}'
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            cd $SERVICE_PATH
+            git fetch origin main
+            git reset --hard origin/main
+            docker compose up --build -d
+
+      - name: Telegram - Deploy Success
+        if: success()
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -d text=$'✅ Deploy SUCCESS\nService: ${{ env.SERVICE_NAME }}\nRun:\nhttps://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+
+      - name: Telegram - Deploy Failed
+        if: failure()
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -d text=$'❌ Deploy FAILED\nService: ${{ env.SERVICE_NAME }}\nRun:\nhttps://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
