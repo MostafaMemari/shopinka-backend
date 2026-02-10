@@ -68,6 +68,7 @@ export class GalleryItemService {
     let thumbnails: IUploadSingleFile[] = [];
 
     const isWatermarked = createGalleryItemDto.isWatermarked ?? false;
+    const isThumbnail = createGalleryItemDto.isThumbnail ?? false;
 
     const gallery = await this.galleryRepository.findOneOrThrow({
       where: { id: createGalleryItemDto.galleryId, userId },
@@ -78,7 +79,7 @@ export class GalleryItemService {
     try {
       originals = await this.awsService.uploadMultiFiles(folder, files, false, isWatermarked);
 
-      thumbnails = await this.generateAndUploadThumbnails(files, folder);
+      if (isThumbnail) thumbnails = await this.generateAndUploadThumbnails(files, folder);
 
       const galleryItems = await Promise.all(
         originals.map((file, index) =>

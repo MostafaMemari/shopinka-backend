@@ -23,6 +23,18 @@ export class CreateGalleryItemDto {
   isWatermarked?: boolean;
 
   @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => {
+    if (typeof value === 'string') return value === 'true';
+    return value;
+  })
+  @ApiPropertyOptional({
+    type: 'boolean',
+    nullable: true,
+  })
+  isThumbnail?: boolean;
+
+  @IsOptional()
   @IsString()
   @Transform(({ value }) => value?.trim())
   @ApiProperty({
