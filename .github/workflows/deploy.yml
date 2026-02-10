@@ -6,7 +6,6 @@ on:
 
 env:
   SERVICE_NAME: Shopinka Backend
-  SERVICE_PATH: /home/deploy/projects/shopinka/shopinka-backend
 
 jobs:
   deploy:
@@ -36,7 +35,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
           script: |
-            cd $SERVICE_PATH
+            cd ~/projects/shopinka/shopinka-backend/
             git fetch origin main
             git reset --hard origin/main
             docker compose up --build -d
