@@ -54,7 +54,7 @@ export class GalleryItemService {
       }
 
       this.logger.log('Trash cleanup process completed successfully.');
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Error during trash cleanup process: ${error.message}`, error.stack);
     }
   }
@@ -292,7 +292,7 @@ export class GalleryItemService {
     const thumbnails: IUploadSingleFile[] = [];
 
     for (const file of files) {
-      if (!ALLOWED_IMAGE_MIME_TYPES.includes(path.extname(file.originalname))) continue;
+      if (!ALLOWED_IMAGE_MIME_TYPES.includes(file.mimetype)) continue;
 
       const thumbnail = await resizeImageWithSharp(file.buffer, {
         height: 100,
