@@ -4,23 +4,6 @@
   - Added the required column `productTitle` to the `OrderItem` table without a default value. This is not possible if the table is not empty.
 
 */
--- DropForeignKey
-ALTER TABLE `OrderItem` DROP FOREIGN KEY `OrderItem_customStickerId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `OrderItem` DROP FOREIGN KEY `OrderItem_productId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `OrderItem` DROP FOREIGN KEY `OrderItem_productVariantId_fkey`;
-
--- DropIndex
-DROP INDEX `OrderItem_customStickerId_fkey` ON `OrderItem`;
-
--- DropIndex
-DROP INDEX `OrderItem_productId_fkey` ON `OrderItem`;
-
--- DropIndex
-DROP INDEX `OrderItem_productVariantId_fkey` ON `OrderItem`;
 
 -- AlterTable
 ALTER TABLE `OrderItem` ADD COLUMN `imageUrl` VARCHAR(191) NULL,
@@ -34,3 +17,4 @@ ALTER TABLE `OrderItem` ADD CONSTRAINT `OrderItem_productVariantId_fkey` FOREIGN
 
 -- AddForeignKey
 ALTER TABLE `OrderItem` ADD CONSTRAINT `OrderItem_customStickerId_fkey` FOREIGN KEY (`customStickerId`) REFERENCES `CustomSticker`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
