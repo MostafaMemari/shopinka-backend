@@ -56,9 +56,9 @@ export class GalleryItemController {
   @ApiConsumes(SwaggerConsumes.MultipartData)
   uploadCustomStickerPreviewImage(
     @UploadedFiles(FileValidatorPipe) files: Express.Multer.File[],
-    @Body() _: UploadCustomStickerPreviewImageDto,
+    @Body() uploadCustomStickerPreviewImageDto: UploadCustomStickerPreviewImageDto,
   ) {
-    return this.galleryItemService.uploadCustomStickerPreviewImage(files[0]);
+    return this.galleryItemService.uploadCustomStickerPreviewImage(files[0], uploadCustomStickerPreviewImageDto);
   }
 
   @Get()

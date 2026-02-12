@@ -39,6 +39,12 @@ export class OrderService {
   private mapCartItemsToOrderItems(cartItems: CartItem[]) {
     return cartItems.map((item) => {
       const base = item['product'] ?? item['productVariant'];
+      const productName = item['product']?.name || item['productVariant']?.product?.name || item['customSticker']?.name || '';
+      const productImage =
+        item['product']?.mainImage?.fileUrl ||
+        item['productVariant']?.product?.mainImage?.fileUrl ||
+        item['customSticker']?.previewImage?.fileUrl ||
+        '';
 
       const price = (base?.salePrice || base?.basePrice) * item.quantity;
 
@@ -48,6 +54,8 @@ export class OrderService {
         productVariantId: item.productVariantId,
         customStickerId: item.customStickerId,
         quantity: item.quantity,
+        productTitle: productName,
+        imageUrl: productImage,
         basePrice: item['customSticker'] ? item['customSticker'].finalPrice * item.quantity : price,
         unitPrice: item['customSticker'] ? item['customSticker'].finalPrice * item.quantity : price,
         total: item['customSticker'] ? item['customSticker'].finalPrice * item.quantity : price,
@@ -351,52 +359,15 @@ export class OrderService {
     });
   }
 
-  findOneForUser(userId: number, orderId: number): Promise<Order> {
+  async findOneForUser(userId: number, orderId: number): Promise<Order> {
     return this.orderRepository.findOneOrThrow({
       where: { userId, id: orderId },
       include: {
         items: {
           include: {
-            product: {
-              select: {
-                id: true,
-                name: true,
-                slug: true,
-                type: true,
-                salePrice: true,
-                basePrice: true,
-                mainImage: { select: { fileUrl: true } },
-              },
-            },
-            customSticker: {
-              select: {
-                id: true,
-                finalPrice: true,
-                lines: true,
-                name: true,
-                previewImage: { select: { fileUrl: true } },
-                material: { select: { name: true, surface: true, colorCode: true } },
-                font: { select: { displayName: true } },
-              },
-            },
-            productVariant: {
-              select: {
-                id: true,
-                salePrice: true,
-                basePrice: true,
-                product: {
-                  select: {
-                    name: true,
-                    type: true,
-                    slug: true,
-                    mainImage: { select: { fileUrl: true } },
-                  },
-                },
-                attributeValues: {
-                  select: { name: true, colorCode: true, buttonLabel: true },
-                },
-              },
-            },
+            product: { include: { mainImage: true } },
+            productVariant: { include: { product: { include: { mainImage: true } }, attributeValues: true } },
+            customSticker: { include: { previewImage: true, font: true, material: true } },
           },
         },
         addressSnapshot: true,

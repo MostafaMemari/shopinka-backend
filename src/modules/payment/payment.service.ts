@@ -68,17 +68,6 @@ export class PaymentService {
 
     const shipping = await this.shippingRepository.findOneOrThrow({ where: { id: paymentDto.shippingId } });
 
-    // let payablePrice = 0;
-
-    // for (const item of cart.items) {
-    //   payablePrice += (
-    //     await this.productService.calculateBestDiscount({
-    //       targetId: item.productId || item.productVariantId || item.customStickerId,
-    //       quantity: item.quantity,
-    //     })
-    //   ).finalPrice;
-    // }
-
     const amountPrice = (cart.payablePrice + shipping.price) * 10;
 
     try {

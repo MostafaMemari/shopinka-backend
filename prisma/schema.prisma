@@ -478,20 +478,26 @@ model Order {
 }
 
 model OrderItem {
-  id               Int     @id @default(autoincrement())
-  orderId          Int
+  id      Int @id @default(autoincrement())
+  orderId Int
+
   productId        Int?
   productVariantId Int?
   customStickerId  Int?
-  basePrice        Decimal
-  unitPrice        Decimal
-  quantity         Int
-  total            Decimal
 
-  product        Product?        @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productVariant ProductVariant? @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
-  customSticker  CustomSticker?  @relation(fields: [customStickerId], references: [id], onDelete: Cascade)
-  order          Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productTitle String
+  imageUrl     String?
+
+  basePrice Decimal
+  unitPrice Decimal
+  quantity  Int
+  total     Decimal
+
+  product        Product?        @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productVariant ProductVariant? @relation(fields: [productVariantId], references: [id], onDelete: SetNull)
+  customSticker  CustomSticker?  @relation(fields: [customStickerId], references: [id], onDelete: SetNull)
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 }

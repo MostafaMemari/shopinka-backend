@@ -17,6 +17,7 @@ import { RestoreGalleryItemDto } from '../dto/restore-gallery-item.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { ALLOWED_IMAGE_MIME_TYPES } from '../../../common/pipes/file-validator.pipe';
 import * as path from 'path';
+import { UploadCustomStickerPreviewImageDto } from '../dto/upload-custom-sticker.dto';
 
 @Injectable()
 export class GalleryItemService {
@@ -312,11 +313,17 @@ export class GalleryItemService {
     return thumbnails;
   }
 
-  async uploadCustomStickerPreviewImage(file: Express.Multer.File): Promise<{ message: string; galleryItem: GalleryItem }> {
+  async uploadCustomStickerPreviewImage(
+    file: Express.Multer.File,
+    uploadCustomStickerPreviewImageDto: UploadCustomStickerPreviewImageDto,
+  ): Promise<{ message: string; galleryItem: GalleryItem }> {
     const galleryId = Number(process.env.CUSTOM_STICKER_GALLERY_ID);
+    let thumbnails: IUploadSingleFile[] = [];
+
+    const isWatermarked = uploadCustomStickerPreviewImageDto?.isWatermarked ?? false;
+    const isThumbnail = uploadCustomStickerPreviewImageDto?.isThumbnail ?? false;
 
     if (!file) throw new BadRequestException('File is required.');
-
     if (!galleryId) throw new BadRequestException("GalleryId is'nt set in env.");
 
     if (!ALLOWED_IMAGE_MIME_TYPES.includes(file.mimetype))
@@ -326,12 +333,21 @@ export class GalleryItemService {
 
     let uploaded: IUploadSingleFile;
     try {
-      uploaded = await this.awsService.uploadSingleFile({ fileMetadata: file, isPublic: false, folderName: this.GALLERY_ITEM_FOLDER });
+      uploaded = await this.awsService.uploadSingleFile({
+        fileMetadata: file,
+        isPublic: true,
+        folderName: this.GALLERY_ITEM_FOLDER,
+        watermark: isWatermarked,
+      });
+
+      if (isThumbnail) thumbnails = await this.generateAndUploadThumbnails([file], this.GALLERY_ITEM_FOLDER);
 
       const galleryItem = await this.galleryItemRepository.create({
         data: {
           fileKey: uploaded.key,
           fileUrl: uploaded.url,
+          thumbnailKey: thumbnails.length ? thumbnails[0].key : undefined,
+          thumbnailUrl: thumbnails.length ? thumbnails[0].url : undefined,
           mimetype: file.mimetype,
           size: file.size,
           title: file.originalname,

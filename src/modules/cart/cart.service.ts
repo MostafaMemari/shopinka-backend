@@ -25,44 +25,14 @@ export class CartService {
         items: {
           orderBy: { createdAt: 'desc' },
           include: {
-            product: {
-              select: {
-                id: true,
-                name: true,
-                slug: true,
-                type: true,
-                salePrice: true,
-                basePrice: true,
-                mainImage: { select: { fileUrl: true } },
-              },
-            },
+            product: { include: { mainImage: true } },
             customSticker: {
-              select: {
-                id: true,
-                finalPrice: true,
-                lines: true,
-                name: true,
-                previewImage: { select: { fileUrl: true } },
-                material: { select: { name: true, surface: true, colorCode: true } },
-                font: { select: { displayName: true } },
-              },
+              include: { previewImage: true, font: true, material: true },
             },
             productVariant: {
-              select: {
-                id: true,
-                salePrice: true,
-                basePrice: true,
-                product: {
-                  select: {
-                    name: true,
-                    type: true,
-                    mainImage: { select: { fileUrl: true } },
-                    slug: true,
-                  },
-                },
-                attributeValues: {
-                  select: { name: true, colorCode: true, buttonLabel: true },
-                },
+              include: {
+                product: { include: { mainImage: true } },
+                attributeValues: true,
               },
             },
           },
