@@ -1,15 +1,13 @@
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 
 export const ALLOWED_IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
-export const ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.svg'];
-export const ALLOWED_FONT_EXTENSIONS = ['.ttf', '.otf', '.woff', '.woff2'];
+export const ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp'];
+export const ALLOWED_FONT_EXTENSIONS = ['ttf', 'otf', 'woff', 'woff2'];
 
 @Injectable()
 export class FileValidatorPipe implements PipeTransform {
   transform(files: Express.Multer.File[] | Express.Multer.File) {
-    if (!files || (Array.isArray(files) && files.length == 0)) {
-      throw new BadRequestException('No files uploaded');
-    }
+    if (!files || (Array.isArray(files) && files.length == 0)) throw new BadRequestException('No files uploaded');
 
     if (Array.isArray(files)) for (const file of files) this.validateFile(file);
     else this.validateFile(files);

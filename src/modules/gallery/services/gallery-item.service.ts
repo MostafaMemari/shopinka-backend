@@ -78,7 +78,7 @@ export class GalleryItemService {
     const folder = this.GALLERY_ITEM_FOLDER;
 
     try {
-      originals = await this.awsService.uploadMultiFiles(folder, files, false, isWatermarked);
+      originals = await this.awsService.uploadMultiFiles(folder, files, true, isWatermarked);
 
       if (isThumbnail) thumbnails = await this.generateAndUploadThumbnails(files, folder);
 

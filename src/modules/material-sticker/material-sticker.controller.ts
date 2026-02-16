@@ -47,8 +47,6 @@ export class MaterialStickerController {
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
   async reorder(@Body() materialStickers: ReorderMaterialStickerDto[]) {
-    console.log(materialStickers);
-
     return this.materialStickerService.reorder(materialStickers);
   }
 
@@ -56,8 +54,6 @@ export class MaterialStickerController {
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateMaterialStickerDto: UpdateMaterialStickerDto) {
-    console.log(updateMaterialStickerDto);
-
     return this.materialStickerService.update(id, updateMaterialStickerDto);
   }
 

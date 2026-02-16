@@ -130,7 +130,7 @@ export class AwsService {
   async uploadMultiFiles(
     folderName: string,
     files: Express.Multer.File[],
-    isPublic: boolean = false,
+    isPublic: boolean = true,
     isWatermarked: boolean = false,
   ): Promise<IUploadSingleFile[] | undefined> {
     const uploadedFiles: IUploadSingleFile[] = [];
@@ -152,6 +152,7 @@ export class AwsService {
 
   async uploadTempFile(file: Partial<Express.Multer.File>, folderName: string) {
     // const folderName = `academy/course/temp`;
+
     return await this.uploadSingleFile({ fileMetadata: file, folderName, isPublic: true });
   }
 
