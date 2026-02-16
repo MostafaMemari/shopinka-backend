@@ -120,15 +120,6 @@ model User {
   customStickers   CustomSticker[]
 }
 
-model OtpRequest {
-  id        Int      @id @default(autoincrement())
-  mobile    String
-  otp       String
-  createdAt DateTime @default(now())
-  expiresAt DateTime
-  attempts  Int      @default(0)
-}
-
 model Transaction {
   id            Int               @id @default(autoincrement())
   userId        Int?
@@ -295,15 +286,17 @@ model Product {
 }
 
 model Seo404Log {
-  id        Int     @id @default(autoincrement())
-  path      String  @unique
-  referrer  String?
-  userAgent String?
+  id Int @id @default(autoincrement())
+
+  path      String  @db.Text
+  referrer  String? @db.Text
+  userAgent String? @db.Text
 
   hitCount   Int      @default(1)
   lastSeenAt DateTime @updatedAt
+  createdAt  DateTime @default(now())
 
-  createdAt DateTime @default(now())
+  @@index([createdAt])
 }
 
 model SeoRedirect {

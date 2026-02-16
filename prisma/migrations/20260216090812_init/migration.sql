@@ -29,6 +29,7 @@ CREATE TABLE `Transaction` (
 
     UNIQUE INDEX `Transaction_orderId_key`(`orderId`),
     UNIQUE INDEX `Transaction_invoice_number_key`(`invoice_number`),
+    INDEX `Transaction_userId_fkey`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -36,11 +37,12 @@ CREATE TABLE `Transaction` (
 CREATE TABLE `Gallery` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(191) NOT NULL,
-    `description` VARCHAR(191) NULL,
+    `description` TEXT NULL,
     `userId` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
+    INDEX `Gallery_userId_fkey`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -49,7 +51,7 @@ CREATE TABLE `GalleryItem` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `galleryId` INTEGER NOT NULL,
     `title` VARCHAR(191) NOT NULL,
-    `description` VARCHAR(191) NULL,
+    `description` TEXT NULL,
     `fileUrl` VARCHAR(191) NOT NULL,
     `fileKey` VARCHAR(191) NOT NULL,
     `thumbnailUrl` VARCHAR(191) NULL,
@@ -62,6 +64,7 @@ CREATE TABLE `GalleryItem` (
     `updatedAt` DATETIME(3) NOT NULL,
 
     INDEX `GalleryItem_deletedAt_idx`(`deletedAt`),
+    INDEX `GalleryItem_galleryId_fkey`(`galleryId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -72,14 +75,30 @@ CREATE TABLE `Address` (
     `fullName` VARCHAR(191) NOT NULL,
     `province` VARCHAR(191) NOT NULL,
     `city` VARCHAR(191) NOT NULL,
-    `streetAndAlley` VARCHAR(191) NOT NULL,
-    `plate` VARCHAR(191) NOT NULL,
-    `unit` VARCHAR(191) NULL,
-    `postal_code` VARCHAR(10) NULL,
+    `postal_address` TEXT NOT NULL,
+    `building_number` INTEGER NOT NULL,
+    `unit` INTEGER NULL,
+    `isDefault` BOOLEAN NOT NULL DEFAULT false,
+    `postal_code` VARCHAR(10) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `Address_postal_code_key`(`postal_code`),
+    INDEX `Address_userId_fkey`(`userId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `AddressSnapshot` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `fullName` VARCHAR(191) NOT NULL,
+    `province` VARCHAR(191) NOT NULL,
+    `city` VARCHAR(191) NOT NULL,
+    `postal_address` TEXT NOT NULL,
+    `building_number` INTEGER NOT NULL,
+    `unit` INTEGER NULL,
+    `postal_code` VARCHAR(10) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -90,11 +109,12 @@ CREATE TABLE `Attribute` (
     `slug` VARCHAR(191) NOT NULL,
     `userId` INTEGER NULL,
     `type` ENUM('COLOR', 'BUTTON') NOT NULL,
-    `description` VARCHAR(191) NULL,
+    `description` TEXT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `Attribute_slug_key`(`slug`),
+    INDEX `Attribute_userId_fkey`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -110,6 +130,7 @@ CREATE TABLE `AttributeValue` (
     `updatedAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `AttributeValue_slug_key`(`slug`),
+    INDEX `AttributeValue_attributeId_fkey`(`attributeId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -121,8 +142,8 @@ CREATE TABLE `Product` (
     `mainImageId` INTEGER NULL,
     `userId` INTEGER NULL,
     `slug` VARCHAR(191) NOT NULL,
-    `description` VARCHAR(191) NULL,
-    `short_description` VARCHAR(191) NULL,
+    `description` TEXT NULL,
+    `short_description` TEXT NULL,
     `quantity` INTEGER NULL,
     `base_price` INTEGER NULL,
     `sale_price` INTEGER NULL,
@@ -138,6 +159,51 @@ CREATE TABLE `Product` (
 
     UNIQUE INDEX `Product_sku_key`(`sku`),
     UNIQUE INDEX `Product_slug_key`(`slug`),
+    INDEX `Product_defaultVariantId_fkey`(`defaultVariantId`),
+    INDEX `Product_mainImageId_fkey`(`mainImageId`),
+    INDEX `Product_userId_fkey`(`userId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Seo404Log` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `path` VARCHAR(191) NOT NULL,
+    `referrer` VARCHAR(191) NULL,
+    `userAgent` VARCHAR(191) NULL,
+    `hitCount` INTEGER NOT NULL DEFAULT 1,
+    `lastSeenAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `Seo404Log_path_key`(`path`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SeoRedirect` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `fromPath` VARCHAR(191) NOT NULL,
+    `toPath` VARCHAR(191) NOT NULL,
+    `statusCode` INTEGER NOT NULL,
+    `hitCount` INTEGER NOT NULL DEFAULT 0,
+    `lastHitAt` DATETIME(3) NULL,
+    `note` VARCHAR(191) NULL,
+
+    UNIQUE INDEX `SeoRedirect_fromPath_key`(`fromPath`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Banner` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `imageId` INTEGER NOT NULL,
+    `link` VARCHAR(191) NOT NULL,
+    `type` ENUM('MAIN_SLIDER', 'SIDE') NOT NULL,
+    `isActive` BOOLEAN NOT NULL DEFAULT true,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    INDEX `Banner_imageId_fkey`(`imageId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -149,7 +215,7 @@ CREATE TABLE `ProductVariant` (
     `productId` INTEGER NOT NULL,
     `orderId` INTEGER NULL,
     `userId` INTEGER NULL,
-    `short_description` VARCHAR(191) NULL,
+    `short_description` TEXT NULL,
     `quantity` INTEGER NULL,
     `base_price` INTEGER NULL,
     `sale_price` INTEGER NULL,
@@ -161,6 +227,9 @@ CREATE TABLE `ProductVariant` (
     `updatedAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `ProductVariant_sku_key`(`sku`),
+    INDEX `ProductVariant_mainImageId_fkey`(`mainImageId`),
+    INDEX `ProductVariant_productId_fkey`(`productId`),
+    INDEX `ProductVariant_userId_fkey`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -171,6 +240,7 @@ CREATE TABLE `Favorite` (
     `productId` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
+    INDEX `Favorite_productId_fkey`(`productId`),
     UNIQUE INDEX `Favorite_userId_productId_key`(`userId`, `productId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -180,7 +250,7 @@ CREATE TABLE `Category` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
     `slug` VARCHAR(191) NOT NULL,
-    `description` VARCHAR(191) NULL,
+    `description` TEXT NULL,
     `parentId` INTEGER NULL,
     `userId` INTEGER NULL,
     `thumbnailImageId` INTEGER NULL,
@@ -189,6 +259,9 @@ CREATE TABLE `Category` (
     `type` ENUM('PRODUCT', 'BLOG') NOT NULL DEFAULT 'PRODUCT',
 
     UNIQUE INDEX `Category_slug_key`(`slug`),
+    INDEX `Category_parentId_fkey`(`parentId`),
+    INDEX `Category_thumbnailImageId_fkey`(`thumbnailImageId`),
+    INDEX `Category_userId_fkey`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -196,7 +269,7 @@ CREATE TABLE `Category` (
 CREATE TABLE `Comment` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(191) NOT NULL,
-    `content` VARCHAR(191) NOT NULL,
+    `content` TEXT NOT NULL,
     `isActive` BOOLEAN NOT NULL DEFAULT false,
     `isRecommended` BOOLEAN NOT NULL DEFAULT true,
     `rate` INTEGER NOT NULL DEFAULT 5,
@@ -207,6 +280,10 @@ CREATE TABLE `Comment` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
+    INDEX `Comment_blogId_fkey`(`blogId`),
+    INDEX `Comment_parentId_fkey`(`parentId`),
+    INDEX `Comment_productId_fkey`(`productId`),
+    INDEX `Comment_userId_fkey`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -227,12 +304,17 @@ CREATE TABLE `CartItem` (
     `cartId` INTEGER NOT NULL,
     `productId` INTEGER NULL,
     `productVariantId` INTEGER NULL,
+    `customStickerId` INTEGER NULL,
     `quantity` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
+    INDEX `CartItem_productId_fkey`(`productId`),
+    INDEX `CartItem_productVariantId_fkey`(`productVariantId`),
+    INDEX `CartItem_customStickerId_fkey`(`customStickerId`),
     UNIQUE INDEX `CartItem_cartId_productId_key`(`cartId`, `productId`),
     UNIQUE INDEX `CartItem_cartId_productVariantId_key`(`cartId`, `productVariantId`),
+    UNIQUE INDEX `CartItem_cartId_customStickerId_key`(`cartId`, `customStickerId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -240,7 +322,6 @@ CREATE TABLE `CartItem` (
 CREATE TABLE `Order` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `userId` INTEGER NULL,
-    `addressId` INTEGER NULL,
     `shippingId` INTEGER NULL,
     `orderNumber` VARCHAR(191) NOT NULL,
     `quantity` INTEGER NOT NULL,
@@ -248,8 +329,13 @@ CREATE TABLE `Order` (
     `status` ENUM('PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
+    `expiresAt` DATETIME(3) NULL,
+    `addressSnapshotId` INTEGER NOT NULL,
 
     UNIQUE INDEX `Order_orderNumber_key`(`orderNumber`),
+    UNIQUE INDEX `Order_addressSnapshotId_key`(`addressSnapshotId`),
+    INDEX `Order_shippingId_fkey`(`shippingId`),
+    INDEX `Order_userId_fkey`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -259,8 +345,13 @@ CREATE TABLE `OrderItem` (
     `orderId` INTEGER NOT NULL,
     `productId` INTEGER NULL,
     `productVariantId` INTEGER NULL,
-    `price` INTEGER NOT NULL,
+    `customStickerId` INTEGER NULL,
+    `productTitle` VARCHAR(191) NOT NULL,
+    `imageUrl` VARCHAR(191) NULL,
+    `basePrice` DECIMAL(65, 30) NOT NULL,
+    `unitPrice` DECIMAL(65, 30) NOT NULL,
     `quantity` INTEGER NOT NULL,
+    `total` DECIMAL(65, 30) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
@@ -270,18 +361,15 @@ CREATE TABLE `OrderItem` (
 CREATE TABLE `SeoMeta` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `userId` INTEGER NULL,
-    `ogImageId` INTEGER NULL,
     `productId` INTEGER NULL,
     `blogId` INTEGER NULL,
     `tagId` INTEGER NULL,
     `categoryId` INTEGER NULL,
     `entityType` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NULL,
-    `description` VARCHAR(191) NULL,
+    `description` TEXT NULL,
     `keywords` VARCHAR(191) NULL DEFAULT '',
     `canonical_url` VARCHAR(191) NULL,
-    `og_title` VARCHAR(191) NULL,
-    `og_description` VARCHAR(191) NULL,
     `robotsTag` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -290,6 +378,7 @@ CREATE TABLE `SeoMeta` (
     UNIQUE INDEX `SeoMeta_blogId_key`(`blogId`),
     UNIQUE INDEX `SeoMeta_tagId_key`(`tagId`),
     UNIQUE INDEX `SeoMeta_categoryId_key`(`categoryId`),
+    INDEX `SeoMeta_userId_fkey`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -300,13 +389,15 @@ CREATE TABLE `Blog` (
     `mainImageId` INTEGER NULL,
     `slug` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NOT NULL,
-    `content` VARCHAR(191) NULL,
+    `content` TEXT NULL,
     `status` ENUM('DRAFT', 'PUBLISHED') NOT NULL DEFAULT 'PUBLISHED',
     `reading_time` INTEGER NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `Blog_slug_key`(`slug`),
+    INDEX `Blog_mainImageId_fkey`(`mainImageId`),
+    INDEX `Blog_userId_fkey`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -317,12 +408,14 @@ CREATE TABLE `Tag` (
     `thumbnailImageId` INTEGER NULL,
     `name` VARCHAR(191) NOT NULL,
     `slug` VARCHAR(191) NOT NULL,
-    `description` VARCHAR(191) NULL,
+    `description` TEXT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
     `type` ENUM('PRODUCT', 'BLOG') NOT NULL DEFAULT 'PRODUCT',
 
     UNIQUE INDEX `Tag_slug_key`(`slug`),
+    INDEX `Tag_thumbnailImageId_fkey`(`thumbnailImageId`),
+    INDEX `Tag_userId_fkey`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -332,11 +425,12 @@ CREATE TABLE `Page` (
     `userId` INTEGER NULL,
     `name` VARCHAR(191) NOT NULL,
     `slug` VARCHAR(191) NOT NULL,
-    `description` VARCHAR(191) NULL,
+    `description` TEXT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `Page_slug_key`(`slug`),
+    INDEX `Page_userId_fkey`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -351,6 +445,7 @@ CREATE TABLE `Shipping` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
+    INDEX `Shipping_userId_fkey`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -366,6 +461,8 @@ CREATE TABLE `ShippingInfo` (
 
     UNIQUE INDEX `ShippingInfo_orderId_key`(`orderId`),
     UNIQUE INDEX `ShippingInfo_trackingCode_key`(`trackingCode`),
+    INDEX `ShippingInfo_shippingId_fkey`(`shippingId`),
+    INDEX `ShippingInfo_userId_fkey`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -377,6 +474,80 @@ CREATE TABLE `ContactMessage` (
     `email` VARCHAR(191) NULL,
     `message` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `BulkPricing` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `productId` INTEGER NULL,
+    `variantId` INTEGER NULL,
+    `userId` INTEGER NULL,
+    `minQty` INTEGER NOT NULL,
+    `discount` DECIMAL(65, 30) NOT NULL,
+    `isGlobal` BOOLEAN NOT NULL DEFAULT false,
+    `type` ENUM('PERCENT', 'FIXED') NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updateAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Font` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+    `fileId` INTEGER NULL,
+    `thumbnailId` INTEGER NULL,
+    `displayName` VARCHAR(191) NOT NULL,
+    `lineHeight` DOUBLE NOT NULL,
+    `size` DOUBLE NOT NULL,
+    `isPersian` BOOLEAN NOT NULL DEFAULT true,
+    `difficultyRatio` DOUBLE NOT NULL DEFAULT 1.0,
+    `isDefault` BOOLEAN NOT NULL DEFAULT false,
+    `displayOrder` INTEGER NOT NULL DEFAULT 0,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `MaterialSticker` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+    `colorCode` VARCHAR(191) NOT NULL,
+    `surface` ENUM('MATTE', 'GLOSSY', 'RAINBOW', 'REFLECTIVE') NOT NULL,
+    `pricePerCM` DOUBLE NOT NULL,
+    `profitPercent` DOUBLE NOT NULL DEFAULT 0.25,
+    `backgroundFrom` VARCHAR(191) NULL,
+    `backgroundTo` VARCHAR(191) NULL,
+    `isDefault` BOOLEAN NOT NULL DEFAULT false,
+    `displayOrder` INTEGER NOT NULL DEFAULT 0,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `CustomSticker` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+    `userId` INTEGER NOT NULL,
+    `fontId` INTEGER NULL,
+    `materialId` INTEGER NULL,
+    `previewImageId` INTEGER NULL,
+    `style` VARCHAR(191) NULL,
+    `weight` VARCHAR(191) NULL,
+    `letterSpacing` DOUBLE NOT NULL DEFAULT 0,
+    `finalPrice` DOUBLE NOT NULL,
+    `lines` JSON NOT NULL,
+    `description` TEXT NULL,
+    `status` ENUM('PENDING', 'APPROVED', 'REJECTED', 'PUBLISHED') NOT NULL DEFAULT 'PENDING',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -445,10 +616,10 @@ CREATE TABLE `_BlogToTag` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `Transaction` ADD CONSTRAINT `Transaction_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Transaction` ADD CONSTRAINT `Transaction_orderId_fkey` FOREIGN KEY (`orderId`) REFERENCES `Order`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Transaction` ADD CONSTRAINT `Transaction_orderId_fkey` FOREIGN KEY (`orderId`) REFERENCES `Order`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Transaction` ADD CONSTRAINT `Transaction_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Gallery` ADD CONSTRAINT `Gallery_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -466,13 +637,16 @@ ALTER TABLE `Attribute` ADD CONSTRAINT `Attribute_userId_fkey` FOREIGN KEY (`use
 ALTER TABLE `AttributeValue` ADD CONSTRAINT `AttributeValue_attributeId_fkey` FOREIGN KEY (`attributeId`) REFERENCES `Attribute`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `Product` ADD CONSTRAINT `Product_defaultVariantId_fkey` FOREIGN KEY (`defaultVariantId`) REFERENCES `ProductVariant`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `Product` ADD CONSTRAINT `Product_mainImageId_fkey` FOREIGN KEY (`mainImageId`) REFERENCES `GalleryItem`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Product` ADD CONSTRAINT `Product_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Product` ADD CONSTRAINT `Product_defaultVariantId_fkey` FOREIGN KEY (`defaultVariantId`) REFERENCES `ProductVariant`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Banner` ADD CONSTRAINT `Banner_imageId_fkey` FOREIGN KEY (`imageId`) REFERENCES `GalleryItem`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `ProductVariant` ADD CONSTRAINT `ProductVariant_mainImageId_fkey` FOREIGN KEY (`mainImageId`) REFERENCES `GalleryItem`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
@@ -484,28 +658,28 @@ ALTER TABLE `ProductVariant` ADD CONSTRAINT `ProductVariant_productId_fkey` FORE
 ALTER TABLE `ProductVariant` ADD CONSTRAINT `ProductVariant_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Favorite` ADD CONSTRAINT `Favorite_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Favorite` ADD CONSTRAINT `Favorite_productId_fkey` FOREIGN KEY (`productId`) REFERENCES `Product`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Favorite` ADD CONSTRAINT `Favorite_productId_fkey` FOREIGN KEY (`productId`) REFERENCES `Product`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Favorite` ADD CONSTRAINT `Favorite_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Category` ADD CONSTRAINT `Category_parentId_fkey` FOREIGN KEY (`parentId`) REFERENCES `Category`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `Category` ADD CONSTRAINT `Category_thumbnailImageId_fkey` FOREIGN KEY (`thumbnailImageId`) REFERENCES `GalleryItem`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `Category` ADD CONSTRAINT `Category_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Category` ADD CONSTRAINT `Category_thumbnailImageId_fkey` FOREIGN KEY (`thumbnailImageId`) REFERENCES `GalleryItem`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Comment` ADD CONSTRAINT `Comment_blogId_fkey` FOREIGN KEY (`blogId`) REFERENCES `Blog`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Comment` ADD CONSTRAINT `Comment_parentId_fkey` FOREIGN KEY (`parentId`) REFERENCES `Comment`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Comment` ADD CONSTRAINT `Comment_productId_fkey` FOREIGN KEY (`productId`) REFERENCES `Product`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Comment` ADD CONSTRAINT `Comment_blogId_fkey` FOREIGN KEY (`blogId`) REFERENCES `Blog`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Comment` ADD CONSTRAINT `Comment_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -523,52 +697,55 @@ ALTER TABLE `CartItem` ADD CONSTRAINT `CartItem_productId_fkey` FOREIGN KEY (`pr
 ALTER TABLE `CartItem` ADD CONSTRAINT `CartItem_productVariantId_fkey` FOREIGN KEY (`productVariantId`) REFERENCES `ProductVariant`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Order` ADD CONSTRAINT `Order_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `CartItem` ADD CONSTRAINT `CartItem_customStickerId_fkey` FOREIGN KEY (`customStickerId`) REFERENCES `CustomSticker`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Order` ADD CONSTRAINT `Order_addressId_fkey` FOREIGN KEY (`addressId`) REFERENCES `Address`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Order` ADD CONSTRAINT `Order_addressSnapshotId_fkey` FOREIGN KEY (`addressSnapshotId`) REFERENCES `AddressSnapshot`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Order` ADD CONSTRAINT `Order_shippingId_fkey` FOREIGN KEY (`shippingId`) REFERENCES `Shipping`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `OrderItem` ADD CONSTRAINT `OrderItem_productId_fkey` FOREIGN KEY (`productId`) REFERENCES `Product`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Order` ADD CONSTRAINT `Order_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `OrderItem` ADD CONSTRAINT `OrderItem_productVariantId_fkey` FOREIGN KEY (`productVariantId`) REFERENCES `ProductVariant`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `OrderItem` ADD CONSTRAINT `OrderItem_productId_fkey` FOREIGN KEY (`productId`) REFERENCES `Product`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `OrderItem` ADD CONSTRAINT `OrderItem_productVariantId_fkey` FOREIGN KEY (`productVariantId`) REFERENCES `ProductVariant`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `OrderItem` ADD CONSTRAINT `OrderItem_customStickerId_fkey` FOREIGN KEY (`customStickerId`) REFERENCES `CustomSticker`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `OrderItem` ADD CONSTRAINT `OrderItem_orderId_fkey` FOREIGN KEY (`orderId`) REFERENCES `Order`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `SeoMeta` ADD CONSTRAINT `SeoMeta_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `SeoMeta` ADD CONSTRAINT `SeoMeta_ogImageId_fkey` FOREIGN KEY (`ogImageId`) REFERENCES `GalleryItem`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `SeoMeta` ADD CONSTRAINT `SeoMeta_productId_fkey` FOREIGN KEY (`productId`) REFERENCES `Product`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE `SeoMeta` ADD CONSTRAINT `SeoMeta_blogId_fkey` FOREIGN KEY (`blogId`) REFERENCES `Blog`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `SeoMeta` ADD CONSTRAINT `SeoMeta_tagId_fkey` FOREIGN KEY (`tagId`) REFERENCES `Tag`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `SeoMeta` ADD CONSTRAINT `SeoMeta_categoryId_fkey` FOREIGN KEY (`categoryId`) REFERENCES `Category`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Blog` ADD CONSTRAINT `Blog_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `SeoMeta` ADD CONSTRAINT `SeoMeta_productId_fkey` FOREIGN KEY (`productId`) REFERENCES `Product`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `SeoMeta` ADD CONSTRAINT `SeoMeta_tagId_fkey` FOREIGN KEY (`tagId`) REFERENCES `Tag`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `SeoMeta` ADD CONSTRAINT `SeoMeta_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Blog` ADD CONSTRAINT `Blog_mainImageId_fkey` FOREIGN KEY (`mainImageId`) REFERENCES `GalleryItem`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Tag` ADD CONSTRAINT `Tag_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Blog` ADD CONSTRAINT `Blog_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Tag` ADD CONSTRAINT `Tag_thumbnailImageId_fkey` FOREIGN KEY (`thumbnailImageId`) REFERENCES `GalleryItem`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Tag` ADD CONSTRAINT `Tag_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Page` ADD CONSTRAINT `Page_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
@@ -577,13 +754,40 @@ ALTER TABLE `Page` ADD CONSTRAINT `Page_userId_fkey` FOREIGN KEY (`userId`) REFE
 ALTER TABLE `Shipping` ADD CONSTRAINT `Shipping_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `ShippingInfo` ADD CONSTRAINT `ShippingInfo_shippingId_fkey` FOREIGN KEY (`shippingId`) REFERENCES `Shipping`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE `ShippingInfo` ADD CONSTRAINT `ShippingInfo_orderId_fkey` FOREIGN KEY (`orderId`) REFERENCES `Order`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `ShippingInfo` ADD CONSTRAINT `ShippingInfo_shippingId_fkey` FOREIGN KEY (`shippingId`) REFERENCES `Shipping`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `ShippingInfo` ADD CONSTRAINT `ShippingInfo_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `BulkPricing` ADD CONSTRAINT `BulkPricing_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `BulkPricing` ADD CONSTRAINT `BulkPricing_productId_fkey` FOREIGN KEY (`productId`) REFERENCES `Product`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `BulkPricing` ADD CONSTRAINT `BulkPricing_variantId_fkey` FOREIGN KEY (`variantId`) REFERENCES `ProductVariant`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Font` ADD CONSTRAINT `Font_fileId_fkey` FOREIGN KEY (`fileId`) REFERENCES `GalleryItem`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Font` ADD CONSTRAINT `Font_thumbnailId_fkey` FOREIGN KEY (`thumbnailId`) REFERENCES `GalleryItem`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `CustomSticker` ADD CONSTRAINT `CustomSticker_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `CustomSticker` ADD CONSTRAINT `CustomSticker_fontId_fkey` FOREIGN KEY (`fontId`) REFERENCES `Font`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `CustomSticker` ADD CONSTRAINT `CustomSticker_materialId_fkey` FOREIGN KEY (`materialId`) REFERENCES `MaterialSticker`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `CustomSticker` ADD CONSTRAINT `CustomSticker_previewImageId_fkey` FOREIGN KEY (`previewImageId`) REFERENCES `GalleryItem`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `_ProductToGalleryItem` ADD CONSTRAINT `_ProductToGalleryItem_A_fkey` FOREIGN KEY (`A`) REFERENCES `GalleryItem`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
