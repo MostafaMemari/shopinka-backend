@@ -27,7 +27,7 @@ export class TorobService {
 
     const products = await this.productRepository.findAll({
       where: { status: ProductStatus.PUBLISHED },
-      include: { mainImage: true, categories: true },
+      include: { mainImage: true, categories: true, defaultVariant: true, variants: true },
       orderBy,
     });
 
@@ -56,7 +56,7 @@ export class TorobService {
 
     const products = await this.productRepository.findAll({
       where: { id: { in: productIds }, status: ProductStatus.PUBLISHED },
-      include: { mainImage: true, categories: true },
+      include: { mainImage: true, categories: true, defaultVariant: true, variants: true },
     });
 
     const filtered = products.filter((p) => pageUniques.includes(`${p.id}_0`));
@@ -82,7 +82,7 @@ export class TorobService {
 
     const products = await this.productRepository.findAll({
       where: { slug: { in: slugs }, status: ProductStatus.PUBLISHED },
-      include: { mainImage: true, categories: true },
+      include: { mainImage: true, categories: true, defaultVariant: true, variants: true },
     });
 
     return {
@@ -96,8 +96,44 @@ export class TorobService {
 
   private mapProduct(product: any) {
     const pageUrl = `https://shopinka.ir/product/${product.slug}/`;
-    const price = product.salePrice ?? product.basePrice ?? 0;
-    const available = (product.quantity ?? 0) > 0;
+
+    let price = 0;
+    let oldPrice: number | undefined = undefined;
+    let available = false;
+
+    if (product.type === 'SIMPLE') {
+      price = product.salePrice ?? product.basePrice ?? 0;
+      oldPrice = product.salePrice ? (product.basePrice ?? undefined) : undefined;
+      available = (product.quantity ?? 0) > 0;
+    }
+
+    if (product.type === 'VARIABLE') {
+      const defaultVariant = product.defaultVariant;
+
+      if (defaultVariant) {
+        price = defaultVariant.salePrice ?? defaultVariant.basePrice ?? 0;
+        oldPrice = defaultVariant.salePrice ? (defaultVariant.basePrice ?? undefined) : undefined;
+
+        available = (defaultVariant.quantity ?? 0) > 0;
+      } else if (product.variants?.length) {
+        const validVariants = product.variants.filter((v: any) => (v.salePrice ?? v.basePrice) != null);
+
+        if (validVariants.length) {
+          const sorted = validVariants.sort((a: any, b: any) => {
+            const priceA = a.salePrice ?? a.basePrice;
+            const priceB = b.salePrice ?? b.basePrice;
+            return priceA - priceB;
+          });
+
+          const cheapest = sorted[0];
+
+          price = cheapest.salePrice ?? cheapest.basePrice ?? 0;
+          oldPrice = cheapest.salePrice ? (cheapest.basePrice ?? undefined) : undefined;
+
+          available = (cheapest.quantity ?? 0) > 0;
+        }
+      }
+    }
 
     return {
       page_unique: `${product.id}`,
@@ -106,7 +142,7 @@ export class TorobService {
       title: product.name,
       subtitle: product.shortDescription ?? undefined,
       current_price: available ? price : 0,
-      old_price: product.salePrice ? (product.basePrice ?? undefined) : undefined,
+      old_price: oldPrice,
       availability: available,
       category_name: product.categories?.[0]?.name ?? undefined,
       image_links: product.mainImage?.fileUrl ? [product.mainImage.fileUrl] : [],
