@@ -8,7 +8,7 @@ export class TorobController {
   constructor(private readonly torobService: TorobService) {}
 
   @Post('products')
-  // @UseGuards(TorobGuard)
+  @UseGuards(TorobGuard)
   async getProducts(@Body() body: TorobProductsRequestDto) {
     return this.torobService.handleRequest(body);
   }
