@@ -409,8 +409,25 @@ export class ProductService {
 
     const product = await this.productRepository.findOneOrThrow({ where: { id: productId, userId }, include: { variants: true } });
 
-    if ((salePrice && basePrice && salePrice > basePrice) || (salePrice && salePrice > product.basePrice)) {
-      throw new BadRequestException(ProductMessages.SalePriceTooHigh);
+    const basePriceSent = basePrice !== undefined;
+    const salePriceSent = salePrice !== undefined;
+
+    const finalBasePrice = basePriceSent ? basePrice : product.basePrice;
+    const finalSalePrice = salePriceSent ? salePrice : product.salePrice;
+
+    if (basePriceSent) {
+      if (finalSalePrice != null && finalSalePrice >= finalBasePrice) {
+        throw new BadRequestException(ProductMessages.SalePriceTooHigh);
+      }
+    }
+
+    if (salePriceSent) {
+      if (salePrice === null) {
+      } else {
+        if (salePrice >= finalBasePrice) {
+          throw new BadRequestException(ProductMessages.SalePriceTooHigh);
+        }
+      }
     }
 
     if (slug || sku) {

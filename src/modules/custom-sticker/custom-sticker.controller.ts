@@ -32,8 +32,8 @@ export class CustomStickerController {
   }
 
   @Get()
-  findAll(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
-    return this.customStickerService.findAll(user.id, paginationDto);
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.customStickerService.findAll(paginationDto);
   }
 
   @Get('admin')

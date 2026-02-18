@@ -115,9 +115,8 @@ export class CustomStickerService {
     return pagination(paginationDto, customStickers);
   }
 
-  async findAll(userId: number, paginationDto: PaginationDto): Promise<OutputPagination<CustomSticker>> {
+  async findAll(paginationDto: PaginationDto): Promise<OutputPagination<CustomSticker>> {
     const customStickers = await this.customStickerRepository.findAll({
-      where: { userId },
       orderBy: { createdAt: 'desc' },
       include: { font: true, material: true, previewImage: true },
     });

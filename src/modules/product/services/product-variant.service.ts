@@ -134,8 +134,25 @@ export class ProductVariantService {
 
     const productVariant = await this.productVariantRepository.findOneOrThrow({ where: { id: productVariantId, userId } });
 
-    if ((salePrice && basePrice && salePrice > basePrice) || (salePrice && salePrice > productVariant.basePrice)) {
-      throw new BadRequestException(ProductVariantMessages.SalePriceTooHigh);
+    const basePriceSent = basePrice !== undefined;
+    const salePriceSent = salePrice !== undefined;
+
+    const finalBasePrice = basePriceSent ? basePrice : productVariant.basePrice;
+    const finalSalePrice = salePriceSent ? salePrice : productVariant.salePrice;
+
+    if (basePriceSent) {
+      if (finalSalePrice != null && finalSalePrice >= finalBasePrice) {
+        throw new BadRequestException(ProductVariantMessages.SalePriceTooHigh);
+      }
+    }
+
+    if (salePriceSent) {
+      if (salePrice === null) {
+      } else {
+        if (salePrice >= finalBasePrice) {
+          throw new BadRequestException(ProductVariantMessages.SalePriceTooHigh);
+        }
+      }
     }
 
     if (sku) {
