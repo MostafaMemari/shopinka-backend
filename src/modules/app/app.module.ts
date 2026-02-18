@@ -36,6 +36,7 @@ import { Seo404LogModule } from '../seo-404-log/seo-404-log.module';
 import { SeoRedirectModule } from '../seo-redirect/seo-redirect.module';
 import { CacheModule } from '../cache/cache.module';
 import { redisConfig } from '../../configs/redis.config';
+import { TorobModule } from '../torob/torob.module';
 
 @Module({
   imports: [
@@ -71,6 +72,7 @@ import { redisConfig } from '../../configs/redis.config';
     Seo404LogModule,
     SeoRedirectModule,
     CacheModule,
+    TorobModule,
   ],
   controllers: [],
   providers: [
