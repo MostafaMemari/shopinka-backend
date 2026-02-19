@@ -90,11 +90,13 @@ export class ShippingService {
           data: { isDefault: false },
         });
       }
-      await tx.materialSticker.update({
+
+      await tx.shipping.update({
         where: { id: shippingToSetDefault.id },
         data: { isDefault: true },
       });
     });
+
     return { message: ShippingMessages.SetDefaultShippingSuccess };
   }
 

@@ -111,11 +111,11 @@ export class MaterialStickerService {
     return { message: MaterialStickerMessages.SetDefaultMaterialSuccess };
   }
 
-  async reorder(fonts: { id: number; displayOrder: number }[]): Promise<{ message: string }> {
-    if (!fonts || fonts.length === 0) return { message: MaterialStickerMessages.ReorderedMaterialsSuccess };
+  async reorder(material: { id: number; displayOrder: number }[]): Promise<{ message: string }> {
+    if (!material || material.length === 0) return { message: MaterialStickerMessages.ReorderedMaterialsSuccess };
 
     await this.prismaService.$transaction(
-      fonts.map((font) =>
+      material.map((font) =>
         this.prismaService.materialSticker.update({
           where: { id: font.id },
           data: { displayOrder: font.displayOrder },
