@@ -250,6 +250,7 @@ model Product {
   salePrice        Int?             @map("sale_price")
   status           ProductStatus    @default(PUBLISHED)
   type             ProductType      @default(SIMPLE)
+  isTorob          Boolean          @default(false)
   defaultVariantId Int?
   width            Int?
   height           Int?

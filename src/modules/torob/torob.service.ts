@@ -26,7 +26,7 @@ export class TorobService {
     const orderBy: Prisma.ProductOrderByWithRelationInput = sort === 'date_updated_desc' ? { updatedAt: 'desc' } : { createdAt: 'desc' };
 
     const products = await this.productRepository.findAll({
-      where: { status: ProductStatus.PUBLISHED },
+      where: { status: ProductStatus.PUBLISHED, isTorob: true },
       include: { mainImage: true, categories: true, defaultVariant: true, variants: true },
       orderBy,
     });
@@ -55,7 +55,7 @@ export class TorobService {
     const productIds = pageUniques.map((u) => Number(u.split('_')[0]));
 
     const products = await this.productRepository.findAll({
-      where: { id: { in: productIds }, status: ProductStatus.PUBLISHED },
+      where: { id: { in: productIds }, status: ProductStatus.PUBLISHED, isTorob: true },
       include: { mainImage: true, categories: true, defaultVariant: true, variants: true },
     });
 
@@ -81,7 +81,7 @@ export class TorobService {
     });
 
     const products = await this.productRepository.findAll({
-      where: { slug: { in: slugs }, status: ProductStatus.PUBLISHED },
+      where: { slug: { in: slugs }, status: ProductStatus.PUBLISHED, isTorob: true },
       include: { mainImage: true, categories: true, defaultVariant: true, variants: true },
     });
 
