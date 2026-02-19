@@ -6,10 +6,14 @@ import { Prisma, Shipping } from '@prisma/client';
 import { ShippingMessages } from '../enums/shipping-messages.enum';
 import { QueryShippingDto } from '../dto/query-shipping.dto';
 import { pagination } from '../../../common/utils/pagination.utils';
+import { PrismaService } from '../../../modules/prisma/prisma.service';
 
 @Injectable()
 export class ShippingService {
-  constructor(private readonly shippingRepository: ShippingRepository) {}
+  constructor(
+    private readonly shippingRepository: ShippingRepository,
+    private readonly prismaService: PrismaService,
+  ) {}
 
   async create(userId: number, createShippingDto: CreateShippingDto): Promise<{ message: string; shipping: Shipping }> {
     const newShipping = await this.shippingRepository.create({ data: { ...createShippingDto, userId } });
@@ -71,6 +75,27 @@ export class ShippingService {
     const updatedShipping = await this.shippingRepository.update({ where: { id: shippingId }, data: updateShippingDto });
 
     return { message: ShippingMessages.UpdatedShippingSuccess, shipping: updatedShipping };
+  }
+
+  async setDefault(id: number): Promise<{ message: string }> {
+    const shippingToSetDefault = await this.shippingRepository.findOneOrThrow({ where: { id } });
+    if (shippingToSetDefault.isDefault) return { message: ShippingMessages.SetDefaultShippingSuccess };
+
+    const currentDefaultShipping = await this.shippingRepository.findOne({ where: { isDefault: true } });
+
+    await this.prismaService.$transaction(async (tx) => {
+      if (currentDefaultShipping) {
+        await tx.shipping.update({
+          where: { id: currentDefaultShipping.id },
+          data: { isDefault: false },
+        });
+      }
+      await tx.materialSticker.update({
+        where: { id: shippingToSetDefault.id },
+        data: { isDefault: true },
+      });
+    });
+    return { message: ShippingMessages.SetDefaultShippingSuccess };
   }
 
   async remove(userId: number, shippingId: number): Promise<{ message: string; shipping: Shipping }> {

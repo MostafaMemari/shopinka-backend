@@ -43,6 +43,13 @@ export class ShippingController {
     return this.shippingService.update(user.id, id, updateShippingDto);
   }
 
+  @Patch(':id/default')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  @ApiConsumes(SwaggerConsumes.UrlEncoded, SwaggerConsumes.Json)
+  async setDefault(@Param('id', ParseIntPipe) id: number) {
+    return this.shippingService.setDefault(id);
+  }
+
   @Delete(':id')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
