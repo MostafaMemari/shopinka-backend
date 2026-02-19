@@ -204,20 +204,6 @@ model Address {
   @@index([userId], map: "Address_userId_fkey")
 }
 
-model AddressSnapshot {
-  id             Int      @id @default(autoincrement())
-  fullName       String
-  province       String
-  city           String
-  postalAddress  String   @map("postal_address") @db.Text
-  buildingNumber Int      @map("building_number")
-  unit           Int?     @map("unit")
-  postalCode     String   @map("postal_code") @db.VarChar(10)
-  createdAt      DateTime @default(now())
-
-  order Order?
-}
-
 model Attribute {
   id          Int              @id @default(autoincrement())
   name        String
@@ -456,14 +442,13 @@ model Order {
   shippingId  Int?
   orderNumber String      @unique
   quantity    Int
-  totalPrice  Int
+  totalPrice  Decimal
   status      OrderStatus @default(PENDING)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   expiresAt   DateTime?
 
-  addressSnapshotId Int             @unique
-  addressSnapshot   AddressSnapshot @relation(fields: [addressSnapshotId], references: [id])
+  addressSnapshot Json
 
   shipping     Shipping?     @relation(fields: [shippingId], references: [id])
   user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
