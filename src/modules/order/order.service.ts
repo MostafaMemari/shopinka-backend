@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { IGetCart } from '../cart/interfaces/cart.interface';
 import { PaymentDto } from '../payment/dto/payment.dto';
 import { AddressRepository } from '../address/repositories/address.repository';
-import { CartItem, Order, OrderStatus, Prisma } from '@prisma/client';
+import { Order, OrderStatus, Prisma } from '@prisma/client';
 import { OrderRepository } from './repositories/order.repository';
 import { QueryMyOrderDto, QueryOrderDto } from './dto/query-order.dto';
 import { pagination } from '../../common/utils/pagination.utils';
@@ -14,7 +14,7 @@ import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 import { ShippingRepository } from '../shipping/repositories/shipping.repository';
 import { UpdateOrderStatusDto } from './dto/update-status-order.dto';
 import { QueryOrderStatus } from './enums/order-sort-by.enum';
-import { AddressSnapshotRepository } from '../address/repositories/address-snapshot.repository';
+import { mapCartItemsToOrderItems } from './order.helpers';
 
 @Injectable()
 export class OrderService {
@@ -22,7 +22,6 @@ export class OrderService {
     private readonly orderRepository: OrderRepository,
     private readonly orderItemRepository: OrderItemRepository,
     private readonly addressRepository: AddressRepository,
-    private readonly addressSnapshotRepository: AddressSnapshotRepository,
     private readonly productRepository: ProductRepository,
     private readonly productVariantRepository: ProductVariantRepository,
     private readonly cartItemRepository: CartItemRepository,
@@ -34,33 +33,6 @@ export class OrderService {
       .toString()
       .padStart(9, '0');
     return number.match(/.{1,3}/g)?.join('-') || '';
-  }
-
-  private mapCartItemsToOrderItems(cartItems: CartItem[]) {
-    return cartItems.map((item) => {
-      const base = item['product'] ?? item['productVariant'];
-      const productName = item['product']?.name || item['productVariant']?.product?.name || item['customSticker']?.name || '';
-      const productImage =
-        item['product']?.mainImage?.fileUrl ||
-        item['productVariant']?.product?.mainImage?.fileUrl ||
-        item['customSticker']?.previewImage?.fileUrl ||
-        '';
-
-      const price = (base?.salePrice || base?.basePrice) * item.quantity;
-
-      //TODO: Check for debug
-      return {
-        productId: item.productId,
-        productVariantId: item.productVariantId,
-        customStickerId: item.customStickerId,
-        quantity: item.quantity,
-        productTitle: productName,
-        imageUrl: productImage,
-        basePrice: item['customSticker'] ? item['customSticker'].finalPrice * item.quantity : price,
-        unitPrice: item['customSticker'] ? item['customSticker'].finalPrice * item.quantity : price,
-        total: item['customSticker'] ? item['customSticker'].finalPrice * item.quantity : price,
-      };
-    });
   }
 
   private async decreaseCartItemsStock(userId: number) {
@@ -87,9 +59,9 @@ export class OrderService {
 
   async create(userId: number, cart: IGetCart, paymentDto: PaymentDto): Promise<Order> {
     const { addressId, shippingId } = paymentDto;
-    let { items, payablePrice } = cart;
+    let { items: cartItems, payablePrice } = cart;
 
-    if (!items.length) throw new BadRequestException('Your cart list is empty');
+    if (!cartItems.length) throw new BadRequestException('Your cart list is empty');
 
     const shipping = await this.shippingRepository.findOneOrThrow({ where: { id: shippingId } });
     payablePrice += shipping.price;
@@ -97,21 +69,9 @@ export class OrderService {
     const address = await this.addressRepository.findOneOrThrow({ where: { userId, id: addressId } });
     if (!address.isDefault) throw new BadRequestException('Please select your default address or set this address as default.');
 
-    const addressSnapshot = await this.addressSnapshotRepository.create({
-      data: {
-        fullName: address.fullName,
-        province: address.province,
-        city: address.city,
-        postalAddress: address.postalAddress,
-        buildingNumber: address.buildingNumber,
-        unit: address.unit,
-        postalCode: address.postalCode,
-      },
-    });
-
     const orderNumber = this.generateOrderNumber();
 
-    const orderItems = this.mapCartItemsToOrderItems(items);
+    const orderItems = mapCartItemsToOrderItems(cartItems);
 
     const OrderExpireMinutes = parseInt(process.env.ORDER_EXPIRE_MINUTES, 10) * 1000 * 60 || 1000 * 60 * 60;
 
@@ -122,10 +82,10 @@ export class OrderService {
         totalPrice: payablePrice,
         status: OrderStatus.PENDING,
         userId,
-        addressSnapshotId: addressSnapshot.id,
-        quantity: items.length,
+        quantity: cartItems.length,
         expiresAt: new Date(Date.now() + OrderExpireMinutes),
         items: { create: orderItems },
+        addressSnapshot: address,
       },
       include: { items: true, user: true },
     });
@@ -354,7 +314,6 @@ export class OrderService {
         shippingInfo: true,
         transaction: true,
         user: true,
-        addressSnapshot: true,
       },
     });
   }
@@ -370,7 +329,6 @@ export class OrderService {
             customSticker: { include: { previewImage: true, font: true, material: true } },
           },
         },
-        addressSnapshot: true,
         shipping: true,
         shippingInfo: true,
         transaction: true,

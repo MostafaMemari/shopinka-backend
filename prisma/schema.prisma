@@ -91,6 +91,7 @@ enum CustomStickerStatus {
 
 enum OrderItemType {
   PRODUCT
+  PRODUCT_VARIANT
   CUSTOM_STICKER
 }
 

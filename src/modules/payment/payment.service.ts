@@ -36,7 +36,6 @@ export class PaymentService {
     private readonly cartItemRepository: CartItemRepository,
     private readonly cartRepository: CartRepository,
     private readonly productRepository: ProductRepository,
-    private readonly productService: ProductService,
     private readonly productVariantRepository: ProductVariantRepository,
   ) {}
 
@@ -108,7 +107,7 @@ export class PaymentService {
 
     if (order.status !== 'PENDING') throw new BadRequestException(PaymentMessages.OrderNotPayable);
 
-    const amountPrice = order.totalPrice * 10;
+    const amountPrice = order.totalPrice.toNumber() * 10;
 
     try {
       const { authority, code, gatewayURL } = await this.zarinpalService.sendRequest({

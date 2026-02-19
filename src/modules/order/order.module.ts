@@ -13,7 +13,6 @@ import { ProductVariantRepository } from '../product/repositories/product-varian
 import { CartItemRepository } from '../cart/repositories/cardItem.repository';
 import { ShippingRepository } from '../shipping/repositories/shipping.repository';
 import { CartService } from '../cart/cart.service';
-import { AddressSnapshotRepository } from '../address/repositories/address-snapshot.repository';
 import { CacheService } from '../cache/cache.service';
 
 @Module({
@@ -22,7 +21,6 @@ import { CacheService } from '../cache/cache.service';
     OrderService,
     PrismaService,
     AddressRepository,
-    AddressSnapshotRepository,
     OrderRepository,
     AuthService,
     UserRepository,
