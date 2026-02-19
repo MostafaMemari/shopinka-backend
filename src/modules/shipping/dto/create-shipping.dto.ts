@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsNumber, IsPositive, IsOptional, IsBoolean } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsPositive, IsOptional, IsBoolean, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateShippingDto {
@@ -9,7 +9,7 @@ export class CreateShippingDto {
   name: string;
 
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @Transform(({ value }) => +value)
   @ApiProperty({ type: 'number', required: true, nullable: false })
   price: number;
