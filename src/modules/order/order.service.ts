@@ -86,6 +86,7 @@ export class OrderService {
         expiresAt: new Date(Date.now() + OrderExpireMinutes),
         items: { create: orderItems },
         addressSnapshot: address,
+        shippingSnapshot: shipping,
       },
       include: { items: true, user: true },
     });
@@ -164,50 +165,7 @@ export class OrderService {
       orderBy: { createdAt: 'desc' },
       include: {
         transaction: true,
-        items: {
-          include: {
-            product: {
-              select: {
-                id: true,
-                name: true,
-                slug: true,
-                type: true,
-                salePrice: true,
-                basePrice: true,
-                mainImage: { select: { fileUrl: true } },
-              },
-            },
-            customSticker: {
-              select: {
-                id: true,
-                finalPrice: true,
-                lines: true,
-                name: true,
-                previewImage: { select: { fileUrl: true } },
-                material: { select: { name: true, surface: true, colorCode: true } },
-                font: { select: { displayName: true } },
-              },
-            },
-            productVariant: {
-              select: {
-                id: true,
-                salePrice: true,
-                basePrice: true,
-                product: {
-                  select: {
-                    name: true,
-                    type: true,
-                    slug: true,
-                    mainImage: { select: { fileUrl: true } },
-                  },
-                },
-                attributeValues: {
-                  select: { name: true, colorCode: true, buttonLabel: true },
-                },
-              },
-            },
-          },
-        },
+        items: { select: { productTitle: true, imageUrl: true } },
         shippingInfo: true,
         shipping: true,
       },
@@ -324,12 +282,10 @@ export class OrderService {
       include: {
         items: {
           include: {
-            product: { include: { mainImage: true } },
-            productVariant: { include: { product: { include: { mainImage: true } }, attributeValues: true } },
-            customSticker: { include: { previewImage: true, font: true, material: true } },
+            product: { select: { slug: true } },
+            productVariant: { include: { product: { select: { slug: true } } } },
           },
         },
-        shipping: true,
         shippingInfo: true,
         transaction: true,
       },

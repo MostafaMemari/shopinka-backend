@@ -449,7 +449,8 @@ model Order {
   updatedAt   DateTime    @updatedAt
   expiresAt   DateTime?
 
-  addressSnapshot Json
+  addressSnapshot  Json
+  shippingSnapshot Json
 
   shipping     Shipping?     @relation(fields: [shippingId], references: [id])
   user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
