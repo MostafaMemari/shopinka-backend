@@ -16,4 +16,5 @@ export enum ProductMessages {
   VariantNotAvailable = 'Default variant must be in stock',
   SetProductVariantSuccess = 'Default variant set successfully',
   DefaultVariantRemovedSuccess = 'Default variant remove successfully',
+  SetIsTorobProductSuccess = 'Set is torob product successfully',
 }

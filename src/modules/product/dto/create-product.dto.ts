@@ -1,8 +1,21 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { ArrayUnique, IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Max, MaxLength, Min } from 'class-validator';
+import {
+  ArrayUnique,
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  Max,
+  MaxLength,
+  Min,
+} from 'class-validator';
 import { ProductStatus, ProductType } from '@prisma/client';
-import { transformNumberArray } from '../../../common/utils/functions.utils';
+import { transformNumberArray, transformToBoolean } from '../../../common/utils/functions.utils';
 
 export class CreateProductDto {
   @IsOptional()
@@ -24,6 +37,12 @@ export class CreateProductDto {
   @MaxLength(350)
   @ApiProperty({ type: 'string', required: false, nullable: true, maxLength: 350 })
   slug?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => transformToBoolean(value))
+  @ApiPropertyOptional({ type: 'boolean', nullable: true, required: false })
+  isTorob?: boolean;
 
   @IsOptional()
   @IsString()

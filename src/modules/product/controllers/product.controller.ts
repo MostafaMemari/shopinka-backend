@@ -91,6 +91,12 @@ export class ProductController {
     return this.productService.favoriteToggle(user.id, id);
   }
 
+  @Patch('is-torob/:id')
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  setIsTorob(@Param('id', ParseIntPipe) id: number) {
+    return this.productService.setIsTorob(id);
+  }
+
   @Patch(':id')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiConsumes(SwaggerConsumes.Json, SwaggerConsumes.UrlEncoded)

@@ -535,6 +535,17 @@ export class ProductService {
     return { message: FavoriteMessages.CreatedFavoriteSuccess, favorite: newFavorite };
   }
 
+  async setIsTorob(productId: number) {
+    await this.productRepository.findOneOrThrow({ where: { id: productId } });
+
+    const updatedProduct = await this.productRepository.update({
+      where: { id: productId },
+      data: { isTorob: true },
+    });
+
+    return { message: ProductMessages.SetIsTorobProductSuccess, product: updatedProduct };
+  }
+
   async calculateBestDiscount(
     calculateBulkPriceDto: CalculateBulkPriceDto,
   ): Promise<{ originalPrice: number; finalPrice: number; discount: number }> {
